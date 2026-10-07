@@ -139,7 +139,7 @@ export default function GuidesPage() {
 
       <footer className="border-t bg-slate-50">
         <div className="mx-auto max-w-6xl px-6 py-8 text-sm text-slate-500">
-          © {new Date().getFullYear()} KaamKitPro. All rights reserved.
+          © 2026 KaamKitPro. All rights reserved.
         </div>
       </footer>
     </main>
