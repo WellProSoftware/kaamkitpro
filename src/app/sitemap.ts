@@ -1,141 +1,79 @@
 import type { MetadataRoute } from "next";
 
+const baseUrl = "https://kaamkitpro.com";
+
+const toolRoutes = [
+  "/tools/qr-code-generator",
+  "/tools/word-counter",
+  "/tools/character-counter",
+  "/tools/case-converter",
+  "/tools/remove-extra-spaces",
+  "/tools/password-generator",
+  "/tools/json-formatter",
+  "/tools/base64",
+  "/tools/uuid-generator",
+  "/tools/timestamp-converter",
+  "/tools/percentage-calculator",
+  "/tools/gst-calculator",
+  "/tools/emi-calculator",
+  "/tools/age-calculator",
+  "/tools/bmi-calculator",
+  "/tools/sip-calculator",
+
+  "/tools/pdf-merge",
+  "/tools/pdf-split",
+  "/tools/pdf-to-jpg",
+  "/tools/jpg-to-pdf",
+  "/tools/pdf-compressor",
+
+  "/tools/image-compressor",
+  "/tools/image-resizer",
+  "/tools/image-converter",
+  "/tools/image-cropper",
+
+  "/tools/meta-tag-generator",
+  "/tools/meta-description-generator",
+  "/tools/keyword-density-checker",
+  "/tools/slug-generator",
+  "/tools/sitemap-generator",
+
+  "/tools/hashtag-generator",
+  "/tools/youtube-title-generator",
+  "/tools/youtube-description-generator",
+  "/tools/instagram-caption-generator",
+  "/tools/og-preview-generator",
+
+  "/tools/html-formatter",
+  "/tools/css-formatter",
+  "/tools/js-formatter",
+  "/tools/url-encoder-decoder",
+  "/tools/hash-generator",
+  "/tools/color-converter",
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://kaamkitpro.com";
-
-  return [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/privacy-policy`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/terms`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/disclaimer`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.5,
-    },
-
-    {
-      url: `${baseUrl}/tools/qr-code-generator`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/tools/password-generator`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/tools/word-counter`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/tools/character-counter`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/tools/case-converter`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/tools/remove-extra-spaces`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/tools/percentage-calculator`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/tools/gst-calculator`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/tools/emi-calculator`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/tools/age-calculator`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/tools/bmi-calculator`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/tools/sip-calculator`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/tools/json-formatter`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/tools/base64`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/tools/uuid-generator`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/tools/timestamp-converter`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
+  const staticRoutes = [
+    "",
+    "/about",
+    "/contact",
+    "/privacy-policy",
+    "/terms",
+    "/disclaimer",
+  "/guides",
+  "/guides/pdf-merge",
+  "/guides/image-compression",
+  "/guides/qr-code",
   ];
+
+  return [...staticRoutes.map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: route === "" ? "weekly" as const : "monthly" as const,
+    priority: route === "" ? 1 : 0.7,
+  })), ...toolRoutes.map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }))];
 }

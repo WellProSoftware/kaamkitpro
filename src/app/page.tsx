@@ -1,618 +1,823 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+type Tool = {
+  name: string;
+  description: string;
+  href: string;
+  category: string;
+};
 
 const categories = [
-  {
-    name: "PDF Tools",
-    description: "Compress, merge, split and convert PDFs",
-    icon: "📄",
-  },
-  {
-    name: "Image Tools",
-    description: "Compress, resize, crop and convert images",
-    icon: "🖼️",
-  },
-  {
-    name: "AI Tools",
-    description: "Useful AI-powered productivity tools",
-    icon: "🤖",
-  },
-  {
-    name: "Calculators",
-    description: "EMI, GST, age, percentage and more",
-    icon: "🧮",
-  },
-  {
-    name: "Text Tools",
-    description: "Word counter, character counter and more",
-    icon: "📝",
-  },
-  {
-    name: "SEO Tools",
-    description: "Tools to improve your website and content",
-    icon: "🔎",
-  },
-  {
-    name: "Social Tools",
-    description: "Useful tools for social media creators",
-    icon: "📱",
-  },
-  {
-    name: "Developer Tools",
-    description: "JSON, Base64, UUID and coding utilities",
-    icon: "💻",
-  },
+  "All",
+  "PDF Tools",
+  "Image Tools",
+  "Calculators",
+  "Text Tools",
+  "SEO Tools",
+  "Social Tools",
+  "Developer Tools",
 ];
 
-const popularTools = [
+const tools: Tool[] = [
   {
     name: "QR Code Generator",
-    description: "Create QR codes instantly",
-    category: "Utilities",
+    description: "Create QR codes quickly from text or links.",
     href: "/tools/qr-code-generator",
-  },
-  {
-    name: "Password Generator",
-    description: "Generate strong random passwords",
-    category: "Utilities",
-    href: "/tools/password-generator",
+    category: "Developer Tools",
   },
   {
     name: "Word Counter",
-    description: "Count words, characters and reading time",
-    category: "Text Tools",
+    description: "Count words, characters and paragraphs instantly.",
     href: "/tools/word-counter",
+    category: "Text Tools",
   },
   {
     name: "Character Counter",
-    description: "Count characters, spaces and lines instantly",
-    category: "Text Tools",
+    description: "Count characters with and without spaces.",
     href: "/tools/character-counter",
+    category: "Text Tools",
   },
   {
     name: "Case Converter",
-    description: "Convert text to uppercase, lowercase and more",
-    category: "Text Tools",
+    description: "Convert text to uppercase, lowercase and more.",
     href: "/tools/case-converter",
+    category: "Text Tools",
   },
   {
     name: "Remove Extra Spaces",
-    description: "Clean unwanted spaces from text",
-    category: "Text Tools",
+    description: "Clean unnecessary spaces from your text.",
     href: "/tools/remove-extra-spaces",
+    category: "Text Tools",
   },
   {
-    name: "Percentage Calculator",
-    description: "Calculate percentages and percentage changes",
-    category: "Calculators",
-    href: "/tools/percentage-calculator",
-  },
-  {
-    name: "GST Calculator",
-    description: "Calculate GST and total amount",
-    category: "Calculators",
-    href: "/tools/gst-calculator",
-  },
-  {
-    name: "EMI Calculator",
-    description: "Calculate monthly loan EMI and interest",
-    category: "Calculators",
-    href: "/tools/emi-calculator",
-  },
-  {
-    name: "Age Calculator",
-    description: "Calculate exact age in years, months and days",
-    category: "Calculators",
-    href: "/tools/age-calculator",
-  },
-  {
-    name: "BMI Calculator",
-    description: "Calculate Body Mass Index",
-    category: "Calculators",
-    href: "/tools/bmi-calculator",
-  },
-  {
-    name: "SIP Calculator",
-    description: "Estimate SIP investment value and returns",
-    category: "Calculators",
-    href: "/tools/sip-calculator",
+    name: "Password Generator",
+    description: "Generate strong random passwords securely.",
+    href: "/tools/password-generator",
+    category: "Developer Tools",
   },
   {
     name: "JSON Formatter",
-    description: "Format, validate and minify JSON",
-    category: "Developer Tools",
+    description: "Format and validate JSON data easily.",
     href: "/tools/json-formatter",
+    category: "Developer Tools",
   },
   {
     name: "Base64 Encoder & Decoder",
-    description: "Encode and decode Base64 text",
-    category: "Developer Tools",
+    description: "Encode or decode Base64 text instantly.",
     href: "/tools/base64",
+    category: "Developer Tools",
   },
   {
     name: "UUID Generator",
-    description: "Generate unique random UUIDs",
-    category: "Developer Tools",
+    description: "Generate unique UUIDs in seconds.",
     href: "/tools/uuid-generator",
+    category: "Developer Tools",
   },
   {
     name: "Timestamp Converter",
-    description: "Convert Unix timestamps and dates",
-    category: "Developer Tools",
+    description: "Convert Unix timestamps to readable dates.",
     href: "/tools/timestamp-converter",
+    category: "Developer Tools",
   },
   {
-    name: "Compress PDF",
-    description: "Reduce PDF file size quickly",
+    name: "Percentage Calculator",
+    description: "Calculate percentages quickly and accurately.",
+    href: "/tools/percentage-calculator",
+    category: "Calculators",
+  },
+  {
+    name: "GST Calculator",
+    description: "Calculate GST inclusive and exclusive prices.",
+    href: "/tools/gst-calculator",
+    category: "Calculators",
+  },
+  {
+    name: "EMI Calculator",
+    description: "Calculate loan EMI, interest and total payment.",
+    href: "/tools/emi-calculator",
+    category: "Calculators",
+  },
+  {
+    name: "Age Calculator",
+    description: "Calculate exact age from date of birth.",
+    href: "/tools/age-calculator",
+    category: "Calculators",
+  },
+  {
+    name: "BMI Calculator",
+    description: "Calculate BMI using height and weight.",
+    href: "/tools/bmi-calculator",
+    category: "Calculators",
+  },
+  {
+    name: "SIP Calculator",
+    description: "Estimate SIP returns and investment growth.",
+    href: "/tools/sip-calculator",
+    category: "Calculators",
+  },
+
+  {
+    name: "PDF Merge",
+    description: "Combine multiple PDF files into one PDF.",
+    href: "/tools/pdf-merge",
     category: "PDF Tools",
-    href: "#",
   },
   {
-    name: "Compress Image",
-    description: "Make images smaller without hassle",
+    name: "PDF Split",
+    description: "Split a PDF into individual pages.",
+    href: "/tools/pdf-split",
+    category: "PDF Tools",
+  },
+  {
+    name: "PDF to JPG",
+    description: "Convert PDF pages into JPG images.",
+    href: "/tools/pdf-to-jpg",
+    category: "PDF Tools",
+  },
+  {
+    name: "JPG to PDF",
+    description: "Convert images into a single PDF file.",
+    href: "/tools/jpg-to-pdf",
+    category: "PDF Tools",
+  },
+  {
+    name: "PDF Compressor",
+    description: "Reduce PDF size with browser-side optimization.",
+    href: "/tools/pdf-compressor",
+    category: "PDF Tools",
+  },
+
+  {
+    name: "Image Compressor",
+    description: "Compress images and reduce file size.",
+    href: "/tools/image-compressor",
     category: "Image Tools",
-    href: "#",
+  },
+  {
+    name: "Image Resizer",
+    description: "Resize images to your required dimensions.",
+    href: "/tools/image-resizer",
+    category: "Image Tools",
+  },
+  {
+    name: "Image Converter",
+    description: "Convert images between JPG, PNG and WebP.",
+    href: "/tools/image-converter",
+    category: "Image Tools",
+  },
+  {
+    name: "Image Cropper",
+    description: "Crop images to the exact area you need.",
+    href: "/tools/image-cropper",
+    category: "Image Tools",
+  },
+
+  {
+    name: "Meta Tag Generator",
+    description: "Generate SEO-friendly meta and social tags.",
+    href: "/tools/meta-tag-generator",
+    category: "SEO Tools",
+  },
+  {
+    name: "Meta Description Generator",
+    description: "Create useful meta descriptions for web pages.",
+    href: "/tools/meta-description-generator",
+    category: "SEO Tools",
+  },
+  {
+    name: "Keyword Density Checker",
+    description: "Check keyword frequency and density in text.",
+    href: "/tools/keyword-density-checker",
+    category: "SEO Tools",
+  },
+  {
+    name: "Slug Generator",
+    description: "Create clean SEO-friendly URL slugs.",
+    href: "/tools/slug-generator",
+    category: "SEO Tools",
+  },
+  {
+    name: "Sitemap Generator",
+    description: "Generate XML sitemap content from URLs.",
+    href: "/tools/sitemap-generator",
+    category: "SEO Tools",
+  },
+
+  {
+    name: "Hashtag Generator",
+    description: "Generate useful hashtags from your topic.",
+    href: "/tools/hashtag-generator",
+    category: "Social Tools",
+  },
+  {
+    name: "YouTube Title Generator",
+    description: "Generate engaging YouTube title ideas.",
+    href: "/tools/youtube-title-generator",
+    category: "Social Tools",
+  },
+  {
+    name: "YouTube Description Generator",
+    description: "Create ready-to-edit YouTube descriptions.",
+    href: "/tools/youtube-description-generator",
+    category: "Social Tools",
+  },
+  {
+    name: "Instagram Caption Generator",
+    description: "Create captions for Instagram posts.",
+    href: "/tools/instagram-caption-generator",
+    category: "Social Tools",
+  },
+  {
+    name: "OG Preview Generator",
+    description: "Preview Open Graph social sharing metadata.",
+    href: "/tools/og-preview-generator",
+    category: "Social Tools",
+  },
+
+  {
+    name: "HTML Formatter",
+    description: "Format and indent HTML code cleanly.",
+    href: "/tools/html-formatter",
+    category: "Developer Tools",
+  },
+  {
+    name: "CSS Formatter",
+    description: "Format CSS code for better readability.",
+    href: "/tools/css-formatter",
+    category: "Developer Tools",
+  },
+  {
+    name: "JavaScript Formatter",
+    description: "Format JavaScript code quickly.",
+    href: "/tools/js-formatter",
+    category: "Developer Tools",
+  },
+  {
+    name: "URL Encoder & Decoder",
+    description: "Encode or decode URL text instantly.",
+    href: "/tools/url-encoder-decoder",
+    category: "Developer Tools",
+  },
+  {
+    name: "Hash Generator",
+    description: "Generate SHA-256, SHA-384 and SHA-512 hashes.",
+    href: "/tools/hash-generator",
+    category: "Developer Tools",
+  },
+  {
+    name: "Color Converter",
+    description: "Convert colors between HEX and RGB.",
+    href: "/tools/color-converter",
+    category: "Developer Tools",
   },
 ];
 
-const features = [
-  {
-    title: "Free to Use",
-    description: "Start using useful digital tools without paying.",
-    icon: "✓",
-  },
-  {
-    title: "Fast & Simple",
-    description: "Clean tools designed to get your work done quickly.",
-    icon: "⚡",
-  },
-  {
-    title: "Many Tools",
-    description: "One platform for PDF, image, text, calculator and more.",
-    icon: "🧰",
-  },
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What is KaamKitPro?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "KaamKitPro is a free online tools platform for everyday digital work, including PDF, image, calculator, text, SEO, social media and developer utilities.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Are KaamKitPro tools free to use?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "KaamKitPro is being built around free online utilities. Tool availability and features may change as the platform grows.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do I need to install software?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No software installation is required for the web-based tools. Open the required tool in your browser and follow its instructions.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I use KaamKitPro on mobile?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. KaamKitPro is designed with responsive web interfaces for modern mobile, tablet and desktop browsers.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does KaamKitPro require an account?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The current web tools are designed to be accessible without requiring users to create an account for basic use.",
+      },
+    },
+  ],
+};
+
+const popularTools = [
+  "PDF Merge",
+  "Image Compressor",
+  "Word Counter",
+  "Password Generator",
+  "GST Calculator",
+  "EMI Calculator",
+  "JSON Formatter",
+  "Meta Tag Generator",
+  "YouTube Title Generator",
+  "HTML Formatter",
+  "URL Encoder & Decoder",
+  "Hash Generator",
 ];
 
 export default function Home() {
   const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
 
-  const filteredTools = popularTools.filter((tool) => {
-    const query = search.toLowerCase().trim();
+  const filteredTools = useMemo(() => {
+    const query = search.trim().toLowerCase();
 
-    if (!query) return true;
+    return tools.filter((tool) => {
+      const matchesCategory =
+        category === "All" || tool.category === category;
 
-    return (
-      tool.name.toLowerCase().includes(query) ||
-      tool.description.toLowerCase().includes(query) ||
-      tool.category.toLowerCase().includes(query)
-    );
-  });
+      const matchesSearch =
+        !query ||
+        tool.name.toLowerCase().includes(query) ||
+        tool.description.toLowerCase().includes(query) ||
+        tool.category.toLowerCase().includes(query);
 
-  const handleSearch = () => {
-    document.getElementById("tools")?.scrollIntoView({
-      behavior: "smooth",
+      return matchesCategory && matchesSearch;
     });
-  };
+  }, [search, category]);
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema),
+        }}
+      />
+      <header className="border-b bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <a href="/" className="text-2xl font-bold tracking-tight">
+          <a href="/" className="text-2xl font-extrabold tracking-tight">
             KaamKit<span className="text-blue-600">Pro</span>
           </a>
 
-          <nav className="hidden items-center gap-6 md:flex">
-            <a
-              href="#tools"
-              className="text-sm font-medium text-slate-600 hover:text-blue-600"
-            >
+          <nav className="hidden gap-6 text-sm font-medium md:flex">
+            <a href="#tools" className="hover:text-blue-600">
               Tools
             </a>
-
-            <a
-              href="#categories"
-              className="text-sm font-medium text-slate-600 hover:text-blue-600"
-            >
+            <a href="#categories" className="hover:text-blue-600">
               Categories
             </a>
-
-            <a
-              href="#why-us"
-              className="text-sm font-medium text-slate-600 hover:text-blue-600"
-            >
+            <a href="#why" className="hover:text-blue-600">
               Why KaamKitPro
             </a>
-
-            <a
-              href="/about"
-              className="text-sm font-medium text-slate-600 hover:text-blue-600"
-            >
+            <a href="/about" className="hover:text-blue-600">
               About
             </a>
-
-            <a
-              href="/contact"
-              className="text-sm font-medium text-slate-600 hover:text-blue-600"
-            >
+            <a href="/contact" className="hover:text-blue-600">
               Contact
             </a>
           </nav>
-
-          <a
-            href="#tools"
-            className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-          >
-            Explore Tools
-          </a>
         </div>
       </header>
 
-      <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl">
-            <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-600">
-              Har Digital Kaam, Ek Jagah.
-            </p>
-
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              Useful Online Tools
-              <span className="block text-blue-600">
-                For Everyday Digital Work
-              </span>
-            </h1>
-
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-              PDF, image, text, calculator, SEO, developer and many more
-              useful tools — all in one simple platform.
-            </p>
+      <section className="border-b bg-gradient-to-b from-white to-slate-50">
+        <div className="mx-auto max-w-5xl px-4 py-16 text-center sm:px-6 lg:py-20">
+          <div className="mb-4 inline-flex rounded-full border bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm">
+            Free Online Tools
           </div>
 
-          <div className="mx-auto mt-10 flex max-w-2xl flex-col gap-3 sm:flex-row">
-            <input
-              type="text"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  handleSearch();
-                }
-              }}
-              placeholder="Search for a tool..."
-              className="flex-1 rounded-2xl border border-slate-300 bg-white px-5 py-4 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-            />
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+            Har Digital Kaam,
+            <span className="block text-blue-600">Ek Jagah.</span>
+          </h1>
 
-            <button
-              type="button"
-              onClick={handleSearch}
-              className="rounded-2xl bg-blue-600 px-7 py-4 font-semibold text-white hover:bg-blue-700"
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
+            KaamKitPro par PDF, images, calculators, text, SEO, social media
+            aur developer tools ek hi jagah use karein — fast, simple aur
+            online.
+          </p>
+
+          <div className="mx-auto mt-8 flex max-w-2xl flex-col gap-3 sm:flex-row">
+            <input
+              type="search"
+              value={search}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setCategory("All");
+              }}
+              placeholder="Search a tool..."
+              className="w-full rounded-xl border border-slate-300 bg-white px-5 py-4 text-base outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+            />
+            <a
+              href="#tools"
+              className="rounded-xl bg-blue-600 px-7 py-4 font-semibold text-white transition hover:bg-blue-700"
             >
-              Search
-            </button>
+              Find Tool
+            </a>
           </div>
         </div>
       </section>
 
-      <section id="categories" className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-10">
-            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-              Categories
-            </p>
+      <section id="categories" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold sm:text-3xl">Browse Categories</h2>
+          <p className="mt-2 text-slate-600">
+            Apne kaam ke hisaab se tools choose karein.
+          </p>
+        </div>
 
-            <h2 className="mt-2 text-3xl font-bold">
-              Find the right tool for your work
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+          {categories.slice(1).map((item) => (
+            <button
+              key={item}
+              onClick={() => {
+                setCategory(item);
+                setSearch("");
+                document
+                  .getElementById("tools")
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="rounded-xl border bg-white p-4 text-left font-semibold shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:text-blue-600"
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section id="tools" className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+        <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <h2 className="text-2xl font-bold sm:text-3xl">
+              {category === "All" ? "All Tools" : category}
             </h2>
-
-            <p className="mt-3 text-slate-600">
-              Choose a category and get things done faster.
+            <p className="mt-2 text-slate-600">
+              {filteredTools.length} tools available
             </p>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {categories.map((category) => (
-              <div
-                key={category.name}
-                className="rounded-2xl border border-slate-200 bg-white p-6 transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
+          <div className="flex flex-wrap gap-2">
+            {categories.map((item) => (
+              <button
+                key={item}
+                onClick={() => setCategory(item)}
+                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                  category === item
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-slate-700 ring-1 ring-slate-200 hover:ring-blue-300"
+                }`}
               >
-                <div className="mb-5 text-3xl">{category.icon}</div>
-
-                <h3 className="text-lg font-bold">{category.name}</h3>
-
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {category.description}
-                </p>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    const categoryTools = popularTools.filter(
-                      (tool) =>
-                        tool.category.toLowerCase() ===
-                        category.name.toLowerCase()
-                    );
-
-                    if (categoryTools.length > 0) {
-                      setSearch(category.name);
-
-                      document.getElementById("tools")?.scrollIntoView({
-                        behavior: "smooth",
-                      });
-                    }
-                  }}
-                  className="mt-5 text-sm font-semibold text-blue-600 hover:text-blue-700"
-                >
-                  Explore →
-                </button>
-              </div>
+                {item}
+              </button>
             ))}
           </div>
         </div>
-      </section>
 
-      <section id="tools" className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-                All Available Tools
-              </p>
-
-              <h2 className="mt-2 text-3xl font-bold">
-                Start with these useful tools
-              </h2>
-
-              <p className="mt-3 text-slate-600">
-                More tools will be added regularly.
-              </p>
-            </div>
-
-            <span className="text-sm text-slate-500">
-              {filteredTools.length} tools found
-            </span>
-          </div>
-
-          {filteredTools.length > 0 ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredTools.map((tool) => (
-                <a
-                  key={tool.name}
-                  href={tool.href}
-                  className="group rounded-2xl border border-slate-200 bg-white p-6 transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
-                >
-                  <span className="text-xs font-semibold uppercase tracking-wide text-blue-600">
+        {filteredTools.length > 0 ? (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredTools.map((tool) => (
+              <a
+                key={tool.href}
+                href={tool.href}
+                className="group rounded-2xl border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-md"
+              >
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <div className="rounded-xl bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700">
                     {tool.category}
+                  </div>
+                  <span className="text-slate-300 transition group-hover:text-blue-500">
+                    →
                   </span>
-
-                  <h3 className="mt-3 text-xl font-bold group-hover:text-blue-600">
-                    {tool.name}
-                  </h3>
-
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    {tool.description}
-                  </p>
-
-                  {tool.href === "#" ? (
-                    <div className="mt-5 text-sm font-semibold text-slate-400">
-                      Coming Soon
-                    </div>
-                  ) : (
-                    <div className="mt-5 text-sm font-semibold text-blue-600">
-                      Open Tool →
-                    </div>
-                  )}
-                </a>
-              ))}
-            </div>
-          ) : (
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-12 text-center">
-              <div className="text-4xl">🔎</div>
-
-              <h3 className="mt-4 text-xl font-bold">No tools found</h3>
-
-              <p className="mt-2 text-slate-600">
-                Try searching for GST, EMI, SIP, QR, Word or JSON.
-              </p>
-
-              <button
-                type="button"
-                onClick={() => setSearch("")}
-                className="mt-5 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700"
-              >
-                Clear Search
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section id="why-us" className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto mb-10 max-w-2xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-              Why KaamKitPro
-            </p>
-
-            <h2 className="mt-2 text-3xl font-bold">
-              Simple tools. Less hassle.
-            </h2>
-
-            <p className="mt-3 text-slate-600">
-              KaamKitPro is being built to make everyday digital work faster
-              and easier.
-            </p>
-          </div>
-
-          <div className="grid gap-5 md:grid-cols-3">
-            {features.map((feature) => (
-              <div
-                key={feature.title}
-                className="rounded-2xl border border-slate-200 bg-white p-7 text-center"
-              >
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-xl">
-                  {feature.icon}
                 </div>
 
-                <h3 className="mt-5 text-lg font-bold">
-                  {feature.title}
+                <h3 className="text-lg font-bold group-hover:text-blue-600">
+                  {tool.name}
                 </h3>
 
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {feature.description}
+                  {tool.description}
                 </p>
-              </div>
+              </a>
             ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border bg-white p-10 text-center">
+            <h3 className="text-xl font-bold">No tool found</h3>
+            <p className="mt-2 text-slate-600">
+              Search ko change karke dobara try karein.
+            </p>
+            <button
+              onClick={() => {
+                setSearch("");
+                setCategory("All");
+              }}
+              className="mt-5 rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white"
+            >
+              Show All Tools
+            </button>
+          </div>
+        )}
+      </section>
+
+      <section className="border-y bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <h2 className="text-2xl font-bold sm:text-3xl">
+              Simple Online Tools for Everyday Work
+            </h2>
+
+            <p className="mt-4 leading-7 text-slate-600">
+              KaamKitPro is a collection of practical online utilities
+              designed for everyday digital tasks. Whether you need to
+              manage a PDF, resize an image, calculate a value, clean text,
+              prepare SEO content, or work with developer data, you can find
+              a focused tool here without installing extra software.
+            </p>
+
+            <p className="mt-4 leading-7 text-slate-600">
+              Many KaamKitPro tools are designed to work directly in your
+              browser. This makes common tasks quick and convenient across
+              desktop and mobile devices. The platform is continuously being
+              expanded with more useful utilities while keeping the
+              interface simple.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            <div className="rounded-2xl border bg-slate-50 p-6">
+              <h3 className="text-lg font-bold">For Everyday Tasks</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Use calculators, text utilities, PDF tools and image tools
+                for common digital work.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border bg-slate-50 p-6">
+              <h3 className="text-lg font-bold">For Creators & Marketers</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Create captions, hashtags, titles, meta tags, slugs and other
+                useful content with dedicated utilities.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border bg-slate-50 p-6">
+              <h3 className="text-lg font-bold">For Developers</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Format code, work with JSON, encode URLs, generate hashes,
+                create UUIDs and handle other development tasks.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-slate-900 py-16 text-white">
-        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
-          <h2 className="text-3xl font-bold sm:text-4xl">
-            Your digital toolkit, all in one place.
+      <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold sm:text-3xl">
+            Frequently Asked Questions
           </h2>
-
-          <p className="mx-auto mt-4 max-w-2xl text-slate-300">
-            Explore KaamKitPro and use the tools you need for your everyday
-            digital work.
+          <p className="mx-auto mt-3 max-w-2xl text-slate-600">
+            Some common questions about using KaamKitPro.
           </p>
+        </div>
 
+        <div className="mt-10 space-y-4">
+          <details className="rounded-2xl border bg-white p-6 shadow-sm">
+            <summary className="cursor-pointer font-bold">
+              What is KaamKitPro?
+            </summary>
+            <p className="mt-3 leading-7 text-slate-600">
+              KaamKitPro is a free online tools platform for everyday digital
+              work. It brings together utilities for PDFs, images,
+              calculators, text, SEO, social media and developer tasks.
+            </p>
+          </details>
+
+          <details className="rounded-2xl border bg-white p-6 shadow-sm">
+            <summary className="cursor-pointer font-bold">
+              Are KaamKitPro tools free to use?
+            </summary>
+            <p className="mt-3 leading-7 text-slate-600">
+              KaamKitPro is being built around free online utilities. Tool
+              availability and features may change as the platform grows.
+            </p>
+          </details>
+
+          <details className="rounded-2xl border bg-white p-6 shadow-sm">
+            <summary className="cursor-pointer font-bold">
+              Do I need to install software?
+            </summary>
+            <p className="mt-3 leading-7 text-slate-600">
+              No software installation is required for the web-based tools.
+              Open the required tool in your browser and follow its
+              instructions.
+            </p>
+          </details>
+
+          <details className="rounded-2xl border bg-white p-6 shadow-sm">
+            <summary className="cursor-pointer font-bold">
+              Can I use KaamKitPro on mobile?
+            </summary>
+            <p className="mt-3 leading-7 text-slate-600">
+              Yes. KaamKitPro is designed with responsive web interfaces so
+              that the tools can be used on modern mobile, tablet and desktop
+              browsers.
+            </p>
+          </details>
+
+          <details className="rounded-2xl border bg-white p-6 shadow-sm">
+            <summary className="cursor-pointer font-bold">
+              Where can I find PDF and image tools?
+            </summary>
+            <p className="mt-3 leading-7 text-slate-600">
+              PDF and image utilities are available from the Tools section.
+              You can also use the homepage search to quickly find a specific
+              tool such as PDF Merge, PDF Split, Image Compressor or Image
+              Resizer.
+            </p>
+          </details>
+
+          <details className="rounded-2xl border bg-white p-6 shadow-sm">
+            <summary className="cursor-pointer font-bold">
+              Does KaamKitPro require an account?
+            </summary>
+            <p className="mt-3 leading-7 text-slate-600">
+              The current web tools are designed to be accessible without
+              requiring users to create an account for basic use.
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section className="border-y bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold sm:text-3xl">Popular Tools</h2>
+            <p className="mt-2 text-slate-600">
+              Frequently useful tools for everyday digital work.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            {popularTools.map((name) => {
+              const tool = tools.find((item) => item.name === name);
+
+              if (!tool) return null;
+
+              return (
+                <a
+                  key={tool.href}
+                  href={tool.href}
+                  className="rounded-xl border bg-slate-50 px-4 py-3 font-semibold transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                >
+                  {tool.name}
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section id="why" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mb-10 text-center">
+          <h2 className="text-2xl font-bold sm:text-3xl">
+            Why KaamKitPro?
+          </h2>
+          <p className="mx-auto mt-3 max-w-2xl text-slate-600">
+            Everyday digital tasks ko simple banane ke liye KaamKitPro ko
+            build kiya ja raha hai.
+          </p>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-3">
+          <div className="rounded-2xl border bg-white p-7 shadow-sm">
+            <div className="text-3xl">⚡</div>
+            <h3 className="mt-4 text-xl font-bold">Fast</h3>
+            <p className="mt-2 leading-7 text-slate-600">
+              Simple interfaces aur quick processing ke saath kaam jaldi
+              complete karein.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border bg-white p-7 shadow-sm">
+            <div className="text-3xl">🔒</div>
+            <h3 className="mt-4 text-xl font-bold">Browser Friendly</h3>
+            <p className="mt-2 leading-7 text-slate-600">
+              Bahut se tools browser mein directly process karte hain, bina
+              unnecessary setup ke.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border bg-white p-7 shadow-sm">
+            <div className="text-3xl">🧰</div>
+            <h3 className="mt-4 text-xl font-bold">All-in-One</h3>
+            <p className="mt-2 leading-7 text-slate-600">
+              PDF, images, calculators, text, SEO, social aur developer
+              utilities ek platform par.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-blue-600">
+        <div className="mx-auto max-w-4xl px-4 py-16 text-center text-white sm:px-6">
+          <h2 className="text-3xl font-extrabold sm:text-4xl">
+            Digital kaam ko simple banayein.
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-blue-100">
+            KaamKitPro par useful online tools explore karein aur apna kaam
+            faster complete karein.
+          </p>
           <a
             href="#tools"
-            className="mt-8 inline-block rounded-2xl bg-blue-600 px-7 py-4 font-semibold text-white hover:bg-blue-700"
+            className="mt-7 inline-block rounded-xl bg-white px-7 py-3.5 font-bold text-blue-700 transition hover:bg-blue-50"
           >
-            Explore Tools
+            Explore All Tools
           </a>
         </div>
       </section>
 
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <div className="grid gap-8 md:grid-cols-4">
-            <div>
-              <a
-                href="/"
-                className="text-2xl font-bold tracking-tight"
-              >
-                KaamKit<span className="text-blue-600">Pro</span>
+      <footer className="bg-slate-950 text-slate-300">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
+          <div>
+            <a
+              href="/"
+              className="text-2xl font-extrabold text-white"
+            >
+              KaamKit<span className="text-blue-400">Pro</span>
+            </a>
+            <p className="mt-4 text-sm leading-6 text-slate-400">
+              Har Digital Kaam, Ek Jagah. Free online tools for everyday
+              digital work.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-bold text-white">Quick Links</h3>
+            <div className="mt-4 space-y-3 text-sm">
+              <a href="/about" className="block hover:text-white">
+                About
               </a>
-
-              <p className="mt-3 text-sm leading-6 text-slate-500">
-                Har Digital Kaam, Ek Jagah.
-              </p>
-
-              <p className="mt-3 text-sm leading-6 text-slate-500">
-                Simple and useful online tools for everyday digital work.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-bold text-slate-900">
-                Quick Links
-              </h3>
-
-              <div className="mt-4 space-y-3 text-sm">
-                <a
-                  href="/"
-                  className="block text-slate-500 hover:text-blue-600"
-                >
-                  Home
-                </a>
-
-                <a
-                  href="/about"
-                  className="block text-slate-500 hover:text-blue-600"
-                >
-                  About Us
-                </a>
-
-                <a
-                  href="/contact"
-                  className="block text-slate-500 hover:text-blue-600"
-                >
-                  Contact Us
-                </a>
-
-                <a
-                  href="#tools"
-                  className="block text-slate-500 hover:text-blue-600"
-                >
-                  Tools
-                </a>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-bold text-slate-900">
-                Legal
-              </h3>
-
-              <div className="mt-4 space-y-3 text-sm">
-                <a
-                  href="/privacy-policy"
-                  className="block text-slate-500 hover:text-blue-600"
-                >
-                  Privacy Policy
-                </a>
-
-                <a
-                  href="/terms"
-                  className="block text-slate-500 hover:text-blue-600"
-                >
-                  Terms & Conditions
-                </a>
-
-                <a
-                  href="/disclaimer"
-                  className="block text-slate-500 hover:text-blue-600"
-                >
-                  Disclaimer
-                </a>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="font-bold text-slate-900">
-                Popular Tools
-              </h3>
-
-              <div className="mt-4 space-y-3 text-sm">
-                <a
-                  href="/tools/qr-code-generator"
-                  className="block text-slate-500 hover:text-blue-600"
-                >
-                  QR Code Generator
-                </a>
-
-                <a
-                  href="/tools/word-counter"
-                  className="block text-slate-500 hover:text-blue-600"
-                >
-                  Word Counter
-                </a>
-
-                <a
-                  href="/tools/emi-calculator"
-                  className="block text-slate-500 hover:text-blue-600"
-                >
-                  EMI Calculator
-                </a>
-
-                <a
-                  href="/tools/json-formatter"
-                  className="block text-slate-500 hover:text-blue-600"
-                >
-                  JSON Formatter
-                </a>
-              </div>
+              <a href="/contact" className="block hover:text-white">
+                Contact
+              </a>
+              <a href="#tools" className="block hover:text-white">
+                Tools
+              </a>
             </div>
           </div>
 
-          <div className="mt-10 flex flex-col gap-3 border-t border-slate-200 pt-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-            <p>© 2026 KaamKitPro. All rights reserved.</p>
+          <div>
+            <h3 className="font-bold text-white">Legal</h3>
+            <div className="mt-4 space-y-3 text-sm">
+              <a href="/privacy-policy" className="block hover:text-white">
+                Privacy Policy
+              </a>
+              <a href="/terms" className="block hover:text-white">
+                Terms & Conditions
+              </a>
+              <a href="/disclaimer" className="block hover:text-white">
+                Disclaimer
+              </a>
+            </div>
+          </div>
 
-            <p>Har Digital Kaam, Ek Jagah.</p>
+          <div>
+            <h3 className="font-bold text-white">Popular Tools</h3>
+            <div className="mt-4 space-y-3 text-sm">
+              {popularTools.slice(0, 5).map((name) => {
+                const tool = tools.find((item) => item.name === name);
+
+                if (!tool) return null;
+
+                return (
+                  <a
+                    key={tool.href}
+                    href={tool.href}
+                    className="block hover:text-white"
+                  >
+                    {tool.name}
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-slate-800">
+          <div className="mx-auto max-w-7xl px-4 py-6 text-center text-sm text-slate-500 sm:px-6 lg:px-8">
+            © {new Date().getFullYear()} KaamKitPro. All rights reserved.
           </div>
         </div>
       </footer>
