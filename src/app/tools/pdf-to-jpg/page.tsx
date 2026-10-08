@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type * as PDFJS from "pdfjs-dist";
 
 export default function PDFToJPGPage() {
   const [file, setFile] = useState<File | null>(null);
   const [converting, setConverting] = useState(false);
   const [message, setMessage] = useState("");
-  const workerRef = useRef<any>(null);
+  const workerRef = useRef<typeof PDFJS | null>(null);
 
   useEffect(() => {
     let mounted = true;
