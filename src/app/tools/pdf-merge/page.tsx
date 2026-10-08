@@ -1,4 +1,5 @@
 "use client";
+import { trackDownload, trackToolUsed } from "@/lib/analytics";
 
 import { useState } from "react";
 import { PDFDocument } from "pdf-lib";
@@ -42,6 +43,7 @@ export default function PDFMergePage() {
   };
 
   const mergePDFs = async () => {
+    trackToolUsed("PDF Merge");
     if (files.length < 2) {
       setMessage("Please select at least 2 PDF files.");
       return;
@@ -76,6 +78,7 @@ export default function PDFMergePage() {
 
       link.href = url;
       link.download = "kaamkitpro-merged.pdf";
+      trackDownload("PDF Merge", "pdf");
 
       document.body.appendChild(link);
       link.click();

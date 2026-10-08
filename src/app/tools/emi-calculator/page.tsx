@@ -1,12 +1,14 @@
 "use client";
+import { trackToolUsed } from "@/lib/analytics";
 import Link from "next/link";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function EMICalculatorPage() {
   const [loan, setLoan] = useState("");
   const [rate, setRate] = useState("");
   const [years, setYears] = useState("");
+  const trackedInteraction = useRef(false);
 
   const principal = Number(loan);
   const annualRate = Number(rate);
@@ -54,7 +56,13 @@ export default function EMICalculatorPage() {
               <input
                 type="number"
                 value={loan}
-                onChange={(e) => setLoan(e.target.value)}
+                onChange={(e) => {
+                  if (!trackedInteraction.current && e.target.value) {
+                    trackedInteraction.current = true;
+                    trackToolUsed("EMI Calculator");
+                  }
+                  setLoan(e.target.value);
+                }}
                 placeholder="e.g. 1000000"
                 className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
               />

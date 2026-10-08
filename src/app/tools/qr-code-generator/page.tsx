@@ -1,4 +1,5 @@
 "use client";
+import { trackDownload, trackToolUsed } from "@/lib/analytics";
 
 import { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
@@ -7,6 +8,7 @@ export default function QRCodeGeneratorPage() {
   const [text, setText] = useState("");
 
   const downloadQRCode = () => {
+    trackToolUsed("QR Code Generator");
     const canvas = document.getElementById("qr-code") as HTMLCanvasElement | null;
 
     if (!canvas) return;
@@ -15,6 +17,7 @@ export default function QRCodeGeneratorPage() {
     const link = document.createElement("a");
 
     link.download = "kaamkitpro-qr-code.png";
+    trackDownload("QR Code Generator", "png");
     link.href = url;
     link.click();
   };

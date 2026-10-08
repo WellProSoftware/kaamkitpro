@@ -1,4 +1,5 @@
 "use client";
+import { trackCopy, trackToolUsed } from "@/lib/analytics";
 
 import { useState } from "react";
 
@@ -8,6 +9,7 @@ export default function JSONFormatterPage() {
   const [error, setError] = useState("");
 
   const formatJSON = () => {
+    trackToolUsed("JSON Formatter");
     setError("");
     setOutput("");
 
@@ -63,6 +65,7 @@ export default function JSONFormatterPage() {
   };
 
   const copyOutput = async () => {
+    trackCopy("JSON Formatter");
     if (!output) return;
 
     try {

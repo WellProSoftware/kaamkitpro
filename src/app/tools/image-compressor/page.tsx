@@ -1,4 +1,5 @@
 "use client";
+import { trackDownload, trackToolUsed } from "@/lib/analytics";
 import Link from "next/link";
 
 import { useState } from "react";
@@ -15,6 +16,7 @@ export default function ImageCompressorPage() {
   } | null>(null);
 
   const compressImage = async () => {
+    trackToolUsed("Image Compressor");
     if (!file) {
       setMessage("Please select an image.");
       return;
@@ -59,6 +61,7 @@ export default function ImageCompressorPage() {
 
             link.href = url;
             link.download = "kaamkitpro-compressed.jpg";
+            trackDownload("Image Compressor", "jpg");
 
             document.body.appendChild(link);
             link.click();
