@@ -1,5 +1,6 @@
 "use client";
 
+import BrandLogo from "@/components/BrandLogo";
 import { useMemo, useState } from "react";
 
 type Tool = {

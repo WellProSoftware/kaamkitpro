@@ -73,7 +73,14 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      {
+        url: "/kaamkitpro-icon.svg",
+        type: "image/svg+xml",
+      },
+    ],
+    shortcut: "/kaamkitpro-icon.svg",
+    apple: "/kaamkitpro-icon.svg",
   },
 };
 
