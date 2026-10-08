@@ -32,6 +32,12 @@ const pdfTools = [
     description:
       "Optimize PDF files and reduce unnecessary PDF data directly in your browser.",
   },
+  {
+    href: "/tools/pdf-rotate",
+    title: "PDF Rotate Tool",
+    description:
+      "Rotate PDF pages by 90°, 180° or 270° directly in your browser.",
+  },
 ];
 
 const faqs = [
@@ -73,7 +79,7 @@ const faqSchema = {
 export const metadata = {
   title: "Free PDF Tools Online",
   description:
-    "Use free online PDF tools to merge, split, compress and convert PDF files. Also convert JPG images to PDF and PDF pages to JPG.",
+    "Use free online PDF tools to merge, split, rotate, compress and convert PDF files. Also convert JPG images to PDF and PDF pages to JPG.",
   keywords: [
     "PDF tools",
     "free PDF tools",
