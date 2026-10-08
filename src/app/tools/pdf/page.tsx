@@ -264,7 +264,7 @@ export default function PdfToolsPage() {
 
           <p className="mt-2 leading-7 text-slate-600">
             Learn how to combine multiple PDF files into one document using
-            KaamKitPro's browser-based PDF Merge Tool.
+            KaamKitPro&apos;s browser-based PDF Merge Tool.
           </p>
 
           <Link
