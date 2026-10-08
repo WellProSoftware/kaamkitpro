@@ -44,6 +44,16 @@ const pdfTools = [
     description: "Add page numbers to every page of a PDF online.",
   },
   {
+    href: "/tools/pdf-protect",
+    title: "PDF Protect Tool",
+    description: "Review PDF password-protection options honestly and securely.",
+  },
+  {
+    href: "/tools/pdf-metadata",
+    title: "PDF Metadata Editor",
+    description: "Edit PDF title, author, subject and keywords online.",
+  },
+  {
     href: "/tools/pdf-watermark",
     title: "PDF Watermark Tool",
     description: "Add a simple text watermark to every PDF page.",
