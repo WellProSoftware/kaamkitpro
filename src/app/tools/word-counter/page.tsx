@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 export default function WordCounterPage() {
   const [text, setText] = useState("");
