@@ -44,6 +44,11 @@ const pdfTools = [
     description: "Add page numbers to every page of a PDF online.",
   },
   {
+    href: "/tools/pdf-extract-text",
+    title: "PDF Text Extractor",
+    description: "Extract selectable text from PDF files in your browser.",
+  },
+  {
     href: "/tools/pdf-protect",
     title: "PDF Protect Tool",
     description: "Review PDF password-protection options honestly and securely.",
