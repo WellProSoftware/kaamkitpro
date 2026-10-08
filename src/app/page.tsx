@@ -144,6 +144,42 @@ const tools: Tool[] = [
     category: "PDF Tools",
   },
   {
+    name: "PDF Rotate",
+    description: "Rotate PDF pages by 90°, 180° or 270°.",
+    href: "/tools/pdf-rotate",
+    category: "PDF Tools",
+  },
+  {
+    name: "PDF Page Number",
+    description: "Add page numbers to every PDF page.",
+    href: "/tools/pdf-page-number",
+    category: "PDF Tools",
+  },
+  {
+    name: "PDF Watermark",
+    description: "Add a text watermark to every PDF page.",
+    href: "/tools/pdf-watermark",
+    category: "PDF Tools",
+  },
+  {
+    name: "PDF Metadata Editor",
+    description: "Edit PDF title, author, subject and keywords.",
+    href: "/tools/pdf-metadata",
+    category: "PDF Tools",
+  },
+  {
+    name: "PDF Text Extractor",
+    description: "Extract selectable text from PDF files.",
+    href: "/tools/pdf-extract-text",
+    category: "PDF Tools",
+  },
+  {
+    name: "PDF Protect",
+    description: "Review PDF password protection options transparently.",
+    href: "/tools/pdf-protect",
+    category: "PDF Tools",
+  },
+  {
     name: "PDF Compressor",
     description: "Reduce PDF size with browser-side optimization.",
     href: "/tools/pdf-compressor",
