@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 const categories = [
   {
@@ -74,6 +75,12 @@ const popularTools = [
 export default function ToolsPage() {
   return (
     <main className="min-h-screen bg-slate-50">
+      <Breadcrumbs
+        items={[
+        { label: "Tools" },
+        ]}
+      />
+
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">

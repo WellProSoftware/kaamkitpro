@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 const tools = [
   {
@@ -48,6 +49,13 @@ export const metadata = {
 export default function ImageToolsPage() {
   return (
     <main className="min-h-screen bg-slate-50">
+      <Breadcrumbs
+        items={[
+        { label: "Tools", href: "/tools" },
+        { label: "Image Tools" },
+        ]}
+      />
+
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
           <Link
