@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { useState } from "react";
 
@@ -137,6 +138,15 @@ export default function AgeCalculatorPage() {
           </a>
         </div>
       </div>
+          <div className="mx-auto mt-10 max-w-6xl px-4 sm:px-6 lg:px-8">
+        <Link
+          href="/tools/calculators"
+          className="text-sm font-medium text-blue-600 hover:underline"
+        >
+          ← Browse all Calculator tools
+        </Link>
+      </div>
+
     </main>
   );
 }
