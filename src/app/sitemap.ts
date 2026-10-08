@@ -53,6 +53,8 @@ const toolRoutes = [
   "/tools/image",
   "/tools/calculators",
   "/tools/seo",
+  "/tools/social",
+  "/tools/developer",
   "/tools/text",
 ];
 

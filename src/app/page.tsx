@@ -487,6 +487,26 @@ export default function Home() {
               Meta tags, slugs, keywords and sitemap tools.
             </span>
           </a>
+
+          <a
+            href="/tools/social"
+            className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
+          >
+            <span className="font-semibold text-slate-900">Social Tools</span>
+            <span className="mt-1 block text-sm text-slate-600">
+              Hashtags, captions, YouTube and social sharing tools.
+            </span>
+          </a>
+
+          <a
+            href="/tools/developer"
+            className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
+          >
+            <span className="font-semibold text-slate-900">Developer Tools</span>
+            <span className="mt-1 block text-sm text-slate-600">
+              Format code, encode URLs, hashes and colors.
+            </span>
+          </a>
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
