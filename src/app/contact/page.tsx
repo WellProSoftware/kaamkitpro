@@ -89,13 +89,10 @@ export default function ContactPage() {
             </p>
 
             <p className="mt-2 text-lg font-semibold text-slate-900">
-              Email address will be added soon.
+              <a href="mailto:support@kaamkitpro.com" className="text-blue-600 underline underline-offset-4 hover:text-blue-700">support@kaamkitpro.com</a>
             </p>
 
-            <p className="mt-2 text-sm leading-6 text-slate-500">
-              We are currently setting up the official KaamKitPro contact
-              email.
-            </p>
+
           </div>
         </section>
 
