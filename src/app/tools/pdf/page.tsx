@@ -44,6 +44,11 @@ const pdfTools = [
     description: "Add page numbers to every page of a PDF online.",
   },
   {
+    href: "/tools/pdf-extract-text",
+    title: "PDF Text Extractor",
+    description: "Extract selectable text from PDF files in your browser.",
+  },
+  {
     href: "/tools/pdf-protect",
     title: "PDF Protect Tool",
     description: "Review PDF password-protection options honestly and securely.",
@@ -259,7 +264,7 @@ export default function PdfToolsPage() {
 
           <p className="mt-2 leading-7 text-slate-600">
             Learn how to combine multiple PDF files into one document using
-            KaamKitPro's browser-based PDF Merge Tool.
+            KaamKitPro&apos;s browser-based PDF Merge Tool.
           </p>
 
           <Link

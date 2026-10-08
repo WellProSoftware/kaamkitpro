@@ -61,12 +61,6 @@ export default function TimestampConverterPage() {
     setDateTime(new Date().toLocaleString());
   };
 
-  const clearAll = () => {
-    setTimestamp("");
-    setDateTime("");
-    setError("");
-  };
-
   const copyTimestamp = async () => {
     if (!timestamp) return;
 
