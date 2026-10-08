@@ -2,6 +2,7 @@ import Link from "next/link";
 import AdSlot from "@/components/AdSlot";
 import type { Metadata } from "next";
 
+import BrandLogo from "@/components/BrandLogo";
 export const metadata: Metadata = {
   title: "How to Create a QR Code Online",
   description:
@@ -16,9 +17,7 @@ export default function QrCodeGuide() {
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <header className="border-b bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          <Link href="/" className="text-2xl font-bold">
-            KaamKitPro
-          </Link>
+          <BrandLogo />
 
           <Link
             href="/guides"
