@@ -437,6 +437,38 @@ export default function Home() {
           </p>
         </div>
 
+        <div className="mb-6 grid gap-3 sm:grid-cols-3">
+          <a
+            href="/tools/pdf"
+            className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
+          >
+            <span className="font-semibold text-slate-900">PDF Tools</span>
+            <span className="mt-1 block text-sm text-slate-600">
+              Merge, split, convert and compress PDFs.
+            </span>
+          </a>
+
+          <a
+            href="/tools/image"
+            className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
+          >
+            <span className="font-semibold text-slate-900">Image Tools</span>
+            <span className="mt-1 block text-sm text-slate-600">
+              Compress, resize, convert and crop images.
+            </span>
+          </a>
+
+          <a
+            href="/tools/calculators"
+            className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
+          >
+            <span className="font-semibold text-slate-900">Calculators</span>
+            <span className="mt-1 block text-sm text-slate-600">
+              EMI, GST, SIP, BMI, age and percentage calculators.
+            </span>
+          </a>
+        </div>
+
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
           {categories.slice(1).map((item) => (
             <button

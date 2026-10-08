@@ -49,6 +49,9 @@ const toolRoutes = [
   "/tools/url-encoder-decoder",
   "/tools/hash-generator",
   "/tools/color-converter",
+  "/tools/pdf",
+  "/tools/image",
+  "/tools/calculators",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
