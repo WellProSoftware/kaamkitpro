@@ -52,6 +52,8 @@ const toolRoutes = [
   "/tools/pdf",
   "/tools/image",
   "/tools/calculators",
+  "/tools/seo",
+  "/tools/text",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

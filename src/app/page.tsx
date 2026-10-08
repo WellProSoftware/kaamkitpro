@@ -467,6 +467,26 @@ export default function Home() {
               EMI, GST, SIP, BMI, age and percentage calculators.
             </span>
           </a>
+
+          <a
+            href="/tools/text"
+            className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
+          >
+            <span className="font-semibold text-slate-900">Text Tools</span>
+            <span className="mt-1 block text-sm text-slate-600">
+              Count, format and clean text quickly.
+            </span>
+          </a>
+
+          <a
+            href="/tools/seo"
+            className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
+          >
+            <span className="font-semibold text-slate-900">SEO Tools</span>
+            <span className="mt-1 block text-sm text-slate-600">
+              Meta tags, slugs, keywords and sitemap tools.
+            </span>
+          </a>
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
