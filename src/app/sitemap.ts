@@ -66,6 +66,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/privacy-policy",
     "/terms",
     "/disclaimer",
+  "/tools",
   "/guides",
   "/guides/pdf-merge",
   "/guides/image-compression",

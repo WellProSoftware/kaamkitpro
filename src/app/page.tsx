@@ -372,6 +372,7 @@ export default function Home() {
           </a>
 
           <nav className="hidden gap-6 text-sm font-medium md:flex">
+            <a href="/tools" className="text-sm font-medium text-slate-600 hover:text-slate-900">All Tools</a>
             <a href="#tools" className="hover:text-blue-600">
               Tools
             </a>
