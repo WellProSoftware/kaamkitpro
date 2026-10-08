@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 function formatHtml(input: string) {
-  let formatted = input
+  const formatted = input
     .replace(/>\s*</g, "><")
     .replace(/></g, "><")
     .trim();
