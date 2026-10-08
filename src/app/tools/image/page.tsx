@@ -3,6 +3,16 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 
 const tools = [
   {
+    href: "/tools/image-flip",
+    title: "Image Flip",
+    description: "Flip images horizontally or vertically directly in your browser.",
+  },
+  {
+    href: "/tools/image-brightness",
+    title: "Image Brightness",
+    description: "Make images brighter or darker online in your browser.",
+  },
+  {
     href: "/tools/image-rotate",
     title: "Image Rotate",
     description: "Rotate images by 90, 180 or 270 degrees directly in your browser.",
