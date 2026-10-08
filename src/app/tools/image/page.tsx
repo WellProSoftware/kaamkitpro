@@ -3,6 +3,17 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 
 const tools = [
   {
+    href: "/tools/image-rotate",
+    title: "Image Rotate",
+    description: "Rotate images by 90, 180 or 270 degrees directly in your browser.",
+  },
+  {
+    href: "/tools/image-grayscale",
+    title: "Image Grayscale",
+    description: "Convert color images to grayscale online in your browser.",
+  },
+
+  {
     href: "/tools/image-compressor",
     title: "Image Compressor",
     description: "Reduce image file size online while keeping useful image quality.",
