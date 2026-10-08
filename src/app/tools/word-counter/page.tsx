@@ -1,12 +1,11 @@
 "use client";
-import { trackToolUsed } from "@/lib/analytics";
 import Link from "next/link";
 
 import { useRef, useState } from "react";
 
 export default function WordCounterPage() {
   const [text, setText] = useState("");
-  const trackedInteraction = useRef(false);
+
 
   const words = text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
 
