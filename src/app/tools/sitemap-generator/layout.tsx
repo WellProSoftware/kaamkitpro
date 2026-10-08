@@ -1,20 +1,30 @@
 import type { Metadata } from "next";
-import { createToolMetadata } from "@/lib/seo";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = createToolMetadata(
-  "XML Sitemap Generator",
-  "Generate XML sitemaps for websites online for free. Add URLs and download your sitemap.xml file.",
-  [
-    "sitemap generator",
-    "XML sitemap generator",
-    "sitemap.xml generator",
-    "SEO sitemap tool",
-    "website sitemap generator",
-  ]
-);
+export const metadata: Metadata =
+  createToolSeoMetadata("sitemap-generator") ?? {};
 
-export default function Layout({
+export default function ToolLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return children;
+  const seoContent = getToolSeoContent("sitemap-generator");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

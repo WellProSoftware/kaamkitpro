@@ -10,7 +10,7 @@ export default function SitemapGeneratorPage() {
 
   const generate = () => {
     const list = urls
-      .split(/\r?\n/)
+      .split(/\r?/)
       .map((url) => url.trim())
       .filter(Boolean);
 
@@ -27,7 +27,7 @@ ${list
     <loc>${url}</loc>
   </url>`
   )
-  .join("\n")}
+  .join("")}
 </urlset>`;
 
     setSitemap(xml);

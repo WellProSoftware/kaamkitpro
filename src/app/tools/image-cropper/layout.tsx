@@ -1,23 +1,30 @@
 import type { Metadata } from "next";
-import { createToolMetadata } from "@/lib/seo";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = createToolMetadata(
-  "Image Cropper",
-  "Crop JPG, PNG and WebP images online for free. Choose a custom crop area using image coordinates.",
-  [
-    "image cropper",
-    "crop image online",
-    "crop JPG",
-    "crop PNG",
-    "image crop tool",
-    "free image cropper",
-  ]
-);
+export const metadata: Metadata =
+  createToolSeoMetadata("image-cropper") ?? {};
 
-export default function ImageCropperLayout({
+export default function ToolLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return children;
+}: Readonly<{ children: React.ReactNode }>) {
+  const seoContent = getToolSeoContent("image-cropper");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

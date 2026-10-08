@@ -1,20 +1,30 @@
 import type { Metadata } from "next";
-import { createToolMetadata } from "@/lib/seo";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = createToolMetadata(
-  "Hash Generator",
-  "Generate SHA-256, SHA-384 and SHA-512 hashes from text online for free.",
-  [
-    "hash generator",
-    "SHA256 generator",
-    "SHA512 generator",
-    "SHA hash generator",
-    "online hash tool",
-  ]
-);
+export const metadata: Metadata =
+  createToolSeoMetadata("hash-generator") ?? {};
 
-export default function Layout({
+export default function ToolLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return children;
+  const seoContent = getToolSeoContent("hash-generator");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

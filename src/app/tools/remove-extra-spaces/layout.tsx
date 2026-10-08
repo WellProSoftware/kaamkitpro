@@ -1,35 +1,30 @@
 import type { Metadata } from "next";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = {
-  title: "Remove Extra Spaces - Free Online Text Cleaner",
-  description:
-    "Free online tool to remove extra spaces, tabs and unwanted line spacing from text instantly.",
-  keywords: [
-    "remove extra spaces",
-    "remove spaces from text",
-    "extra spaces remover",
-    "text cleaner",
-    "remove whitespace",
-    "online text cleaner",
-    "clean text tool",
-  ],
-  openGraph: {
-    title: "Remove Extra Spaces - Free Online Text Cleaner | KaamKitPro",
-    description:
-      "Clean unwanted spaces, tabs and extra line spacing from your text instantly with KaamKitPro.",
-    type: "website",
-    siteName: "KaamKitPro",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+export const metadata: Metadata =
+  createToolSeoMetadata("remove-extra-spaces") ?? {};
 
-export default function RemoveExtraSpacesLayout({
+export default function ToolLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return children;
+}: Readonly<{ children: React.ReactNode }>) {
+  const seoContent = getToolSeoContent("remove-extra-spaces");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

@@ -12,7 +12,7 @@ function formatJavaScript(input: string) {
     const value = line.trim();
 
     if (value) {
-      result += `${"  ".repeat(Math.max(0, indent))}${value}\n`;
+      result += `${"  ".repeat(Math.max(0, indent))}${value}`;
     }
 
     line = "";

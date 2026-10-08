@@ -1,21 +1,30 @@
 import type { Metadata } from "next";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = {
-  title: "UUID Generator - Generate Random UUIDs Online",
-  description:
-    "Generate random UUIDs instantly with the free online UUID Generator for development, APIs and databases.",
-  keywords: [
-    "UUID generator",
-    "random UUID generator",
-    "UUID v4 generator",
-    "online UUID generator",
-    "generate UUID",
-  ],
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata =
+  createToolSeoMetadata("uuid-generator") ?? {};
 
-export default function Layout({
+export default function ToolLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return children;
+  const seoContent = getToolSeoContent("uuid-generator");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

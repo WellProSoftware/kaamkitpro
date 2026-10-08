@@ -1,23 +1,30 @@
 import type { Metadata } from "next";
-import { createToolMetadata } from "@/lib/seo";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = createToolMetadata(
-  "Image Resizer",
-  "Resize JPG, PNG and WebP images online for free. Set custom image width and height in pixels.",
-  [
-    "image resizer",
-    "resize image online",
-    "resize JPG",
-    "resize PNG",
-    "change image dimensions",
-    "free image resizer",
-  ]
-);
+export const metadata: Metadata =
+  createToolSeoMetadata("image-resizer") ?? {};
 
-export default function ImageResizerLayout({
+export default function ToolLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return children;
+}: Readonly<{ children: React.ReactNode }>) {
+  const seoContent = getToolSeoContent("image-resizer");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

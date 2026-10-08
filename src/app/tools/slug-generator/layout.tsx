@@ -1,20 +1,30 @@
 import type { Metadata } from "next";
-import { createToolMetadata } from "@/lib/seo";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = createToolMetadata(
-  "SEO Slug Generator",
-  "Generate clean, readable and SEO-friendly URL slugs from titles and text.",
-  [
-    "slug generator",
-    "SEO slug generator",
-    "URL slug generator",
-    "SEO friendly URL",
-    "permalink generator",
-  ]
-);
+export const metadata: Metadata =
+  createToolSeoMetadata("slug-generator") ?? {};
 
-export default function Layout({
+export default function ToolLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return children;
+  const seoContent = getToolSeoContent("slug-generator");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

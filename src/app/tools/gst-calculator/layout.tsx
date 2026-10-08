@@ -1,36 +1,30 @@
 import type { Metadata } from "next";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = {
-  title: "GST Calculator - Free Online GST Calculator India",
-  description:
-    "Free online GST Calculator to calculate GST amount, base price and total price with GST rates of 5%, 12%, 18% and 28%.",
-  keywords: [
-    "GST calculator",
-    "GST calculator India",
-    "GST calculation",
-    "GST calculator online",
-    "18 GST calculator",
-    "GST inclusive calculator",
-    "GST exclusive calculator",
-    "GST amount calculator",
-  ],
-  openGraph: {
-    title: "GST Calculator - Free Online GST Calculator India | KaamKitPro",
-    description:
-      "Calculate GST amount, base price and total price instantly with the free KaamKitPro GST Calculator.",
-    type: "website",
-    siteName: "KaamKitPro",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+export const metadata: Metadata =
+  createToolSeoMetadata("gst-calculator") ?? {};
 
-export default function GSTCalculatorLayout({
+export default function ToolLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return children;
+}: Readonly<{ children: React.ReactNode }>) {
+  const seoContent = getToolSeoContent("gst-calculator");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

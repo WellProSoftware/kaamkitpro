@@ -101,7 +101,7 @@ export default function OgPreviewGeneratorPage() {
 <meta property="og:description" content="${description}" />
 <meta property="og:url" content="${url}" />
 <meta property="og:type" content="website" />${
-            image ? `\n<meta property="og:image" content="${image}" />` : ""
+            image ? `<meta property="og:image" content="${image}" />` : ""
           }`}
           </pre>
         </div>

@@ -1,21 +1,30 @@
 import type { Metadata } from "next";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = {
-  title: "QR Code Generator - Free Online QR Code Maker",
-  description:
-    "Create and download QR codes from text, URLs and other information with the free online QR Code Generator.",
-  keywords: [
-    "QR code generator",
-    "QR code maker",
-    "free QR code generator",
-    "online QR code generator",
-    "create QR code",
-  ],
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata =
+  createToolSeoMetadata("qr-code-generator") ?? {};
 
-export default function Layout({
+export default function ToolLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return children;
+  const seoContent = getToolSeoContent("qr-code-generator");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

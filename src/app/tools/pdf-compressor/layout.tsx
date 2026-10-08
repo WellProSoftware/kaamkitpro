@@ -1,22 +1,30 @@
 import type { Metadata } from "next";
-import { createToolMetadata } from "@/lib/seo";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = createToolMetadata(
-  "PDF Compressor",
-  "Compress and optimize PDF files online for free. Reduce PDF file size directly in your browser.",
-  [
-    "PDF compressor",
-    "compress PDF",
-    "reduce PDF size",
-    "PDF size reducer",
-    "free PDF compressor",
-  ]
-);
+export const metadata: Metadata =
+  createToolSeoMetadata("pdf-compressor") ?? {};
 
-export default function PDFCompressorLayout({
+export default function ToolLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return children;
+}: Readonly<{ children: React.ReactNode }>) {
+  const seoContent = getToolSeoContent("pdf-compressor");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

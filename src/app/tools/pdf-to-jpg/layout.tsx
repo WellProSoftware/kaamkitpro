@@ -1,22 +1,30 @@
 import type { Metadata } from "next";
-import { createToolMetadata } from "@/lib/seo";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = createToolMetadata(
-  "PDF to JPG Converter",
-  "Convert PDF pages to JPG images online for free. Turn every page of a PDF into a high-quality JPG image.",
-  [
-    "PDF to JPG",
-    "PDF to image",
-    "convert PDF to JPG",
-    "PDF page to JPG",
-    "free PDF to JPG converter",
-  ]
-);
+export const metadata: Metadata =
+  createToolSeoMetadata("pdf-to-jpg") ?? {};
 
-export default function PDFToJPGLayout({
+export default function ToolLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return children;
+}: Readonly<{ children: React.ReactNode }>) {
+  const seoContent = getToolSeoContent("pdf-to-jpg");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

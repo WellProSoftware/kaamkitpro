@@ -5,10 +5,10 @@ import { useState } from "react";
 
 function formatCss(input: string) {
   return input
-    .replace(/\s*{\s*/g, " {\n  ")
-    .replace(/\s*}\s*/g, "\n}\n")
-    .replace(/;\s*/g, ";\n  ")
-    .replace(/\n\s*\n/g, "\n")
+    .replace(/\s*{\s*/g, " {  ")
+    .replace(/\s*}\s*/g, "}")
+    .replace(/;\s*/g, ";  ")
+    .replace(/\s*/g, "")
     .trim();
 }
 

@@ -6,10 +6,10 @@ import { useState } from "react";
 function formatHtml(input: string) {
   let formatted = input
     .replace(/>\s*</g, "><")
-    .replace(/></g, ">\n<")
+    .replace(/></g, "><")
     .trim();
 
-  const lines = formatted.split("\n");
+  const lines = formatted.split("");
   let indent = 0;
 
   return lines
@@ -32,7 +32,7 @@ function formatHtml(input: string) {
 
       return result;
     })
-    .join("\n");
+    .join("");
 }
 
 export default function HtmlFormatterPage() {

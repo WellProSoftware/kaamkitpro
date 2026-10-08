@@ -167,7 +167,7 @@ export default function CaseConverterPage() {
               </p>
 
               <p className="mt-2 text-3xl font-bold">
-                {text === "" ? 0 : text.split("\n").length}
+                {text === "" ? 0 : text.split("").length}
               </p>
             </div>
 

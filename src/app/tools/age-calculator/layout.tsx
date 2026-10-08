@@ -1,21 +1,30 @@
 import type { Metadata } from "next";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = {
-  title: "Age Calculator - Calculate Exact Age Online",
-  description:
-    "Free online Age Calculator to calculate your exact age in years, months and days.",
-  keywords: [
-    "age calculator",
-    "age calculator online",
-    "calculate age",
-    "exact age calculator",
-    "date of birth calculator",
-  ],
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata =
+  createToolSeoMetadata("age-calculator") ?? {};
 
-export default function Layout({
+export default function ToolLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return children;
+  const seoContent = getToolSeoContent("age-calculator");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

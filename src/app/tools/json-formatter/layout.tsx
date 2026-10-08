@@ -1,22 +1,30 @@
 import type { Metadata } from "next";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = {
-  title: "JSON Formatter - Format, Validate & Minify JSON",
-  description:
-    "Free online JSON Formatter to format, validate and minify JSON data instantly.",
-  keywords: [
-    "JSON formatter",
-    "JSON validator",
-    "JSON minifier",
-    "JSON beautifier",
-    "format JSON online",
-    "validate JSON",
-  ],
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata =
+  createToolSeoMetadata("json-formatter") ?? {};
 
-export default function Layout({
+export default function ToolLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return children;
+  const seoContent = getToolSeoContent("json-formatter");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

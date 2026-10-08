@@ -22,7 +22,7 @@ export default function WordCounterPage() {
   const paragraphs =
     text.trim() === ""
       ? 0
-      : text.split(/\n\s*\n/).filter((item) => item.trim() !== "").length;
+      : text.split(/\s*/).filter((item) => item.trim() !== "").length;
 
   const readingTime =
     words === 0 ? 0 : Math.max(1, Math.ceil(words / 200));

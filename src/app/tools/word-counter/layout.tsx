@@ -1,34 +1,30 @@
 import type { Metadata } from "next";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = {
-  title: "Word Counter - Free Online Word Count Tool",
-  description:
-    "Free online Word Counter to count words, characters, sentences, paragraphs and estimated reading time instantly.",
-  keywords: [
-    "word counter",
-    "online word counter",
-    "word count tool",
-    "free word counter",
-    "character counter",
-    "reading time calculator",
-  ],
-  openGraph: {
-    title: "Word Counter - Free Online Word Count Tool | KaamKitPro",
-    description:
-      "Count words, characters, sentences, paragraphs and reading time instantly with KaamKitPro Word Counter.",
-    type: "website",
-    siteName: "KaamKitPro",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+export const metadata: Metadata =
+  createToolSeoMetadata("word-counter") ?? {};
 
-export default function WordCounterLayout({
+export default function ToolLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return children;
+}: Readonly<{ children: React.ReactNode }>) {
+  const seoContent = getToolSeoContent("word-counter");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

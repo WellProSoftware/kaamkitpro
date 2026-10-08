@@ -31,7 +31,7 @@ export default function YouTubeTitleGeneratorPage() {
 
   const copyAll = async () => {
     if (!titles.length) return;
-    await navigator.clipboard.writeText(titles.join("\n"));
+    await navigator.clipboard.writeText(titles.join(""));
   };
 
   return (

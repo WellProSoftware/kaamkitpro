@@ -9,7 +9,7 @@ export default function CharacterCounterPage() {
   const characters = text.length;
   const charactersWithoutSpaces = text.replace(/\s/g, "").length;
   const spaces = (text.match(/\s/g) || []).length;
-  const lines = text === "" ? 0 : text.split("\n").length;
+  const lines = text === "" ? 0 : text.split("").length;
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-12 text-slate-900">

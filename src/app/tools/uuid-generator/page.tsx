@@ -28,7 +28,7 @@ export default function UUIDGeneratorPage() {
     if (uuids.length === 0) return;
 
     try {
-      await navigator.clipboard.writeText(uuids.join("\n"));
+      await navigator.clipboard.writeText(uuids.join(""));
     } catch {
       // Clipboard may be unavailable in some browsers.
     }

@@ -1,21 +1,30 @@
 import type { Metadata } from "next";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = {
-  title: "SIP Calculator - Free Online SIP Investment Calculator",
-  description:
-    "Estimate SIP investment value, total invested amount and potential returns with the free online SIP Calculator.",
-  keywords: [
-    "SIP calculator",
-    "SIP calculator India",
-    "mutual fund SIP calculator",
-    "investment calculator",
-    "SIP returns calculator",
-  ],
-  robots: { index: true, follow: true },
-};
+export const metadata: Metadata =
+  createToolSeoMetadata("sip-calculator") ?? {};
 
-export default function Layout({
+export default function ToolLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return children;
+  const seoContent = getToolSeoContent("sip-calculator");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

@@ -1,35 +1,30 @@
 import type { Metadata } from "next";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = {
-  title: "Case Converter - Uppercase, Lowercase & Title Case",
-  description:
-    "Free online Case Converter to change text to uppercase, lowercase, title case, sentence case and reverse text instantly.",
-  keywords: [
-    "case converter",
-    "text case converter",
-    "uppercase converter",
-    "lowercase converter",
-    "title case converter",
-    "sentence case converter",
-    "online text converter",
-  ],
-  openGraph: {
-    title: "Case Converter - Free Online Text Case Converter | KaamKitPro",
-    description:
-      "Convert text to uppercase, lowercase, title case, sentence case and reverse text instantly with KaamKitPro.",
-    type: "website",
-    siteName: "KaamKitPro",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+export const metadata: Metadata =
+  createToolSeoMetadata("case-converter") ?? {};
 
-export default function CaseConverterLayout({
+export default function ToolLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return children;
+}: Readonly<{ children: React.ReactNode }>) {
+  const seoContent = getToolSeoContent("case-converter");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

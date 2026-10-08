@@ -1,34 +1,30 @@
 import type { Metadata } from "next";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = {
-  title: "Character Counter - Free Online Character Count Tool",
-  description:
-    "Free online Character Counter to count characters, characters without spaces, spaces and lines instantly.",
-  keywords: [
-    "character counter",
-    "character count tool",
-    "online character counter",
-    "free character counter",
-    "characters without spaces",
-    "text counter",
-  ],
-  openGraph: {
-    title: "Character Counter - Free Online Character Count Tool | KaamKitPro",
-    description:
-      "Count characters, spaces and lines instantly with KaamKitPro Character Counter.",
-    type: "website",
-    siteName: "KaamKitPro",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+export const metadata: Metadata =
+  createToolSeoMetadata("character-counter") ?? {};
 
-export default function CharacterCounterLayout({
+export default function ToolLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return children;
+}: Readonly<{ children: React.ReactNode }>) {
+  const seoContent = getToolSeoContent("character-counter");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }

@@ -8,8 +8,8 @@ export default function RemoveExtraSpacesPage() {
 
   const cleanedText = text
     .replace(/[ \t]+/g, " ")
-    .replace(/\n\s+/g, "\n")
-    .replace(/\s+\n/g, "\n")
+    .replace(/\s+/g, "")
+    .replace(/\s+/g, "")
     .trim();
 
   const removeExtraSpaces = () => {

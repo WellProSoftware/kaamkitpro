@@ -1,22 +1,30 @@
 import type { Metadata } from "next";
-import { createToolMetadata } from "@/lib/seo";
+import ToolSeoContent from "@/components/ToolSeoContent";
+import { getToolSeoContent } from "@/lib/tool-seo-content";
+import { createToolSeoMetadata } from "@/lib/tool-seo";
 
-export const metadata: Metadata = createToolMetadata(
-  "PDF Split Tool",
-  "Split a PDF into separate pages online for free. Extract every page from a PDF as an individual PDF file.",
-  [
-    "PDF split",
-    "split PDF online",
-    "PDF page splitter",
-    "extract PDF pages",
-    "free PDF splitter",
-  ]
-);
+export const metadata: Metadata =
+  createToolSeoMetadata("pdf-split") ?? {};
 
-export default function PDFSplitLayout({
+export default function ToolLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return children;
+}: Readonly<{ children: React.ReactNode }>) {
+  const seoContent = getToolSeoContent("pdf-split");
+
+  return (
+    <>
+      {children}
+
+      {seoContent && (
+        <ToolSeoContent
+          title={seoContent.title}
+          description={seoContent.description}
+          howToUse={seoContent.howToUse}
+          benefits={seoContent.benefits}
+          faq={seoContent.faq}
+          relatedTools={seoContent.relatedTools}
+        />
+      )}
+    </>
+  );
 }
