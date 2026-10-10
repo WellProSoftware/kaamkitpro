@@ -42,3 +42,35 @@ Never commit real credentials, put service-role/payment secrets in browser-expos
 ## Before payments can go live
 
 The current changes do not activate checkout or unlock any Pro feature. Before accepting money, implement and test authenticated checkout creation, server-side Razorpay signature validation, webhook signature validation, idempotent event handling, subscription entitlement checks, cancellation/refund flows, and forged/duplicate/out-of-order webhook cases. Confirm Razorpay merchant and international-payment approval first. Keep plans `planned` until these gates are met.
+
+
+## Access grants and usage limits
+
+The migration `supabase/migrations/20261012000000_access_grants_and_tool_limits.sql` adds separate admin-issued access grants and daily tool usage counters. Apply this migration in the Supabase SQL Editor before testing the new routes.
+
+### Admin grant panel
+
+- Route: `/admin/access`
+- Server-only allowlist: `KAAMKITPRO_ADMIN_EMAILS`, a comma-separated list of verified Supabase account email addresses.
+- The admin must be signed in. The server checks the Supabase user token and then checks the email allowlist; hiding the page is not the security boundary.
+- Grant types: `full_pro` (all tools, no ads, bypass normal quotas), `pro` (no ads and Pro quotas), and `selected_tools` (named tool keys).
+- Duration: permanent until revoked, 30 days, 90 days, or a custom expiry.
+- Every grant has a reason, optional note, creator, timestamps, and a revocation timestamp. Grants never create a payment event or mutate a Razorpay subscription.
+- Set `KAAMKITPRO_ADMIN_EMAILS` in Vercel for each environment that needs admin access. Do not put this variable in a `NEXT_PUBLIC_*` variable.
+
+### Tool access policy and quota API
+
+- Central policy registry: `src/lib/tool-access-policy.ts`. Add each new tool to the registry and choose a tier. Unknown low-cost browser tools default to Free so a tool is not unexpectedly paywalled.
+- Metered usage API: `POST /api/tools/usage` with `{ "tool_key": "pdf-merge", "action": "check" }` to check quota, or `action: "consume"` to atomically increment the daily counter.
+- Daily counters reset by date in Asia/Kolkata. Metered tools require a signed-in account so the quota is server-tracked. Tool execution handlers must call this API before execution and only consume quota for a real operation; client-only calls are not a security boundary for expensive server work.
+- Current suggested free daily quotas include PDF merge/split 5, PDF conversion/compression 3, image resize/conversion 5, SEO tools 10, AI tools 3, and heavy processing 2. Pro quotas are higher and should be adjusted from real usage/cost data.
+- `GET /api/access` resolves the user's current plan, complimentary grant and ad eligibility. AdSense script loading is skipped for signed-in Pro/granted users and excluded from login/account/admin pages; entitlement checks fail closed when the access API cannot verify the state.
+
+### Rollout checklist
+
+1. Apply the new migration in Supabase.
+2. Add `KAAMKITPRO_ADMIN_EMAILS` to Vercel with the admin's verified Supabase email, for the environments where the admin panel will be used.
+3. Redeploy after CI passes; Vercel deployment may remain blocked by deployment quota.
+4. Test grant creation, expiry, revocation, selected tool access, Free limits, Pro limits, and AdSense gating in Preview.
+5. Wire quota checks into each metered tool's actual execution path before treating that tool's limits as enforced. The shared quota endpoint and policy registry are the foundation; they do not automatically intercept every existing browser-only tool.
+6. Keep Razorpay plans in `planned` status until checkout, signatures, webhook idempotency, cancellation/refund behavior and entitlement tests are complete.
