@@ -193,3 +193,19 @@ test("Percentage Calculator updates all three calculations", async ({ page }) =>
   await fields.nth(5).fill("100");
   await expect(page.getByText("+25%", { exact: true })).toBeVisible();
 });
+
+test("PDF Protect clearly reports unsupported encryption and does not download a false protected file", async ({ page }) => {
+  await page.goto("/tools/pdf-protect");
+  await expect(page.getByRole("heading", { name: "PDF Protect Tool" })).toBeVisible();
+  await page.locator("#pdf-file").setInputFiles({
+    name: "private-document.pdf",
+    mimeType: "application/pdf",
+    buffer: await createOnePagePdf("Private test document"),
+  });
+  await page.getByLabel("Password you intended to use").fill("test-password");
+  const downloadPromise = page.waitForEvent("download", { timeout: 1500 }).catch(() => null);
+  await page.getByRole("button", { name: "Check protection support" }).click();
+  await expect(page.getByRole("status")).toContainText("Password encryption is not supported");
+  await expect(page.getByRole("status")).toContainText("No file was changed or downloaded");
+  expect(await downloadPromise).toBeNull();
+});
