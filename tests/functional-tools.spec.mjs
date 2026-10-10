@@ -227,3 +227,29 @@ test("OG Preview Generator escapes special characters in generated meta attribut
   expect(generatedTags).toContain('https://example.com/image.png?x=1&amp;y=&quot;two&quot;');
   expect(generatedTags).not.toContain('<script>alert(1)</script>');
 });
+
+
+test("Homepage search filters tools and can reset to all tools", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "All Tools", exact: true })).toBeVisible();
+
+  const search = page.getByPlaceholder("Search a tool...");
+  await search.fill("PDF Merge");
+  await expect(page.getByRole("heading", { name: "PDF Merge", exact: true })).toBeVisible();
+  await expect(page.getByText("1 tools available", { exact: true })).toBeVisible();
+
+  await search.fill("tool-that-does-not-exist");
+  await expect(page.getByRole("heading", { name: "No tool found", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Show All Tools", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "All Tools", exact: true })).toBeVisible();
+  await expect(page.getByText(/tools available/)).toBeVisible();
+});
+
+test("Homepage category filter shows matching tools", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Calculators", exact: true }).last().click();
+
+  await expect(page.getByRole("heading", { name: "Calculators", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Percentage Calculator", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "PDF Merge", exact: true })).toHaveCount(0);
+});
