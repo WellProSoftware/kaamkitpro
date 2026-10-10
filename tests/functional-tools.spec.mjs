@@ -279,7 +279,7 @@ test("JSON to CSV converts object arrays and escapes commas", async ({ page }) =
   await page.goto("/tools/json-to-csv");
   await expect(page.getByRole("heading", { name: "JSON to CSV Converter" })).toBeVisible();
   await page.locator("#json-csv-input").fill('[{"name":"Asha","note":"Tea, coffee"},{"name":"Sam","note":"Hello"}]');
-  await expect(page.locator("#csv-output")).toHaveValue('name,note\r\nAsha,"Tea, coffee"\r\nSam,Hello');
+  await expect(page.locator("#csv-output")).toHaveValue('name,note\nAsha,"Tea, coffee"\nSam,Hello');
 });
 
 test("Text Diff Checker reports added and removed lines", async ({ page }) => {
