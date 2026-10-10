@@ -1,0 +1,38 @@
+name: KaamKitPro Production Smoke Tests
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Optional website URL to test"
+        required: false
+        default: "https://kaamkitpro.com"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kaamkitpro-smoke-tests
+  cancel-in-progress: true
+
+jobs:
+  smoke-test:
+    name: Check production pages and content
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run production smoke tests
+        env:
+          SMOKE_BASE_URL: ${{ inputs.base_url || 'https://kaamkitpro.com' }}
+        run: node scripts/smoke-test.mjs
