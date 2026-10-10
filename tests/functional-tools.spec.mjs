@@ -146,7 +146,7 @@ test("Image Flip processes an uploaded image and downloads the result", async ({
   });
 
   await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
-  await page.getByLabel("Flip direction").selectOption("vertical");
+  await page.locator("select").selectOption("vertical");
 
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Flip & Download", exact: true }).click();
