@@ -35,10 +35,17 @@ export async function GET(request: NextRequest) {
     limit: "100",
   });
   const grantsResponse = await serviceRest(`user_access_grants?${configQuery.toString()}`);
-  let grants: Grant[] = [];
-  if (grantsResponse?.ok) {
-    grants = (await grantsResponse.json().catch(() => [])) as Grant[];
+  if (!grantsResponse?.ok) {
+    return NextResponse.json({
+      user: { id: user.id, email: user.email },
+      plan: "access_check_unavailable",
+      isPro: false,
+      adsEnabled: false,
+      selectedTools: [],
+      message: "Access status could not be verified. Ads are disabled until the check succeeds.",
+    }, { status: 503 });
   }
+  const grants = (await grantsResponse.json().catch(() => [])) as Grant[];
 
   const now = Date.now();
   const active = grants.filter((grant) => activeGrant(grant, now));
@@ -56,9 +63,17 @@ export async function GET(request: NextRequest) {
     limit: "1",
   });
   const subscriptionResponse = await serviceRest(`subscriptions?${subscriptionQuery.toString()}`);
-  const subscriptions = subscriptionResponse?.ok
-    ? await subscriptionResponse.json().catch(() => [])
-    : [];
+  if (!subscriptionResponse?.ok) {
+    return NextResponse.json({
+      user: { id: user.id, email: user.email },
+      plan: "access_check_unavailable",
+      isPro: false,
+      adsEnabled: false,
+      selectedTools: [],
+      message: "Access status could not be verified. Ads are disabled until the check succeeds.",
+    }, { status: 503 });
+  }
+  const subscriptions = await subscriptionResponse.json().catch(() => []);
   const paidSubscription = Array.isArray(subscriptions) && subscriptions.some((item: { current_period_end?: string | null }) =>
     !item.current_period_end || Date.parse(item.current_period_end) > now
   );
