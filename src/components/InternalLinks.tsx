@@ -12,6 +12,7 @@ const toolLinks = [
   { href: "/tools/json-formatter", label: "JSON Formatter" },
   { href: "/tools/emi-calculator", label: "EMI Calculator" },
   { href: "/tools/gst-calculator", label: "GST Calculator" },
+  { href: "/tools/percentage-calculator", label: "Percentage Calculator" },
   { href: "/tools/sip-calculator", label: "SIP Calculator" },
 ];
 
