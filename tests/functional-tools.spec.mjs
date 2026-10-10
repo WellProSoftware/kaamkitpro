@@ -253,3 +253,24 @@ test("Homepage category filter shows matching tools", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Percentage Calculator", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "PDF Merge", exact: true })).toHaveCount(0);
 });
+
+
+test("Line Sorter sorts naturally and ignores case when selected", async ({ page }) => {
+  await page.goto("/tools/line-sorter");
+  await expect(page.getByRole("heading", { name: "Online Line Sorter" })).toBeVisible();
+  await page.locator("#line-input").fill("Item 10\\nitem 2\\nApple");
+  await expect(page.locator("#line-output")).toHaveValue("Apple\\nitem 2\\nItem 10");
+});
+
+test("Duplicate Line Remover preserves first occurrence", async ({ page }) => {
+  await page.goto("/tools/remove-duplicate-lines");
+  await page.locator("#duplicate-input").fill("apple\\nbanana\\napple");
+  await expect(page.locator("#duplicate-output")).toHaveValue("apple\\nbanana");
+  await expect(page.getByText("2 kept · 1 removed")).toBeVisible();
+});
+
+test("CSV to JSON converts quoted fields and commas", async ({ page }) => {
+  await page.goto("/tools/csv-to-json");
+  await page.locator("#csv-input").fill('name,city,note\\nAsha,Mumbai,"Likes tea, coffee"');
+  await expect(page.locator("#json-output")).toHaveValue(JSON.stringify([{ name: "Asha", city: "Mumbai", note: "Likes tea, coffee" }], null, 2));
+});
