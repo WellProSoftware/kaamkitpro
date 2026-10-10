@@ -1,4 +1,6 @@
 "use client";
+
+import Image from "next/image";
 import Link from "next/link";
 
 import { useState } from "react";
@@ -10,6 +12,7 @@ export default function OgPreviewGeneratorPage() {
   );
   const [url, setUrl] = useState("https://example.com");
   const [image, setImage] = useState("");
+  const [imageError, setImageError] = useState(false);
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10">
@@ -49,7 +52,10 @@ export default function OgPreviewGeneratorPage() {
 
             <input
               value={image}
-              onChange={(e) => setImage(e.target.value)}
+              onChange={(e) => {
+                setImage(e.target.value);
+                setImageError(false);
+              }}
               placeholder="Image URL (optional)"
               className="w-full rounded-lg border border-slate-300 px-4 py-3"
             />
@@ -61,18 +67,21 @@ export default function OgPreviewGeneratorPage() {
             </p>
 
             <div className="overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm">
-              {image ? (
-                <img
-                  src={image}
-                  alt="Open Graph preview"
-                  className="h-48 w-full object-cover"
-                  onError={(event) => {
-                    event.currentTarget.style.display = "none";
-                  }}
-                />
+              {image && !imageError ? (
+                <div className="relative h-48 w-full">
+                  <Image
+                    src={image}
+                    alt="Open Graph preview"
+                    fill
+                    unoptimized
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover"
+                    onError={() => setImageError(true)}
+                  />
+                </div>
               ) : (
                 <div className="flex h-48 items-center justify-center bg-slate-200 text-slate-500">
-                  Image preview
+                  {imageError ? "Unable to load image" : "Image preview"}
                 </div>
               )}
 
@@ -106,7 +115,7 @@ export default function OgPreviewGeneratorPage() {
           </pre>
         </div>
       </div>
-          <div className="mx-auto mt-10 max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto mt-10 max-w-6xl px-4 sm:px-6 lg:px-8">
         <Link
           href="/tools/social"
           className="text-sm font-medium text-blue-600 hover:underline"
@@ -114,7 +123,6 @@ export default function OgPreviewGeneratorPage() {
           ← Browse all Social tools
         </Link>
       </div>
-
     </main>
   );
 }
