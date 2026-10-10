@@ -129,7 +129,7 @@ export async function PATCH(request: NextRequest) {
   const response = await serviceRest(`user_access_grants?${query.toString()}`, {
     method: "PATCH",
     headers: { Prefer: "return=representation" },
-    body: JSON.stringify({ revoked_at: new Date().toISOString() }),
+    body: JSON.stringify({ revoked_at: new Date().toISOString(), revoked_by: auth.user.id }),
   });
   if (!response) return NextResponse.json({ error: "Server access storage is not configured." }, { status: 503 });
   const payload = await response.json().catch(() => []);
