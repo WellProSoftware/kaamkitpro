@@ -72,6 +72,18 @@ const tools: Tool[] = [
     category: "Data Tools",
   },
   {
+    name: "JSON to CSV Converter",
+    description: "Convert JSON arrays into spreadsheet-friendly CSV files.",
+    href: "/tools/json-to-csv",
+    category: "Data Tools",
+  },
+  {
+    name: "Text Diff Checker",
+    description: "Compare two text versions and see added or removed lines.",
+    href: "/tools/text-diff-checker",
+    category: "Text Tools",
+  },
+  {
     name: "Password Generator",
     description: "Generate strong random passwords securely.",
     href: "/tools/password-generator",
