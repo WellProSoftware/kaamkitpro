@@ -18,7 +18,7 @@ const toolRoutes = [
   "/tools/slug-generator", "/tools/sitemap-generator", "/tools/social", "/tools/text",
   "/tools/timestamp-converter", "/tools/url-encoder-decoder", "/tools/uuid-generator",
   "/tools/word-counter", "/tools/youtube-description-generator", "/tools/youtube-title-generator",
-  "/tools/remove-extra-spaces",
+  "/tools/remove-extra-spaces", "/tools/line-sorter", "/tools/remove-duplicate-lines", "/tools/csv-to-json",
 ];
 
 const staticRoutes = [
