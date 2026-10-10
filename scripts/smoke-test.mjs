@@ -7,6 +7,10 @@ const checks = [
   { path: "/tools/image", expected: ["Image"] },
   { path: "/tools/pdf-merge", expected: ["PDF Merge"] },
   { path: "/tools/percentage-calculator", expected: ["Percentage Calculator"] },
+  { path: "/privacy-policy", expected: ["Privacy Policy"] },
+  { path: "/terms", expected: ["Terms"] },
+  { path: "/contact", expected: ["Contact"] },
+  { path: "/disclaimer", expected: ["Disclaimer"] },
   { path: "/tools/pdf-split", expected: ["PDF Split"] },
   { path: "/tools/pdf-rotate", expected: ["PDF Rotate"] },
   { path: "/tools/pdf-page-number", expected: ["Page Number"] },
@@ -18,7 +22,8 @@ const checks = [
   { path: "/tools/image-grayscale", expected: ["Grayscale"] },
   { path: "/tools/image-flip", expected: ["Image Flip"] },
   { path: "/tools/image-brightness", expected: ["Brightness"] },
-  { path: "/sitemap.xml", expected: ["<urlset"] },
+  { path: "/sitemap.xml", expected: ["<urlset", "https://kaamkitpro.com/tools/percentage-calculator"] },
+  { path: "/ads.txt", expected: ["google.com, pub-6738934686699082, DIRECT, f08c47fec0942fa0"] },
   { path: "/robots.txt", expected: ["Sitemap:"] },
 ];
 
