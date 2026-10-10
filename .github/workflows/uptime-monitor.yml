@@ -15,7 +15,7 @@ concurrency:
 jobs:
   check-website:
     name: Check public website routes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 3
 
     steps:
