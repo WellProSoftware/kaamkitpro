@@ -8,6 +8,7 @@ type AccountUser = { id: string; email: string | null };
 
 export default function AccountPage() {
   const [user, setUser] = useState<AccountUser | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -22,6 +23,11 @@ export default function AccountPage() {
         }
         if (!response.ok || !result.user) throw new Error(result.error || "Unable to load your account.");
         if (!cancelled) setUser(result.user);
+        const accessResponse = await fetch("/api/access", { cache: "no-store" }).catch(() => null);
+        if (accessResponse?.ok) {
+          const access = (await accessResponse.json().catch(() => ({}))) as { isAdmin?: boolean };
+          if (!cancelled) setIsAdmin(access.isAdmin === true);
+        }
       })
       .catch((cause) => {
         if (!cancelled) setError(cause instanceof Error ? cause.message : "Unable to load your account.");
@@ -43,7 +49,10 @@ export default function AccountPage() {
       <div className="mx-auto max-w-3xl">
         <header className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4">
           <BrandLogo />
-          <button onClick={signOut} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold hover:border-blue-400 hover:text-blue-700">Sign out</button>
+          <div className="flex items-center gap-3">
+            {isAdmin ? <Link href="/admin/access" className="text-sm font-bold text-blue-700 hover:underline">Admin access</Link> : null}
+            <button onClick={signOut} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold hover:border-blue-400 hover:text-blue-700">Sign out</button>
+          </div>
         </header>
 
         <section className="mt-7 rounded-3xl border border-slate-200 bg-white p-7 shadow-sm sm:p-9">
