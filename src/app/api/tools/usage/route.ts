@@ -22,7 +22,6 @@ function indiaDate() {
 }
 
 function nextIndiaMidnight() {
-  const now = new Date();
   const date = indiaDate();
   const [year, month, day] = date.split("-").map(Number);
   const nextDay = new Date(Date.UTC(year, month - 1, day + 1, 0, 0, 0));
