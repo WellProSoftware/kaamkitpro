@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("JSON Formatter formats valid JSON", async ({ page }) => {
   await page.goto("/tools/json-formatter");
-  await expect(page.getByRole("heading", { name: "JSON Formatter" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "JSON Formatter", exact: true })).toBeVisible();
 
   await page.getByPlaceholder('{"name":"KaamKitPro","tools":10}').fill('{"name":"KaamKitPro","tools":10}');
   await page.getByRole("button", { name: "Format", exact: true }).click();
@@ -50,6 +50,6 @@ test("PDF Merge lists selected files and supports removing one", async ({ page }
 test("Image Rotate page renders its upload control", async ({ page }) => {
   await page.goto("/tools/image-rotate");
   await expect(page.getByRole("heading", { name: "Image Rotate Tool" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Select Image" })).toBeVisible();
+  await expect(page.getByText("Select Image", { exact: true })).toBeVisible();
   await expect(page.locator("#rotate-file")).toHaveAttribute("accept", "image/*");
 });
