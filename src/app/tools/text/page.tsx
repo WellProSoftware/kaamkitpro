@@ -21,6 +21,16 @@ const tools = [
     name: "Remove Extra Spaces",
     description: "Clean repeated spaces and make text easier to read.",
   },
+  {
+    href: "/tools/line-sorter",
+    name: "Line Sorter",
+    description: "Sort lines alphabetically or numerically, with case and blank-line options.",
+  },
+  {
+    href: "/tools/remove-duplicate-lines",
+    name: "Remove Duplicate Lines",
+    description: "Deduplicate lists while preserving the first occurrence.",
+  },
 ];
 
 export default function TextToolsPage() {
