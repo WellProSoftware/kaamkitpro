@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import BrandLogo from "@/components/BrandLogo";
-import AdSlot from "@/components/AdSlot";
 
 export const metadata: Metadata = {
   title: "How to Calculate GST on a Price",
@@ -18,7 +17,6 @@ export default function GstCalculatorGuide() {
         <h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">How to Calculate GST on a Price</h1>
         <p className="mt-5 text-lg leading-8 text-slate-600">Goods and Services Tax (GST) calculations commonly start with one of two questions: how much tax should be added to a base price, or how much tax is already included in a final price? Knowing which price you have prevents a common calculation error.</p>
         <div className="mt-8"><Link href="/tools/gst-calculator" className="inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">Open GST Calculator</Link></div>
-        <AdSlot />
         <div className="mt-12 space-y-9">
           <section><h2 className="text-2xl font-bold">GST added to a base price</h2><p className="mt-3 leading-8 text-slate-600">When the price does not include GST, calculate tax by multiplying the base amount by the applicable GST rate. For example, if a hypothetical taxable amount is ₹1,000 and the applicable rate is 18%, GST is ₹1,000 × 0.18 = ₹180, and the total is ₹1,180. Confirm the correct rate for the specific goods or services before using a result.</p></section>
           <section><h2 className="text-2xl font-bold">GST already included in the total</h2><p className="mt-3 leading-8 text-slate-600">When a total already includes GST, do not simply multiply the total by the rate. Use the inclusive-price formula: tax portion = total × rate ÷ (100 + rate). For a hypothetical total of ₹1,180 at 18%, the tax portion is ₹1,180 × 18 ÷ 118 = ₹180 and the pre-tax value is ₹1,000.</p></section>
