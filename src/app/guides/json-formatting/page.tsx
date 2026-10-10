@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import BrandLogo from "@/components/BrandLogo";
-import AdSlot from "@/components/AdSlot";
 
 export const metadata: Metadata = {
   title: "How to Format and Validate JSON",
@@ -18,7 +17,6 @@ export default function JsonFormattingGuide() {
         <h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">How to Format and Validate JSON</h1>
         <p className="mt-5 text-lg leading-8 text-slate-600">JSON (JavaScript Object Notation) is a text format commonly used to exchange structured data between applications. Formatting adds indentation and line breaks so the structure is easier to inspect; validation checks whether the text follows JSON syntax.</p>
         <div className="mt-8"><Link href="/tools/json-formatter" className="inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">Open JSON Formatter</Link></div>
-        <AdSlot />
         <div className="mt-12 space-y-9">
           <section><h2 className="text-2xl font-bold">What valid JSON looks like</h2><p className="mt-3 leading-8 text-slate-600">A JSON object uses braces and key-value pairs. Property names and string values use double quotes, pairs are separated by commas, and values can be strings, numbers, booleans, null, arrays, or nested objects. JSON does not allow comments or trailing commas.</p><pre className="mt-4 overflow-x-auto rounded-xl bg-slate-950 p-5 text-sm leading-6 text-slate-100"><code>{`{
   "tool": "KaamKitPro",
