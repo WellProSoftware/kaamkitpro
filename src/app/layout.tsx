@@ -90,11 +90,6 @@ const websiteSchema = {
   name: "KaamKitPro",
   url: siteUrl,
   description: "Free online tools for everyday digital work.",
-  potentialAction: {
-    "@type": "SearchAction",
-    target: `${siteUrl}/?q={search_term_string}`,
-    "query-input": "required name=search_term_string",
-  },
 };
 
 const organizationSchema = {
