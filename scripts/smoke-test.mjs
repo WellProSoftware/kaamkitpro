@@ -7,6 +7,7 @@ const checks = [
   { path: "/tools/image", expected: ["Image"] },
   { path: "/tools/pdf-merge", expected: ["PDF Merge"] },
   { path: "/tools/percentage-calculator", expected: ["Percentage Calculator"] },
+  { path: "/tools/og-preview-generator", expected: ["OG Preview Generator"] },
   { path: "/privacy-policy", expected: ["Privacy Policy"] },
   { path: "/terms", expected: ["Terms"] },
   { path: "/contact", expected: ["Contact"] },
