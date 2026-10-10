@@ -417,6 +417,9 @@ export default function Home() {
             <a href="#why" className="text-slate-600 hover:text-slate-900">
               Why KaamKitPro
             </a>
+            <a href="/pricing" className="text-slate-600 hover:text-slate-900">
+              Pricing
+            </a>
             <a href="/about" className="text-slate-600 hover:text-slate-900">
               About
             </a>
@@ -882,6 +885,9 @@ export default function Home() {
               </a>
               <a href="/guides" className="block hover:text-white">
                 Guides
+              </a>
+              <a href="/pricing" className="block hover:text-white">
+                Plans & Pricing
               </a>
               <a href="#tools" className="block hover:text-white">
                 Tools
