@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 import InternalLinks from "@/components/InternalLinks";
+import AdSenseLoader from "@/components/AdSenseLoader";
 
 const siteUrl = "https://kaamkitpro.com";
 
@@ -125,14 +126,7 @@ export default function RootLayout({
           {JSON.stringify(organizationSchema)}
         </Script>
 
-        {/* Google AdSense verification / ad serving script */}
-        <Script
-          id="google-adsense"
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6738934686699082"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
+        <AdSenseLoader />
 
         {children}
 
@@ -143,7 +137,6 @@ export default function RootLayout({
           src="https://www.googletagmanager.com/gtag/js?id=G-M9190XP42G"
           strategy="afterInteractive"
         />
-
         <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
