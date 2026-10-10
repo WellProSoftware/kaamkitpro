@@ -127,8 +127,14 @@ export default function PricingPage() {
             <li>For recurring renewals, approve the payment mandate shown by your bank, card issuer or UPI app.</li>
             <li>After the gateway confirms payment, the site will activate the matching plan and email a receipt or status update.</li>
           </ol>
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+            <h3 className="font-bold text-slate-900">For customers worldwide</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              The planned checkout will support international card payments and eligible recurring subscriptions after merchant approval. We intend to offer supported currencies such as USD, EUR and GBP where enabled by the payment provider. Availability depends on the merchant account, supported currency, customer card and provider rules; international subscription payments may be card-only. Razorpay states international payments settle to Indian merchants in INR after currency conversion.
+            </p>
+          </div>
           <p className="mt-5 text-sm leading-6 text-slate-500">
-            The intended payment provider is Razorpay Subscriptions for India. The final provider, supported methods and fees depend on merchant approval and the provider&apos;s current terms. Payment details will be handled by the provider; KaamKitPro should never store raw card or UPI credentials.
+            The intended payment provider is Razorpay Subscriptions for India. International card acceptance must be separately approved. The final provider, supported currencies, payment methods and fees depend on merchant approval and current terms. Payment details will be handled by the provider; KaamKitPro should never store raw card or UPI credentials.
           </p>
           <a
             href="https://razorpay.com/subscriptions/"
