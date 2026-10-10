@@ -7,8 +7,8 @@ test("JSON Formatter formats valid JSON", async ({ page }) => {
   await page.getByPlaceholder('{"name":"KaamKitPro","tools":10}').fill('{"name":"KaamKitPro","tools":10}');
   await page.getByRole("button", { name: "Format", exact: true }).click();
 
-  await expect(page.getByText('"name": "KaamKitPro"', { exact: false })).toBeVisible();
-  await expect(page.getByText('"tools": 10', { exact: false })).toBeVisible();
+  await expect(page.locator("div.whitespace-pre-wrap")).toContainText('"name": "KaamKitPro"');
+  await expect(page.locator("div.whitespace-pre-wrap")).toContainText('"tools": 10');
 });
 
 test("JSON Formatter reports invalid JSON", async ({ page }) => {
