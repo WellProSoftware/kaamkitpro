@@ -5,6 +5,15 @@ import Link from "next/link";
 
 import { useState } from "react";
 
+function escapeMetaAttribute(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/\u0027/g, "&#39;");
+}
+
 export default function OgPreviewGeneratorPage() {
   const [title, setTitle] = useState("Your Page Title");
   const [description, setDescription] = useState(
@@ -13,6 +22,15 @@ export default function OgPreviewGeneratorPage() {
   const [url, setUrl] = useState("https://example.com");
   const [image, setImage] = useState("");
   const [imageError, setImageError] = useState(false);
+
+  const metaTags = `<meta property="og:title" content="${escapeMetaAttribute(title)}" />
+<meta property="og:description" content="${escapeMetaAttribute(description)}" />
+<meta property="og:url" content="${escapeMetaAttribute(url)}" />
+<meta property="og:type" content="website" />${
+    image
+      ? `\n<meta property="og:image" content="${escapeMetaAttribute(image)}" />`
+      : ""
+  }`;
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10">
@@ -106,12 +124,7 @@ export default function OgPreviewGeneratorPage() {
           </h2>
 
           <pre className="mt-3 overflow-x-auto whitespace-pre-wrap text-sm text-slate-700">
-{`<meta property="og:title" content="${title}" />
-<meta property="og:description" content="${description}" />
-<meta property="og:url" content="${url}" />
-<meta property="og:type" content="website" />${
-            image ? `<meta property="og:image" content="${image}" />` : ""
-          }`}
+            {metaTags}
           </pre>
         </div>
       </div>
