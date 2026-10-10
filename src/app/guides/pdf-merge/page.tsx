@@ -1,5 +1,4 @@
 import Link from "next/link";
-import AdSlot from "@/components/AdSlot";
 import type { Metadata } from "next";
 
 import BrandLogo from "@/components/BrandLogo";
@@ -53,8 +52,6 @@ export default function PdfMergeGuide() {
               Merge PDFs Now
             </Link>
           </div>
-
-          <AdSlot />
 
           <div className="mt-12 space-y-10">
             <section>

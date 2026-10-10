@@ -5,7 +5,7 @@ import BrandLogo from "@/components/BrandLogo";
 export const metadata: Metadata = {
   title: "Online Tools Guides",
   description:
-    "Practical guides for using PDF, image, QR code and other online tools with simple step-by-step instructions.",
+    "Original, practical guides for PDF compression, merging files, GST calculations, JSON formatting, image optimization and QR codes.",
   alternates: {
     canonical: "https://kaamkitpro.com/guides",
   },
@@ -35,6 +35,27 @@ const guides = [
     href: "/guides/qr-code",
     tool: "/tools/qr-code-generator",
     category: "Everyday Tools",
+  },
+  {
+    title: "How to Compress a PDF Online",
+    description: "Compare file sizes, check document quality, and learn practical ways to reduce PDF size.",
+    href: "/guides/pdf-compression",
+    tool: "/tools/pdf-compressor",
+    category: "PDF Tools",
+  },
+  {
+    title: "How to Calculate GST on a Price",
+    description: "Understand GST-exclusive and GST-inclusive prices with formulas and worked examples.",
+    href: "/guides/gst-calculator",
+    tool: "/tools/gst-calculator",
+    category: "Calculators",
+  },
+  {
+    title: "How to Format and Validate JSON",
+    description: "Learn JSON syntax, fix common parsing errors, and understand formatting versus schema validation.",
+    href: "/guides/json-formatting",
+    tool: "/tools/json-formatter",
+    category: "Developer Tools",
   },
 ];
 
@@ -80,7 +101,7 @@ export default function GuidesPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-12">
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {guides.map((guide) => (
             <article
               key={guide.href}
