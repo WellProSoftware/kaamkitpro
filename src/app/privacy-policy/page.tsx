@@ -109,9 +109,12 @@ export default function PrivacyPolicyPage() {
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
-              We may use analytics services in the future to understand
-              traffic, popular tools, website performance and general usage
-              patterns.
+              We currently load Google Analytics to measure website traffic,
+              understand which pages are used and improve the site. Google
+              Analytics may process technical and usage information such as
+              pages viewed, browser and device details, referral information
+              and approximate location, subject to Google's settings and
+              policies.
             </p>
 
             <p className="mt-4 leading-7 text-slate-600">
@@ -127,8 +130,11 @@ export default function PrivacyPolicyPage() {
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
-              KaamKitPro may display advertisements from third-party
-              advertising providers in the future.
+              KaamKitPro loads the Google AdSense script to support
+              advertising. Whether ads are actually served depends on the
+              site's advertising configuration and provider eligibility or
+              approval; loading the script does not guarantee that ads will
+              appear.
             </p>
 
             <p className="mt-4 leading-7 text-slate-600">
@@ -144,9 +150,12 @@ export default function PrivacyPolicyPage() {
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
-              KaamKitPro may use third-party services for hosting, analytics,
-              security, advertising, communication or other website
-              functionality.
+              KaamKitPro uses third-party services including Google
+              Analytics for usage measurement and Google AdSense for
+              advertising functionality, in addition to hosting and other
+              website infrastructure services. These providers may process
+              technical information under their own terms and privacy
+              policies.
             </p>
 
             <p className="mt-4 leading-7 text-slate-600">
