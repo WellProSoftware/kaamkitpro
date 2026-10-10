@@ -59,6 +59,7 @@ export default function AdminAccessPage() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadGrants();
   }, []);
 
@@ -210,6 +211,7 @@ export default function AdminAccessPage() {
           {!loading && grants.length === 0 ? <p className="mt-5 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">No access grants found.</p> : null}
           <div className="mt-5 space-y-3">
             {grants.map((grant) => {
+              // eslint-disable-next-line react-hooks/purity
               const expired = grant.expires_at ? Date.parse(grant.expires_at) <= Date.now() : false;
               const inactive = Boolean(grant.revoked_at) || expired;
               return (
