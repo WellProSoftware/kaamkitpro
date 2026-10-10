@@ -62,9 +62,14 @@ export default function PricingPage() {
       <header className="border-b bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
           <BrandLogo />
-          <Link href="/" className="text-sm font-semibold text-slate-600 hover:text-slate-900">
-            ← Home
-          </Link>
+          <nav className="flex items-center gap-4">
+            <Link href="/login" className="text-sm font-semibold text-blue-700 hover:text-blue-800">
+              Sign in
+            </Link>
+            <Link href="/" className="text-sm font-semibold text-slate-600 hover:text-slate-900">
+              ← Home
+            </Link>
+          </nav>
         </div>
       </header>
 
