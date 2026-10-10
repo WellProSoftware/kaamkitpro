@@ -209,3 +209,21 @@ test("PDF Protect clearly reports unsupported encryption and does not download a
   await expect(page.getByRole("status")).toContainText("No file was changed or downloaded");
   expect(await downloadPromise).toBeNull();
 });
+
+
+test("OG Preview Generator escapes special characters in generated meta attributes", async ({ page }) => {
+  await page.goto("/tools/og-preview-generator");
+  await expect(page.getByRole("heading", { name: "OG Preview Generator", exact: true })).toBeVisible();
+
+  await page.getByPlaceholder("Page title").fill('Title "quoted" & <b>bold</b> \'single\'');
+  await page.getByPlaceholder("Page description").fill('Description "quoted" & <script>alert(1)</script> \'single\'');
+  await page.getByPlaceholder("https://example.com").fill('https://example.com/?a=1&b="two"');
+  await page.getByPlaceholder("Image URL (optional)").fill('https://example.com/image.png?x=1&y="two"');
+
+  const generatedTags = await page.locator("pre").innerText();
+  expect(generatedTags).toContain('Title &quot;quoted&quot; &amp; &lt;b&gt;bold&lt;/b&gt; &#39;single&#39;');
+  expect(generatedTags).toContain('Description &quot;quoted&quot; &amp; &lt;script&gt;alert(1)&lt;/script&gt; &#39;single&#39;');
+  expect(generatedTags).toContain('https://example.com/?a=1&amp;b=&quot;two&quot;');
+  expect(generatedTags).toContain('https://example.com/image.png?x=1&amp;y=&quot;two&quot;');
+  expect(generatedTags).not.toContain('<script>alert(1)</script>');
+});
