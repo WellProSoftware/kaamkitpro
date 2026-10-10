@@ -104,7 +104,7 @@ test("Image Rotate processes an image and downloads the rotated result", async (
   });
 
   await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
-  await page.getByRole("combobox", { name: "Rotation" }).selectOption("90");
+  await page.locator("select").selectOption("90");
 
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Rotate & Download", exact: true }).click();
