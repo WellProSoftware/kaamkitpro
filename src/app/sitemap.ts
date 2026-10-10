@@ -22,7 +22,7 @@ const toolRoutes = [
 ];
 
 const staticRoutes = [
-  "", "/about", "/contact", "/advertise", "/disclaimer", "/guides", "/guides/image-compression",
+  "", "/about", "/contact", "/advertise", "/pricing", "/disclaimer", "/guides", "/guides/image-compression",
   "/guides/pdf-merge", "/guides/qr-code", "/guides/pdf-compression", "/guides/gst-calculator", "/guides/json-formatting", "/privacy-policy", "/terms", "/tools",
 ];
 
