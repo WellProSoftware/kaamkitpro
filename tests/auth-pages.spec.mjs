@@ -31,7 +31,7 @@ test.describe("KaamKitPro authentication pages", () => {
 
   test("admin access page requires a signed-in allowlisted account", async ({ page }) => {
     await page.goto("/admin/access");
-    await expect(page).toHaveURL(/\\/login$/);
+    await expect(page).toHaveURL(/\/login$/);
   });
 
   test("free tools stay available and metered tools require tracked usage", async ({ request }) => {
