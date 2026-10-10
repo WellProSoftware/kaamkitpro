@@ -1,5 +1,4 @@
 import Link from "next/link";
-import AdSlot from "@/components/AdSlot";
 import type { Metadata } from "next";
 
 import BrandLogo from "@/components/BrandLogo";
@@ -52,8 +51,6 @@ export default function ImageCompressionGuide() {
               Compress an Image
             </Link>
           </div>
-
-          <AdSlot />
 
           <div className="mt-12 space-y-10">
             <section>
