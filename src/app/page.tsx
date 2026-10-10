@@ -364,6 +364,7 @@ const popularTools = [
   "Word Counter",
   "Password Generator",
   "GST Calculator",
+  "Percentage Calculator",
   "EMI Calculator",
   "JSON Formatter",
   "Meta Tag Generator",
