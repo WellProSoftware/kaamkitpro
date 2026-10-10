@@ -19,6 +19,7 @@ const categories = [
   "SEO Tools",
   "Social Tools",
   "Developer Tools",
+  "Data Tools",
 ];
 
 const tools: Tool[] = [
@@ -51,6 +52,24 @@ const tools: Tool[] = [
     description: "Clean unnecessary spaces from your text.",
     href: "/tools/remove-extra-spaces",
     category: "Text Tools",
+  },
+  {
+    name: "Line Sorter",
+    description: "Sort lists alphabetically or numerically in your browser.",
+    href: "/tools/line-sorter",
+    category: "Text Tools",
+  },
+  {
+    name: "Remove Duplicate Lines",
+    description: "Remove repeated items from lists while keeping the first occurrence.",
+    href: "/tools/remove-duplicate-lines",
+    category: "Text Tools",
+  },
+  {
+    name: "CSV to JSON Converter",
+    description: "Convert CSV rows into JSON objects or arrays locally.",
+    href: "/tools/csv-to-json",
+    category: "Data Tools",
   },
   {
     name: "Password Generator",
