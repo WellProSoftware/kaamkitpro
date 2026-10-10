@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRequestUser, serviceRest } from "@/lib/server-access";
+import { getRequestUser, isAuthorizedAdmin, serviceRest } from "@/lib/server-access";
 
 type Grant = {
   access_type: "full_pro" | "pro" | "selected_tools";
@@ -42,6 +42,7 @@ export async function GET(request: NextRequest) {
       isPro: false,
       adsEnabled: false,
       selectedTools: [],
+      isAdmin: isAuthorizedAdmin(user.email),
       message: "Access status could not be verified. Ads are disabled until the check succeeds.",
     }, { status: 503 });
   }
@@ -86,6 +87,7 @@ export async function GET(request: NextRequest) {
     fullAccess: fullGrant,
     adsEnabled: !isPro,
     selectedTools,
+    isAdmin: isAuthorizedAdmin(user.email),
     message: isPro
       ? "Pro access is active. Ads are disabled."
       : selectedTools.length
