@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import BrandLogo from "@/components/BrandLogo";
-import AdSlot from "@/components/AdSlot";
 
 export const metadata: Metadata = {
   title: "How to Compress a PDF Online",
@@ -24,7 +23,6 @@ export default function PdfCompressionGuide() {
           <h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">How to Compress a PDF Online</h1>
           <p className="mt-5 text-lg leading-8 text-slate-600">A large PDF can be difficult to email, upload to a form, or store on a phone. Compression aims to reduce the file size while keeping the document readable. The amount saved depends on what the PDF contains: scanned pages and embedded images often offer more opportunities for reduction than documents made mostly of selectable text.</p>
           <div className="mt-8"><Link href="/tools/pdf-compressor" className="inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">Open PDF Compressor</Link></div>
-          <AdSlot />
           <div className="mt-12 space-y-9">
             <section><h2 className="text-2xl font-bold">1. Check the file before compressing</h2><p className="mt-3 leading-8 text-slate-600">Open the original PDF and confirm that its pages are complete, upright, and readable. If it contains forms or signatures, check whether those elements need to remain interactive after processing. Keep an untouched copy of important documents.</p></section>
             <section><h2 className="text-2xl font-bold">2. Run compression and compare the sizes</h2><p className="mt-3 leading-8 text-slate-600">Use the PDF Compressor and save the processed file. Compare the original and output file sizes rather than assuming every PDF will shrink by the same percentage. A PDF that is already optimized may show little or no reduction.</p></section>
