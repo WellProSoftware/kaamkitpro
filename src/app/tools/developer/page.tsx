@@ -36,6 +36,11 @@ const tools = [
     title: "CSV to JSON Converter",
     description: "Convert CSV tables into JSON objects or arrays with quoted-field support.",
   },
+  {
+    href: "/tools/json-to-csv",
+    title: "JSON to CSV Converter",
+    description: "Convert JSON arrays into CSV with proper quoting and a downloadable file.",
+  },
 ];
 
 export default function DeveloperToolsPage() {
