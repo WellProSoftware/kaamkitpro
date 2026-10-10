@@ -63,7 +63,7 @@ The migration `supabase/migrations/20261012000000_access_grants_and_tool_limits.
 - Central policy registry: `src/lib/tool-access-policy.ts`. Add each new tool to the registry and choose a tier. Unknown low-cost browser tools default to Free so a tool is not unexpectedly paywalled.
 - Metered usage API: `POST /api/tools/usage` with `{ "tool_key": "pdf-merge", "action": "check" }` to check quota, or `action: "consume"` to atomically increment the daily counter.
 - Daily counters reset by date in Asia/Kolkata. Metered tools require a signed-in account so the quota is server-tracked. Tool execution handlers must call this API before execution and only consume quota for a real operation; client-only calls are not a security boundary for expensive server work.
-- Current suggested free daily quotas include PDF merge/split 5, PDF conversion/compression 3, image resize/conversion 5, SEO tools 10, AI tools 3, and heavy processing 2. Pro quotas are higher and should be adjusted from real usage/cost data.
+- Current browser-only PDF, image, calculator, text and SEO tools remain Free because processing happens on the visitor's device. Proposed limits apply to hosted AI (3/day), cloud processing (2/day), and hosted conversion (3/day); Pro quotas are higher. Tune these values from actual usage and provider cost data.
 - `GET /api/access` resolves the user's current plan, complimentary grant and ad eligibility. AdSense script loading is skipped for signed-in Pro/granted users and excluded from login/account/admin pages; entitlement checks fail closed when the access API cannot verify the state.
 
 ### Rollout checklist
