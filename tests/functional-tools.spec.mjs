@@ -113,3 +113,65 @@ test("Image Rotate processes an image and downloads the rotated result", async (
   expect(download.suggestedFilename()).toBe("kaamkitpro-rotated.jpg");
   await expect(page.getByText("Image rotated successfully.")).toBeVisible();
 });
+
+
+const onePixelPng = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p6sAAAAASUVORK5CYII=",
+  "base64",
+);
+
+test("Image Grayscale processes an uploaded image and downloads the result", async ({ page }) => {
+  await page.goto("/tools/image-grayscale");
+  await page.locator("#grayscale-file").setInputFiles({
+    name: "pixel.png",
+    mimeType: "image/png",
+    buffer: onePixelPng,
+  });
+
+  await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Convert to Grayscale", exact: true }).click();
+  const download = await downloadPromise;
+
+  expect(download.suggestedFilename()).toBe("kaamkitpro-grayscale.jpg");
+  await expect(page.getByText("Grayscale image created successfully.")).toBeVisible();
+});
+
+test("Image Flip processes an uploaded image and downloads the result", async ({ page }) => {
+  await page.goto("/tools/image-flip");
+  await page.locator("#flip-file").setInputFiles({
+    name: "pixel.png",
+    mimeType: "image/png",
+    buffer: onePixelPng,
+  });
+
+  await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
+  await page.locator("select").selectOption("vertical");
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Flip & Download", exact: true }).click();
+  const download = await downloadPromise;
+
+  expect(download.suggestedFilename()).toBe("kaamkitpro-flipped.jpg");
+  await expect(page.getByText("Image flipped successfully.")).toBeVisible();
+});
+
+test("Image Brightness processes an uploaded image and downloads the result", async ({ page }) => {
+  await page.goto("/tools/image-brightness");
+  await page.locator("#brightness-file").setInputFiles({
+    name: "pixel.png",
+    mimeType: "image/png",
+    buffer: onePixelPng,
+  });
+
+  await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
+  await page.getByRole("slider").fill("140");
+  await expect(page.getByText("Brightness: 140%")).toBeVisible();
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Adjust & Download", exact: true }).click();
+  const download = await downloadPromise;
+
+  expect(download.suggestedFilename()).toBe("kaamkitpro-brightness.jpg");
+  await expect(page.getByText("Brightness adjusted successfully.")).toBeVisible();
+});
