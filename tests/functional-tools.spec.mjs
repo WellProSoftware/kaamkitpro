@@ -175,3 +175,21 @@ test("Image Brightness processes an uploaded image and downloads the result", as
   expect(download.suggestedFilename()).toBe("kaamkitpro-brightness.jpg");
   await expect(page.getByText("Brightness adjusted successfully.")).toBeVisible();
 });
+
+test("Percentage Calculator updates all three calculations", async ({ page }) => {
+  await page.goto("/tools/percentage-calculator");
+  await expect(page.getByRole("heading", { name: "Percentage Calculator", exact: true })).toBeVisible();
+
+  const fields = page.locator('input[type="number"]');
+  await fields.nth(0).fill("25");
+  await fields.nth(1).fill("80");
+  await expect(page.getByText("20", { exact: true })).toBeVisible();
+
+  await fields.nth(2).fill("30");
+  await fields.nth(3).fill("120");
+  await expect(page.getByText("25%", { exact: true })).toBeVisible();
+
+  await fields.nth(4).fill("80");
+  await fields.nth(5).fill("100");
+  await expect(page.getByText("+25%", { exact: true })).toBeVisible();
+});

@@ -6,6 +6,7 @@ const checks = [
   { path: "/tools/pdf", expected: ["PDF"] },
   { path: "/tools/image", expected: ["Image"] },
   { path: "/tools/pdf-merge", expected: ["PDF Merge"] },
+  { path: "/tools/percentage-calculator", expected: ["Percentage Calculator"] },
   { path: "/tools/pdf-split", expected: ["PDF Split"] },
   { path: "/tools/pdf-rotate", expected: ["PDF Rotate"] },
   { path: "/tools/pdf-page-number", expected: ["Page Number"] },
