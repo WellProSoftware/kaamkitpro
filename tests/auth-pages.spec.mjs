@@ -42,7 +42,7 @@ test.describe("KaamKitPro authentication pages", () => {
     expect(await free.json()).toMatchObject({ allowed: true, tier: "free", limited: false });
 
     const metered = await request.post("/api/tools/usage", {
-      data: { tool_key: "pdf-merge", action: "check" },
+      data: { tool_key: "ai-tool", action: "check" },
     });
     expect(metered.status()).toBe(401);
     expect(await metered.json()).toMatchObject({ allowed: false, requiresSignIn: true });
