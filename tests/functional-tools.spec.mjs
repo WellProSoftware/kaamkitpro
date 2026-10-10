@@ -274,3 +274,21 @@ test("CSV to JSON converts quoted fields and commas", async ({ page }) => {
   await page.locator("#csv-input").fill('name,city,note\\nAsha,Mumbai,"Likes tea, coffee"');
   await expect(page.locator("#json-output")).toHaveValue(JSON.stringify([{ name: "Asha", city: "Mumbai", note: "Likes tea, coffee" }], null, 2));
 });
+
+test("JSON to CSV converts object arrays and escapes commas", async ({ page }) => {
+  await page.goto("/tools/json-to-csv");
+  await expect(page.getByRole("heading", { name: "JSON to CSV Converter" })).toBeVisible();
+  await page.locator("#json-csv-input").fill('[{"name":"Asha","note":"Tea, coffee"},{"name":"Sam","note":"Hello"}]');
+  await expect(page.locator("#csv-output")).toHaveValue('name,note\r\nAsha,"Tea, coffee"\r\nSam,Hello');
+});
+
+test("Text Diff Checker reports added and removed lines", async ({ page }) => {
+  await page.goto("/tools/text-diff-checker");
+  await expect(page.getByRole("heading", { name: "Text Diff Checker" })).toBeVisible();
+  await page.locator("#diff-before").fill("alpha\nbeta");
+  await page.locator("#diff-after").fill("alpha\ngamma");
+  await expect(page.getByText("+ 1 added")).toBeVisible();
+  await expect(page.getByText("− 1 removed")).toBeVisible();
+  await expect(page.locator("pre")).toContainText("+ gamma");
+  await expect(page.locator("pre")).toContainText("− beta");
+});
