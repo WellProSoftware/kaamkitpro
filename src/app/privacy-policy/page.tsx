@@ -113,7 +113,7 @@ export default function PrivacyPolicyPage() {
               understand which pages are used and improve the site. Google
               Analytics may process technical and usage information such as
               pages viewed, browser and device details, referral information
-              and approximate location, subject to Google's settings and
+              and approximate location, subject to Google&apos;s settings and
               policies.
             </p>
 
@@ -132,7 +132,7 @@ export default function PrivacyPolicyPage() {
             <p className="mt-4 leading-7 text-slate-600">
               KaamKitPro loads the Google AdSense script to support
               advertising. Whether ads are actually served depends on the
-              site's advertising configuration and provider eligibility or
+              site&apos;s advertising configuration and provider eligibility or
               approval; loading the script does not guarantee that ads will
               appear.
             </p>
