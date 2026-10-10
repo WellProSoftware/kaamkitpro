@@ -16,6 +16,9 @@ create table if not exists public.user_access_grants (
   check (expires_at is null or expires_at > starts_at)
 );
 
+alter table public.user_access_grants
+  add column if not exists revoked_by uuid references auth.users(id) on delete set null;
+
 create index if not exists user_access_grants_email_active_idx
   on public.user_access_grants (lower(target_email), starts_at, expires_at)
   where revoked_at is null;
