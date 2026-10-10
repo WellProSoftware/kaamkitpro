@@ -877,6 +877,12 @@ export default function Home() {
               <a href="/contact" className="block hover:text-white">
                 Contact
               </a>
+              <a href="/advertise" className="block hover:text-white">
+                Advertise & Partner
+              </a>
+              <a href="/guides" className="block hover:text-white">
+                Guides
+              </a>
               <a href="#tools" className="block hover:text-white">
                 Tools
               </a>
