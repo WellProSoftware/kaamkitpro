@@ -1,0 +1,57 @@
+name: KaamKitPro Uptime Monitor
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kaamkitpro-uptime
+  cancel-in-progress: true
+
+jobs:
+  check-website:
+    name: Check public website routes
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Check key pages return a successful HTTP response
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          urls=(
+            "https://kaamkitpro.com/"
+            "https://kaamkitpro.com/tools"
+            "https://kaamkitpro.com/tools/pdf"
+            "https://kaamkitpro.com/tools/image"
+            "https://kaamkitpro.com/tools/pdf-merge"
+            "https://kaamkitpro.com/tools/image-compressor"
+            "https://kaamkitpro.com/tools/image-rotate"
+            "https://kaamkitpro.com/tools/image-grayscale"
+            "https://kaamkitpro.com/tools/image-flip"
+            "https://kaamkitpro.com/tools/image-brightness"
+          )
+
+          failed=0
+
+          for url in "${urls[@]}"; do
+            echo "Checking ${url}"
+            if curl --fail --silent --show-error --location --max-time 20 --retry 2 --retry-delay 3 "${url}" --output /dev/null; then
+              echo "PASS ${url}"
+            else
+              echo "FAIL ${url}"
+              failed=1
+            fi
+          done
+
+          if [ "$failed" -ne 0 ]; then
+            echo "One or more KaamKitPro pages failed the uptime check."
+            exit 1
+          fi
+
+          echo "All monitored KaamKitPro pages returned successful HTTP responses."
