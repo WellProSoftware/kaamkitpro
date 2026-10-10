@@ -25,6 +25,7 @@ const accessLabels: Record<Grant["access_type"], string> = {
 
 export default function AdminAccessPage() {
   const [email, setEmail] = useState("");
+  const [filterEmail, setFilterEmail] = useState("");
   const [accessType, setAccessType] = useState<Grant["access_type"]>("full_pro");
   const [duration, setDuration] = useState("permanent");
   const [expiresAt, setExpiresAt] = useState("");
@@ -109,7 +110,7 @@ export default function AdminAccessPage() {
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || "Could not revoke access.");
       setMessage(`Access revoked for ${grant.target_email}.`);
-      await loadGrants(email);
+      await loadGrants(filterEmail);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not revoke access.");
     } finally {
@@ -200,8 +201,8 @@ export default function AdminAccessPage() {
               <h2 className="text-xl font-bold">Recent access grants</h2>
               <p className="mt-1 text-sm text-slate-600">Search by email or review the latest 50 grants.</p>
             </div>
-            <form onSubmit={(event) => { event.preventDefault(); void loadGrants(email); }} className="flex gap-2">
-              <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Filter by email" className="min-h-10 min-w-0 rounded-lg border border-slate-300 px-3 text-sm" />
+            <form onSubmit={(event) => { event.preventDefault(); void loadGrants(filterEmail); }} className="flex gap-2">
+              <input type="email" value={filterEmail} onChange={(event) => setFilterEmail(event.target.value)} placeholder="Filter by email" className="min-h-10 min-w-0 rounded-lg border border-slate-300 px-3 text-sm" />
               <button className="rounded-lg border border-slate-300 px-3 text-sm font-semibold hover:border-blue-400">Search</button>
             </form>
           </div>
