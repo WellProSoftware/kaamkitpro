@@ -128,7 +128,7 @@ export default function PricingPage() {
             <li>After the gateway confirms payment, the site will activate the matching plan and email a receipt or status update.</li>
           </ol>
           <p className="mt-5 text-sm leading-6 text-slate-500">
-            The intended payment provider is Razorpay Subscriptions for India. The final provider, supported methods and fees depend on merchant approval and the provider's current terms. Payment details will be handled by the provider; KaamKitPro should never store raw card or UPI credentials.
+            The intended payment provider is Razorpay Subscriptions for India. The final provider, supported methods and fees depend on merchant approval and the provider&apos;s current terms. Payment details will be handled by the provider; KaamKitPro should never store raw card or UPI credentials.
           </p>
           <a
             href="https://razorpay.com/subscriptions/"
