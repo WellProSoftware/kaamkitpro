@@ -1,15 +1,20 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 const ADSENSE_SCRIPT_ID = "google-adsense";
 
 export default function AdSenseLoader() {
+  const pathname = usePathname();
+
   useEffect(() => {
     let cancelled = false;
-    const path = window.location.pathname;
-    const excluded = /^\/(login|account|admin)(\/|$)/.test(path) || path.startsWith("/auth/");
-    if (excluded) return;
+    const excluded = /^\/(login|account|admin)(\/|$)/.test(pathname) || pathname.startsWith("/auth/");
+    if (excluded) {
+      document.getElementById(ADSENSE_SCRIPT_ID)?.remove();
+      return;
+    }
 
     fetch("/api/access", { cache: "no-store" })
       .then(async (response) => {
@@ -18,7 +23,13 @@ export default function AdSenseLoader() {
         return data.adsEnabled === true;
       })
       .then((adsEnabled) => {
-        if (cancelled || !adsEnabled || document.getElementById(ADSENSE_SCRIPT_ID)) return;
+        if (cancelled) return;
+        if (!adsEnabled) {
+          document.getElementById(ADSENSE_SCRIPT_ID)?.remove();
+          return;
+        }
+        if (document.getElementById(ADSENSE_SCRIPT_ID)) return;
+
         const script = document.createElement("script");
         script.id = ADSENSE_SCRIPT_ID;
         script.async = true;
@@ -29,12 +40,13 @@ export default function AdSenseLoader() {
       })
       .catch(() => {
         // Fail closed: do not load ad scripts when entitlement status cannot be verified.
+        document.getElementById(ADSENSE_SCRIPT_ID)?.remove();
       });
 
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }
