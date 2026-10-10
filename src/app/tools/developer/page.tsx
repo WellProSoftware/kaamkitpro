@@ -31,6 +31,11 @@ const tools = [
     title: "Color Converter",
     description: "Convert colors between HEX and RGB formats.",
   },
+  {
+    href: "/tools/csv-to-json",
+    title: "CSV to JSON Converter",
+    description: "Convert CSV tables into JSON objects or arrays with quoted-field support.",
+  },
 ];
 
 export default function DeveloperToolsPage() {
