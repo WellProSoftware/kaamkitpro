@@ -23,7 +23,7 @@ export default function AuthCallbackPage() {
       if (authError) {
         if (!cancelled) {
           setFailed(true);
-          setMessage(decodeURIComponent(authError.replace(/\+/g, " ")));
+          setMessage(authError.replace(/\+/g, " "));
         }
         return;
       }
