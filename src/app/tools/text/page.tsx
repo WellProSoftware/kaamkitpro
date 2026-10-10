@@ -31,6 +31,11 @@ const tools = [
     name: "Remove Duplicate Lines",
     description: "Deduplicate lists while preserving the first occurrence.",
   },
+  {
+    href: "/tools/text-diff-checker",
+    name: "Text Diff Checker",
+    description: "Compare two versions of text and inspect line changes.",
+  },
 ];
 
 export default function TextToolsPage() {
