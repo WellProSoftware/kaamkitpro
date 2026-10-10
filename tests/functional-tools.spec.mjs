@@ -1,4 +1,12 @@
 import { expect, test } from "@playwright/test";
+import { PDFDocument } from "pdf-lib";
+
+async function createOnePagePdf(label) {
+  const document = await PDFDocument.create();
+  const page = document.addPage([300, 200]);
+  page.drawText(label, { x: 30, y: 150, size: 18 });
+  return Buffer.from(await document.save());
+}
 
 test("JSON Formatter formats valid JSON", async ({ page }) => {
   await page.goto("/tools/json-formatter");
@@ -27,12 +35,12 @@ test("PDF Merge lists selected files and supports removing one", async ({ page }
     {
       name: "first.pdf",
       mimeType: "application/pdf",
-      buffer: Buffer.from("%PDF-1.4\n% test file one"),
+      buffer: await createOnePagePdf("First test page"),
     },
     {
       name: "second.pdf",
       mimeType: "application/pdf",
-      buffer: Buffer.from("%PDF-1.4\n% test file two"),
+      buffer: await createOnePagePdf("Second test page"),
     },
   ]);
 
@@ -47,9 +55,61 @@ test("PDF Merge lists selected files and supports removing one", async ({ page }
   await expect(page.getByText("first.pdf", { exact: false })).toHaveCount(0);
 });
 
+test("PDF Merge creates and downloads a valid merged PDF", async ({ page }) => {
+  await page.goto("/tools/pdf-merge");
+  await page.locator("#pdf-upload").setInputFiles([
+    {
+      name: "first.pdf",
+      mimeType: "application/pdf",
+      buffer: await createOnePagePdf("First test page"),
+    },
+    {
+      name: "second.pdf",
+      mimeType: "application/pdf",
+      buffer: await createOnePagePdf("Second test page"),
+    },
+  ]);
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Merge PDFs", exact: true }).click();
+  const download = await downloadPromise;
+
+  expect(download.suggestedFilename()).toBe("kaamkitpro-merged.pdf");
+  await expect(page.getByText("PDFs merged successfully.")).toBeVisible();
+
+  const downloadPath = await download.path();
+  expect(downloadPath).toBeTruthy();
+  const mergedBytes = await import("node:fs/promises").then(({ readFile }) => readFile(downloadPath));
+  const mergedPdf = await PDFDocument.load(mergedBytes);
+  expect(mergedPdf.getPageCount()).toBe(2);
+});
+
 test("Image Rotate page renders its upload control", async ({ page }) => {
   await page.goto("/tools/image-rotate");
   await expect(page.getByRole("heading", { name: "Image Rotate Tool" })).toBeVisible();
   await expect(page.getByText("Select Image", { exact: true })).toBeVisible();
   await expect(page.locator("#rotate-file")).toHaveAttribute("accept", "image/*");
+});
+
+test("Image Rotate processes an image and downloads the rotated result", async ({ page }) => {
+  await page.goto("/tools/image-rotate");
+  await page.locator("#rotate-file").setInputFiles({
+    name: "pixel.png",
+    mimeType: "image/png",
+    // Valid 1x1 transparent PNG.
+    buffer: Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p6sAAAAASUVORK5CYII=",
+      "base64",
+    ),
+  });
+
+  await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
+  await page.getByRole("combobox", { name: "Rotation" }).selectOption("90");
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Rotate & Download", exact: true }).click();
+  const download = await downloadPromise;
+
+  expect(download.suggestedFilename()).toBe("kaamkitpro-rotated.jpg");
+  await expect(page.getByText("Image rotated successfully.")).toBeVisible();
 });
