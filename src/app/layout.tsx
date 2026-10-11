@@ -127,7 +127,7 @@ export default function RootLayout({
           {JSON.stringify(organizationSchema)}
         </Script>
 
-        <AdSenseLoader />
+        <AdSenseLoader disabled={isStagingBuild} />
 
         {children}
 
