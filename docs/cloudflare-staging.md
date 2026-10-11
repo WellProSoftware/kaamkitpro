@@ -32,3 +32,7 @@ The current GitHub Actions workflow is validation-only: it does not deploy a Wor
 ## Authentication integration
 
 A public staging Worker can exercise the unauthenticated routes without credentials. A real magic-link, grant/revoke, and authenticated quota test requires a separate non-production Supabase project, configured with the staging callback URL and staging-only environment variables. Do not use the production Supabase service-role key or production database for grant/revoke tests. This repository workflow does not create a Supabase project or change Supabase Auth redirect settings.
+
+### Explicit staging deployment trigger
+
+The `cloudflare-vinext-staging` branch can deploy only to the isolated `kaamkitpro-staging` Worker on `workers.dev`. Normal pushes run validation only. A maintainer must use the exact `[deploy-staging]` commit-message marker to request a staging deployment; the deploy job waits for validation to succeed and rejects generated Worker configs containing custom routes or domains. Never add production domains or DNS routes to this staging Worker.
