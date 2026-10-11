@@ -5,6 +5,7 @@ import InternalLinks from "@/components/InternalLinks";
 import AdSenseLoader from "@/components/AdSenseLoader";
 
 const siteUrl = "https://kaamkitpro.com";
+const isStagingBuild = process.env.KAAMKITPRO_STAGING === "true" || process.env.VERCEL_ENV === "preview";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -62,11 +63,11 @@ export const metadata: Metadata = {
   },
 
   robots: {
-    index: true,
-    follow: true,
+    index: !isStagingBuild,
+    follow: !isStagingBuild,
     googleBot: {
-      index: true,
-      follow: true,
+      index: !isStagingBuild,
+      follow: !isStagingBuild,
       "max-image-preview": "large",
       "max-snippet": -1,
       "max-video-preview": -1,
