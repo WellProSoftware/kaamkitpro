@@ -303,3 +303,15 @@ test("Sitemap lists each new utility route exactly once", async ({ request }) =>
     expect(matches).toHaveLength(1);
   }
 });
+
+
+test("CSV to JSON guide is discoverable and included once in the sitemap", async ({ page }) => {
+  await page.goto("/guides/csv-to-json");
+  await expect(page.getByRole("heading", { name: "How to Convert CSV to JSON Online for Free", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open Free CSV to JSON Converter" })).toHaveAttribute("href", "/tools/csv-to-json");
+
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  const sitemap = await sitemapResponse.text();
+  expect(sitemap.match(/https:\/\/kaamkitpro\.com\/guides\/csv-to-json/g)).toHaveLength(1);
+});
