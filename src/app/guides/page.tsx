@@ -87,6 +87,27 @@ const guides = [
     tool: "/tools/csv-to-json",
     category: "Developer Tools",
   },
+  {
+    title: "How to Count Words and Characters Online",
+    description: "Count words, characters, sentences and spaces in drafts, captions and documents with a free browser-based tool.",
+    href: "/guides/word-counter",
+    tool: "/tools/word-counter",
+    category: "Text Tools",
+  },
+  {
+    title: "How to Create an SEO-Friendly URL Slug",
+    description: "Learn how to turn a page title into a readable URL slug and avoid common URL formatting mistakes.",
+    href: "/guides/slug-generator",
+    tool: "/tools/slug-generator",
+    category: "SEO Tools",
+  },
+  {
+    title: "How to Remove Duplicate Lines from a List",
+    description: "Clean repeated names, keywords, IDs and copied spreadsheet lines while choosing how whitespace and letter case should be treated.",
+    href: "/guides/remove-duplicate-lines",
+    tool: "/tools/remove-duplicate-lines",
+    category: "Text Tools",
+  },
 ];
 
 export default function GuidesPage() {
