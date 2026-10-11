@@ -2,7 +2,6 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { serviceRest } from "@/lib/server-access";
 
-export const runtime = "nodejs";
 
 type Payload = {
   event?: string;
