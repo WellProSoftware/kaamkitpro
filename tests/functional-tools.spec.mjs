@@ -562,3 +562,20 @@ test("JSON to CSV escapes commas and quotes and rejects invalid shape", async ({
   await page.locator("#json-csv-input").fill('{"name":"Asha"}');
   await expect(page.getByRole("alert")).toContainText("JSON must be an array of objects or arrays.");
 });
+
+
+test("Line Sorter sorts numeric labels naturally and can remove blank lines", async ({ page }) => {
+  await page.goto("/tools/line-sorter");
+  await expect(page.getByRole("heading", { name: "Online Line Sorter" })).toBeVisible();
+  await page.locator("#line-input").fill("Item 10\nItem 2\nApple\n");
+  await page.getByLabel("Remove blank lines").check();
+  await expect(page.locator("#line-output")).toHaveValue("Apple\nItem 2\nItem 10");
+});
+
+test("Remove Duplicate Lines keeps first occurrence and supports case-insensitive matching", async ({ page }) => {
+  await page.goto("/tools/remove-duplicate-lines");
+  await page.locator("#duplicate-input").fill("Apple\napple\nBanana\nApple");
+  await page.getByLabel("Treat uppercase/lowercase as same").check();
+  await expect(page.locator("#duplicate-output")).toHaveValue("Apple\nBanana");
+  await expect(page.getByText("2 kept · 2 removed", { exact: true })).toBeVisible();
+});
