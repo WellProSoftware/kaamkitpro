@@ -1,0 +1,176 @@
+name: Cloudflare Workers Free staging validation
+
+on:
+  push:
+    branches:
+      - cloudflare/vinext-staging
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaamkitpro-cloudflare-staging-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Vinext compatibility, build, and browser checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      KAAMKITPRO_STAGING: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+
+    steps:
+      - name: Checkout staging branch
+        uses: actions/checkout@v5
+        with:
+          ref: cloudflare/vinext-staging
+          persist-credentials: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install existing application dependencies
+        run: npm ci
+
+      - name: Check Next.js API compatibility before migration
+        id: compatibility
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          npx --yes vinext@1.0.0-beta.5 check 2>&1 | tee vinext-compatibility-report.txt
+          status=${PIPESTATUS[0]}
+          echo "$status" > vinext-compatibility-exit-code.txt
+          exit "$status"
+
+      - name: Initialize Cloudflare Workers config without paid add-ons
+        id: init
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f vite.config.ts ] || ! node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts['build:vinext'] ? 0 : 1)"; then
+            npx --yes vinext@1.0.0-beta.5 init \
+              --platform=cloudflare \
+              --skip-check \
+              --data-cache=none \
+              --cdn-cache=workers-cache \
+              --image-optimization=none
+          else
+            echo "vinext config already initialized; retaining the staging configuration."
+          fi
+          test -f vite.config.ts
+          test -f cloudflare.config.ts
+          node -e "const p=require('./package.json'); if (!p.scripts?.['build:vinext'] || !p.scripts?.['start:vinext']) process.exit(1)"
+
+      - name: Build the Cloudflare/vinext output
+        id: vinext_build
+        if: always() && steps.init.outcome == 'success'
+        continue-on-error: true
+        run: npm run build:vinext 2>&1 | tee vinext-build.log
+
+      - name: TypeScript check including generated Cloudflare types
+        id: types
+        if: always() && steps.init.outcome == 'success'
+        continue-on-error: true
+        run: npx tsc --noEmit 2>&1 | tee typescript-check.log
+
+      - name: Lint
+        id: lint
+        if: always() && steps.init.outcome == 'success'
+        continue-on-error: true
+        run: npm run lint 2>&1 | tee lint.log
+
+      - name: Recheck the original Next.js build
+        id: next_build
+        if: always() && steps.init.outcome == 'success'
+        continue-on-error: true
+        run: npm run build 2>&1 | tee next-build.log
+
+      - name: Install isolated browser-test dependencies
+        id: playwright_install
+        if: always() && steps.vinext_build.outcome == 'success'
+        continue-on-error: true
+        run: |
+          npm install --no-save @playwright/test
+          npx playwright install --with-deps chromium
+
+      - name: Run existing regressions plus Cloudflare staging checks
+        id: browser_tests
+        if: always() && steps.playwright_install.outcome == 'success'
+        continue-on-error: true
+        run: npx playwright test -c playwright.cloudflare.config.mjs 2>&1 | tee cloudflare-playwright.log
+
+      - name: Commit generated Cloudflare source configuration to staging branch
+        if: always() && steps.init.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .gitignore package.json package-lock.json tsconfig.json vite.config.ts cloudflare.config.ts src/app/layout.tsx src/app/robots.ts
+          if git diff --cached --quiet; then
+            echo "No generated source changes to commit."
+          else
+            git commit -m "chore: initialize vinext Cloudflare staging"
+            git push origin HEAD:cloudflare/vinext-staging
+          fi
+
+      - name: Upload compatibility and test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kaamkitpro-cloudflare-staging-reports
+          if-no-files-found: warn
+          retention-days: 7
+          path: |
+            vinext-compatibility-report.txt
+            vinext-compatibility-exit-code.txt
+            vinext-build.log
+            typescript-check.log
+            lint.log
+            next-build.log
+            cloudflare-playwright.log
+            test-results/
+            playwright-report/
+
+      - name: Enforce staging validation gate
+        if: always()
+        shell: bash
+        env:
+          COMPATIBILITY: ${{ steps.compatibility.outcome }}
+          INITIALIZATION: ${{ steps.init.outcome }}
+          VINEXT_BUILD: ${{ steps.vinext_build.outcome }}
+          TYPESCRIPT: ${{ steps.types.outcome }}
+          LINT: ${{ steps.lint.outcome }}
+          NEXT_BUILD: ${{ steps.next_build.outcome }}
+          PLAYWRIGHT_INSTALL: ${{ steps.playwright_install.outcome }}
+          BROWSER_TESTS: ${{ steps.browser_tests.outcome }}
+        run: |
+          failed=0
+          for item in \
+            "vinext check:$COMPATIBILITY" \
+            "vinext init:$INITIALIZATION" \
+            "vinext build:$VINEXT_BUILD" \
+            "TypeScript:$TYPESCRIPT" \
+            "lint:$LINT" \
+            "Next.js build:$NEXT_BUILD" \
+            "Playwright install:$PLAYWRIGHT_INSTALL" \
+            "browser tests:$BROWSER_TESTS"; do
+            echo "$item"
+            case "$item" in
+              *:success) ;;
+              *) failed=1 ;;
+            esac
+          done
+          if [ "$failed" -ne 0 ]; then
+            echo "One or more checks failed. Review the uploaded logs; do not deploy this branch until the failures are resolved."
+            exit 1
+          fi
+          echo "Compatibility, build, TypeScript, lint, and browser gates passed."
