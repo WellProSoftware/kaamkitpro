@@ -105,6 +105,25 @@ export async function POST(request: NextRequest) {
   const sub = payload.payload?.subscription?.entity;
   const nextStatus = statusFor(payload.event, sub?.status);
   if (nextStatus && sub?.id) {
+    // Never let a delayed activation/charge/resume event reopen a terminal
+    // subscription. Provider events can be delivered out of order.
+    const currentQuery = new URLSearchParams({
+      select: "status",
+      provider_subscription_id: `eq.${sub.id}`,
+      limit: "1",
+    });
+    const currentResponse = await serviceRest(`subscriptions?${currentQuery.toString()}`);
+    if (!currentResponse?.ok) {
+      return NextResponse.json({ error: "Could not verify subscription state." }, { status: 503 });
+    }
+    const currentRows = await currentResponse.json().catch(() => []);
+    const current = Array.isArray(currentRows) ? currentRows[0] as { status?: string } | undefined : undefined;
+    if (!current) {
+      return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
+    }
+    const terminal = current.status === "cancelled" || current.status === "expired";
+    const reactivating = nextStatus === "active" || nextStatus === "trialing";
+    if (!(terminal && reactivating)) {
     const patchQuery = new URLSearchParams({ provider_subscription_id: `eq.${sub.id}` });
     const patch = await serviceRest(`subscriptions?${patchQuery.toString()}`, {
       method: "PATCH",
@@ -120,6 +139,7 @@ export async function POST(request: NextRequest) {
     const updated = await patch.json().catch(() => []);
     if (!Array.isArray(updated) || updated.length === 0) {
       return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
+    }
     }
   }
 
