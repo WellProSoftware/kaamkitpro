@@ -488,3 +488,27 @@ test("Slug Generator converts a title into a clean URL slug", async ({ page }) =
   await page.getByRole("button", { name: "Generate Slug" }).click();
   await expect(page.getByText("creme-coffee-best-online-tools", { exact: true })).toBeVisible();
 });
+
+
+test("JSON Formatter minifies valid JSON without changing its data", async ({ page }) => {
+  await page.goto("/tools/json-formatter");
+  await page.getByPlaceholder('{"name":"KaamKitPro","tools":10}').fill('{
+  "name": "KaamKitPro",
+  "tools": 10
+}');
+  await page.getByRole("button", { name: "Minify", exact: true }).click();
+  await expect(page.locator("div.whitespace-pre-wrap")).toContainText('{"name":"KaamKitPro","tools":10}');
+});
+
+test("JSON Formatter gives a clear message for empty input", async ({ page }) => {
+  await page.goto("/tools/json-formatter");
+  await page.getByRole("button", { name: "Format", exact: true }).click();
+  await expect(page.getByText("Please enter some JSON first.", { exact: true })).toBeVisible();
+});
+
+test("Slug Generator normalizes repeated spaces and punctuation", async ({ page }) => {
+  await page.goto("/tools/slug-generator");
+  await page.getByPlaceholder("Example: Best Free Online Tools for Students").fill("  Hello---World !!!  SEO   Tools  ");
+  await page.getByRole("button", { name: "Generate Slug" }).click();
+  await expect(page.getByText("hello-world-seo-tools", { exact: true })).toBeVisible();
+});
