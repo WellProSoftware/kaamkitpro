@@ -17,7 +17,7 @@ test("staging pages explicitly opt out of search indexing", async ({ page, reque
 test("pricing stays free-only and does not expose checkout", async ({ page }) => {
   await page.goto("/pricing");
   await expect(page.getByRole("heading", { name: "Useful tools. Free to use." })).toBeVisible();
-  await expect(page.getByText(/All currently available tools are free/i)).toBeVisible();
+  await expect(page.getByText(/All currently available tools are free/i).first()).toBeVisible();
   await expect(page.getByText(/Paid plans and checkout are not available/i)).toBeVisible();
   await expect(page.getByText("Pro Monthly", { exact: true })).toHaveCount(0);
   await expect(page.getByText("Pro Yearly", { exact: true })).toHaveCount(0);
