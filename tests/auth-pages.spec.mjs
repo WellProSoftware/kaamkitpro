@@ -31,7 +31,21 @@ test.describe("KaamKitPro authentication pages", () => {
 
   test("admin access page requires a signed-in allowlisted account", async ({ page }) => {
     await page.goto("/admin/access");
-    await expect(page).toHaveURL(/\/login$/);
+    await expect(page).toHaveURL(/\\/login$/);
+  });
+
+  test("admin grant API rejects requests without an authenticated admin", async ({ request }) => {
+    const response = await request.get("/api/admin/access");
+    expect(response.status()).toBe(401);
+    expect(await response.json()).toMatchObject({ error: "Please sign in first." });
+  });
+
+  test("subscription checkout rejects requests without an authenticated user", async ({ request }) => {
+    const response = await request.post("/api/billing/checkout", {
+      data: { plan_id: "pro-monthly-inr" },
+    });
+    expect(response.status()).toBe(401);
+    expect(await response.json()).toMatchObject({ error: "Sign in before starting a subscription." });
   });
 
   test("free tools stay available and metered tools require tracked usage", async ({ request }) => {
@@ -58,7 +72,7 @@ test.describe("KaamKitPro authentication pages", () => {
     await page.goto("/pricing");
     await page.getByRole("link", { name: "Sign in" }).click();
 
-    await expect(page).toHaveURL(/\/login$/);
+    await expect(page).toHaveURL(/\\/login$/);
     await expect(
       page.getByRole("heading", { name: "Sign in with email" }),
     ).toBeVisible();
