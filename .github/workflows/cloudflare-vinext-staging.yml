@@ -245,7 +245,7 @@ jobs:
             const config = JSON.parse(fs.readFileSync(path, "utf8"));
             if (config.name !== "kaamkitpro-staging") throw new Error("Refusing to add auth config to a non-staging Worker");
             config.vars = { ...(config.vars || {}), KAAMKITPRO_STAGING: "true", NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY };
-            fs.writeFileSync(path, JSON.stringify(config, null, 2) + "\\n");
+            fs.writeFileSync(path, JSON.stringify(config, null, 2) + "\n");
           '
       - name: Verify worker is isolated from production
         shell: bash
