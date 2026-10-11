@@ -31,7 +31,7 @@ test.describe("KaamKitPro authentication pages", () => {
 
   test("admin access page requires a signed-in allowlisted account", async ({ page }) => {
     await page.goto("/admin/access");
-    await expect(page).toHaveURL(/\\/login$/);
+    await expect(page).toHaveURL(/\/login$/);
   });
 
   test("admin grant API rejects requests without an authenticated admin", async ({ request }) => {
@@ -72,7 +72,7 @@ test.describe("KaamKitPro authentication pages", () => {
     await page.goto("/pricing");
     await page.getByRole("link", { name: "Sign in" }).click();
 
-    await expect(page).toHaveURL(/\\/login$/);
+    await expect(page).toHaveURL(/\/login$/);
     await expect(
       page.getByRole("heading", { name: "Sign in with email" }),
     ).toBeVisible();
