@@ -18,12 +18,12 @@ const toolRoutes = [
   "/tools/slug-generator", "/tools/sitemap-generator", "/tools/social", "/tools/text",
   "/tools/timestamp-converter", "/tools/url-encoder-decoder", "/tools/uuid-generator",
   "/tools/word-counter", "/tools/youtube-description-generator", "/tools/youtube-title-generator",
-  "/tools/remove-extra-spaces",
+  "/tools/remove-extra-spaces", "/tools/line-sorter", "/tools/remove-duplicate-lines", "/tools/csv-to-json", "/tools/json-to-csv", "/tools/text-diff-checker",
 ];
 
 const staticRoutes = [
   "", "/about", "/contact", "/advertise", "/pricing", "/disclaimer", "/guides", "/guides/image-compression",
-  "/guides/pdf-merge", "/guides/qr-code", "/guides/pdf-compression", "/guides/gst-calculator", "/guides/json-formatting", "/privacy-policy", "/terms", "/tools",
+  "/guides/pdf-merge", "/guides/qr-code", "/guides/pdf-compression", "/guides/gst-calculator", "/guides/json-formatting", "/guides/csv-to-json", "/guides/json-to-csv", "/guides/line-sorter", "/guides/text-diff-checker", "/guides/word-counter", "/guides/slug-generator", "/guides/remove-duplicate-lines", "/privacy-policy", "/terms", "/tools",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
