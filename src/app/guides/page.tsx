@@ -58,6 +58,13 @@ const guides = [
     category: "Developer Tools",
   },
   {
+    title: "How to Convert JSON to CSV Online",
+    description: "Turn JSON arrays into spreadsheet-ready rows and handle quoting, nested data, and common conversion issues.",
+    href: "/guides/json-to-csv",
+    tool: "/tools/json-to-csv",
+    category: "Developer Tools",
+  },
+  {
     title: "How to Convert CSV to JSON Online",
     description: "Turn CSV rows into JSON objects, handle quoted fields, and fix common conversion issues.",
     href: "/guides/csv-to-json",
