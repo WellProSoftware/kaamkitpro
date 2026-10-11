@@ -65,10 +65,14 @@ test("login and invalid callback pages render without a Supabase session", async
 });
 
 test("admin page and account routes redirect signed-out users safely", async ({ page }) => {
+  await page.route("**/api/auth/session", route =>
+    route.fulfill({ status: 401, contentType: "application/json", body: JSON.stringify({ error: "Not signed in." }) }),
+  );
   await page.goto("/admin/access");
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\\/login$/);
   await page.goto("/account");
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.getByRole("heading", { name: "Sign in with email" })).toBeVisible({ timeout: 10_000 });
+  await expect(page).toHaveURL(/\\/login$/);
 });
 
 test("signed-out access API resolves to Free and ads can load on the public homepage", async ({ request, page }) => {
