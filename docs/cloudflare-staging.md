@@ -27,7 +27,7 @@ The staging workflow:
 4. Runs the existing login/access/utility/SEO regression suite plus `tests/cloudflare-vinext.spec.mjs` against the Vite preview runtime.
 5. Commits generated source config and the package lock to this staging branch, not to `main`.
 
-The Worker preview workflow is manually dispatched and requires `deploy_to_workers_dev=true`; it will fail safely before deploying if the Cloudflare account ID and API token are not available as GitHub Actions secrets. Put secret values in GitHub repository Actions secrets—never paste tokens into issues, source files, or chat.
+The current GitHub Actions workflow is validation-only: it does not deploy a Worker. A staging deployment remains blocked until the account has a `workers.dev` subdomain and GitHub Actions has a Cloudflare API token and account ID stored as repository Actions secrets. On first setup, an account owner must open the Workers & Pages page in the Cloudflare dashboard to initialize the `workers.dev` subdomain. Do not create custom domains or routes. Once staging deployment is explicitly enabled, deploy only to the `workers.dev` preview and verify the generated URL before any further step. Put secret values in GitHub repository Actions secrets—never paste tokens into issues, source files, or chat.
 
 ## Authentication integration
 
