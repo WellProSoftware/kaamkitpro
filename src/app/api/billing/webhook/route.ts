@@ -122,9 +122,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
     }
     const terminal = current.status === "cancelled" || current.status === "expired";
-    const reactivating = nextStatus === "active" || nextStatus === "trialing";
-    if (!(terminal && reactivating)) {
-    const patchQuery = new URLSearchParams({ provider_subscription_id: `eq.${sub.id}` });
+    // Terminal state wins over every later-delivered lifecycle event.
+    if (!terminal) {
+    // Enforce this in the UPDATE itself as well: a read-then-write guard alone
+    // would still have a race if cancellation landed between those two requests.
+    const patchQuery = new URLSearchParams({
+      provider_subscription_id: `eq.${sub.id}`,
+      status: "not.in.(cancelled,expired)",
+    });
     const patch = await serviceRest(`subscriptions?${patchQuery.toString()}`, {
       method: "PATCH",
       headers: { Prefer: "return=representation" },
@@ -138,7 +143,16 @@ export async function POST(request: NextRequest) {
     if (!patch?.ok) return NextResponse.json({ error: "Could not update subscription." }, { status: 503 });
     const updated = await patch.json().catch(() => []);
     if (!Array.isArray(updated) || updated.length === 0) {
-      return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
+      // Another concurrent event may have made the subscription terminal.
+      // Confirm the row still exists; terminal rows are safely left unchanged.
+      const verify = await serviceRest(`subscriptions?${currentQuery.toString()}`);
+      if (!verify?.ok) return NextResponse.json({ error: "Could not verify subscription state." }, { status: 503 });
+      const verifyRows = await verify.json().catch(() => []);
+      const latest = Array.isArray(verifyRows) ? verifyRows[0] as { status?: string } | undefined : undefined;
+      if (!latest) return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
+      if (latest.status !== "cancelled" && latest.status !== "expired") {
+        return NextResponse.json({ error: "Subscription state changed; retry webhook." }, { status: 503 });
+      }
     }
     }
   }
