@@ -262,6 +262,7 @@ jobs:
           '
       - name: Deploy to workers.dev
         run: npx vinext-cloudflare deploy --config dist/server/wrangler.json
+      # Production domains and deployments are intentionally excluded from this smoke-test gate.
       - name: Post-deploy smoke tests against staging workers.dev only
         shell: bash
         run: |
