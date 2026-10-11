@@ -51,3 +51,7 @@ The production site is deployed on Vercel at https://kaamkitpro.com. Changes mer
 ## Privacy and support
 
 Review the site's [Privacy Policy](https://kaamkitpro.com/privacy-policy), [Terms and Conditions](https://kaamkitpro.com/terms), and [Disclaimer](https://kaamkitpro.com/disclaimer). For support, contact support@kaamkitpro.com.
+
+## Staging security regression tests
+
+The Cloudflare Workers Free staging workflow validates authenticated daily quota enforcement (three allowed uses, then HTTP 429) and Admin Access grant/revoke using disposable Supabase staging identities. These tests run only against the isolated `kaamkitpro-staging` Worker and clean up temporary test identities; they do not authorize or deploy production changes.
