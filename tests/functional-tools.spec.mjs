@@ -253,3 +253,22 @@ test("Homepage category filter shows matching tools", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Percentage Calculator", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "PDF Merge", exact: true })).toHaveCount(0);
 });
+
+
+test("Pricing page clearly labels Pro as planned and does not offer active checkout", async ({ page }) => {
+  await page.goto("/pricing");
+  await expect(page.getByRole("heading", { name: "Free tools today. More power with Pro." })).toBeVisible();
+  await expect(page.getByText("These are proposed launch prices and planned features.", { exact: false })).toBeVisible();
+  await expect(page.getByText("Subscription checkout is not active yet", { exact: false })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Join Pro early-access list" })).toHaveAttribute("href", /^mailto:/);
+});
+
+test("Subscription checkout rejects unauthenticated requests", async ({ request }) => {
+  const response = await request.post("/api/billing/checkout", {
+    data: { plan_id: "pro-monthly-inr" },
+  });
+  expect(response.status()).toBe(401);
+  await expect(response.json()).resolves.toMatchObject({
+    error: "Sign in before starting a subscription.",
+  });
+});
