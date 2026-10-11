@@ -40,6 +40,14 @@ GitHub Actions also runs CI, browser regression tests, production smoke checks, 
 
 The production site is deployed on Vercel at https://kaamkitpro.com. Changes merged into `main` are deployed through the connected Vercel Git integration.
 
+## Current monetization and staging policy
+
+- Keep currently available tools free to use; advertising is the intended initial revenue model.
+- Paid plans, checkout, and payment collection stay disabled until payment onboarding is ready and explicitly approved.
+- AdSense delivery depends on Google approval and serving; the publisher line in `public/ads.txt` alone does not guarantee ads or revenue.
+- Cloudflare validation/deployment is isolated to the `cloudflare/vinext-staging` branch and the `kaamkitpro-staging` Worker on `workers.dev`. Never add production domains or routes to this workflow.
+- A staging deployment is gated behind successful build, compatibility, TypeScript, lint, and browser checks, and must be explicitly requested with the `[deploy-staging]` commit marker or the workflow's manual deployment input.
+
 ## Privacy and support
 
 Review the site's [Privacy Policy](https://kaamkitpro.com/privacy-policy), [Terms and Conditions](https://kaamkitpro.com/terms), and [Disclaimer](https://kaamkitpro.com/disclaimer). For support, contact support@kaamkitpro.com.
