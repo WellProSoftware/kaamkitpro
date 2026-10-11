@@ -23,7 +23,7 @@ const toolRoutes = [
 
 const staticRoutes = [
   "", "/about", "/contact", "/advertise", "/pricing", "/disclaimer", "/guides", "/guides/image-compression",
-  "/guides/pdf-merge", "/guides/qr-code", "/guides/pdf-compression", "/guides/gst-calculator", "/guides/json-formatting", "/guides/csv-to-json", "/privacy-policy", "/terms", "/tools",
+  "/guides/pdf-merge", "/guides/qr-code", "/guides/pdf-compression", "/guides/gst-calculator", "/guides/json-formatting", "/guides/csv-to-json", "/guides/json-to-csv", "/privacy-policy", "/terms", "/tools",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
