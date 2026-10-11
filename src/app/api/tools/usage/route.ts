@@ -44,9 +44,8 @@ async function accessFor(userId: string, email: string) {
     limit: "100",
   });
   const grantsResponse = await serviceRest(`user_access_grants?${grantQuery.toString()}`);
-  const grants = grantsResponse?.ok
-    ? ((await grantsResponse.json().catch(() => [])) as Grant[])
-    : [];
+  if (!grantsResponse?.ok) return null;
+  const grants = (await grantsResponse.json().catch(() => [])) as Grant[];
   const active = grants.filter((grant) => activeGrant(grant, now));
   const fullAccess = active.some((grant) => grant.access_type === "full_pro");
   const proGrant = active.some((grant) => grant.access_type === "pro");
@@ -62,9 +61,8 @@ async function accessFor(userId: string, email: string) {
     limit: "1",
   });
   const subscriptionResponse = await serviceRest(`subscriptions?${subscriptionQuery.toString()}`);
-  const subscriptions = subscriptionResponse?.ok
-    ? await subscriptionResponse.json().catch(() => [])
-    : [];
+  if (!subscriptionResponse?.ok) return null;
+  const subscriptions = await subscriptionResponse.json().catch(() => []);
   const paidSubscription = Array.isArray(subscriptions) && subscriptions.some((item: { current_period_end?: string | null }) =>
     !item.current_period_end || Date.parse(item.current_period_end) > now
   );
@@ -107,6 +105,13 @@ export async function POST(request: NextRequest) {
   }
 
   const access = await accessFor(user.id, user.email);
+  if (!access) {
+    return NextResponse.json({
+      allowed: false,
+      error: "Access status could not be verified. Please try again shortly.",
+      tool_key: toolKey,
+    }, { status: 503 });
+  }
   const selectedGrant = access.selectedTools.includes(toolKey);
   if (access.fullAccess || selectedGrant) {
     return NextResponse.json({
@@ -145,8 +150,10 @@ export async function POST(request: NextRequest) {
       limit: "1",
     });
     const response = await serviceRest(`tool_usage_daily?${query.toString()}`);
-    if (!response) return NextResponse.json({ error: "Usage storage is not configured." }, { status: 503 });
-    const rows = response.ok ? await response.json().catch(() => []) : [];
+    if (!response?.ok) {
+      return NextResponse.json({ error: "Usage status could not be verified. Please try again shortly." }, { status: 503 });
+    }
+    const rows = await response.json().catch(() => []);
     const used = Array.isArray(rows) && rows.length ? Number(rows[0].usage_count) || 0 : 0;
     return NextResponse.json({
       allowed: used < dailyLimit,
