@@ -55,7 +55,7 @@ Ravi,Sales,false`}</code></pre>
             <section>
               <h2 className="text-2xl font-bold">Common CSV conversion problems</h2>
               <ul className="mt-4 list-disc space-y-3 pl-6 leading-8 text-slate-600">
-                <li><strong>Commas inside a value:</strong> fields such as <code>"Mumbai, India"</code> need correct CSV quoting.</li>
+                <li><strong>Commas inside a value:</strong> fields such as <code>&quot;Mumbai, India&quot;</code> need correct CSV quoting.</li>
                 <li><strong>Quotes inside a field:</strong> CSV commonly escapes an embedded double quote by doubling it.</li>
                 <li><strong>Missing or duplicate headers:</strong> use a distinct column name for each field so object properties remain clear.</li>
                 <li><strong>Uneven row lengths:</strong> check rows with too few or too many fields before importing the data.</li>
@@ -68,7 +68,7 @@ Ravi,Sales,false`}</code></pre>
             </section>
             <section className="rounded-2xl bg-slate-50 p-6">
               <h2 className="text-2xl font-bold">Keep sensitive data safe</h2>
-              <p className="mt-3 leading-8 text-slate-600">Before using any online converter, check how it processes input. Avoid uploading confidential customer records, credentials, or personal data unless you are authorized and the tool's privacy practices meet your requirements. Use sample or redacted data when troubleshooting.</p>
+              <p className="mt-3 leading-8 text-slate-600">Before using any online converter, check how it processes input. Avoid uploading confidential customer records, credentials, or personal data unless you are authorized and the tool&apos;s privacy practices meet your requirements. Use sample or redacted data when troubleshooting.</p>
             </section>
             <section>
               <h2 className="text-2xl font-bold">Related free tools</h2>
