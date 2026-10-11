@@ -312,3 +312,37 @@ jobs:
           if (failures) process.exit(1);
           console.log("All post-deploy checks passed for the isolated workers.dev staging URL.");
           NODE
+
+      - name: Focused diagnostics for failed client-page routes
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          node --input-type=module <<'NODE'
+          const base = "https://kaamkitpro-staging.ankitkd550.workers.dev";
+          const paths = [
+            "/tools/pdf-merge",
+            "/tools/image-rotate",
+            "/tools/pdf",
+            "/tools/image",
+            "/tools/pdf-metadata",
+            "/tools/image-converter",
+            "/_next/static/chunks/AdSenseLoader-BHk0gQEs.js"
+          ];
+          for (const path of paths) {
+            try {
+              const response = await fetch(base + path, { redirect: "follow" });
+              const body = await response.text();
+              console.log(JSON.stringify({
+                path,
+                status: response.status,
+                contentType: response.headers.get("content-type"),
+                cacheStatus: response.headers.get("cf-cache-status"),
+                length: body.length,
+                bodyPreview: body.slice(0, 240).replace(/\s+/g, " ")
+              }));
+            } catch (error) {
+              console.log(JSON.stringify({ path, error: String(error) }));
+            }
+          }
+          NODE
