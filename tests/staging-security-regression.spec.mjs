@@ -104,4 +104,28 @@ test.describe("staging security regression checks", () => {
     await page.goto("/");
     await expect(page.locator('script[src*="pagead2.googlesyndication.com"]')).toHaveCount(0);
   });
+
+  test("staging pages are noindex and staging sitemap does not publish production URLs", async ({ request }) => {
+    const home = await request.get("/");
+    expect(home.status()).toBe(200);
+    const html = await home.text();
+    expect(html).toMatch(/name="robots"[^>]*content="[^"]*noindex/i);
+
+    const sitemap = await request.get("/sitemap.xml");
+    expect(sitemap.status()).toBe(200);
+    const sitemapBody = await sitemap.text();
+    expect(sitemapBody).not.toContain("https://kaamkitpro.com/");
+  });
+
+  test("AdSense loader is fail-closed and staging-gated in source", async () => {
+    const loader = await readFile(new URL("../src/components/AdSenseLoader.tsx", import.meta.url), "utf8");
+    const layout = await readFile(new URL("../src/app/layout.tsx", import.meta.url), "utf8");
+    const access = await readFile(new URL("../src/app/api/access/route.ts", import.meta.url), "utf8");
+    expect(loader).toContain('return data.adsEnabled === true');
+    expect(loader).toContain(".catch(() =>");
+    expect(layout).toContain('<AdSenseLoader disabled={isStagingBuild} />');
+    expect(access).toContain("adsEnabled: !isStagingBuild && !isPro");
+    expect(access).toContain("adsEnabled: false");
+  });
+
 });
