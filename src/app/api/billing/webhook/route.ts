@@ -70,6 +70,38 @@ export async function POST(request: NextRequest) {
   if (!row) return NextResponse.json({ error: "Event record missing." }, { status: 503 });
   if (row.processed_at) return NextResponse.json({ received: true, duplicate: true });
 
+  // Claim this event atomically. The conditional PATCH is a single database
+  // update, so concurrent deliveries cannot both own the same unprocessed event.
+  // A five-minute lease allows recovery if a server exits mid-processing.
+  const now = new Date();
+  const staleBefore = new Date(now.getTime() - 5 * 60 * 1000).toISOString();
+  const claimQuery = new URLSearchParams({
+    provider_event_id: `eq.${eventId}`,
+    processed_at: "is.null",
+    or: `(processing_started_at.is.null,processing_started_at.lt.${staleBefore})`,
+  });
+  const claimed = await serviceRest(`payment_events?${claimQuery.toString()}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify({ processing_started_at: now.toISOString() }),
+  });
+  if (!claimed?.ok) return NextResponse.json({ error: "Could not claim webhook event." }, { status: 503 });
+  const claimedRows = await claimed.json().catch(() => []);
+  if (!Array.isArray(claimedRows) || claimedRows.length === 0) {
+    const stateQuery = new URLSearchParams({
+      select: "processed_at,processing_started_at",
+      provider_event_id: `eq.${eventId}`,
+      limit: "1",
+    });
+    const stateResponse = await serviceRest(`payment_events?${stateQuery.toString()}`);
+    if (!stateResponse?.ok) return NextResponse.json({ error: "Could not verify event state." }, { status: 503 });
+    const states = await stateResponse.json().catch(() => []);
+    const state = Array.isArray(states) ? states[0] as { processed_at?: string | null } | undefined : undefined;
+    if (state?.processed_at) return NextResponse.json({ received: true, duplicate: true });
+    // Non-2xx asks the payment provider to retry rather than silently dropping an event.
+    return NextResponse.json({ error: "Webhook event is already being processed; retry later." }, { status: 503 });
+  }
+
   const sub = payload.payload?.subscription?.entity;
   const nextStatus = statusFor(payload.event, sub?.status);
   if (nextStatus && sub?.id) {
