@@ -5,7 +5,7 @@ import BrandLogo from "@/components/BrandLogo";
 export const metadata: Metadata = {
   title: "Online Tools Guides",
   description:
-    "Original, practical guides for PDF compression, merging files, GST calculations, JSON formatting, image optimization and QR codes.",
+    "Original, practical guides for text sorting, CSV and JSON conversion, PDF tools, GST calculations, image optimization and QR codes.",
   alternates: {
     canonical: "https://kaamkitpro.com/guides",
   },
@@ -56,6 +56,14 @@ const guides = [
     href: "/guides/json-formatting",
     tool: "/tools/json-formatter",
     category: "Developer Tools",
+  },
+  {
+    title: "How to Sort Lines of Text Online",
+    description:
+      "Organize lists, filenames, product codes and keywords with alphabetical or natural sorting, then keep cleaning the list.",
+    href: "/guides/line-sorter",
+    tool: "/tools/line-sorter",
+    category: "Text Tools",
   },
   {
     title: "How to Convert JSON to CSV Online",
