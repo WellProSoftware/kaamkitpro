@@ -39,3 +39,12 @@ The `cloudflare-vinext-staging` branch can deploy only to the isolated `kaamkitp
 ### Tailwind styling parity fix
 
 The staging Vite configuration explicitly registers `@tailwindcss/vite` so `@import "tailwindcss"` is compiled during the vinext build. Revalidate the generated styles and visual layout on the workers.dev staging site before considering migration ready. Production Vercel remains unchanged.
+
+
+## Isolated staging authentication (October 2026)
+
+- Dedicated Supabase project: `KaamKitPro-Staging` (`stcahnjwonfcuzevfmyg`) in `ap-south-1`.
+- Its database is initialized with the existing subscription, access-grant/tool-limit, and webhook-lease migrations. No production rows or keys were copied.
+- The staging deploy workflow binds only this project's public URL and publishable key to the `kaamkitpro-staging` Worker. These are public client configuration values, not service-role credentials.
+- In Supabase Dashboard for `KaamKitPro-Staging`, Authentication → URL Configuration, set the Site URL to `https://kaamkitpro-staging.ankitkd550.workers.dev` and add `https://kaamkitpro-staging.ankitkd550.workers.dev/auth/callback` to Redirect URLs. Do not change production project's Auth settings.
+- Authenticated grant/revoke and metered quota still require a staging-only service-role key stored as a Worker secret and a staging-only admin allowlist. Never copy the production service-role key. Until that is configured, do not treat those privileged flows as verified.
