@@ -313,6 +313,111 @@ jobs:
           console.log("All post-deploy checks passed for the isolated workers.dev staging URL.");
           NODE
 
+      - name: Verify authenticated daily quota on staging with a disposable user
+        shell: bash
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { randomBytes } from "node:crypto";
+
+          const base = "https://kaamkitpro-staging.ankitkd550.workers.dev";
+          const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+          const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+          const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+          if (!projectUrl || !publishableKey || !serviceKey) throw new Error("Missing staging Supabase test configuration.");
+
+          const email = `kaamkitpro-staging-quota-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}@example.com`;
+          const password = randomBytes(32).toString("base64url") + "Q7!";
+          let userId = null;
+          let failed = false;
+
+          async function expect(condition, message) {
+            if (!condition) throw new Error(message);
+          }
+
+          async function callUsage(cookie, action) {
+            return fetch(base + "/api/tools/usage", {
+              method: "POST",
+              headers: { "content-type": "application/json", cookie },
+              body: JSON.stringify({ tool_key: "ai-tool", action }),
+            });
+          }
+
+          try {
+            const createdResponse = await fetch(projectUrl + "/auth/v1/admin/users", {
+              method: "POST",
+              headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}`, "content-type": "application/json" },
+              body: JSON.stringify({ email, password, email_confirm: true }),
+            });
+            if (!createdResponse.ok) throw new Error(`Could not create disposable staging auth user (HTTP ${createdResponse.status}).`);
+            const created = await createdResponse.json();
+            userId = created.id;
+            await expect(typeof userId === "string" && userId.length > 0, "Supabase did not return the disposable user ID.");
+
+            const loginResponse = await fetch(projectUrl + "/auth/v1/token?grant_type=password", {
+              method: "POST",
+              headers: { apikey: publishableKey, "content-type": "application/json" },
+              body: JSON.stringify({ email, password }),
+            });
+            if (!loginResponse.ok) throw new Error(`Disposable user sign-in failed (HTTP ${loginResponse.status}).`);
+            const session = await loginResponse.json();
+            await expect(typeof session.access_token === "string", "Supabase did not return an access token.");
+            const cookie = `kk_access_token=${session.access_token}`;
+
+            const accessResponse = await fetch(base + "/api/access", { headers: { cookie, "cache-control": "no-store" } });
+            const access = await accessResponse.json();
+            await expect(accessResponse.ok && access.plan === "free" && access.isPro === false && access.adsEnabled === false,
+              "Signed-in staging account should remain Free with ads disabled.");
+
+            const initialResponse = await callUsage(cookie, "check");
+            const initial = await initialResponse.json();
+            await expect(initialResponse.ok && initial.allowed === true && initial.used === 0 && initial.remaining === 3 && initial.dailyLimit === 3,
+              "Initial daily quota should be 0/3.");
+
+            for (let used = 1; used <= 3; used++) {
+              const response = await callUsage(cookie, "consume");
+              const result = await response.json();
+              await expect(response.status === 200 && result.allowed === true && result.used === used && result.remaining === 3 - used,
+                `Quota consume ${used} did not return expected usage/remaining values.`);
+            }
+
+            const exhaustedResponse = await callUsage(cookie, "consume");
+            const exhausted = await exhaustedResponse.json();
+            await expect(exhaustedResponse.status === 429 && exhausted.allowed === false && exhausted.used === 3 && exhausted.remaining === 0,
+              "Fourth consume should be denied with HTTP 429 at the daily limit.");
+
+            console.log("PASS authenticated quota check: initial usage 0/3.");
+            console.log("PASS quota consumption: calls 1–3 allowed and usage counted correctly.");
+            console.log("PASS quota enforcement: fourth call denied at 3/3 with HTTP 429.");
+            console.log("PASS disposable signed-in user remains Free; staging ads stay disabled.");
+          } catch (error) {
+            failed = true;
+            console.error("FAIL authenticated quota integration:", String(error));
+          } finally {
+            if (userId) {
+              try {
+                const cleanup = await fetch(projectUrl + "/auth/v1/admin/users/" + encodeURIComponent(userId), {
+                  method: "DELETE",
+                  headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}` },
+                });
+                if (!cleanup.ok) {
+                  failed = true;
+                  console.error(`FAIL disposable-user cleanup (HTTP ${cleanup.status}); remove the temporary staging user manually.`);
+                } else {
+                  console.log("PASS disposable staging auth user cleaned up.");
+                }
+              } catch (error) {
+                failed = true;
+                console.error("FAIL disposable-user cleanup:", String(error));
+              }
+            }
+          }
+
+          if (failed) process.exit(1);
+          NODE
+
       - name: Focused diagnostics for failed client-page routes
         if: always()
         shell: bash
