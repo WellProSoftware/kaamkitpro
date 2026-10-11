@@ -353,3 +353,23 @@ test("Text diff guide is discoverable and included once in the sitemap", async (
   const sitemap = await sitemapResponse.text();
   expect(sitemap.match(/https:\/\/kaamkitpro\.com\/guides\/text-diff-checker/g)).toHaveLength(1);
 });
+
+
+test("Pricing page keeps tools free, checkout inactive, and sign-in available", async ({ page }) => {
+  await page.goto("/pricing");
+  await expect(page.getByRole("heading", { name: "Useful tools. Free to use." })).toBeVisible();
+  await expect(page.getByText("All currently available tools are free; no paid subscription is required.", { exact: false })).toBeVisible();
+  await expect(page.getByText("Paid plans and checkout are not available and no payment is being collected.", { exact: false })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Sign in", exact: true })).toHaveAttribute("href", "/login");
+  await expect(page.getByRole("link", { name: /checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
+});
+
+test("Subscription checkout rejects unauthenticated requests", async ({ request }) => {
+  const response = await request.post("/api/billing/checkout", {
+    data: { plan_id: "pro-monthly-inr" },
+  });
+  expect(response.status()).toBe(401);
+  await expect(response.json()).resolves.toMatchObject({
+    error: "Sign in before starting a subscription.",
+  });
+});
