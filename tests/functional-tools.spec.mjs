@@ -292,3 +292,14 @@ test("Text Diff Checker reports added and removed lines", async ({ page }) => {
   await expect(page.locator("pre")).toContainText("+ gamma");
   await expect(page.locator("pre")).toContainText("− beta");
 });
+
+
+test("Sitemap lists each new utility route exactly once", async ({ request }) => {
+  const response = await request.get("/sitemap.xml");
+  expect(response.ok()).toBeTruthy();
+  const xml = await response.text();
+  for (const route of ["json-to-csv", "text-diff-checker"]) {
+    const matches = xml.match(new RegExp("https://kaamkitpro\\.com/tools/" + route, "g")) || [];
+    expect(matches).toHaveLength(1);
+  }
+});
