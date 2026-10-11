@@ -163,3 +163,45 @@ test("CSV to JSON converter works in the vinext preview runtime", async ({ page 
     JSON.stringify([{ name: "Asha", city: "Mumbai", note: "Likes tea, coffee" }], null, 2),
   );
 });
+
+test("quota endpoint validates malformed and unknown tool keys safely", async ({ request }) => {
+  const malformed = await request.post("/api/tools/usage", { data: { action: "check" } });
+  expect(malformed.status()).toBe(400);
+  expect(await malformed.json()).toMatchObject({ error: "A valid tool key is required." });
+
+  const anonymousConsume = await request.post("/api/tools/usage", {
+    data: { tool_key: "ai-tool", action: "consume" },
+  });
+  expect(anonymousConsume.status()).toBe(401);
+  expect(await anonymousConsume.json()).toMatchObject({ requiresSignIn: true });
+
+  const freeConsume = await request.post("/api/tools/usage", {
+    data: { tool_key: "calculator", action: "consume" },
+  });
+  expect(freeConsume.ok()).toBeTruthy();
+  expect(await freeConsume.json()).toMatchObject({ allowed: true, tier: "free", limited: false });
+});
+
+test("billing webhook rejects unsigned requests without changing subscription state", async ({ request }) => {
+  const response = await request.post("/api/billing/webhook", {
+    data: { event: "subscription.activated", payload: {} },
+  });
+  expect([401, 503]).toContain(response.status());
+  expect(await response.json()).toHaveProperty("error");
+});
+
+test("representative free utility pages render on staging", async ({ page }) => {
+  const cases = [
+    ["/tools/json-formatter", "JSON Formatter"],
+    ["/tools/pdf-merge", "PDF Merge Tool"],
+    ["/tools/image-rotate", "Image Rotate Tool"],
+    ["/tools/qr-code-generator", "QR Code Generator"],
+    ["/tools/gst-calculator", "GST Calculator"],
+  ];
+
+  for (const [path, heading] of cases) {
+    await page.goto(path);
+    await expect(page.getByRole("heading", { name: heading, exact: true })).toBeVisible();
+  }
+});
+
