@@ -100,4 +100,8 @@ test.describe("staging security regression checks", () => {
       expect(source).not.toContain("!item.current_period_end || Date.parse(item.current_period_end) > now");
     }
   });
+  test("staging does not load the live AdSense script", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator('script[src*="pagead2.googlesyndication.com"]')).toHaveCount(0);
+  });
 });
