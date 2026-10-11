@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRequestUser, serviceRest } from "@/lib/server-access";
 
-export const runtime = "nodejs";
 
 type Plan = {
   id: string;
