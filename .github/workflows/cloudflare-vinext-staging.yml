@@ -262,3 +262,39 @@ jobs:
           '
       - name: Deploy to workers.dev
         run: npx vinext-cloudflare deploy --config dist/server/wrangler.json
+      - name: Post-deploy smoke tests against staging workers.dev only
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          const base = "https://kaamkitpro-staging.ankitkd550.workers.dev";
+          const checks = [
+            ["/", async r => r.status === 200 && /noindex/i.test(await r.text()), "homepage + staging noindex"],
+            ["/pricing", async r => { const t = await r.text(); return r.status === 200 && /Useful tools/i.test(t) && /Paid plans and checkout are not available/i.test(t); }, "free-only pricing"],
+            ["/ads.txt", async r => r.status === 200 && (await r.text()).trim() === "google.com, pub-6738934686699082, DIRECT, f08c47fec0942fa0", "ads.txt publisher line"],
+            ["/robots.txt", async r => r.status === 200 && /Disallow:\\s*\\//i.test(await r.text()), "robots.txt staging exclusion"],
+            ["/api/access", async r => { const t = await r.json(); return r.status === 200 && t.plan === "free" && t.isPro === false; }, "anonymous access API"],
+            ["/tools/json-formatter", async r => r.status === 200 && /JSON Formatter/.test(await r.text()), "JSON Formatter"],
+            ["/tools/pdf-merge", async r => r.status === 200 && /PDF Merge Tool/.test(await r.text()), "PDF Merge"],
+            ["/tools/image-rotate", async r => r.status === 200 && /Image Rotate Tool/.test(await r.text()), "Image Rotate"],
+            ["/tools/qr-code-generator", async r => r.status === 200 && /QR Code Generator/.test(await r.text()), "QR code generator"],
+            ["/tools/gst-calculator", async r => r.status === 200 && /GST Calculator/.test(await r.text()), "GST calculator"],
+          ];
+          let failures = 0;
+          for (const [path, verify, label] of checks) {
+            let ok = false;
+            let detail = "";
+            for (let attempt = 0; attempt < 5; attempt++) {
+              try {
+                const response = await fetch(base + path, { redirect: "follow" });
+                detail = "HTTP " + response.status;
+                if (await verify(response)) { ok = true; break; }
+              } catch (error) { detail = String(error); }
+              await new Promise(resolve => setTimeout(resolve, 1500));
+            }
+            console.log((ok ? "PASS " : "FAIL ") + label + " — " + detail);
+            if (!ok) failures++;
+          }
+          if (failures) process.exit(1);
+          console.log("All post-deploy checks passed for the isolated workers.dev staging URL.");
+          NODE
