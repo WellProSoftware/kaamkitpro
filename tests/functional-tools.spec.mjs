@@ -315,3 +315,15 @@ test("CSV to JSON guide is discoverable and included once in the sitemap", async
   const sitemap = await sitemapResponse.text();
   expect(sitemap.match(/https:\/\/kaamkitpro\.com\/guides\/csv-to-json/g)).toHaveLength(1);
 });
+
+
+test("JSON to CSV guide is discoverable and included once in the sitemap", async ({ page }) => {
+  await page.goto("/guides/json-to-csv");
+  await expect(page.getByRole("heading", { name: "How to Convert JSON to CSV Online for Free", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open Free JSON to CSV Converter" })).toHaveAttribute("href", "/tools/json-to-csv");
+
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  const sitemap = await sitemapResponse.text();
+  expect(sitemap.match(/https:\/\/kaamkitpro\.com\/guides\/json-to-csv/g)).toHaveLength(1);
+});
