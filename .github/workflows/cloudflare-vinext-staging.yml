@@ -44,7 +44,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          npx --yes vinext@1.0.0-beta.5 check 2>&1 | tee vinext-compatibility-report.txt
+          npx vinext check 2>&1 | tee vinext-compatibility-report.txt
           status=${PIPESTATUS[0]}
           echo "$status" > vinext-compatibility-exit-code.txt
           exit "$status"
