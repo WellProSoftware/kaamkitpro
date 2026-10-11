@@ -586,7 +586,7 @@ test("Remove Extra Spaces collapses repeated spaces and preserves words and line
   await page.locator("textarea").fill("  Hello   world  \n\n  Keep\tthese   words  ");
   await page.getByRole("button", { name: "Remove Extra Spaces", exact: true }).click();
   await expect(page.locator("div.whitespace-pre-wrap")).toContainText("Hello world\n\nKeep these words");
-  await expect(page.getByText("Cleaned Words", { exact: true }).locator("xpath=..")).toContainText("4");
+  await expect(page.getByText("Cleaned Words", { exact: true }).locator("xpath=..")).toContainText("5");
 });
 
 test("Case Converter reports line count instead of character count", async ({ page }) => {
