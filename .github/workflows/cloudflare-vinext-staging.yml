@@ -5,6 +5,12 @@ on:
     branches:
       - cloudflare/vinext-staging
   workflow_dispatch:
+    inputs:
+      deploy_to_workers_dev:
+        description: "Deploy the validated staging build to workers.dev (never production)"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -196,3 +202,47 @@ jobs:
             exit 1
           fi
           echo "Compatibility, build, TypeScript, lint, and browser gates passed."
+
+  deploy-staging:
+    name: Deploy validated build to workers.dev only
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy_to_workers_dev == true
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: cloudflare-staging
+    permissions:
+      contents: read
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      KAAMKITPRO_STAGING: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Checkout staging branch only
+        uses: actions/checkout@v5
+        with:
+          ref: cloudflare/vinext-staging
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build staging output
+        run: npm run build:vinext
+      - name: Verify worker is isolated from production
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+          test -n "$CLOUDFLARE_API_TOKEN"
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const p = JSON.parse(fs.readFileSync("dist/server/wrangler.json", "utf8"));
+            if (p.name !== "kaamkitpro-staging") throw new Error("Refusing deploy: unexpected Worker name");
+            if (p.routes?.length || p.route || p.custom_domains?.length || p.domains?.length) throw new Error("Refusing deploy: custom route/domain detected");
+            console.log("Verified staging-only Worker name and no custom routes/domains.");
+          '
+      - name: Deploy to workers.dev
+        run: npx vinext-cloudflare deploy --config dist/server/wrangler.json
