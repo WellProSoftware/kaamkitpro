@@ -36,3 +36,7 @@ A public staging Worker can exercise the unauthenticated routes without credenti
 ### Explicit staging deployment trigger
 
 The `cloudflare-vinext-staging` branch can deploy only to the isolated `kaamkitpro-staging` Worker on `workers.dev`. Normal pushes run validation only. A maintainer must use the exact `[deploy-staging]` commit-message marker to request a staging deployment; the deploy job waits for validation to succeed and rejects generated Worker configs containing custom routes or domains. Never add production domains or DNS routes to this staging Worker.
+
+### Tailwind styling parity fix
+
+The staging Vite configuration explicitly registers `@tailwindcss/vite` so `@import "tailwindcss"` is compiled during the vinext build. Revalidate the generated styles and visual layout on the workers.dev staging site before considering migration ready. Production Vercel remains unchanged.
