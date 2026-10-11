@@ -579,3 +579,41 @@ test("Remove Duplicate Lines keeps first occurrence and supports case-insensitiv
   await expect(page.locator("#duplicate-output")).toHaveValue("Apple\nBanana");
   await expect(page.getByText("2 kept · 2 removed", { exact: true })).toBeVisible();
 });
+
+
+test("Remove Extra Spaces collapses repeated spaces and preserves words and line breaks", async ({ page }) => {
+  await page.goto("/tools/remove-extra-spaces");
+  await page.locator("textarea").fill("  Hello   world  \n\n  Keep\tthese   words  ");
+  await page.getByRole("button", { name: "Remove Extra Spaces", exact: true }).click();
+  await expect(page.locator("div.whitespace-pre-wrap")).toContainText("Hello world\n\nKeep these words");
+  await expect(page.getByText("Cleaned Words", { exact: true }).locator("xpath=..")).toContainText("4");
+});
+
+test("Case Converter reports line count instead of character count", async ({ page }) => {
+  await page.goto("/tools/case-converter");
+  await page.getByPlaceholder("Type or paste your text here...").fill("Hello\nworld");
+  const stats = page.getByText("Lines", { exact: true }).locator("xpath=..");
+  await expect(stats).toContainText("2");
+  await page.getByRole("button", { name: "UPPERCASE", exact: true }).click();
+  await expect(page.locator("textarea")).toHaveValue("HELLO\nWORLD");
+  await expect(stats).toContainText("2");
+});
+
+test("Base64 encoder and decoder preserve Hindi and emoji text", async ({ page }) => {
+  await page.goto("/tools/base64");
+  const input = page.getByPlaceholder("Enter text here...");
+  await input.fill("नमस्ते KaamKitPro 🌟");
+  await page.getByRole("button", { name: "Encode to Base64", exact: true }).click();
+  const encoded = await page.locator("div.whitespace-pre-wrap.break-words").innerText();
+  expect(encoded).toBe(Buffer.from("नमस्ते KaamKitPro 🌟", "utf8").toString("base64"));
+  await input.fill(encoded);
+  await page.getByRole("button", { name: "Decode from Base64", exact: true }).click();
+  await expect(page.locator("div.whitespace-pre-wrap.break-words")).toContainText("नमस्ते KaamKitPro 🌟");
+});
+
+test("Base64 decoder reports malformed input", async ({ page }) => {
+  await page.goto("/tools/base64");
+  await page.getByPlaceholder("Enter text here...").fill("%%%not-base64%%%");
+  await page.getByRole("button", { name: "Decode from Base64", exact: true }).click();
+  await expect(page.getByText("Invalid Base64 input.", { exact: true })).toBeVisible();
+});

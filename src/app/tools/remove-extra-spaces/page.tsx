@@ -7,9 +7,10 @@ export default function RemoveExtraSpacesPage() {
   const [text, setText] = useState("");
 
   const cleanedText = text
-    .replace(/[ \t]+/g, " ")
-    .replace(/\s+/g, "")
-    .replace(/\s+/g, "")
+    .split("\n")
+    .map((line) => line.replace(/[ \t]+/g, " ").trim())
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
     .trim();
 
   const removeExtraSpaces = () => {
