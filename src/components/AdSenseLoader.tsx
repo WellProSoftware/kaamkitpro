@@ -5,11 +5,15 @@ import { usePathname } from "next/navigation";
 
 const ADSENSE_SCRIPT_ID = "google-adsense";
 
-export default function AdSenseLoader() {
+export default function AdSenseLoader({ disabled = false }: { disabled?: boolean }) {
   const pathname = usePathname();
 
   useEffect(() => {
     let cancelled = false;
+    if (disabled) {
+      document.getElementById(ADSENSE_SCRIPT_ID)?.remove();
+      return;
+    }
     const excluded = /^\/(login|account|admin)(\/|$)/.test(pathname) || pathname.startsWith("/auth/");
     if (excluded) {
       document.getElementById(ADSENSE_SCRIPT_ID)?.remove();
@@ -46,7 +50,7 @@ export default function AdSenseLoader() {
     return () => {
       cancelled = true;
     };
-  }, [pathname]);
+  }, [pathname, disabled]);
 
   return null;
 }
