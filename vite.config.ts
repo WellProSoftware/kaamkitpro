@@ -9,6 +9,9 @@ export default defineConfig({
   // the staging-only SEO guard deterministic in the generated server bundle.
   define: {
     "process.env.KAAMKITPRO_STAGING": JSON.stringify(process.env.KAAMKITPRO_STAGING ?? ""),
+    // Cloudflare Worker vars are not automatically exposed as process.env at runtime.
+    // Bake only the run-scoped, non-secret staging admin email into the server bundle.
+    "process.env.KAAMKITPRO_ADMIN_EMAILS": JSON.stringify(process.env.KAAMKITPRO_ADMIN_EMAILS ?? ""),
   },
   plugins: [
     tailwindcss(),
