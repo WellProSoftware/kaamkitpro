@@ -128,4 +128,22 @@ test.describe("staging security regression checks", () => {
     expect(access).toContain("adsEnabled: false");
   });
 
+  test("public trust and monetization pages remain reachable and listed in the production sitemap source", async ({ request }) => {
+    const paths = ["/about", "/contact", "/advertise", "/privacy-policy", "/terms", "/pricing", "/guides"];
+    for (const path of paths) {
+      const response = await request.get(path);
+      expect(response.status(), path).toBe(200);
+    }
+
+    const sitemap = await readFile(new URL("../src/app/sitemap.ts", import.meta.url), "utf8");
+    for (const path of paths) {
+      expect(sitemap, `production sitemap should include ${path}`).toContain(`"${path}"`);
+    }
+
+    const privacy = await request.get("/privacy-policy");
+    expect(await privacy.text()).toMatch(/Advertising/i);
+    const advertise = await request.get("/advertise");
+    expect(await advertise.text()).toMatch(/Partnership/i);
+  });
+
 });
