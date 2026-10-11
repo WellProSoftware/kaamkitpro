@@ -209,7 +209,6 @@ jobs:
     needs: validate
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    environment: cloudflare-staging
     permissions:
       contents: read
     env:
