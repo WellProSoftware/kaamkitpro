@@ -340,3 +340,16 @@ test("Line sorter guide is discoverable and included once in the sitemap", async
   const sitemap = await sitemapResponse.text();
   expect(sitemap.match(/https:\/\/kaamkitpro\.com\/guides\/line-sorter/g)).toHaveLength(1);
 });
+
+
+test("Text diff guide is discoverable and included once in the sitemap", async ({ page }) => {
+  await page.goto("/guides/text-diff-checker");
+  await expect(page.getByRole("heading", { name: "How to Compare Two Texts Online for Free", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open Free Text Diff Checker" })).toHaveAttribute("href", "/tools/text-diff-checker");
+  await expect(page.getByRole("link", { name: "Free Line Sorter" })).toHaveAttribute("href", "/tools/line-sorter");
+
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  const sitemap = await sitemapResponse.text();
+  expect(sitemap.match(/https:\/\/kaamkitpro\.com\/guides\/text-diff-checker/g)).toHaveLength(1);
+});
