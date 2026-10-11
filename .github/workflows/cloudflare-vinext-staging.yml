@@ -116,7 +116,7 @@ jobs:
           import path from "node:path";
           const root = "src/app/tools";
           const sitemap = fs.readFileSync("src/app/sitemap.ts", "utf8");
-          const listed = new Set([...sitemap.matchAll(/"(\\/tools(?:\\/[a-z0-9-]+)*)"/g)].map(match => match[1]));
+          const listed = new Set([...sitemap.matchAll(/"([^"]+)"/g)].map(match => match[1]).filter(value => value === "/tools" || value.startsWith("/tools/")));
           const pages = [];
           function walk(dir) {
             for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
