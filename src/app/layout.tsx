@@ -133,20 +133,24 @@ export default function RootLayout({
 
         <InternalLinks />
 
-        {/* Google Analytics */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-M9190XP42G"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){window.dataLayer.push(arguments);}
-            gtag('js', new Date());
+        {/* Keep staging traffic out of production analytics. */}
+        {!isStagingBuild && (
+          <>
+            <Script
+              src="https://www.googletagmanager.com/gtag/js?id=G-M9190XP42G"
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){window.dataLayer.push(arguments);}
+                gtag('js', new Date());
 
-            gtag('config', 'G-M9190XP42G');
-          `}
-        </Script>
+                gtag('config', 'G-M9190XP42G');
+              `}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );
