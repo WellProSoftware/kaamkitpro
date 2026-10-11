@@ -11,8 +11,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  cacheComponents: true,
-  partialPrefetching: true,
+  // Keep experimental cache components and partial prefetching out of this isolated vinext staging branch.
   async headers() {
     return [
       {
