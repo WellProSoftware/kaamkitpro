@@ -492,10 +492,10 @@ test("Slug Generator converts a title into a clean URL slug", async ({ page }) =
 
 test("JSON Formatter minifies valid JSON without changing its data", async ({ page }) => {
   await page.goto("/tools/json-formatter");
-  await page.getByPlaceholder('{"name":"KaamKitPro","tools":10}').fill('{
+  await page.getByPlaceholder('{"name":"KaamKitPro","tools":10}').fill(`{
   "name": "KaamKitPro",
   "tools": 10
-}');
+}`);
   await page.getByRole("button", { name: "Minify", exact: true }).click();
   await expect(page.locator("div.whitespace-pre-wrap")).toContainText('{"name":"KaamKitPro","tools":10}');
 });
