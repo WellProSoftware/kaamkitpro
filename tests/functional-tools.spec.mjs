@@ -418,3 +418,21 @@ test("Subscription checkout rejects unauthenticated requests", async ({ request 
     error: "Sign in before starting a subscription.",
   });
 });
+
+test("Word Counter counts paragraphs by blank-line separation", async ({ page }) => {
+  await page.goto("/tools/word-counter");
+  await expect(page.getByRole("heading", { name: "Word Counter", exact: true })).toBeVisible();
+
+  const editor = page.locator("textarea").first();
+  const paragraphCount = page.getByText("Paragraphs", { exact: true }).locator("..").getByText("2", { exact: true });
+
+  await editor.fill("First line\\ncontinued in the same paragraph\\n\\nSecond paragraph");
+  await expect(paragraphCount).toBeVisible();
+
+  await editor.fill("One paragraph only");
+  await expect(page.getByText("Paragraphs", { exact: true }).locator("..").getByText("1", { exact: true })).toBeVisible();
+
+  await editor.fill("");
+  await expect(page.getByText("Paragraphs", { exact: true }).locator("..").getByText("0", { exact: true })).toBeVisible();
+});
+
