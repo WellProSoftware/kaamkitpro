@@ -75,26 +75,20 @@ test("admin page and account routes redirect signed-out users safely", async ({ 
   await expect(page).toHaveURL(/\/login$/);
 });
 
-test("signed-out access API resolves to Free and ads can load on the public homepage", async ({ request, page }) => {
+test("signed-out access API resolves to Free and live ads stay disabled on staging", async ({ request, page }) => {
   const response = await request.get("/api/access");
   expect(response.ok()).toBeTruthy();
   expect(await response.json()).toMatchObject({
     user: null,
     plan: "free",
     isPro: false,
-    adsEnabled: true,
+    adsEnabled: false,
     selectedTools: [],
   });
 
-  // Intercept the remote ad script so the test never depends on or executes a third-party ad request.
-  await page.route("https://pagead2.googlesyndication.com/**", route =>
-    route.fulfill({ status: 200, contentType: "application/javascript", body: "/* intercepted in staging test */" }),
-  );
   await page.goto("/");
-  await expect(page.locator("#google-adsense")).toHaveAttribute(
-    "data-ad-client",
-    "ca-pub-6738934686699082",
-  );
+  await expect(page.locator("#google-adsense")).toHaveCount(0);
+  await expect(page.locator('script[src*="pagead2.googlesyndication.com"]')).toHaveCount(0);
 });
 
 test("admin grant and revoke mutations reject unauthenticated callers", async ({ request }) => {
