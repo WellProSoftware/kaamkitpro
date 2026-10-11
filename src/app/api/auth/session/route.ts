@@ -57,15 +57,18 @@ export async function POST(request: NextRequest) {
   const refreshToken = payload.refresh_token;
   const expiresIn = payload.expires_in;
 
+  // Do not impose a minimum length on opaque Supabase refresh tokens.
+  // Supabase Auth validates the access token below; malformed/expired access
+  // tokens still fail closed before any session cookies are issued.
   if (
     typeof accessToken !== "string" ||
-    accessToken.length < 20 ||
+    accessToken.length === 0 ||
     accessToken.length > 8192 ||
     typeof refreshToken !== "string" ||
-    refreshToken.length < 20 ||
+    refreshToken.length === 0 ||
     refreshToken.length > 2048
   ) {
-    return NextResponse.json({ error: "Invalid session tokens." }, { status: 400 });
+    return NextResponse.json({ error: "Invalid session token format." }, { status: 400 });
   }
 
   const user = await getSupabaseUser(config.url, config.key, accessToken);
