@@ -16,13 +16,14 @@ function activeGrant(grant: Grant, now: number) {
 }
 
 export async function GET(request: NextRequest) {
+  const isStagingBuild = process.env.KAAMKITPRO_STAGING === "true" || process.env.VERCEL_ENV === "preview";
   const user = await getRequestUser(request);
   if (!user?.email) {
     return NextResponse.json({
       user: null,
       plan: "free",
       isPro: false,
-      adsEnabled: true,
+      adsEnabled: !isStagingBuild,
       selectedTools: [],
       message: "Sign in to manage your account and metered tool usage.",
     });
@@ -87,7 +88,7 @@ export async function GET(request: NextRequest) {
     plan: fullGrant ? "admin_full_access" : isPro ? "pro" : selectedTools.length ? "selected_tools" : "free",
     isPro,
     fullAccess: fullGrant,
-    adsEnabled: !isPro,
+    adsEnabled: !isStagingBuild && !isPro,
     selectedTools,
     isAdmin: isAuthorizedAdmin(user.email),
     message: isPro
