@@ -540,3 +540,25 @@ test("Image Compressor creates a downloadable compressed image", async ({ page }
   expect(download.suggestedFilename()).toBe("kaamkitpro-compressed.jpg");
   await expect(page.getByText("Image compressed successfully.", { exact: true })).toBeVisible();
 });
+
+
+test("CSV to JSON handles commas inside quoted fields", async ({ page }) => {
+  await page.goto("/tools/csv-to-json");
+  await page.locator("#csv-input").fill('name,city,note\nAsha,Mumbai,"Likes tea, coffee"');
+  await expect(page.locator("#json-output")).toContainText('"note": "Likes tea, coffee"');
+  await expect(page.getByRole("alert")).toHaveCount(0);
+});
+
+test("CSV to JSON reports unclosed quoted fields", async ({ page }) => {
+  await page.goto("/tools/csv-to-json");
+  await page.locator("#csv-input").fill('name,note\nAsha,"not closed');
+  await expect(page.getByRole("alert")).toContainText("CSV has an unclosed quoted field.");
+});
+
+test("JSON to CSV escapes commas and quotes and rejects invalid shape", async ({ page }) => {
+  await page.goto("/tools/json-to-csv");
+  await page.locator("#json-csv-input").fill('[{"name":"Asha","note":"tea, \\"coffee\\""}]');
+  await expect(page.locator("#csv-output")).toContainText('"tea, ""coffee"""');
+  await page.locator("#json-csv-input").fill('{"name":"Asha"}');
+  await expect(page.getByRole("alert")).toContainText("JSON must be an array of objects or arrays.");
+});
