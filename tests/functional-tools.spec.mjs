@@ -466,3 +466,25 @@ test("tool pages publish page-specific canonical URLs", async ({ page }) => {
     );
   }
 });
+
+test("QR Code Generator creates a downloadable QR code for entered text", async ({ page }) => {
+  await page.goto("/tools/qr-code-generator");
+  await expect(page.getByRole("heading", { name: "QR Code Generator", exact: true })).toBeVisible();
+  const input = page.locator("#qr-text");
+  await expect(page.getByRole("button", { name: "Download QR Code" })).toBeDisabled();
+  await input.fill("https://example.com/kaamkitpro-test");
+  await expect(page.getByText("Your QR code is ready")).toBeVisible();
+  await expect(page.locator("#qr-code")).toBeVisible();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download QR Code" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-qr-code.png");
+});
+
+test("Slug Generator converts a title into a clean URL slug", async ({ page }) => {
+  await page.goto("/tools/slug-generator");
+  await expect(page.getByRole("heading", { name: "Slug Generator", exact: true })).toBeVisible();
+  await page.getByPlaceholder("Example: Best Free Online Tools for Students").fill("  Crème & Coffee — Best Online Tools!  ");
+  await page.getByRole("button", { name: "Generate Slug" }).click();
+  await expect(page.getByText("creme-coffee-best-online-tools", { exact: true })).toBeVisible();
+});
