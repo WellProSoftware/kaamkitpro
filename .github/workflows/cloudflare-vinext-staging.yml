@@ -88,25 +88,25 @@ jobs:
         id: vinext_build
         if: always() && steps.init.outcome == 'success'
         continue-on-error: true
-        run: npm run build:vinext 2>&1 | tee vinext-build.log
+        run: set -o pipefail; npm run build:vinext 2>&1 | tee vinext-build.log
 
       - name: TypeScript check including generated Cloudflare types
         id: types
         if: always() && steps.init.outcome == 'success'
         continue-on-error: true
-        run: npx tsc --noEmit 2>&1 | tee typescript-check.log
+        run: set -o pipefail; npx tsc --noEmit 2>&1 | tee typescript-check.log
 
       - name: Lint
         id: lint
         if: always() && steps.init.outcome == 'success'
         continue-on-error: true
-        run: npm run lint 2>&1 | tee lint.log
+        run: set -o pipefail; npm run lint 2>&1 | tee lint.log
 
       - name: Recheck the original Next.js build
         id: next_build
         if: always() && steps.init.outcome == 'success'
         continue-on-error: true
-        run: npm run build 2>&1 | tee next-build.log
+        run: set -o pipefail; npm run build 2>&1 | tee next-build.log
 
       - name: Install isolated browser-test dependencies
         id: playwright_install
@@ -120,7 +120,7 @@ jobs:
         id: browser_tests
         if: always() && steps.playwright_install.outcome == 'success'
         continue-on-error: true
-        run: npx playwright test -c playwright.cloudflare.config.mjs 2>&1 | tee cloudflare-playwright.log
+        run: set -o pipefail; npx playwright test -c playwright.cloudflare.config.mjs 2>&1 | tee cloudflare-playwright.log
 
       - name: Commit generated Cloudflare source configuration to staging branch
         if: always() && steps.init.outcome == 'success'
