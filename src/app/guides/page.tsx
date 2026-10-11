@@ -57,6 +57,13 @@ const guides = [
     tool: "/tools/json-formatter",
     category: "Developer Tools",
   },
+  {
+    title: "How to Convert CSV to JSON Online",
+    description: "Turn CSV rows into JSON objects, handle quoted fields, and fix common conversion issues.",
+    href: "/guides/csv-to-json",
+    tool: "/tools/csv-to-json",
+    category: "Developer Tools",
+  },
 ];
 
 export default function GuidesPage() {
