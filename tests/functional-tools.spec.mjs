@@ -439,3 +439,30 @@ test("Word Counter counts paragraphs by blank-line separation", async ({ page })
   await expect(countFor(0)).toBeVisible();
 });
 
+test("tool pages publish page-specific canonical URLs", async ({ page }) => {
+  const paths = [
+    "/tools",
+    "/tools/word-counter",
+    "/tools/json-formatter",
+    "/tools/qr-code-generator",
+    "/tools/image-compressor",
+    "/tools/pdf-merge",
+    "/tools/image-brightness",
+    "/tools/image-flip",
+    "/tools/image-grayscale",
+    "/tools/image-rotate",
+    "/tools/line-sorter",
+    "/tools/remove-duplicate-lines",
+    "/tools/csv-to-json",
+    "/tools/json-to-csv",
+    "/tools/text-diff-checker",
+  ];
+
+  for (const path of paths) {
+    await page.goto(path);
+    await expect(page.locator('link[rel="canonical"]'), path).toHaveAttribute(
+      "href",
+      `https://kaamkitpro.com${path}`,
+    );
+  }
+});
