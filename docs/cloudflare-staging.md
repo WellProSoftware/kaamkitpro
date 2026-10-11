@@ -20,14 +20,13 @@ Keep usage within the Workers Free limits published at <https://developers.cloud
 ## Validation steps
 
 The staging workflow:
-
 1. Runs `vinext check` and saves its output as an artifact.
 2. Initializes vinext non-destructively with the Cloudflare target and no KV/Images add-ons.
 3. Builds with `npm run build:vinext`.
 4. Runs the existing login/access/utility/SEO regression suite plus `tests/cloudflare-vinext.spec.mjs` against the Vite preview runtime.
 5. Commits generated source config and the package lock to this staging branch, not to `main`.
 
-The GitHub Actions workflow validates the staging build and can deploy only after an explicit `[deploy-staging]` commit marker and successful validation. The initial staging deployment completed successfully to the `kaamkitpro-staging` Worker. Keep it on the account's `workers.dev` subdomain; do not create custom domains or routes. Put secret values in GitHub repository Actions secrets—never paste tokens into issues, source files, or chat.
+The latest staging validation, including Tailwind CSS plugin setup, passed build, TypeScript, lint, Next.js build and browser checks. This commit requests a new deployment of that validated code to the `kaamkitpro-staging` Worker only. Keep it on the account's `workers.dev` subdomain; do not create custom domains or routes. Put secret values in GitHub repository Actions secrets—never paste tokens into issues, source files, or chat.
 
 ## Authentication integration
 
@@ -35,7 +34,7 @@ A public staging Worker can exercise the unauthenticated routes without credenti
 
 ### Explicit staging deployment trigger
 
-The `cloudflare-vinext-staging` branch can deploy only to the isolated `kaamkitpro-staging` Worker on `workers.dev`. Normal pushes run validation only. A maintainer must use the exact `[deploy-staging]` commit-message marker to request a staging deployment; the deploy job waits for validation to succeed and rejects generated Worker configs containing custom routes or domains. Never add production domains or DNS routes to this staging Worker.
+The `cloudflare-vinext-staging` branch can deploy only to the isolated `kaamkitpro-staging` Worker on `workers.dev`. Normal pushes run validation only. A maintainer can request deployment using the exact `[deploy-staging]` commit-message marker; the deploy job waits for validation to succeed and rejects generated Worker configs containing custom routes or domains. Never add production domains or DNS routes to this staging Worker.
 
 ### Tailwind styling parity fix
 
