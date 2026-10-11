@@ -355,6 +355,37 @@ test("Text diff guide is discoverable and included once in the sitemap", async (
 });
 
 
+test("Word counter guide is discoverable and included once in the sitemap", async ({ page }) => {
+  await page.goto("/guides/word-counter");
+  await expect(page.getByRole("heading", { name: "How to Count Words and Characters Online", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open Free Word Counter" })).toHaveAttribute("href", "/tools/word-counter");
+
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  expect((await sitemapResponse.text()).match(/https:\/\/kaamkitpro\.com\/guides\/word-counter/g)).toHaveLength(1);
+});
+
+test("Slug generator guide is discoverable and included once in the sitemap", async ({ page }) => {
+  await page.goto("/guides/slug-generator");
+  await expect(page.getByRole("heading", { name: "How to Create an SEO-Friendly URL Slug", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open Free Slug Generator" })).toHaveAttribute("href", "/tools/slug-generator");
+
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  expect((await sitemapResponse.text()).match(/https:\/\/kaamkitpro\.com\/guides\/slug-generator/g)).toHaveLength(1);
+});
+
+test("Duplicate-line guide is discoverable and included once in the sitemap", async ({ page }) => {
+  await page.goto("/guides/remove-duplicate-lines");
+  await expect(page.getByRole("heading", { name: "How to Remove Duplicate Lines from a List", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open Free Duplicate Line Remover" })).toHaveAttribute("href", "/tools/remove-duplicate-lines");
+
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  expect((await sitemapResponse.text()).match(/https:\/\/kaamkitpro\.com\/guides\/remove-duplicate-lines/g)).toHaveLength(1);
+});
+
+
 test("Pricing page keeps tools free, checkout inactive, and sign-in available", async ({ page }) => {
   await page.goto("/pricing");
   await expect(page.getByRole("heading", { name: "Useful tools. Free to use." })).toBeVisible();
