@@ -27,6 +27,13 @@ const staticRoutes = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const isStagingBuild =
+    process.env.KAAMKITPRO_STAGING === "true" ||
+    process.env.VERCEL_ENV === "preview";
+
+  // Do not publish production URLs from a publicly reachable staging sitemap.
+  if (isStagingBuild) return [];
+
   return [
     ...staticRoutes.map((route) => ({
       url: baseUrl + route,
