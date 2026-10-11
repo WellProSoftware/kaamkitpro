@@ -421,7 +421,7 @@ jobs:
       - name: Verify authenticated Admin Access grant and revoke on staging with a disposable admin
         shell: bash
         env:
-          SUPABASE_SERVICE_ROLE_KEY: \${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           set -euo pipefail
           node --input-type=module <<'NODE'
@@ -431,8 +431,8 @@ jobs:
           const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
           const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
           const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-          const adminEmail = \`kaamkitpro-staging-admin-\${process.env.GITHUB_RUN_ID}@example.com\`;
-          const targetEmail = \`kaamkitpro-staging-grantee-\${process.env.GITHUB_RUN_ID}@example.com\`;
+          const adminEmail = `kaamkitpro-staging-admin-${process.env.GITHUB_RUN_ID}@example.com`;
+          const targetEmail = `kaamkitpro-staging-grantee-${process.env.GITHUB_RUN_ID}@example.com`;
           if (!projectUrl || !publishableKey || !serviceKey) throw new Error("Missing staging Supabase test configuration.");
 
           const password = randomBytes(32).toString("base64url") + "Q7!";
@@ -447,7 +447,7 @@ jobs:
               ...options,
               headers: {
                 "content-type": "application/json",
-                cookie: \`kk_access_token=\${accessToken}\`,
+                cookie: `kk_access_token=${accessToken}`,
                 ...(options.headers || {}),
               },
             });
@@ -456,10 +456,10 @@ jobs:
           try {
             const createdResponse = await fetch(projectUrl + "/auth/v1/admin/users", {
               method: "POST",
-              headers: { apikey: serviceKey, authorization: \`Bearer \${serviceKey}\`, "content-type": "application/json" },
+              headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}`, "content-type": "application/json" },
               body: JSON.stringify({ email: adminEmail, password, email_confirm: true }),
             });
-            if (!createdResponse.ok) throw new Error(\`Could not create disposable staging admin user (HTTP \${createdResponse.status}).\`);
+            if (!createdResponse.ok) throw new Error(`Could not create disposable staging admin user (HTTP ${createdResponse.status}).`);
             const created = await createdResponse.json();
             userId = created.id;
             await expect(typeof userId === "string" && userId.length > 0, "Supabase did not return the disposable admin user ID.");
@@ -469,13 +469,13 @@ jobs:
               headers: { apikey: publishableKey, "content-type": "application/json" },
               body: JSON.stringify({ email: adminEmail, password }),
             });
-            if (!loginResponse.ok) throw new Error(\`Disposable admin sign-in failed (HTTP \${loginResponse.status}).\`);
+            if (!loginResponse.ok) throw new Error(`Disposable admin sign-in failed (HTTP ${loginResponse.status}).`);
             const session = await loginResponse.json();
             await expect(typeof session.access_token === "string", "Supabase did not return an admin access token.");
             accessToken = session.access_token;
 
             const listBefore = await adminCall("/api/admin/access?email=" + encodeURIComponent(targetEmail));
-            await expect(listBefore.status === 200, \`Authorized admin list failed (HTTP \${listBefore.status}).\`);
+            await expect(listBefore.status === 200, `Authorized admin list failed (HTTP ${listBefore.status}).`);
             const beforePayload = await listBefore.json();
             await expect(Array.isArray(beforePayload.grants), "Admin grant list did not return a grants array.");
             await expect(!beforePayload.grants.some(g => g.target_email === targetEmail && !g.revoked_at),
@@ -494,7 +494,7 @@ jobs:
             });
             const grantPayload = await grantResponse.json();
             await expect(grantResponse.status === 201 && grantPayload.grant?.id,
-              \`Admin grant creation failed (HTTP \${grantResponse.status}).\`);
+              `Admin grant creation failed (HTTP ${grantResponse.status}).`);
             grantId = grantPayload.grant.id;
             await expect(grantPayload.grant.target_email === targetEmail && grantPayload.grant.revoked_at == null,
               "Created grant did not match the expected target or active state.");
@@ -510,7 +510,7 @@ jobs:
             });
             const revokePayload = await revokeResponse.json();
             await expect(revokeResponse.status === 200 && revokePayload.grant?.id === grantId && !!revokePayload.grant.revoked_at,
-              \`Admin revoke failed (HTTP \${revokeResponse.status}).\`);
+              `Admin revoke failed (HTTP ${revokeResponse.status}).`);
 
             const listedAfter = await adminCall("/api/admin/access?email=" + encodeURIComponent(targetEmail));
             const afterPayload = await listedAfter.json();
@@ -528,12 +528,12 @@ jobs:
               try {
                 const response = await fetch(projectUrl + "/rest/v1/user_access_grants?id=eq." + encodeURIComponent(grantId) + "&revoked_at=is.null", {
                   method: "PATCH",
-                  headers: { apikey: serviceKey, authorization: \`Bearer \${serviceKey}\`, "content-type": "application/json", Prefer: "return=minimal" },
+                  headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}`, "content-type": "application/json", Prefer: "return=minimal" },
                   body: JSON.stringify({ revoked_at: new Date().toISOString(), revoked_by: userId }),
                 });
                 if (!response.ok) {
                   failed = true;
-                  console.error(\`FAIL test grant cleanup (HTTP \${response.status}).\`);
+                  console.error(`FAIL test grant cleanup (HTTP ${response.status}).`);
                 } else {
                   console.log("PASS test grant cleanup.");
                 }
@@ -546,11 +546,11 @@ jobs:
               try {
                 const cleanup = await fetch(projectUrl + "/auth/v1/admin/users/" + encodeURIComponent(userId), {
                   method: "DELETE",
-                  headers: { apikey: serviceKey, authorization: \`Bearer \${serviceKey}\` },
+                  headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}` },
                 });
                 if (!cleanup.ok) {
                   failed = true;
-                  console.error(\`FAIL disposable-admin cleanup (HTTP \${cleanup.status}); remove the temporary staging user manually.\`);
+                  console.error(`FAIL disposable-admin cleanup (HTTP ${cleanup.status}); remove the temporary staging user manually.`);
                 } else {
                   console.log("PASS disposable staging admin user cleaned up.");
                 }
