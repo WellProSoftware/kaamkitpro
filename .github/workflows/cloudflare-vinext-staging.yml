@@ -287,7 +287,7 @@ jobs:
             ["/pricing", async r => { const t = await r.text(); return r.status === 200 && /Useful tools/i.test(t) && /Paid plans and checkout are not available/i.test(t); }, "free-only pricing"],
             ["/ads.txt", async r => r.status === 200 && (await r.text()).trim() === "google.com, pub-6738934686699082, DIRECT, f08c47fec0942fa0", "ads.txt publisher line"],
             ["/robots.txt", async r => r.status === 200 && (await r.text()).includes("Disallow: /"), "robots.txt staging exclusion"],
-            ["/api/access", async r => { const t = await r.json(); return r.status === 200 && t.plan === "free" && t.isPro === false; }, "anonymous access API"],
+            ["/api/access", async r => { const t = await r.json(); return r.status === 200 && t.plan === "free" && t.isPro === false && t.adsEnabled === false; }, "anonymous access API + ads disabled on staging"],
             ["/tools/json-formatter", async r => r.status === 200 && /JSON Formatter/.test(await r.text()), "JSON Formatter"],
             ["/tools/pdf-merge", async r => r.status === 200 && /PDF Merge Tool/.test(await r.text()), "PDF Merge"],
             ["/tools/image-rotate", async r => r.status === 200 && /Image Rotate Tool/.test(await r.text()), "Image Rotate"],
