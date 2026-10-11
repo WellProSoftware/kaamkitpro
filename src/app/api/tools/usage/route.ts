@@ -63,8 +63,12 @@ async function accessFor(userId: string, email: string) {
   const subscriptionResponse = await serviceRest(`subscriptions?${subscriptionQuery.toString()}`);
   if (!subscriptionResponse?.ok) return null;
   const subscriptions = await subscriptionResponse.json().catch(() => []);
+  // Fail closed when a supposedly active subscription has no usable period end.
+  // Otherwise a malformed/incomplete provider event could grant Pro indefinitely.
   const paidSubscription = Array.isArray(subscriptions) && subscriptions.some((item: { current_period_end?: string | null }) =>
-    !item.current_period_end || Date.parse(item.current_period_end) > now
+    typeof item.current_period_end === "string" &&
+    Number.isFinite(Date.parse(item.current_period_end)) &&
+    Date.parse(item.current_period_end) > now
   );
 
   return {
