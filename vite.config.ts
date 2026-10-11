@@ -4,6 +4,11 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 import { cdnAdapter } from "@vinext/cloudflare/cache/cdn-adapter";
 
 export default defineConfig({
+  // Vite does not automatically inline arbitrary process.env variables. Make
+  // the staging-only SEO guard deterministic in the generated server bundle.
+  define: {
+    "process.env.KAAMKITPRO_STAGING": JSON.stringify(process.env.KAAMKITPRO_STAGING ?? ""),
+  },
   plugins: [
     vinext({
       cache: { cdn: cdnAdapter() },
