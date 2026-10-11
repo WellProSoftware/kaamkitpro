@@ -24,15 +24,14 @@ function dateFromUnix(value?: number | null) {
 }
 
 function statusFor(event: string, providerStatus?: string) {
-  if (["subscription.activated", "subscription.charged", "subscription.resumed", "subscription.authenticated"].includes(event)) return "active";
+  if (["subscription.activated", "subscription.charged", "subscription.resumed"].includes(event)) return "active";
   if (event === "subscription.halted") return "past_due";
   if (event === "subscription.cancelled") return "cancelled";
   if (event === "subscription.completed") return "expired";
   if (event === "subscription.pending" || event === "subscription.paused") return "incomplete";
-  if (providerStatus === "active") return "active";
-  if (providerStatus === "halted") return "past_due";
-  if (providerStatus === "cancelled") return "cancelled";
-  if (providerStatus === "completed") return "expired";
+  // Ignore unknown event types even if their embedded entity says "active".
+  // Entitlement changes are allowed only for explicitly recognized lifecycle events.
+  void providerStatus;
   return null;
 }
 
