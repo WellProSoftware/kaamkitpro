@@ -475,6 +475,10 @@ jobs:
             await expect(typeof session.access_token === "string", "Supabase did not return an admin access token.");
             accessToken = session.access_token;
 
+            const accessCheck = await adminCall("/api/access");
+            const accessCheckPayload = await accessCheck.json().catch(() => ({}));
+            console.log("Staging admin auth diagnostic:", JSON.stringify({ status: accessCheck.status, isAdmin: accessCheckPayload.isAdmin, returnedEmailMatches: accessCheckPayload.user?.email?.toLowerCase() === adminEmail.toLowerCase(), userPresent: Boolean(accessCheckPayload.user?.id) }));
+
             const listBefore = await adminCall("/api/admin/access?email=" + encodeURIComponent(targetEmail));
             await expect(listBefore.status === 200, `Authorized admin list failed (HTTP ${listBefore.status}): ${(await listBefore.clone().text()).slice(0, 300)}`);
             const beforePayload = await listBefore.json();
