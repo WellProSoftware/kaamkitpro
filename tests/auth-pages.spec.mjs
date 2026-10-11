@@ -62,10 +62,10 @@ test.describe("KaamKitPro authentication pages", () => {
     expect(await metered.json()).toMatchObject({ allowed: false, requiresSignIn: true });
   });
 
-  test("signed-out users resolve to Free with ads enabled", async ({ request }) => {
+  test("signed-out users resolve to Free with live ads disabled on staging", async ({ request }) => {
     const response = await request.get("/api/access");
     expect(response.ok()).toBeTruthy();
-    expect(await response.json()).toMatchObject({ plan: "free", isPro: false, adsEnabled: true });
+    expect(await response.json()).toMatchObject({ plan: "free", isPro: false, adsEnabled: false });
   });
 
   test("pricing page links to sign in", async ({ page }) => {
