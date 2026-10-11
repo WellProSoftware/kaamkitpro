@@ -105,6 +105,38 @@ jobs:
         continue-on-error: true
         run: set -o pipefail; npx tsc --noEmit 2>&1 | tee typescript-check.log
 
+      - name: Verify sitemap covers every static tool route
+        id: sitemap_coverage
+        if: always() && steps.init.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          import path from "node:path";
+          const root = "src/app/tools";
+          const sitemap = fs.readFileSync("src/app/sitemap.ts", "utf8");
+          const listed = new Set([...sitemap.matchAll(/"(\\/tools(?:\\/[a-z0-9-]+)*)"/g)].map(match => match[1]));
+          const pages = [];
+          function walk(dir) {
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+              const full = path.join(dir, entry.name);
+              if (entry.isDirectory()) walk(full);
+              else if (entry.isFile() && entry.name === "page.tsx") {
+                const relative = path.relative(root, path.dirname(full)).split(path.sep).join("/");
+                if (relative && !relative.includes("[") && !relative.startsWith("api/")) pages.push("/tools/" + relative);
+              }
+            }
+          }
+          walk(root);
+          const missing = pages.filter(route => !listed.has(route));
+          if (missing.length) {
+            console.error("Tool pages missing from production sitemap:", missing.join(", "));
+            process.exit(1);
+          }
+          console.log(`Sitemap coverage passed: all ${pages.length} static tool page routes are listed.`);
+          NODE
+
       - name: Lint
         id: lint
         if: always() && steps.init.outcome == 'success'
