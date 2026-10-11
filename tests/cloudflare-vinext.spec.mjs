@@ -30,10 +30,18 @@ test("ads.txt remains byte-for-byte consistent in its publisher entry", async ({
   expect((await response.text()).trim()).toBe(ADS_TXT_LINE);
 });
 
-test("SEO sitemap contains the utility and guide routes exactly once", async ({ request }) => {
+test("staging sitemap does not expose production URLs", async ({ request }) => {
   const response = await request.get("/sitemap.xml");
   expect(response.ok()).toBeTruthy();
   const xml = await response.text();
+  expect(xml).not.toContain("https://kaamkitpro.com/");
+});
+
+test("SEO sitemap contains the utility and guide routes exactly once in production sitemap mode", async ({ request }) => {
+  const response = await request.get("/sitemap.xml");
+  expect(response.ok()).toBeTruthy();
+  const xml = await response.text();
+  test.skip(process.env.KAAMKITPRO_STAGING === "true", "Staging sitemap is intentionally empty to avoid exposing production URLs.");
 
   for (const route of [
     "tools/line-sorter",
