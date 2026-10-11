@@ -512,3 +512,31 @@ test("Slug Generator normalizes repeated spaces and punctuation", async ({ page 
   await page.getByRole("button", { name: "Generate Slug" }).click();
   await expect(page.getByText("hello-world-seo-tools", { exact: true })).toBeVisible();
 });
+
+
+test("Text Diff Checker updates added and removed line counts", async ({ page }) => {
+  await page.goto("/tools/text-diff-checker");
+  await expect(page.getByRole("heading", { name: "Text Diff Checker", exact: true })).toBeVisible();
+  await page.locator("#diff-before").fill("alpha\nbeta");
+  await page.locator("#diff-after").fill("alpha\ngamma");
+  await expect(page.getByText("+ 1 added", { exact: true })).toBeVisible();
+  await expect(page.getByText("− 1 removed", { exact: true })).toBeVisible();
+  await expect(page.locator("pre")).toContainText("+ gamma");
+  await expect(page.locator("pre")).toContainText("− beta");
+});
+
+test("Image Compressor creates a downloadable compressed image", async ({ page }) => {
+  await page.goto("/tools/image-compressor");
+  await expect(page.getByRole("heading", { name: "Image Compressor", exact: true })).toBeVisible();
+  await page.locator("#image-file").setInputFiles({
+    name: "pixel.png",
+    mimeType: "image/png",
+    buffer: onePixelPng,
+  });
+  await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Compress Image", exact: true }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-compressed.jpg");
+  await expect(page.getByText("Image compressed successfully.", { exact: true })).toBeVisible();
+});
