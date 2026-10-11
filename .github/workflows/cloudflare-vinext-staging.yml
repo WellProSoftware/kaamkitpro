@@ -219,6 +219,7 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       KAAMKITPRO_STAGING: "true"
+      KAAMKITPRO_ADMIN_EMAILS: kaamkitpro-staging-admin-${{ github.run_id }}@example.com
       NEXT_TELEMETRY_DISABLED: "1"
       NEXT_PUBLIC_SUPABASE_URL: "https://stcahnjwonfcuzevfmyg.supabase.co"
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_pnD1QuYuIV9qYGRdYJTDGQ_UfwUycgY"
@@ -475,7 +476,7 @@ jobs:
             accessToken = session.access_token;
 
             const listBefore = await adminCall("/api/admin/access?email=" + encodeURIComponent(targetEmail));
-            await expect(listBefore.status === 200, `Authorized admin list failed (HTTP ${listBefore.status}).`);
+            await expect(listBefore.status === 200, `Authorized admin list failed (HTTP ${listBefore.status}): ${(await listBefore.clone().text()).slice(0, 300)}`);
             const beforePayload = await listBefore.json();
             await expect(Array.isArray(beforePayload.grants), "Admin grant list did not return a grants array.");
             await expect(!beforePayload.grants.some(g => g.target_email === targetEmail && !g.revoked_at),
