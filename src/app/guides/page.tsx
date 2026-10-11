@@ -58,6 +58,14 @@ const guides = [
     category: "Developer Tools",
   },
   {
+    title: "How to Compare Two Texts Online",
+    description:
+      "Find added, removed, and unchanged lines between two drafts, lists, or plain-text versions.",
+    href: "/guides/text-diff-checker",
+    tool: "/tools/text-diff-checker",
+    category: "Text Tools",
+  },
+  {
     title: "How to Sort Lines of Text Online",
     description:
       "Organize lists, filenames, product codes and keywords with alphabetical or natural sorting, then keep cleaning the list.",
