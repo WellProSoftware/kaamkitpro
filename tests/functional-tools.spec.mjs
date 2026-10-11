@@ -294,7 +294,14 @@ test("Text Diff Checker reports added and removed lines", async ({ page }) => {
 });
 
 
+test("Staging sitemap does not expose production URLs", async ({ request }) => {
+  const response = await request.get("/sitemap.xml");
+  expect(response.ok()).toBeTruthy();
+  expect(await response.text()).not.toContain("https://kaamkitpro.com/");
+});
+
 test("Sitemap lists each new utility route exactly once", async ({ request }) => {
+  test.skip(process.env.KAAMKITPRO_STAGING === "true", "Production sitemap route assertions do not apply to staging.");
   const response = await request.get("/sitemap.xml");
   expect(response.ok()).toBeTruthy();
   const xml = await response.text();
@@ -306,6 +313,7 @@ test("Sitemap lists each new utility route exactly once", async ({ request }) =>
 
 
 test("CSV to JSON guide is discoverable and included once in the sitemap", async ({ page }) => {
+  test.skip(process.env.KAAMKITPRO_STAGING === "true", "Production sitemap assertions do not apply to staging.");
   await page.goto("/guides/csv-to-json");
   await expect(page.getByRole("heading", { name: "How to Convert CSV to JSON Online for Free", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open Free CSV to JSON Converter" })).toHaveAttribute("href", "/tools/csv-to-json");
@@ -318,6 +326,7 @@ test("CSV to JSON guide is discoverable and included once in the sitemap", async
 
 
 test("JSON to CSV guide is discoverable and included once in the sitemap", async ({ page }) => {
+  test.skip(process.env.KAAMKITPRO_STAGING === "true", "Production sitemap assertions do not apply to staging.");
   await page.goto("/guides/json-to-csv");
   await expect(page.getByRole("heading", { name: "How to Convert JSON to CSV Online for Free", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open Free JSON to CSV Converter" })).toHaveAttribute("href", "/tools/json-to-csv");
@@ -330,6 +339,7 @@ test("JSON to CSV guide is discoverable and included once in the sitemap", async
 
 
 test("Line sorter guide is discoverable and included once in the sitemap", async ({ page }) => {
+  test.skip(process.env.KAAMKITPRO_STAGING === "true", "Production sitemap assertions do not apply to staging.");
   await page.goto("/guides/line-sorter");
   await expect(page.getByRole("heading", { name: "How to Sort Lines of Text Online for Free", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open Free Line Sorter" })).toHaveAttribute("href", "/tools/line-sorter");
@@ -343,6 +353,7 @@ test("Line sorter guide is discoverable and included once in the sitemap", async
 
 
 test("Text diff guide is discoverable and included once in the sitemap", async ({ page }) => {
+  test.skip(process.env.KAAMKITPRO_STAGING === "true", "Production sitemap assertions do not apply to staging.");
   await page.goto("/guides/text-diff-checker");
   await expect(page.getByRole("heading", { name: "How to Compare Two Texts Online for Free", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open Free Text Diff Checker" })).toHaveAttribute("href", "/tools/text-diff-checker");
@@ -356,6 +367,7 @@ test("Text diff guide is discoverable and included once in the sitemap", async (
 
 
 test("Word counter guide is discoverable and included once in the sitemap", async ({ page }) => {
+  test.skip(process.env.KAAMKITPRO_STAGING === "true", "Production sitemap assertions do not apply to staging.");
   await page.goto("/guides/word-counter");
   await expect(page.getByRole("heading", { name: "How to Count Words and Characters Online", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open Free Word Counter" })).toHaveAttribute("href", "/tools/word-counter");
@@ -366,6 +378,7 @@ test("Word counter guide is discoverable and included once in the sitemap", asyn
 });
 
 test("Slug generator guide is discoverable and included once in the sitemap", async ({ page }) => {
+  test.skip(process.env.KAAMKITPRO_STAGING === "true", "Production sitemap assertions do not apply to staging.");
   await page.goto("/guides/slug-generator");
   await expect(page.getByRole("heading", { name: "How to Create an SEO-Friendly URL Slug", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open Free Slug Generator" })).toHaveAttribute("href", "/tools/slug-generator");
@@ -376,6 +389,7 @@ test("Slug generator guide is discoverable and included once in the sitemap", as
 });
 
 test("Duplicate-line guide is discoverable and included once in the sitemap", async ({ page }) => {
+  test.skip(process.env.KAAMKITPRO_STAGING === "true", "Production sitemap assertions do not apply to staging.");
   await page.goto("/guides/remove-duplicate-lines");
   await expect(page.getByRole("heading", { name: "How to Remove Duplicate Lines from a List", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Open Free Duplicate Line Remover" })).toHaveAttribute("href", "/tools/remove-duplicate-lines");
