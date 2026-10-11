@@ -76,7 +76,9 @@ export async function GET(request: NextRequest) {
   }
   const subscriptions = await subscriptionResponse.json().catch(() => []);
   const paidSubscription = Array.isArray(subscriptions) && subscriptions.some((item: { current_period_end?: string | null }) =>
-    !item.current_period_end || Date.parse(item.current_period_end) > now
+    typeof item.current_period_end === "string" &&
+    Number.isFinite(Date.parse(item.current_period_end)) &&
+    Date.parse(item.current_period_end) > now
   );
 
   const isPro = fullGrant || proGrant || paidSubscription;
