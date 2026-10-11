@@ -66,8 +66,23 @@ jobs:
             echo "vinext config already initialized; retaining the staging configuration."
           fi
           test -f vite.config.ts
-          test -f cloudflare.config.ts
+          if [ ! -f cloudflare.config.ts ] && [ ! -f wrangler.jsonc ]; then
+            echo "Expected Cloudflare config (cloudflare.config.ts or wrangler.jsonc) was not generated."
+            exit 1
+          fi
           node -e "const p=require('./package.json'); if (!p.scripts?.['build:vinext'] || !p.scripts?.['start:vinext']) process.exit(1)"
+
+      - name: Recheck compatibility after vinext initialization
+        id: compatibility_post
+        if: always() && steps.init.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          npx vinext check 2>&1 | tee vinext-postinit-compatibility-report.txt
+          status=${PIPESTATUS[0]}
+          echo "$status" > vinext-postinit-compatibility-exit-code.txt
+          exit "$status"
 
       - name: Build the Cloudflare/vinext output
         id: vinext_build
@@ -114,7 +129,10 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .gitignore package.json package-lock.json tsconfig.json vite.config.ts cloudflare.config.ts src/app/layout.tsx src/app/robots.ts
+          git add .gitignore package.json package-lock.json tsconfig.json vite.config.ts src/app/layout.tsx src/app/robots.ts
+          for config in cloudflare.config.ts wrangler.jsonc; do
+            if [ -f "$config" ]; then git add "$config"; fi
+          done
           if git diff --cached --quiet; then
             echo "No generated source changes to commit."
           else
@@ -132,6 +150,8 @@ jobs:
           path: |
             vinext-compatibility-report.txt
             vinext-compatibility-exit-code.txt
+            vinext-postinit-compatibility-report.txt
+            vinext-postinit-compatibility-exit-code.txt
             vinext-build.log
             typescript-check.log
             lint.log
@@ -146,6 +166,7 @@ jobs:
         env:
           COMPATIBILITY: ${{ steps.compatibility.outcome }}
           INITIALIZATION: ${{ steps.init.outcome }}
+          COMPATIBILITY_POST: ${{ steps.compatibility_post.outcome }}
           VINEXT_BUILD: ${{ steps.vinext_build.outcome }}
           TYPESCRIPT: ${{ steps.types.outcome }}
           LINT: ${{ steps.lint.outcome }}
@@ -157,6 +178,7 @@ jobs:
           for item in \
             "vinext check:$COMPATIBILITY" \
             "vinext init:$INITIALIZATION" \
+            "post-init vinext check:$COMPATIBILITY_POST" \
             "vinext build:$VINEXT_BUILD" \
             "TypeScript:$TYPESCRIPT" \
             "lint:$LINT" \
