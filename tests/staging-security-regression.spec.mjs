@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { readFile } from "node:fs/promises";
 
 test.describe("staging security regression checks", () => {
   test("server-only Supabase credentials are not exposed in public HTML", async ({ request }) => {
@@ -85,5 +86,18 @@ test.describe("staging security regression checks", () => {
     expect((await adsResponse.text()).trim()).toBe(
       "google.com, pub-6738934686699082, DIRECT, f08c47fec0942fa0",
     );
+  });
+
+  test("subscription access fails closed for missing or invalid period-end timestamps", async () => {
+    for (const path of [
+      "../src/app/api/access/route.ts",
+      "../src/app/api/tools/usage/route.ts",
+    ]) {
+      const source = await readFile(new URL(path, import.meta.url), "utf8");
+      expect(source).toContain('typeof item.current_period_end === "string"');
+      expect(source).toContain("Number.isFinite(Date.parse(item.current_period_end))");
+      expect(source).toContain("Date.parse(item.current_period_end) > now");
+      expect(source).not.toContain("!item.current_period_end || Date.parse(item.current_period_end) > now");
+    }
   });
 });
