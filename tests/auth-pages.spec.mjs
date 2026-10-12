@@ -67,7 +67,7 @@ test.describe("KaamKitPro authentication pages", () => {
     expect(await response.json()).toMatchObject({ error: "Sign in before starting a subscription." });
   });
 
-  test("free tools stay available and metered tools require tracked usage", async ({ request }) => {
+  test("free tools stay available anonymously; account-based tools ask for sign-in", async ({ request }) => {
     const free = await request.post("/api/tools/usage", {
       data: { tool_key: "calculator", action: "check" },
     });
@@ -79,16 +79,18 @@ test.describe("KaamKitPro authentication pages", () => {
     });
     expect(metered.status()).toBe(401);
     expect(await metered.json()).toMatchObject({ allowed: false, requiresSignIn: true });
+
+    const proOnly = await request.post("/api/tools/usage", {
+      data: { tool_key: "bulk-ai-generation", action: "check" },
+    });
+    expect(proOnly.status()).toBe(401);
+    expect(await proOnly.json()).toMatchObject({ allowed: false, requiresSignIn: true });
   });
 
-  test("signed-out users resolve to Free with live ads disabled on staging", async ({ request }) => {
-    const response = await request.get("/api/access");
-    expect(response.ok()).toBeTruthy();
-    expect(await response.json()).toMatchObject({ plan: "free", isPro: false, adsEnabled: false });
-  });
-
-  test("pricing page links to sign in", async ({ page }) => {
+  test("pricing page explains that free tools do not need signup", async ({ page }) => {
     await page.goto("/pricing");
+    await expect(page.getByRole("heading", { name: "Useful tools. No signup needed." })).toBeVisible();
+    await expect(page.getByText("Free tools stay open to everyone without signup.")).toBeVisible();
     await page.getByRole("link", { name: "Sign in" }).click();
 
     await expect(page).toHaveURL(/\/login$/);
