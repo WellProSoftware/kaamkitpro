@@ -278,8 +278,10 @@ test("CSV to JSON converts quoted fields and commas", async ({ page }) => {
 test("JSON to CSV converts object arrays and escapes commas", async ({ page }) => {
   await page.goto("/tools/json-to-csv");
   await expect(page.getByRole("heading", { name: "JSON to CSV Converter" })).toBeVisible();
-  await page.locator("#json-csv-input").fill('[{"name":"Asha","note":"Tea, coffee"},{"name":"Sam","note":"Hello"}]');
-  await expect(page.locator("#csv-output")).toHaveValue('name,note\nAsha,"Tea, coffee"\nSam,Hello');
+  const input = page.locator("#json-csv-input");
+  await input.fill('[{"name":"Asha","note":"Tea, coffee"},{"name":"Sam","note":"Hello"}]');
+  await expect(input).toHaveValue('[{"name":"Asha","note":"Tea, coffee"},{"name":"Sam","note":"Hello"}]');
+  await expect(page.locator("#csv-output")).toHaveValue('name,note\r\nAsha,"Tea, coffee"\r\nSam,Hello');
 });
 
 test("Text Diff Checker reports added and removed lines", async ({ page }) => {
@@ -925,8 +927,9 @@ test("EMI Calculator waits for all inputs and accepts an explicit zero interest 
   await expect(page.getByText("Monthly EMI", { exact: true }).locator("..").getByText("₹0", { exact: true })).toBeVisible();
 
   await fields.nth(1).fill("0");
-  await expect(page.getByText("₹10,000", { exact: true })).toBeVisible();
-  await expect(page.getByText("₹1,20,000", { exact: true })).toBeVisible();
+  await expect(fields.nth(1)).toHaveValue("0");
+  await expect(page.locator("main").getByText("₹10,000", { exact: true })).toBeVisible();
+  await expect(page.locator("main").getByText("₹1,20,000", { exact: true })).toBeVisible();
 });
 
 
