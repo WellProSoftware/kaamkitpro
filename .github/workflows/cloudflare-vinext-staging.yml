@@ -614,8 +614,10 @@ jobs:
             "/tools/pdf",
             "/tools/image",
             "/tools/pdf-metadata",
-            "/tools/image-converter",
-            "/_next/static/chunks/AdSenseLoader-BHk0gQEs.js"
+            "/tools/image-converter"
+          ];
+          // Staging deliberately disables AdSense; hashed client chunk names are build-specific,
+          // so do not probe a stale hard-coded chunk URL here.
           ];
           for (const path of paths) {
             try {
