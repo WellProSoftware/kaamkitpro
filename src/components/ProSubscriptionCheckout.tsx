@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type CheckoutResponse = {
   key_id: string;
@@ -61,6 +62,7 @@ async function loadRazorpayCheckout() {
 }
 
 export default function ProSubscriptionCheckout() {
+  const router = useRouter();
   const [consent, setConsent] = useState(false);
   const [busyPlan, setBusyPlan] = useState<string | null>(null);
   const [message, setMessage] = useState("");
@@ -115,12 +117,12 @@ export default function ProSubscriptionCheckout() {
             if (verification.verified) {
               setMessage("Payment verified. Refreshing your Pro access…");
               window.dispatchEvent(new Event("kaamkitpro:access-changed"));
-              window.location.assign("/account?subscription=verified");
+              router.push("/account?subscription=verified");
               return;
             }
             if (verification.pending) {
               setMessage("Payment confirmation is processing. Pro access will activate after Razorpay verification; please refresh your account shortly.");
-              window.location.assign("/account?subscription=pending");
+              router.push("/account?subscription=pending");
               return;
             }
             throw new Error(verification.error || "Payment is not verified yet. Please check your account before retrying.");
