@@ -515,7 +515,7 @@ test("JSON Formatter minifies valid JSON without changing its data", async ({ pa
 test("JSON Formatter gives a clear message for empty input", async ({ page }) => {
   await page.goto("/tools/json-formatter");
   await expect(page.getByRole("heading", { name: "JSON Formatter", exact: true })).toBeVisible();
-  await page.waitForTimeout(250); // Let client-side handlers hydrate in the vinext preview.
+  await page.waitForTimeout(500); // Let client-side handlers hydrate in the vinext preview.
   await page.getByRole("button", { name: "Format", exact: true }).click();
   await expect(page.getByText(/Please enter some JSON first\./)).toBeVisible();
 });
