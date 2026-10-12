@@ -12,6 +12,11 @@ on:
         required: true
         type: boolean
         default: false
+      deploy_feature_pr32:
+        description: "Validate/deploy PR #32 billing code to the isolated staging Worker (Test Mode only)"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -30,10 +35,10 @@ jobs:
       NEXT_TELEMETRY_DISABLED: "1"
 
     steps:
-      - name: Checkout staging branch
+      - name: Checkout staging or explicitly selected PR #32 feature branch
         uses: actions/checkout@v5
         with:
-          ref: cloudflare/vinext-staging
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_feature_pr32 == true && inputs.deploy_to_workers_dev == true && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging' }}
           persist-credentials: true
 
       - name: Set up Node.js
@@ -169,6 +174,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          if [ "${{ github.event_name == 'workflow_dispatch' && inputs.deploy_feature_pr32 == true && inputs.deploy_to_workers_dev == true }}" = "true" ]; then
+            echo "Feature validation mode: do not commit generated configuration back to the feature branch."
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .gitignore package.json package-lock.json tsconfig.json vite.config.ts src/app/layout.tsx src/app/robots.ts
@@ -252,15 +261,17 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       KAAMKITPRO_STAGING: "true"
+      RAZORPAY_MODE: "test"
+      RAZORPAY_LIVE_PAYMENTS_ENABLED: "false"
       KAAMKITPRO_ADMIN_EMAILS: kaamkitpro-staging-admin-${{ github.run_id }}@example.com
       NEXT_TELEMETRY_DISABLED: "1"
       NEXT_PUBLIC_SUPABASE_URL: "https://stcahnjwonfcuzevfmyg.supabase.co"
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_pnD1QuYuIV9qYGRdYJTDGQ_UfwUycgY"
     steps:
-      - name: Checkout staging branch only
+      - name: Checkout staging branch or explicitly selected PR #32 feature branch
         uses: actions/checkout@v5
         with:
-          ref: cloudflare/vinext-staging
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_feature_pr32 == true && inputs.deploy_to_workers_dev == true && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging' }}
       - name: Set up Node.js
         uses: actions/setup-node@v5
         with:
