@@ -1,0 +1,137 @@
+name: KaamKitPro Cloudflare production worker (workers.dev only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_production_worker:
+        description: "Deploy production worker to workers.dev only; does not change DNS or custom domains"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kaamkitpro-cloudflare-production-worker
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy_production_worker == true
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.PRODUCTION_SUPABASE_SERVICE_ROLE_KEY }}
+      NEXT_PUBLIC_SUPABASE_URL: https://brydbxhghwyeyjvsvfkr.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.PRODUCTION_SUPABASE_PUBLISHABLE_KEY }}
+      KAAMKITPRO_ADMIN_EMAILS: ${{ secrets.PRODUCTION_KAAMKITPRO_ADMIN_EMAILS }}
+      KAAMKITPRO_STAGING: "false"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Checkout the validated Cloudflare application branch
+        uses: actions/checkout@v5
+        with:
+          ref: cloudflare/vinext-staging
+          persist-credentials: false
+
+      - name: Validate required production secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN SUPABASE_SERVICE_ROLE_KEY NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY KAAMKITPRO_ADMIN_EMAILS; do
+            if [ -z "${!name:-}" ]; then
+              echo "Missing required GitHub Actions secret/configuration: $name (production deployment stopped safely)."
+              exit 1
+            fi
+          done
+          if [ "$NEXT_PUBLIC_SUPABASE_URL" != "https://brydbxhghwyeyjvsvfkr.supabase.co" ]; then
+            echo "Production Supabase URL mismatch."
+            exit 1
+          fi
+          if [ "$NEXT_PUBLIC_SUPABASE_URL" = "https://stcahnjwonfcuzevfmyg.supabase.co" ]; then
+            echo "Refusing to deploy production worker against staging Supabase."
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build production application
+        run: npm run build:vinext
+
+      - name: Configure isolated production worker (no domain routes)
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const path = "dist/server/wrangler.json";
+          const config = JSON.parse(fs.readFileSync(path, "utf8"));
+          config.name = "kaamkitpro-production";
+          config.routes = [];
+          delete config.route;
+          config.custom_domains = [];
+          delete config.domains;
+          config.vars = {
+            ...(config.vars || {}),
+            KAAMKITPRO_STAGING: "false",
+            KAAMKITPRO_ADMIN_EMAILS: process.env.KAAMKITPRO_ADMIN_EMAILS,
+            NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+            NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+          };
+          if (config.name !== "kaamkitpro-production" || config.routes.length || config.custom_domains.length) {
+            throw new Error("Production worker isolation check failed.");
+          }
+          fs.writeFileSync(path, JSON.stringify(config, null, 2) + "\n");
+          console.log("Production Worker config validated: workers.dev only; no custom domain or route.");
+          NODE
+
+      - name: Configure server-side production Supabase secret
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s' "$SUPABASE_SERVICE_ROLE_KEY" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --name kaamkitpro-production
+
+      - name: Deploy production worker to workers.dev only
+        run: npx vinext-cloudflare deploy --config dist/server/wrangler.json
+
+      - name: Smoke-test production worker without changing DNS
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          const base = "https://kaamkitpro-production.ankitkd550.workers.dev";
+          const checks = [
+            ["/", async r => r.status === 200 && !/noindex/i.test(await r.text()), "homepage does not carry staging noindex"],
+            ["/pricing", async r => { const t = await r.text(); return r.status === 200 && /Useful tools/i.test(t) && /Paid plans and checkout are not available/i.test(t); }, "free-only pricing; checkout remains disabled"],
+            ["/ads.txt", async r => r.status === 200 && (await r.text()).trim() === "google.com, pub-6738934686699082, DIRECT, f08c47fec0942fa0", "ads.txt publisher line"],
+            ["/robots.txt", async r => r.status === 200 && !/Disallow: \/\s*$/.test(await r.text()), "production robots policy"],
+            ["/api/access", async r => { const t = await r.json(); return r.status === 200 && t.plan === "free" && t.isPro === false; }, "anonymous access API"]
+          ];
+          let failures = 0;
+          for (const [path, verify, label] of checks) {
+            let ok = false;
+            let detail = "";
+            for (let attempt = 0; attempt < 4; attempt++) {
+              try {
+                const response = await fetch(base + path, { redirect: "follow" });
+                detail = "HTTP " + response.status;
+                if (await verify(response)) { ok = true; break; }
+              } catch (error) { detail = String(error); }
+              await new Promise(resolve => setTimeout(resolve, 1500));
+            }
+            console.log((ok ? "PASS " : "FAIL ") + label + " — " + detail);
+            if (!ok) failures++;
+          }
+          if (failures) process.exit(1);
+          console.log("Worker smoke tests passed. DNS/custom-domain cutover was not performed.");
+          NODE
