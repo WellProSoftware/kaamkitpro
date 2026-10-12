@@ -403,13 +403,22 @@ test("Duplicate-line guide is discoverable and included once in the sitemap", as
 });
 
 
-test("Pricing page keeps tools free, checkout inactive, and sign-in available", async ({ page }) => {
+test("Pricing page explains Free access and presents Pro checkout only when available", async ({ page }) => {
   await page.goto("/pricing");
-  await expect(page.getByRole("heading", { name: "Useful tools. Free to use." })).toBeVisible();
-  await expect(page.getByText("All currently available tools are free; no paid subscription is required.", { exact: false })).toBeVisible();
-  await expect(page.getByText("Paid plans and checkout are not available and no payment is being collected.", { exact: false })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Useful tools\./ })).toBeVisible();
+  await expect(page.getByText(/Open any currently available free tool and start using it immediately/i)).toBeVisible();
   await expect(page.getByRole("link", { name: "Sign in", exact: true })).toHaveAttribute("href", "/login");
-  await expect(page.getByRole("link", { name: /checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
+
+  const monthlyButton = page.getByRole("button", { name: "Choose monthly" });
+  if (await monthlyButton.count()) {
+    await expect(page.getByRole("heading", { name: "Use every tool without ads" })).toBeVisible();
+    await expect(monthlyButton).toBeVisible();
+    await expect(page.getByRole("button", { name: "Choose yearly" })).toBeVisible();
+    await expect(page.getByText(/authorize recurring subscription payments/i)).toBeVisible();
+  } else {
+    await expect(page.getByRole("button", { name: /checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
+  }
 });
 
 test("Subscription checkout rejects unauthenticated requests", async ({ request }) => {
