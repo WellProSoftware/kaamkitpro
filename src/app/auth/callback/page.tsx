@@ -14,10 +14,16 @@ export default function AuthCallbackPage() {
       const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
       const query = new URLSearchParams(window.location.search);
       const authError = params.get("error_description") || query.get("error_description") || query.get("error");
-      const accessToken = params.get("access_token");
-      const refreshToken = params.get("refresh_token");
-      const expiresIn = Number(params.get("expires_in") || 3600);
+      let accessToken = params.get("access_token");
+      let refreshToken = params.get("refresh_token");
+      let expiresIn = Number(params.get("expires_in") || 3600);
 
+      const tokenHash = query.get("token_hash");
+      const otpType = query.get("type") || "email";
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\\/$/, "");
+      const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+      // Remove one-time credentials from browser history as soon as they are read.
       window.history.replaceState(null, "", "/auth/callback");
 
       if (authError) {
@@ -28,15 +34,38 @@ export default function AuthCallbackPage() {
         return;
       }
 
-      if (!accessToken || !refreshToken) {
-        if (!cancelled) {
-          setFailed(true);
-          setMessage("This sign-in link is invalid, expired, or not configured for the expected email flow. Request a new link and try again.");
-        }
-        return;
-      }
-
       try {
+        // Support Supabase email templates that redirect with token_hash/type (PKCE-style
+        // confirmation) as well as the existing implicit-flow token hash.
+        if (!accessToken && tokenHash && supabaseUrl && publishableKey) {
+          const verifyResponse = await fetch(`${supabaseUrl}/auth/v1/verify`, {
+            method: "POST",
+            headers: {
+              apikey: publishableKey,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ token_hash: tokenHash, type: otpType }),
+            cache: "no-store",
+          });
+          const verified = (await verifyResponse.json().catch(() => ({}))) as {
+            access_token?: string;
+            refresh_token?: string;
+            expires_in?: number;
+            msg?: string;
+            message?: string;
+          };
+          if (!verifyResponse.ok) {
+            throw new Error(verified.msg || verified.message || "The sign-in link is invalid or expired. Request a new one.");
+          }
+          accessToken = verified.access_token || null;
+          refreshToken = verified.refresh_token || null;
+          expiresIn = Number(verified.expires_in || 3600);
+        }
+
+        if (!accessToken || !refreshToken) {
+          throw new Error("This sign-in link is invalid, expired, or not configured for the expected email flow. Request a new link and try again.");
+        }
+
         const response = await fetch("/api/auth/session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
