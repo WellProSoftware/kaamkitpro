@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { serviceRest } from "@/lib/server-access";
+import { getServerEnv } from "@/lib/server-env";
 
 
 type Payload = {
@@ -36,7 +37,7 @@ function statusFor(event: string, providerStatus?: string) {
 }
 
 export async function POST(request: NextRequest) {
-  const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+  const secret = await getServerEnv("RAZORPAY_WEBHOOK_SECRET");
   if (!secret) return NextResponse.json({ error: "Webhook is not configured." }, { status: 503 });
 
   const body = await request.text();
