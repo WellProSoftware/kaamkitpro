@@ -1,3 +1,4 @@
+# Safety note: this workflow must deploy only the kaamkitpro-staging Worker.
 name: Cloudflare Workers Free staging validation
 
 on:
