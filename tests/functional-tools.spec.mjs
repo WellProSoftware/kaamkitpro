@@ -985,6 +985,7 @@ test("Percentage Calculator handles zero denominators without invalid percentage
 
   const fields = page.locator('input[type="number"]');
   await fields.nth(3).fill("0");
+  await fields.nth(4).fill("0");
   await expect(page.getByText("Whole must not be zero.", { exact: true })).toBeVisible();
   await expect(page.getByText("Original value must not be zero.", { exact: true })).toBeVisible();
 
