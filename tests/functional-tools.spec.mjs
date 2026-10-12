@@ -1063,3 +1063,13 @@ test("Word Counter shows zero metrics for empty text and Clear resets counts", a
   await expect(page.getByText("0 min", { exact: true })).toBeVisible();
 });
 
+test("Slug Generator removes accents and collapses punctuation and repeated spaces", async ({ page }) => {
+  await page.goto("/tools/slug-generator");
+  await expect(page.getByRole("heading", { name: "Slug Generator", exact: true })).toBeVisible();
+
+  await page.getByPlaceholder("Example: Best Free Online Tools for Students").fill("  Crème   Brûlée & SEO!!!  ");
+  await page.getByRole("button", { name: "Generate Slug", exact: true }).click();
+
+  await expect(page.getByText("creme-brulee-seo", { exact: true })).toBeVisible();
+});
+
