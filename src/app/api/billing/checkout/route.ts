@@ -39,6 +39,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid Razorpay mode. Use test or live." }, { status: 503 });
   }
 
+  // This branch and Cloudflare staging Worker must never create a live subscription.
+  // Live collection requires a separate, explicitly authorized production release.
+  const stagingOnly = process.env.KAAMKITPRO_STAGING === "true" || process.env.VERCEL_ENV === "preview";
+  if (stagingOnly && (mode !== "test" || !keyId.startsWith("rzp_test_"))) {
+    return NextResponse.json({ error: "Staging checkout is restricted to Razorpay Test Mode." }, { status: 503 });
+  }
+
   let body: { plan_id?: unknown };
   try {
     body = await request.json();
