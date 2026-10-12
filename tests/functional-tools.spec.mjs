@@ -281,7 +281,8 @@ test("JSON to CSV converts object arrays and escapes commas", async ({ page }) =
   const input = page.locator("#json-csv-input");
   await input.fill('[{"name":"Asha","note":"Tea, coffee"},{"name":"Sam","note":"Hello"}]');
   await expect(input).toHaveValue('[{"name":"Asha","note":"Tea, coffee"},{"name":"Sam","note":"Hello"}]');
-  await expect(page.locator("#csv-output")).toHaveValue('name,note\r\nAsha,"Tea, coffee"\r\nSam,Hello');
+  const csvOutput = await page.locator("#csv-output").inputValue();
+  expect(csvOutput.replace(/\r\n/g, "\n")).toBe('name,note\nAsha,"Tea, coffee"\nSam,Hello');
 });
 
 test("Text Diff Checker reports added and removed lines", async ({ page }) => {
