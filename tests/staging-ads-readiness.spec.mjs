@@ -62,3 +62,17 @@ test("privacy consent choices persist and staging never loads optional trackers"
   await expect(page.locator("#google-analytics-script, #google-adsense")).toHaveCount(0);
   await expect(page.locator('script[src*="googletagmanager.com/gtag/js"], script[src*="pagead2.googlesyndication.com"]')).toHaveCount(0);
 });
+
+test("visitors can reopen privacy choices and switch to essential-only", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => window.localStorage.setItem("kk_privacy_consent_v1", "accepted"));
+  await page.reload();
+  const dialog = page.getByRole("dialog", { name: /Your privacy choices/i });
+  await expect(dialog).toHaveCount(0);
+  await page.getByRole("button", { name: "Reopen privacy choices" }).click();
+  await expect(dialog).toBeVisible();
+  await page.getByRole("button", { name: "Essential only" }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => window.localStorage.getItem("kk_privacy_consent_v1"))).toBe("essential");
+  await expect(page.locator("#google-analytics-script, #google-adsense")).toHaveCount(0);
+});
