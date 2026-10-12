@@ -689,3 +689,24 @@ test("Image Resizer applies custom dimensions and downloads the result", async (
   expect(download.suggestedFilename()).toBe("kaamkitpro-resized.jpg");
   await expect(page.getByText("Image resized successfully.", { exact: true })).toBeVisible();
 });
+
+
+test("Image Cropper validates crop bounds and downloads the cropped image", async ({ page }) => {
+  await page.goto("/tools/image-cropper");
+  await page.locator("#crop-file").setInputFiles({
+    name: "pixel.png",
+    mimeType: "image/png",
+    buffer: onePixelPng,
+  });
+  await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
+  await expect(page.getByText("Original size: 1 × 1px", { exact: true })).toBeVisible();
+  await page.getByLabel("Crop width").fill("2");
+  await page.getByRole("button", { name: "Crop Image", exact: true }).click();
+  await expect(page.getByText("Crop area is outside the image boundaries.", { exact: true })).toBeVisible();
+  await page.getByLabel("Crop width").fill("1");
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Crop Image", exact: true }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-cropped.jpg");
+  await expect(page.getByText("Image cropped successfully.", { exact: true })).toBeVisible();
+});
