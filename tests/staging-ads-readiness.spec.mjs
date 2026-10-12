@@ -39,3 +39,27 @@ test("anonymous staging access API stays free and keeps ads disabled", async ({ 
     selectedTools: [],
   });
 });
+
+test("privacy consent choices persist and staging never loads optional trackers", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.removeItem("kk_privacy_consent_v1");
+  });
+  await page.goto("/");
+  const dialog = page.getByRole("dialog", { name: /Your privacy choices/i });
+  await expect(dialog).toBeVisible();
+  await page.getByRole("button", { name: "Essential only" }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => window.localStorage.getItem("kk_privacy_consent_v1"))).toBe("essential");
+  await page.reload();
+  await expect(page.getByRole("dialog", { name: /Your privacy choices/i })).toHaveCount(0);
+  await expect(page.locator("#google-analytics-script, #google-adsense")).toHaveCount(0);
+
+  await page.evaluate(() => window.localStorage.removeItem("kk_privacy_consent_v1"));
+  await page.reload();
+  await expect(page.getByRole("dialog", { name: /Your privacy choices/i })).toBeVisible();
+  await page.getByRole("button", { name: "Accept analytics & ads" }).click();
+  await expect.poll(() => page.evaluate(() => window.localStorage.getItem("kk_privacy_consent_v1"))).toBe("accepted");
+  await expect(page.getByRole("dialog", { name: /Your privacy choices/i })).toHaveCount(0);
+  await expect(page.locator("#google-analytics-script, #google-adsense")).toHaveCount(0);
+  await expect(page.locator('script[src*="googletagmanager.com/gtag/js"], script[src*="pagead2.googlesyndication.com"]')).toHaveCount(0);
+});
