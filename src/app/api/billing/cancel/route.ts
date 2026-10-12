@@ -19,10 +19,11 @@ export async function POST(request: NextRequest) {
   const user = await getRequestUser(request);
   if (!user?.email) return NextResponse.json({ error: "Please sign in first." }, { status: 401 });
 
-  const [keyId, keySecret, configuredMode, stagingFlag, vercelEnv] = await Promise.all([
+  const [keyId, keySecret, configuredMode, livePaymentsEnabled, stagingFlag, vercelEnv] = await Promise.all([
     getServerEnv("RAZORPAY_KEY_ID"),
     getServerEnv("RAZORPAY_KEY_SECRET"),
     getServerEnv("RAZORPAY_MODE"),
+    getServerEnv("RAZORPAY_LIVE_PAYMENTS_ENABLED"),
     getServerEnv("KAAMKITPRO_STAGING"),
     getServerEnv("VERCEL_ENV"),
   ]);
@@ -34,6 +35,9 @@ export async function POST(request: NextRequest) {
   }
   if ((mode === "test" && !keyId.startsWith("rzp_test_")) || (mode === "live" && !keyId.startsWith("rzp_live_"))) {
     return NextResponse.json({ error: "Razorpay key does not match the configured mode." }, { status: 503 });
+  }
+  if (mode === "live" && livePaymentsEnabled !== "true") {
+    return NextResponse.json({ error: "Live subscription management is disabled until a production release is authorized." }, { status: 503 });
   }
   if (mode !== "test" && mode !== "live") return NextResponse.json({ error: "Invalid Razorpay mode." }, { status: 503 });
 
