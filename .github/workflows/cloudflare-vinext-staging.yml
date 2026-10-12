@@ -279,7 +279,7 @@ jobs:
             const path = "dist/server/wrangler.json";
             const config = JSON.parse(fs.readFileSync(path, "utf8"));
             if (config.name !== "kaamkitpro-staging") throw new Error("Refusing to add auth config to a non-staging Worker");
-            config.vars = { ...(config.vars || {}), KAAMKITPRO_STAGING: "true", KAAMKITPRO_ADMIN_EMAILS: `kaamkitpro-staging-admin-${process.env.GITHUB_RUN_ID}@example.com`, NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY };
+            config.vars = { ...(config.vars || {}), KAAMKITPRO_STAGING: "true", KAAMKITPRO_ADMIN_EMAILS: `kaamkitpro-staging-admin-${process.env.GITHUB_RUN_ID}@example.com`, RAZORPAY_MODE: "test", RAZORPAY_LIVE_PAYMENTS_ENABLED: "false", NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY };
             fs.writeFileSync(path, JSON.stringify(config, null, 2) + "\n");
           '
       - name: Verify worker is isolated from production
@@ -307,6 +307,26 @@ jobs:
           fi
           printf '%s' "$SUPABASE_SERVICE_ROLE_KEY" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --name kaamkitpro-staging
           echo "Configured Supabase server secret on the isolated staging Worker."
+      - name: Configure Razorpay Test Mode secrets on staging Worker only
+        shell: bash
+        env:
+          RAZORPAY_TEST_KEY_ID: ${{ secrets.RAZORPAY_TEST_KEY_ID }}
+          RAZORPAY_TEST_KEY_SECRET: ${{ secrets.RAZORPAY_TEST_KEY_SECRET }}
+          RAZORPAY_STAGING_WEBHOOK_SECRET: ${{ secrets.RAZORPAY_STAGING_WEBHOOK_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "$RAZORPAY_TEST_KEY_ID" ] || [ -z "$RAZORPAY_TEST_KEY_SECRET" ] || [ -z "$RAZORPAY_STAGING_WEBHOOK_SECRET" ]; then
+            echo "Missing RAZORPAY_TEST_KEY_ID, RAZORPAY_TEST_KEY_SECRET, or RAZORPAY_STAGING_WEBHOOK_SECRET repository secret. Refusing staging checkout deployment."
+            exit 1
+          fi
+          case "$RAZORPAY_TEST_KEY_ID" in
+            rzp_test_*) ;;
+            *) echo "Razorpay staging key must begin with rzp_test_; refusing deployment."; exit 1 ;;
+          esac
+          printf '%s' "$RAZORPAY_TEST_KEY_ID" | npx wrangler secret put RAZORPAY_KEY_ID --name kaamkitpro-staging
+          printf '%s' "$RAZORPAY_TEST_KEY_SECRET" | npx wrangler secret put RAZORPAY_KEY_SECRET --name kaamkitpro-staging
+          printf '%s' "$RAZORPAY_STAGING_WEBHOOK_SECRET" | npx wrangler secret put RAZORPAY_WEBHOOK_SECRET --name kaamkitpro-staging
+          echo "Configured Razorpay Test Mode credentials on the staging Worker only."
       - name: Deploy to workers.dev
         run: npx vinext-cloudflare deploy --config dist/server/wrangler.json
       # Production domains and deployments are intentionally excluded from this smoke-test gate.
