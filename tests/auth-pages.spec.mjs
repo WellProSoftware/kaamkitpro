@@ -68,6 +68,29 @@ test.describe("KaamKitPro authentication pages", () => {
     expect(await response.json()).toMatchObject({ plan: "free", isPro: false, adsEnabled: false });
   });
 
+  test("staging never loads AdSense, even when ad consent is accepted", async ({ page, request }) => {
+    await page.addInitScript(() => {
+      window.localStorage.setItem("kk_privacy_consent_v1", "accepted");
+    });
+
+    const adScriptRequests = [];
+    page.on("request", (requestEvent) => {
+      if (requestEvent.url().includes("googlesyndication.com")) {
+        adScriptRequests.push(requestEvent.url());
+      }
+    });
+
+    await page.goto("/");
+    await page.waitForTimeout(500);
+
+    expect(adScriptRequests).toHaveLength(0);
+    await expect(page.locator("#google-adsense")).toHaveCount(0);
+
+    const accessResponse = await request.get("/api/access");
+    expect(accessResponse.ok()).toBeTruthy();
+    expect((await accessResponse.json()).adsEnabled).toBe(false);
+  });
+
   test("pricing page links to sign in", async ({ page }) => {
     await page.goto("/pricing");
     await page.getByRole("link", { name: "Sign in" }).click();
