@@ -977,3 +977,32 @@ test("GST Calculator handles a zero amount without producing invalid values", as
   await expect(page.getByText("₹0.00", { exact: true })).toHaveCount(3);
   await expect(page.getByText(/NaN|Infinity/)).toHaveCount(0);
 });
+
+
+test("Percentage Calculator handles zero denominators without invalid percentages", async ({ page }) => {
+  await page.goto("/tools/percentage-calculator");
+  await expect(page.getByRole("heading", { name: "Percentage Calculator", exact: true })).toBeVisible();
+
+  const fields = page.locator('input[type="number"]');
+  await fields.nth(3).fill("0");
+  await expect(page.getByText("Whole must not be zero.", { exact: true })).toBeVisible();
+  await expect(page.getByText("Original value must not be zero.", { exact: true })).toBeVisible();
+
+  const results = page.locator("main").getByText("—", { exact: true });
+  await expect(results).toHaveCount(2);
+  await expect(page.getByText(/NaN|Infinity/)).toHaveCount(0);
+});
+
+test("Percentage Calculator supports a decrease and a zero percent result", async ({ page }) => {
+  await page.goto("/tools/percentage-calculator");
+  const fields = page.locator('input[type="number"]');
+
+  await fields.nth(4).fill("100");
+  await fields.nth(5).fill("75");
+  await expect(page.getByText("-25%", { exact: true })).toBeVisible();
+  await expect(page.getByText("Decrease", { exact: true })).toBeVisible();
+
+  await fields.nth(5).fill("100");
+  await expect(page.getByText("0%", { exact: true })).toBeVisible();
+  await expect(page.getByText("No change", { exact: true })).toBeVisible();
+});
