@@ -79,7 +79,7 @@ test.describe("staging security regression checks", () => {
   test("staging SEO exclusion and ad publisher declaration stay present", async ({ request }) => {
     const robotsResponse = await request.get("/robots.txt");
     expect(robotsResponse.status()).toBe(200);
-    expect(await robotsResponse.text()).toMatch(/Disallow:\s*\//i);
+    expect(await robotsResponse.text()).toMatch(/Disallow:\\s*\\//i);
 
     const adsResponse = await request.get("/ads.txt");
     expect(adsResponse.status()).toBe(200);
@@ -121,8 +121,9 @@ test.describe("staging security regression checks", () => {
     const loader = await readFile(new URL("../src/components/AdSenseLoader.tsx", import.meta.url), "utf8");
     const layout = await readFile(new URL("../src/app/layout.tsx", import.meta.url), "utf8");
     const access = await readFile(new URL("../src/app/api/access/route.ts", import.meta.url), "utf8");
-    expect(loader).toContain('return data.adsEnabled === true');
-    expect(loader).toContain(".catch(() =>");
+    expect(loader).toContain("data.adsEnabled !== true");
+    expect(loader).toContain('consent !== "accepted"');
+    expect(loader).toContain("if (!response.ok)");
     expect(layout).toContain('<AdSenseLoader disabled={isStagingBuild} />');
     expect(access).toContain("adsEnabled: !isStagingBuild && !isPro");
     expect(access).toContain("adsEnabled: false");
