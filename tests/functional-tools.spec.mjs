@@ -836,7 +836,7 @@ test("BMI Calculator updates BMI and category from entered measurements", async 
   await fields.nth(0).fill("70");
   await fields.nth(1).fill("175");
   await expect(page.getByText("22.9", { exact: true })).toBeVisible();
-  await expect(page.getByText("Normal", { exact: true })).toBeVisible();
+  await expect(page.getByText("Normal", { exact: true }).first()).toBeVisible();
 });
 
 test("EMI Calculator computes monthly EMI for a sample loan", async ({ page }) => {
