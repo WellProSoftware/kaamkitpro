@@ -101,8 +101,21 @@ jobs:
           set -euo pipefail
           printf '%s' "$SUPABASE_SERVICE_ROLE_KEY" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --name kaamkitpro-production
 
+      - name: Verify final deployment config before production deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const config = JSON.parse(fs.readFileSync("dist/server/wrangler.json", "utf8"));
+          if (config.name !== "kaamkitpro-production") throw new Error(`Refusing deploy: expected kaamkitpro-production, got ${config.name}`);
+          if (config.routes?.length || config.route || config.custom_domains?.length || config.domains?.length) throw new Error("Refusing deploy: custom route/domain detected");
+          if (!config.main) throw new Error("Refusing deploy: generated config has no main entrypoint");
+          console.log(`Verified deploy target ${config.name}; entrypoint ${config.main}; no custom domains/routes.`);
+          NODE
+
       - name: Deploy production worker to workers.dev only
-        run: npx vinext-cloudflare deploy --config dist/server/wrangler.json
+        run: npx wrangler deploy --config dist/server/wrangler.json
 
       - name: Smoke-test production worker without changing DNS
         shell: bash
