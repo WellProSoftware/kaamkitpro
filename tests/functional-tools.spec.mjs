@@ -93,6 +93,8 @@ test("Image Rotate page renders its upload control", async ({ page }) => {
 
 test("Image Rotate processes an image and downloads the rotated result", async ({ page }) => {
   await page.goto("/tools/image-rotate");
+  await expect(page.locator("#rotate-file")).toBeAttached();
+  await page.waitForTimeout(500); // Ensure the client file-change handler is hydrated.
   await page.locator("#rotate-file").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
@@ -122,6 +124,8 @@ const onePixelPng = Buffer.from(
 
 test("Image Grayscale processes an uploaded image and downloads the result", async ({ page }) => {
   await page.goto("/tools/image-grayscale");
+  await expect(page.locator("#grayscale-file")).toBeAttached();
+  await page.waitForTimeout(500); // Ensure the client file-change handler is hydrated.
   await page.locator("#grayscale-file").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
@@ -139,6 +143,8 @@ test("Image Grayscale processes an uploaded image and downloads the result", asy
 
 test("Image Flip processes an uploaded image and downloads the result", async ({ page }) => {
   await page.goto("/tools/image-flip");
+  await expect(page.locator("#flip-file")).toBeAttached();
+  await page.waitForTimeout(500); // Ensure the client file-change handler is hydrated.
   await page.locator("#flip-file").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
@@ -158,6 +164,8 @@ test("Image Flip processes an uploaded image and downloads the result", async ({
 
 test("Image Brightness processes an uploaded image and downloads the result", async ({ page }) => {
   await page.goto("/tools/image-brightness");
+  await expect(page.locator("#brightness-file")).toBeAttached();
+  await page.waitForTimeout(500); // Ensure the client file-change handler is hydrated.
   await page.locator("#brightness-file").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
@@ -687,8 +695,9 @@ test("Image Grayscale converts an uploaded image and downloads the result", asyn
 
 test("Image Resizer applies custom dimensions and downloads the result", async ({ page }) => {
   await page.goto("/tools/image-resizer");
-  await expect(page.getByRole("heading", { name: "Image Resizer Tool" })).toBeVisible();
-  await page.waitForTimeout(250); // File input events must run after client hydration.
+  await expect(page.getByRole("heading", { name: "Image Resizer", exact: true })).toBeVisible();
+  await expect(page.locator("#resize-file")).toBeAttached();
+  await page.waitForTimeout(500); // File input events must run after client hydration.
   await page.locator("#resize-file").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
