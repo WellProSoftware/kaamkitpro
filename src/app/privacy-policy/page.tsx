@@ -112,8 +112,8 @@ export default function PrivacyPolicyPage() {
               analytics and advertising technologies using the privacy choices
               prompt. Optional analytics and advertising scripts are not loaded
               unless you opt in. If browser storage is unavailable, optional
-              tracking remains disabled. You can clear this site’s local storage
-              to see the prompt again.
+              tracking remains disabled. Use the persistent “Privacy choices”
+              control on the website to reopen this prompt and change your choice.
             </p>
           </section>
 
@@ -143,11 +143,12 @@ export default function PrivacyPolicyPage() {
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
-              KaamKitPro loads the Google AdSense script to support
-              advertising. Whether ads are actually served depends on the
-              site&apos;s advertising configuration and provider eligibility or
-              approval; loading the script does not guarantee that ads will
-              appear.
+              On eligible production pages, KaamKitPro may load the Google AdSense
+              script only after consent and an access check permit advertising.
+              Staging, account and administrative pages keep advertising disabled.
+              Whether ads are actually served depends on the site&apos;s advertising
+              configuration and provider eligibility or approval; loading the
+              script does not guarantee that ads will appear.
             </p>
 
             <p className="mt-4 leading-7 text-slate-600">
