@@ -15,16 +15,19 @@ export default function EMICalculatorPage() {
   const months = Number(years) * 12;
 
   const monthlyRate = annualRate / 12 / 100;
+  const inputsComplete = loan !== "" && rate !== "" && years !== "";
 
   const emi =
-    principal > 0 && annualRate > 0 && months > 0
-      ? (principal *
-          monthlyRate *
-          Math.pow(1 + monthlyRate, months)) /
-        (Math.pow(1 + monthlyRate, months) - 1)
-      : principal > 0 && months > 0
-        ? principal / months
-        : 0;
+    inputsComplete && principal > 0 && months > 0
+      ? annualRate > 0
+        ? (principal *
+            monthlyRate *
+            Math.pow(1 + monthlyRate, months)) /
+          (Math.pow(1 + monthlyRate, months) - 1)
+        : annualRate === 0
+          ? principal / months
+          : 0
+      : 0;
 
   const totalPayment = emi * months;
   const totalInterest = totalPayment - principal;
