@@ -39,13 +39,16 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
       script.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
       script.onload = () => {
         if (cancelled) return;
-        const analyticsWindow = window as Window & { dataLayer?: unknown[][] };
+        const analyticsWindow = window as Window & {
+          dataLayer?: unknown[][];
+          gtag?: (...args: unknown[]) => void;
+        };
         analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
-        function gtag(...args: unknown[]) {
+        analyticsWindow.gtag = function gtag(...args: unknown[]) {
           analyticsWindow.dataLayer?.push(args);
-        }
-        gtag("js", new Date());
-        gtag("config", MEASUREMENT_ID);
+        };
+        analyticsWindow.gtag("js", new Date());
+        analyticsWindow.gtag("config", MEASUREMENT_ID);
       };
       document.head.appendChild(script);
     }
