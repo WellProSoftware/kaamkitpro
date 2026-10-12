@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { getRequestUser, serviceRest } from "@/lib/server-access";
+import { getServerEnv } from "@/lib/server-env";
 
 type VerificationBody = {
   razorpay_payment_id?: unknown;
@@ -40,10 +41,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Sign in before verifying a subscription." }, { status: 401 });
   }
 
-  const keyId = process.env.RAZORPAY_KEY_ID;
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
-  const mode = process.env.RAZORPAY_MODE || "test";
-  const stagingOnly = process.env.KAAMKITPRO_STAGING === "true" || process.env.VERCEL_ENV === "preview";
+  const [keyId, keySecret, configuredMode, livePaymentsEnabled, stagingFlag, vercelEnv] = await Promise.all([
+    getServerEnv("RAZORPAY_KEY_ID"),
+    getServerEnv("RAZORPAY_KEY_SECRET"),
+    getServerEnv("RAZORPAY_MODE"),
+    getServerEnv("RAZORPAY_LIVE_PAYMENTS_ENABLED"),
+    getServerEnv("KAAMKITPRO_STAGING"),
+    getServerEnv("VERCEL_ENV"),
+  ]);
+  const mode = configuredMode || "test";
+  const stagingOnly = stagingFlag === "true" || vercelEnv === "preview";
 
   if (!keyId || !keySecret) {
     return NextResponse.json({ error: "Subscription verification is not configured." }, { status: 503 });
@@ -54,7 +61,7 @@ export async function POST(request: NextRequest) {
   if (mode === "test" && !keyId.startsWith("rzp_test_")) {
     return NextResponse.json({ error: "Razorpay Test Mode requires a test key." }, { status: 503 });
   }
-  if (mode === "live" && (process.env.RAZORPAY_LIVE_PAYMENTS_ENABLED !== "true" || !keyId.startsWith("rzp_live_"))) {
+  if (mode === "live" && (livePaymentsEnabled !== "true" || !keyId.startsWith("rzp_live_"))) {
     return NextResponse.json({ error: "Live payment verification is disabled until a production release is authorized." }, { status: 503 });
   }
   if (mode !== "test" && mode !== "live") {
