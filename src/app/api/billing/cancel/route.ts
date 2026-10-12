@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Invalid cancellation request." }, { status: 400 });
   }
-  if (typeof body.subscription_id !== "string" || !/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(body.subscription_id)) {
+  if (typeof body.subscription_id !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.subscription_id)) {
     return NextResponse.json({ error: "Choose a valid subscription." }, { status: 400 });
   }
 
