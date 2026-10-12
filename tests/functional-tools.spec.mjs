@@ -882,3 +882,16 @@ test("EMI Calculator handles a zero-interest loan", async ({ page }) => {
   await expect(page.getByText("₹0", { exact: true })).toBeVisible();
   await expect(page.getByText("₹1,20,000", { exact: true })).toBeVisible();
 });
+
+
+test("BMI Calculator keeps the result empty for zero or missing measurements", async ({ page }) => {
+  await page.goto("/tools/bmi-calculator");
+  await expect(page.getByRole("heading", { name: "BMI Calculator", exact: true })).toBeVisible();
+  await expect(page.getByText("—", { exact: true })).toBeVisible();
+  await expect(page.getByText("Enter your details", { exact: true })).toBeVisible();
+  const fields = page.locator('input[type="number"]');
+  await fields.nth(0).fill("70");
+  await fields.nth(1).fill("0");
+  await expect(page.getByText("—", { exact: true })).toBeVisible();
+  await expect(page.getByText("Enter your details", { exact: true })).toBeVisible();
+});
