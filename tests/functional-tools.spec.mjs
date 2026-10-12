@@ -1011,3 +1011,12 @@ test("Percentage Calculator supports a decrease and a zero percent result", asyn
   await expect(page.getByText("0%", { exact: true })).toBeVisible();
   await expect(page.getByText("No change", { exact: true })).toBeVisible();
 });
+
+test("URL Decoder reports malformed percent-encoded Unicode", async ({ page }) => {
+  await page.goto("/tools/url-encoder-decoder");
+  await page.getByRole("heading", { name: "URL Encoder & Decoder", exact: true }).waitFor();
+  await page.getByRole("button", { name: "URL Decode", exact: true }).click();
+  await page.getByPlaceholder("Enter text or encoded URL...").fill("%E0%A4%A");
+  await page.getByRole("button", { name: "Decode URL", exact: true }).click();
+  await expect(page.getByText("Invalid URL encoded text.", { exact: true })).toBeVisible();
+});
