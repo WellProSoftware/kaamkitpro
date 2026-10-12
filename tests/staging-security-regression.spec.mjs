@@ -79,7 +79,7 @@ test.describe("staging security regression checks", () => {
   test("staging SEO exclusion and ad publisher declaration stay present", async ({ request }) => {
     const robotsResponse = await request.get("/robots.txt");
     expect(robotsResponse.status()).toBe(200);
-    expect(await robotsResponse.text()).toMatch(/Disallow:\\s*\\//i);
+    expect(await robotsResponse.text()).toContain("Disallow: /");
 
     const adsResponse = await request.get("/ads.txt");
     expect(adsResponse.status()).toBe(200);
