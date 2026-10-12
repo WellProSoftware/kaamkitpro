@@ -1,27 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const CONSENT_KEY = "kk_privacy_consent_v1";
 type Consent = "accepted" | "essential";
 
-export default function PrivacyConsent() {
-  const [visible, setVisible] = useState(false);
+function hasNoSavedChoice() {
+  if (typeof window === "undefined") return false;
+  try {
+    return !window.localStorage.getItem(CONSENT_KEY);
+  } catch {
+    return true;
+  }
+}
 
-  useEffect(() => {
-    try {
-      setVisible(!window.localStorage.getItem(CONSENT_KEY));
-    } catch {
-      // If storage is unavailable, keep optional tracking disabled.
-      setVisible(true);
-    }
-  }, []);
+export default function PrivacyConsent() {
+  const [visible, setVisible] = useState(hasNoSavedChoice);
 
   function saveConsent(consent: Consent) {
     try {
       window.localStorage.setItem(CONSENT_KEY, consent);
     } catch {
-      // Consent remains opt-in for this page session if storage is blocked.
+      // Optional tracking stays disabled if consent cannot be persisted.
     }
     window.dispatchEvent(new CustomEvent("kaamkitpro:consent", { detail: consent }));
     setVisible(false);
