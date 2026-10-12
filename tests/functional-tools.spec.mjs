@@ -895,3 +895,22 @@ test("BMI Calculator keeps the result empty for zero or missing measurements", a
   await expect(page.getByText("—", { exact: true })).toBeVisible();
   await expect(page.getByText("Enter your details", { exact: true })).toBeVisible();
 });
+
+
+test("BMI Calculator updates each weight category when measurements change", async ({ page }) => {
+  await page.goto("/tools/bmi-calculator");
+  const fields = page.locator('input[type="number"]');
+  await fields.nth(0).fill("70");
+
+  await fields.nth(1).fill("200");
+  await expect(page.getByText("Underweight", { exact: true }).first()).toBeVisible();
+
+  await fields.nth(1).fill("175");
+  await expect(page.getByText("Normal", { exact: true }).first()).toBeVisible();
+
+  await fields.nth(1).fill("160");
+  await expect(page.getByText("Overweight", { exact: true }).first()).toBeVisible();
+
+  await fields.nth(1).fill("150");
+  await expect(page.getByText("Obesity", { exact: true }).first()).toBeVisible();
+});
