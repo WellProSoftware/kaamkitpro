@@ -956,7 +956,7 @@ test("Age Calculator returns zero years, months, and days for today's birth date
   await page.getByRole("button", { name: "Calculate Age", exact: true }).click();
   // Select the result grid by its content instead of assuming it is the last grid
   // in the page (navigation/footer layout may add other grids).
-  const results = page.locator("main .grid").filter({ has: page.getByText("Years", { exact: true }) });
+  const results = page.locator("main .grid").filter({ hasText: "Years" });
   await expect(results.getByText("Years", { exact: true })).toBeVisible();
   await expect(results.getByText("Months", { exact: true })).toBeVisible();
   await expect(results.getByText("Days", { exact: true })).toBeVisible();
