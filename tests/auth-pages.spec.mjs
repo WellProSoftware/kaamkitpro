@@ -77,6 +77,12 @@ test.describe("KaamKitPro authentication pages", () => {
     });
     expect(cancel.status()).toBe(401);
     expect(await cancel.json()).toMatchObject({ error: "Please sign in first." });
+
+    const verify = await request.post("/api/billing/verify", {
+      data: {},
+    });
+    expect(verify.status()).toBe(401);
+    expect(await verify.json()).toMatchObject({ error: "Sign in before verifying a subscription." });
   });
 
   test("free tools stay available anonymously; account-based tools ask for sign-in", async ({ request }) => {
