@@ -29,11 +29,11 @@ test.describe("KaamKitPro authentication pages", () => {
     await page.goto("/login");
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
-    await expect(page.getByLabel("Password")).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "Password" })).toBeVisible();
 
     await page.getByLabel("One-time code").check();
     await expect(page.getByRole("button", { name: "Send one-time code" })).toBeVisible();
-    await expect(page.getByLabel("Password")).toHaveCount(0);
+    await expect(page.getByRole("textbox", { name: "Password" })).toHaveCount(0);
   });
 
   test("callback page rejects a URL without sign-in tokens", async ({ page }) => {
