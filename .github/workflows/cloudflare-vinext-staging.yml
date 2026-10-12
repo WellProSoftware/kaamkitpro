@@ -8,7 +8,12 @@ on:
   workflow_dispatch:
     inputs:
       deploy_to_workers_dev:
-        description: "Deploy the validated staging build to workers.dev (never production)"
+        description: "Deploy the validated build to the isolated workers.dev staging Worker (never production)"
+        required: true
+        type: boolean
+        default: false
+      deploy_feature_pr32:
+        description: "Use PR #32 feature branch instead of the staging base branch (requires deploy_to_workers_dev=true)"
         required: true
         type: boolean
         default: false
@@ -30,10 +35,10 @@ jobs:
       NEXT_TELEMETRY_DISABLED: "1"
 
     steps:
-      - name: Checkout staging branch
+      - name: Checkout explicitly selected staging source
         uses: actions/checkout@v5
         with:
-          ref: cloudflare/vinext-staging
+          ref: ${{ inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging' }}
           persist-credentials: true
 
       - name: Set up Node.js
@@ -165,7 +170,7 @@ jobs:
         run: set -o pipefail; npx playwright test -c playwright.cloudflare.config.mjs 2>&1 | tee cloudflare-playwright.log
 
       - name: Commit generated Cloudflare source configuration to staging branch
-        if: always() && steps.init.outcome == 'success'
+        if: always() && steps.init.outcome == 'success' && !(github.event_name == 'workflow_dispatch' && inputs.deploy_feature_pr32 == true)
         shell: bash
         run: |
           set -euo pipefail
@@ -241,7 +246,7 @@ jobs:
 
   deploy-staging:
     name: Deploy validated build to workers.dev only
-    if: needs.validate.result == 'success' && ((github.event_name == 'workflow_dispatch' && inputs.deploy_to_workers_dev == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[deploy-staging]')))
+    if: needs.validate.result == 'success' && ((github.event_name == 'workflow_dispatch' && inputs.deploy_to_workers_dev == true && (!inputs.deploy_feature_pr32 || github.ref == 'refs/heads/cloudflare/vinext-staging')) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[deploy-staging]')))
     needs: validate
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -257,10 +262,10 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: "https://stcahnjwonfcuzevfmyg.supabase.co"
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_pnD1QuYuIV9qYGRdYJTDGQ_UfwUycgY"
     steps:
-      - name: Checkout staging branch only
+      - name: Checkout explicitly selected staging source only
         uses: actions/checkout@v5
         with:
-          ref: cloudflare/vinext-staging
+          ref: ${{ inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging' }}
       - name: Set up Node.js
         uses: actions/setup-node@v5
         with:
@@ -279,7 +284,7 @@ jobs:
             const path = "dist/server/wrangler.json";
             const config = JSON.parse(fs.readFileSync(path, "utf8"));
             if (config.name !== "kaamkitpro-staging") throw new Error("Refusing to add auth config to a non-staging Worker");
-            config.vars = { ...(config.vars || {}), KAAMKITPRO_STAGING: "true", KAAMKITPRO_ADMIN_EMAILS: `kaamkitpro-staging-admin-${process.env.GITHUB_RUN_ID}@example.com`, NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY };
+            config.vars = { ...(config.vars || {}), KAAMKITPRO_STAGING: "true", KAAMKITPRO_ADMIN_EMAILS: `kaamkitpro-staging-admin-${process.env.GITHUB_RUN_ID}@example.com`, RAZORPAY_MODE: "test", RAZORPAY_LIVE_PAYMENTS_ENABLED: "false", NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY };
             fs.writeFileSync(path, JSON.stringify(config, null, 2) + "\n");
           '
       - name: Verify worker is isolated from production
@@ -318,7 +323,7 @@ jobs:
           const base = "https://kaamkitpro-staging.ankitkd550.workers.dev";
           const checks = [
             ["/", async r => r.status === 200 && /noindex/i.test(await r.text()), "homepage + staging noindex"],
-            ["/pricing", async r => { const t = await r.text(); return r.status === 200 && /Useful tools/i.test(t) && /Paid plans and checkout are not available/i.test(t); }, "free-only pricing"],
+            ["/pricing", async r => { const t = await r.text(); return r.status === 200 && /Useful tools/i.test(t) && /Use every tool without ads/i.test(t) && /restricted to Razorpay Test Mode/i.test(t); }, "pricing and staging-only Test Mode checkout"],
             ["/ads.txt", async r => r.status === 200 && (await r.text()).trim() === "google.com, pub-6738934686699082, DIRECT, f08c47fec0942fa0", "ads.txt publisher line"],
             ["/robots.txt", async r => r.status === 200 && (await r.text()).includes("Disallow: /"), "robots.txt staging exclusion"],
             ["/api/access", async r => { const t = await r.json(); return r.status === 200 && t.plan === "free" && t.isPro === false && t.adsEnabled === false; }, "anonymous access API + ads disabled on staging"],
