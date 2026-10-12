@@ -220,6 +220,7 @@ jobs:
           NEXT_BUILD: ${{ steps.next_build.outcome }}
           PLAYWRIGHT_INSTALL: ${{ steps.playwright_install.outcome }}
           BROWSER_TESTS: ${{ steps.browser_tests.outcome }}
+          SITEMAP_COVERAGE: ${{ steps.sitemap_coverage.outcome }}
         run: |
           failed=0
           for item in \
@@ -231,7 +232,8 @@ jobs:
             "lint:$LINT" \
             "Next.js build:$NEXT_BUILD" \
             "Playwright install:$PLAYWRIGHT_INSTALL" \
-            "browser tests:$BROWSER_TESTS"; do
+            "browser tests:$BROWSER_TESTS" \
+            "sitemap coverage:$SITEMAP_COVERAGE"; do
             echo "$item"
             case "$item" in
               *:success) ;;
