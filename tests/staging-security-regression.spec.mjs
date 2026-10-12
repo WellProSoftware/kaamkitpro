@@ -76,6 +76,41 @@ test.describe("staging security regression checks", () => {
     expect(await metered.json()).toMatchObject({ allowed: false, requiresSignIn: true });
   });
 
+  test("billing checkout and account routes reject signed-out requests", async ({ request }) => {
+    const checkout = await request.post("/api/billing/checkout", {
+      data: { plan_id: "pro-monthly-inr" },
+    });
+    expect(checkout.status()).toBe(401);
+
+    const verify = await request.post("/api/billing/verify", {
+      data: {
+        razorpay_payment_id: "pay_test123",
+        razorpay_subscription_id: "sub_test123",
+        razorpay_signature: "0".repeat(64),
+      },
+    });
+    expect(verify.status()).toBe(401);
+
+    const subscription = await request.get("/api/billing/subscription");
+    expect(subscription.status()).toBe(401);
+
+    const cancel = await request.post("/api/billing/cancel", {
+      data: { subscription_id: "a80a66cc-5f2f-4cfd-a1bf-7c71ec3d73d8" },
+    });
+    expect(cancel.status()).toBe(401);
+  });
+
+  test("billing webhook fails closed without a valid provider signature", async ({ request }) => {
+    const response = await request.post("/api/billing/webhook", {
+      headers: {
+        "x-razorpay-event-id": "staging-security-regression",
+      },
+      data: { event: "subscription.activated" },
+    });
+    expect([401, 503]).toContain(response.status());
+    expect(response.status()).not.toBe(200);
+  });
+
   test("staging SEO exclusion and ad publisher declaration stay present", async ({ request }) => {
     const robotsResponse = await request.get("/robots.txt");
     expect(robotsResponse.status()).toBe(200);
