@@ -4,32 +4,45 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 const ADSENSE_SCRIPT_ID = "google-adsense";
+const CONSENT_KEY = "kk_privacy_consent_v1";
 
 export default function AdSenseLoader({ disabled = false }: { disabled?: boolean }) {
   const pathname = usePathname();
 
   useEffect(() => {
     let cancelled = false;
-    if (disabled) {
-      document.getElementById(ADSENSE_SCRIPT_ID)?.remove();
-      return;
-    }
-    const excluded = /^\/(login|account|admin)(\/|$)/.test(pathname) || pathname.startsWith("/auth/");
-    if (excluded) {
-      document.getElementById(ADSENSE_SCRIPT_ID)?.remove();
-      return;
-    }
 
-    fetch("/api/access", { cache: "no-store" })
-      .then(async (response) => {
-        if (!response.ok) return false;
+    const removeAds = () => document.getElementById(ADSENSE_SCRIPT_ID)?.remove();
+    const excluded = /^\\/(login|account|admin)(\\/|$)/.test(pathname) || pathname.startsWith("/auth/");
+
+    async function syncAds() {
+      if (disabled || excluded) {
+        removeAds();
+        return;
+      }
+
+      let consent = "";
+      try {
+        consent = window.localStorage.getItem(CONSENT_KEY) || "";
+      } catch {
+        removeAds();
+        return;
+      }
+
+      if (consent !== "accepted") {
+        removeAds();
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/access", { cache: "no-store" });
+        if (!response.ok) {
+          removeAds();
+          return;
+        }
         const data = (await response.json()) as { adsEnabled?: boolean };
-        return data.adsEnabled === true;
-      })
-      .then((adsEnabled) => {
-        if (cancelled) return;
-        if (!adsEnabled) {
-          document.getElementById(ADSENSE_SCRIPT_ID)?.remove();
+        if (cancelled || data.adsEnabled !== true) {
+          removeAds();
           return;
         }
         if (document.getElementById(ADSENSE_SCRIPT_ID)) return;
@@ -41,14 +54,18 @@ export default function AdSenseLoader({ disabled = false }: { disabled?: boolean
         script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6738934686699082";
         script.dataset.adClient = "ca-pub-6738934686699082";
         document.head.appendChild(script);
-      })
-      .catch(() => {
-        // Fail closed: do not load ad scripts when entitlement status cannot be verified.
-        document.getElementById(ADSENSE_SCRIPT_ID)?.remove();
-      });
+      } catch {
+        // Fail closed if consent or entitlement cannot be verified.
+        removeAds();
+      }
+    }
 
+    const onConsent = () => { void syncAds(); };
+    void syncAds();
+    window.addEventListener("kaamkitpro:consent", onConsent);
     return () => {
       cancelled = true;
+      window.removeEventListener("kaamkitpro:consent", onConsent);
     };
   }, [pathname, disabled]);
 
