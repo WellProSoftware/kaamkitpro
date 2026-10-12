@@ -183,3 +183,9 @@ test.describe("staging security regression checks", () => {
   });
 
 });
+
+test("Razorpay subscription verification signs payment ID before subscription ID", async () => {
+  const source = await readFile(new URL("../src/app/api/billing/verify/route.ts", import.meta.url), "utf8");
+  expect(source).toContain('update(`${paymentId}|${subscriptionId}`)');
+  expect(source).not.toContain('update(`${subscriptionId}|${paymentId}`)');
+});
