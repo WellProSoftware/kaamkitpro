@@ -87,6 +87,29 @@ test.describe("KaamKitPro authentication pages", () => {
     expect(await proOnly.json()).toMatchObject({ allowed: false, requiresSignIn: true });
   });
 
+  test("staging never loads AdSense, even when optional ads consent is accepted", async ({ page, request }) => {
+    await page.addInitScript(() => {
+      window.localStorage.setItem("kk_privacy_consent_v1", "accepted");
+    });
+
+    const adScriptRequests = [];
+    page.on("request", (requestEvent) => {
+      if (requestEvent.url().includes("googlesyndication.com")) {
+        adScriptRequests.push(requestEvent.url());
+      }
+    });
+
+    await page.goto("/");
+    await page.waitForTimeout(500);
+
+    expect(adScriptRequests).toHaveLength(0);
+    await expect(page.locator("#google-adsense")).toHaveCount(0);
+
+    const accessResponse = await request.get("/api/access");
+    expect(accessResponse.ok()).toBeTruthy();
+    expect((await accessResponse.json()).adsEnabled).toBe(false);
+  });
+
   test("pricing page explains that free tools do not need signup", async ({ page }) => {
     await page.goto("/pricing");
     await expect(page.getByRole("heading", { name: "Useful tools. No signup needed." })).toBeVisible();
