@@ -1,21 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const CONSENT_KEY = "kk_privacy_consent_v1";
 type Consent = "accepted" | "essential";
 
-function hasNoSavedChoice() {
-  if (typeof window === "undefined") return false;
-  try {
-    return !window.localStorage.getItem(CONSENT_KEY);
-  } catch {
-    return true;
-  }
-}
-
 export default function PrivacyConsent() {
-  const [visible, setVisible] = useState(hasNoSavedChoice);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      try {
+        setVisible(!window.localStorage.getItem(CONSENT_KEY));
+      } catch {
+        setVisible(true);
+      }
+    });
+  }, []);
 
   function saveConsent(consent: Consent) {
     try {
