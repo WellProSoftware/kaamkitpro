@@ -20,7 +20,7 @@ export default function AuthCallbackPage() {
 
       const tokenHash = query.get("token_hash");
       const otpType = query.get("type") || "email";
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\\/$/, "");
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
       const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
       // Remove one-time credentials from browser history as soon as they are read.
