@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRequestUser, serviceRest } from "@/lib/server-access";
+import { getServerEnv } from "@/lib/server-env";
 
 
 type Plan = {
@@ -17,9 +18,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Sign in before starting a subscription." }, { status: 401 });
   }
 
-  const keyId = process.env.RAZORPAY_KEY_ID;
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
-  const mode = process.env.RAZORPAY_MODE || "test";
+  const [keyId, keySecret, configuredMode, livePaymentsEnabled, stagingFlag, vercelEnv] = await Promise.all([
+    getServerEnv("RAZORPAY_KEY_ID"),
+    getServerEnv("RAZORPAY_KEY_SECRET"),
+    getServerEnv("RAZORPAY_MODE"),
+    getServerEnv("RAZORPAY_LIVE_PAYMENTS_ENABLED"),
+    getServerEnv("KAAMKITPRO_STAGING"),
+    getServerEnv("VERCEL_ENV"),
+  ]);
+  const mode = configuredMode || "test";
   if (!keyId || !keySecret) {
     return NextResponse.json({ error: "Subscription checkout is not configured yet." }, { status: 503 });
   }
@@ -30,7 +37,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Razorpay Test Mode requires a test key. Checkout remains disabled." }, { status: 503 });
   }
   if (mode === "live" && (
-    process.env.RAZORPAY_LIVE_PAYMENTS_ENABLED !== "true" ||
+    livePaymentsEnabled !== "true" ||
     !keyId.startsWith("rzp_live_")
   )) {
     return NextResponse.json({ error: "Live payments are disabled until the account, plans, webhook and entitlement flow are verified." }, { status: 503 });
@@ -41,7 +48,7 @@ export async function POST(request: NextRequest) {
 
   // This branch and Cloudflare staging Worker must never create a live subscription.
   // Live collection requires a separate, explicitly authorized production release.
-  const stagingOnly = process.env.KAAMKITPRO_STAGING === "true" || process.env.VERCEL_ENV === "preview";
+  const stagingOnly = stagingFlag === "true" || vercelEnv === "preview";
   if (stagingOnly && (mode !== "test" || !keyId.startsWith("rzp_test_"))) {
     return NextResponse.json({ error: "Staging checkout is restricted to Razorpay Test Mode." }, { status: 503 });
   }
