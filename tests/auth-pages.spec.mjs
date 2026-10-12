@@ -110,10 +110,24 @@ test.describe("KaamKitPro authentication pages", () => {
     expect((await accessResponse.json()).adsEnabled).toBe(false);
   });
 
+
+  test("Pro subscription checkout requires explicit recurring billing consent", async ({ page }) => {
+    await page.goto("/pricing");
+    await expect(page.getByRole("button", { name: "Choose monthly" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Choose monthly" }).click();
+    await expect(page.getByRole("status")).toContainText("accept the recurring billing terms");
+    await expect(page.locator('script[src*="checkout.razorpay.com"]')).toHaveCount(0);
+  });
+
   test("pricing page explains that free tools do not need signup", async ({ page }) => {
     await page.goto("/pricing");
     await expect(page.getByRole("heading", { name: "Useful tools. No signup needed." })).toBeVisible();
-    await expect(page.getByText("Free tools stay open to everyone without signup.")).toBeVisible();
+    await expect(page.getByText("Open any currently available free tool and start using it immediately.", { exact: false })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Use every tool without ads" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Choose monthly" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Choose yearly" })).toBeVisible();
+    await expect(page.getByText(/authorize recurring subscription payments/i)).toBeVisible();
     await page.getByRole("link", { name: "Sign in" }).click();
 
     await expect(page).toHaveURL(/\/login$/);
