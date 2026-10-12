@@ -635,3 +635,21 @@ test("URL Encoder and Decoder preserve reserved and Unicode characters", async (
   await page.getByRole("button", { name: "Decode URL", exact: true }).click();
   await expect(page.getByText("Invalid URL encoded text.", { exact: true })).toBeVisible();
 });
+
+
+test("Image Brightness adjusts an uploaded image and downloads the result", async ({ page }) => {
+  await page.goto("/tools/image-brightness");
+  await page.locator("#brightness-file").setInputFiles({
+    name: "pixel.png",
+    mimeType: "image/png",
+    buffer: onePixelPng,
+  });
+  await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
+  await page.locator('input[type="range"]').fill("160");
+  await expect(page.getByText("Brightness: 160%", { exact: true })).toBeVisible();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Adjust & Download", exact: true }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-brightness.jpg");
+  await expect(page.getByText("Brightness adjusted successfully.", { exact: true })).toBeVisible();
+});
