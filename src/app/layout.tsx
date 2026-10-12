@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import InternalLinks from "@/components/InternalLinks";
 import AdSenseLoader from "@/components/AdSenseLoader";
+import PrivacyConsent from "@/components/PrivacyConsent";
 
 const siteUrl = "https://kaamkitpro.com";
 const isStagingBuild = process.env.KAAMKITPRO_STAGING === "true" || process.env.VERCEL_ENV === "preview";
@@ -133,23 +134,24 @@ export default function RootLayout({
 
         <InternalLinks />
 
-        {/* Keep staging traffic out of production analytics. */}
+        <PrivacyConsent />
+
+        {/* Optional analytics is loaded only after explicit consent. */}
         {!isStagingBuild && (
-          <>
-            <Script
-              src="https://www.googletagmanager.com/gtag/js?id=G-M9190XP42G"
-              strategy="afterInteractive"
-            />
-            <Script id="google-analytics" strategy="afterInteractive">
-              {`
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              if (window.localStorage.getItem("kk_privacy_consent_v1") === "accepted") {
+                var analyticsScript = document.createElement("script");
+                analyticsScript.async = true;
+                analyticsScript.src = "https://www.googletagmanager.com/gtag/js?id=G-M9190XP42G";
+                document.head.appendChild(analyticsScript);
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){window.dataLayer.push(arguments);}
                 gtag('js', new Date());
-
                 gtag('config', 'G-M9190XP42G');
-              `}
-            </Script>
-          </>
+              }
+            `}
+          </Script>
         )}
       </body>
     </html>
