@@ -669,3 +669,22 @@ test("Image Grayscale converts an uploaded image and downloads the result", asyn
   expect(download.suggestedFilename()).toBe("kaamkitpro-grayscale.jpg");
   await expect(page.getByText("Grayscale image created successfully.", { exact: true })).toBeVisible();
 });
+
+
+test("Image Resizer applies custom dimensions and downloads the result", async ({ page }) => {
+  await page.goto("/tools/image-resizer");
+  await page.locator("#resize-file").setInputFiles({
+    name: "pixel.png",
+    mimeType: "image/png",
+    buffer: onePixelPng,
+  });
+  await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
+  await page.getByLabel("Keep aspect ratio").uncheck();
+  await page.getByLabel("Width (px)").fill("2");
+  await page.getByLabel("Height (px)").fill("3");
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Resize Image", exact: true }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-resized.jpg");
+  await expect(page.getByText("Image resized successfully.", { exact: true })).toBeVisible();
+});
