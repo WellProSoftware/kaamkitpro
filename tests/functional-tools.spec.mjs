@@ -679,9 +679,10 @@ test("Image Resizer applies custom dimensions and downloads the result", async (
     buffer: onePixelPng,
   });
   await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
+  await expect(page.locator('input[type="number"]').nth(0)).toHaveValue("1");
   await page.getByLabel("Keep aspect ratio").uncheck();
-  await page.getByLabel("Width (px)").fill("2");
-  await page.getByLabel("Height (px)").fill("3");
+  await page.locator('input[type="number"]').nth(0).fill("2");
+  await page.locator('input[type="number"]').nth(1).fill("3");
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Resize Image", exact: true }).click();
   const download = await downloadPromise;
