@@ -67,6 +67,18 @@ test.describe("KaamKitPro authentication pages", () => {
     expect(await response.json()).toMatchObject({ error: "Sign in before starting a subscription." });
   });
 
+  test("subscription status and cancellation APIs reject unauthenticated users", async ({ request }) => {
+    const status = await request.get("/api/billing/subscription");
+    expect(status.status()).toBe(401);
+    expect(await status.json()).toMatchObject({ error: "Please sign in first." });
+
+    const cancel = await request.post("/api/billing/cancel", {
+      data: { subscription_id: "00000000-0000-4000-8000-000000000000" },
+    });
+    expect(cancel.status()).toBe(401);
+    expect(await cancel.json()).toMatchObject({ error: "Please sign in first." });
+  });
+
   test("free tools stay available anonymously; account-based tools ask for sign-in", async ({ request }) => {
     const free = await request.post("/api/tools/usage", {
       data: { tool_key: "calculator", action: "check" },
