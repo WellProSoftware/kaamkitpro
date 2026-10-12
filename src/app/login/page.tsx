@@ -176,7 +176,7 @@ export default function LoginPage() {
         ) : (
           <div className="mt-6 rounded-xl bg-blue-50 p-4 text-sm text-blue-900">
             <p className="font-bold">Code sent to {identifier}</p>
-            <p className="mt-1">If you don't see it, check your inbox or SMS and spam folder.</p>
+            <p className="mt-1">If you don&apos;t see it, check your inbox or SMS and spam folder.</p>
           </div>
         )}
 
