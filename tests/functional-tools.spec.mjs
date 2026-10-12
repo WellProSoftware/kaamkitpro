@@ -1038,3 +1038,28 @@ test("Base64 Encoder and Decoder explain empty input and Clear resets the form",
   await expect(page.getByText("Please enter some text first.", { exact: true })).toHaveCount(0);
 });
 
+test("Word Counter shows zero metrics for empty text and Clear resets counts", async ({ page }) => {
+  await page.goto("/tools/word-counter");
+  await expect(page.getByRole("heading", { name: "Word Counter", exact: true })).toBeVisible();
+
+  const input = page.getByPlaceholder("Type or paste your text here...");
+  const metrics = page.locator("main").locator(".grid").first();
+
+  for (const label of ["Words", "Characters", "Without Spaces", "Sentences", "Paragraphs"]) {
+    const card = page.locator("main").locator("div.rounded-2xl").filter({ has: page.getByText(label, { exact: true }) }).first();
+    await expect(card).toContainText("0");
+  }
+  await expect(page.getByText("0 min", { exact: true })).toBeVisible();
+
+  await input.fill("KaamKitPro is useful. Count these words!");
+  await expect(page.getByText("6", { exact: true }).first()).toBeVisible();
+  await page.getByRole("button", { name: "Clear", exact: true }).click();
+
+  await expect(input).toHaveValue("");
+  for (const label of ["Words", "Characters", "Without Spaces", "Sentences", "Paragraphs"]) {
+    const card = page.locator("main").locator("div.rounded-2xl").filter({ has: page.getByText(label, { exact: true }) }).first();
+    await expect(card).toContainText("0");
+  }
+  await expect(page.getByText("0 min", { exact: true })).toBeVisible();
+});
+
