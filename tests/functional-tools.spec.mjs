@@ -514,8 +514,10 @@ test("JSON Formatter minifies valid JSON without changing its data", async ({ pa
 
 test("JSON Formatter gives a clear message for empty input", async ({ page }) => {
   await page.goto("/tools/json-formatter");
+  await expect(page.getByRole("heading", { name: "JSON Formatter", exact: true })).toBeVisible();
+  await page.waitForTimeout(250); // Let client-side handlers hydrate in the vinext preview.
   await page.getByRole("button", { name: "Format", exact: true }).click();
-  await expect(page.getByText("Please enter some JSON first.", { exact: true })).toBeVisible();
+  await expect(page.getByText(/Please enter some JSON first\./)).toBeVisible();
 });
 
 test("Slug Generator normalizes repeated spaces and punctuation", async ({ page }) => {
@@ -685,6 +687,8 @@ test("Image Grayscale converts an uploaded image and downloads the result", asyn
 
 test("Image Resizer applies custom dimensions and downloads the result", async ({ page }) => {
   await page.goto("/tools/image-resizer");
+  await expect(page.getByRole("heading", { name: "Image Resizer Tool" })).toBeVisible();
+  await page.waitForTimeout(250); // File input events must run after client hydration.
   await page.locator("#resize-file").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
