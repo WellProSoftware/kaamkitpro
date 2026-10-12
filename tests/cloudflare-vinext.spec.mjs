@@ -167,6 +167,8 @@ test("free text utility works in the vinext preview runtime", async ({ page }) =
 
 test("CSV to JSON converter works in the vinext preview runtime", async ({ page }) => {
   await page.goto("/tools/csv-to-json");
+  await expect(page.getByRole("heading", { name: "CSV to JSON Converter" })).toBeVisible();
+  await page.waitForTimeout(250); // Avoid filling before the client component hydrates.
   await page.locator("#csv-input").fill('name,city,note\nAsha,Mumbai,"Likes tea, coffee"');
   await expect(page.locator("#json-output")).toHaveValue(
     JSON.stringify([{ name: "Asha", city: "Mumbai", note: "Likes tea, coffee" }], null, 2),
