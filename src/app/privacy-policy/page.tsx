@@ -105,12 +105,25 @@ export default function PrivacyPolicyPage() {
 
           <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
             <h2 className="text-2xl font-bold">
-              4. Analytics
+              4. Privacy Choices and Consent
+            </h2>
+            <p className="mt-4 leading-7 text-slate-600">
+              On supported pages, you can choose “Essential only” or accept
+              analytics and advertising technologies using the privacy choices
+              prompt. Optional analytics and advertising scripts are not loaded
+              unless you opt in. If browser storage is unavailable, optional
+              tracking remains disabled. You can clear this site’s local storage
+              to see the prompt again.
+            </p>
+          </section>
+
+          <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
+            <h2 className="text-2xl font-bold">
+              5. Analytics
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
-              We currently load Google Analytics to measure website traffic,
-              understand which pages are used and improve the site. Google
+              When you accept analytics and advertising technologies through our privacy choices, we load Google Analytics to measure website traffic, understand which pages are used and improve the site. Google
               Analytics may process technical and usage information such as
               pages viewed, browser and device details, referral information
               and approximate location, subject to Google&apos;s settings and
@@ -126,7 +139,7 @@ export default function PrivacyPolicyPage() {
 
           <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
             <h2 className="text-2xl font-bold">
-              5. Advertising
+              6. Advertising
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
@@ -146,7 +159,7 @@ export default function PrivacyPolicyPage() {
 
           <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
             <h2 className="text-2xl font-bold">
-              6. Third-Party Services
+              7. Third-Party Services
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
@@ -166,7 +179,7 @@ export default function PrivacyPolicyPage() {
 
           <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
             <h2 className="text-2xl font-bold">
-              7. Data Security
+              8. Data Security
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
@@ -182,7 +195,7 @@ export default function PrivacyPolicyPage() {
 
           <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
             <h2 className="text-2xl font-bold">
-              8. Children&apos;s Privacy
+              9. Children&apos;s Privacy
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
@@ -194,7 +207,7 @@ export default function PrivacyPolicyPage() {
 
           <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
             <h2 className="text-2xl font-bold">
-              9. Changes to This Privacy Policy
+              10. Changes to This Privacy Policy
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
@@ -210,7 +223,7 @@ export default function PrivacyPolicyPage() {
 
           <section className="rounded-3xl border border-blue-100 bg-blue-50 p-6 sm:p-8">
             <h2 className="text-2xl font-bold">
-              10. Contact
+              11. Contact
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
