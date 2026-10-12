@@ -748,3 +748,43 @@ test("Staging access API keeps advertising disabled for anonymous visitors", asy
   expect(body.user).toBeNull();
   expect(body.adsEnabled).toBe(false);
 });
+
+
+test("Admin access API rejects anonymous grant listing and mutations", async ({ request }) => {
+  const listResponse = await request.get("/api/admin/access");
+  expect(listResponse.status()).toBe(401);
+  await expect(listResponse.json()).resolves.toMatchObject({ error: "Please sign in first." });
+
+  const grantResponse = await request.post("/api/admin/access", {
+    data: {
+      email: "staging-test@example.com",
+      access_type: "selected_tools",
+      tool_keys: ["json-formatter"],
+      reason: "testing",
+      duration: "30",
+    },
+  });
+  expect(grantResponse.status()).toBe(401);
+  await expect(grantResponse.json()).resolves.toMatchObject({ error: "Please sign in first." });
+
+  const revokeResponse = await request.patch("/api/admin/access", {
+    data: { id: "00000000-0000-4000-8000-000000000000" },
+  });
+  expect(revokeResponse.status()).toBe(401);
+  await expect(revokeResponse.json()).resolves.toMatchObject({ error: "Please sign in first." });
+});
+
+test("Admin access API rejects cross-origin grant mutations", async ({ request }) => {
+  const response = await request.post("/api/admin/access", {
+    headers: { origin: "https://attacker.invalid" },
+    data: {
+      email: "staging-test@example.com",
+      access_type: "selected_tools",
+      tool_keys: ["json-formatter"],
+      reason: "testing",
+      duration: "30",
+    },
+  });
+  expect(response.status()).toBe(403);
+  await expect(response.json()).resolves.toMatchObject({ error: "Invalid request origin." });
+});
