@@ -700,10 +700,12 @@ test("Image Cropper validates crop bounds and downloads the cropped image", asyn
   });
   await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
   await expect(page.getByText("Original size: 1 × 1px", { exact: true })).toBeVisible();
-  await page.getByLabel("Crop width").fill("2");
+  const numberInputs = page.locator('input[type="number"]');
+  await expect(numberInputs).toHaveCount(4);
+  await numberInputs.nth(2).fill("2");
   await page.getByRole("button", { name: "Crop Image", exact: true }).click();
   await expect(page.getByText("Crop area is outside the image boundaries.", { exact: true })).toBeVisible();
-  await page.getByLabel("Crop width").fill("1");
+  await numberInputs.nth(2).fill("1");
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Crop Image", exact: true }).click();
   const download = await downloadPromise;
