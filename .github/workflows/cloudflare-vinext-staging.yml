@@ -8,7 +8,12 @@ on:
   workflow_dispatch:
     inputs:
       deploy_to_workers_dev:
-        description: "Deploy the validated staging build to workers.dev (never production)"
+        description: "Deploy the validated build to the isolated workers.dev staging Worker (never production)"
+        required: true
+        type: boolean
+        default: false
+      deploy_feature_pr32:
+        description: "Use PR #32 feature branch instead of the staging base branch (requires deploy_to_workers_dev=true)"
         required: true
         type: boolean
         default: false
@@ -30,10 +35,10 @@ jobs:
       NEXT_TELEMETRY_DISABLED: "1"
 
     steps:
-      - name: Checkout staging branch
+      - name: Checkout explicitly selected staging source
         uses: actions/checkout@v5
         with:
-          ref: cloudflare/vinext-staging
+          ref: ${{ inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging' }}
           persist-credentials: true
 
       - name: Set up Node.js
@@ -165,7 +170,7 @@ jobs:
         run: set -o pipefail; npx playwright test -c playwright.cloudflare.config.mjs 2>&1 | tee cloudflare-playwright.log
 
       - name: Commit generated Cloudflare source configuration to staging branch
-        if: always() && steps.init.outcome == 'success'
+        if: always() && steps.init.outcome == 'success' && !(github.event_name == 'workflow_dispatch' && inputs.deploy_feature_pr32 == true)
         shell: bash
         run: |
           set -euo pipefail
@@ -215,6 +220,7 @@ jobs:
           NEXT_BUILD: ${{ steps.next_build.outcome }}
           PLAYWRIGHT_INSTALL: ${{ steps.playwright_install.outcome }}
           BROWSER_TESTS: ${{ steps.browser_tests.outcome }}
+          SITEMAP_COVERAGE: ${{ steps.sitemap_coverage.outcome }}
         run: |
           failed=0
           for item in \
@@ -226,7 +232,8 @@ jobs:
             "lint:$LINT" \
             "Next.js build:$NEXT_BUILD" \
             "Playwright install:$PLAYWRIGHT_INSTALL" \
-            "browser tests:$BROWSER_TESTS"; do
+            "browser tests:$BROWSER_TESTS" \
+            "sitemap coverage:$SITEMAP_COVERAGE"; do
             echo "$item"
             case "$item" in
               *:success) ;;
@@ -241,7 +248,7 @@ jobs:
 
   deploy-staging:
     name: Deploy validated build to workers.dev only
-    if: needs.validate.result == 'success' && ((github.event_name == 'workflow_dispatch' && inputs.deploy_to_workers_dev == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[deploy-staging]')))
+    if: needs.validate.result == 'success' && ((github.event_name == 'workflow_dispatch' && inputs.deploy_to_workers_dev == true && (!inputs.deploy_feature_pr32 || github.ref == 'refs/heads/cloudflare/vinext-staging')) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[deploy-staging]')))
     needs: validate
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -257,10 +264,10 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: "https://stcahnjwonfcuzevfmyg.supabase.co"
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_pnD1QuYuIV9qYGRdYJTDGQ_UfwUycgY"
     steps:
-      - name: Checkout staging branch only
+      - name: Checkout explicitly selected staging source only
         uses: actions/checkout@v5
         with:
-          ref: cloudflare/vinext-staging
+          ref: ${{ inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging' }}
       - name: Set up Node.js
         uses: actions/setup-node@v5
         with:
@@ -618,7 +625,6 @@ jobs:
           ];
           // Staging deliberately disables AdSense; hashed client chunk names are build-specific,
           // so do not probe a stale hard-coded chunk URL here.
-          ];
           for (const path of paths) {
             try {
               const response = await fetch(base + path, { redirect: "follow" });
