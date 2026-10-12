@@ -35,9 +35,10 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
       script.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
       script.onload = () => {
         if (cancelled) return;
-        window.dataLayer = window.dataLayer || [];
+        const analyticsWindow = window as Window & { dataLayer?: unknown[][] };
+        analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
         function gtag(...args: unknown[]) {
-          window.dataLayer.push(args);
+          analyticsWindow.dataLayer?.push(args);
         }
         gtag("js", new Date());
         gtag("config", MEASUREMENT_ID);
