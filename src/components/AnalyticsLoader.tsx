@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 const CONSENT_KEY = "kk_privacy_consent_v1";
 const SCRIPT_ID = "google-analytics-script";
 const MEASUREMENT_ID = "G-M9190XP42G";
 
 export default function AnalyticsLoader({ disabled = false }: { disabled?: boolean }) {
+  const pathname = usePathname();
+  const lastTrackedToolPath = useRef("");
+
   useEffect(() => {
     let cancelled = false;
 
@@ -49,6 +53,12 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
         };
         analyticsWindow.gtag("js", new Date());
         analyticsWindow.gtag("config", MEASUREMENT_ID);
+        if (window.location.pathname.startsWith("/tools/")) {
+          analyticsWindow.gtag("event", "tool_used", {
+            tool_name: window.location.pathname,
+          });
+          lastTrackedToolPath.current = window.location.pathname;
+        }
       };
       document.head.appendChild(script);
     }
@@ -60,6 +70,25 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
       window.removeEventListener("kaamkitpro:consent", loadAnalyticsIfConsented);
     };
   }, [disabled]);
+
+  useEffect(() => {
+    if (disabled || !pathname.startsWith("/tools/") || lastTrackedToolPath.current === pathname) {
+      return;
+    }
+
+    let consent = "";
+    try {
+      consent = window.localStorage.getItem(CONSENT_KEY) || "";
+    } catch {
+      return;
+    }
+    if (consent !== "accepted" || typeof window.gtag !== "function") {
+      return;
+    }
+
+    window.gtag("event", "tool_used", { tool_name: pathname });
+    lastTrackedToolPath.current = pathname;
+  }, [disabled, pathname]);
 
   return null;
 }
