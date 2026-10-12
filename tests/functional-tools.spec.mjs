@@ -811,3 +811,21 @@ test("Admin access API rejects cross-origin revoke requests before authenticatio
   expect(response.status()).toBe(403);
   await expect(response.json()).resolves.toMatchObject({ error: "Invalid request origin." });
 });
+
+test("GST Calculator correctly adds and removes GST", async ({ page }) => {
+  await page.goto("/tools/gst-calculator");
+  await expect(page.getByRole("heading", { name: "GST Calculator", exact: true })).toBeVisible();
+
+  await page.locator('input[type="number"]').fill("10000");
+  await page.getByRole("button", { name: "Add GST", exact: true }).click();
+  await expect(page.getByText("₹10000.00", { exact: true })).toBeVisible();
+  await expect(page.getByText("₹1800.00", { exact: true })).toBeVisible();
+  await expect(page.getByText("₹11800.00", { exact: true })).toBeVisible();
+
+  await page.locator('input[type="number"]').fill("11800");
+  await page.getByRole("button", { name: "Remove GST", exact: true }).click();
+  await expect(page.getByText("₹10000.00", { exact: true })).toBeVisible();
+  await expect(page.getByText("₹1800.00", { exact: true })).toBeVisible();
+  await expect(page.getByText("₹11800.00", { exact: true })).toBeVisible();
+});
+
