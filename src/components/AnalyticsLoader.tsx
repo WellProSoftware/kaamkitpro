@@ -27,7 +27,11 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
         removeAnalytics();
         return;
       }
-      if (consent !== "accepted" || document.getElementById(SCRIPT_ID)) return;
+      if (consent !== "accepted") {
+        removeAnalytics();
+        return;
+      }
+      if (document.getElementById(SCRIPT_ID)) return;
 
       const script = document.createElement("script");
       script.id = SCRIPT_ID;
