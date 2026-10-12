@@ -38,12 +38,12 @@ export default function PricingPage() {
           <div className="mx-auto mt-8 max-w-2xl rounded-2xl border border-blue-200 bg-blue-50 p-5 text-left leading-7 text-blue-950">
             <h2 className="font-bold">How access works</h2>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm sm:text-base">
-              <li>Free tools stay open to everyone without signup.</li>
-              <li>When you choose a Pro-only feature, you will be asked to sign in or create an account at that point.</li>
+              <li>Free tools remain free permanently and can be used without signup; ads may support the free service.</li>
+              <li>Paid-capacity tools offer a small trial allowance: typically 2 uses for heavier cloud processing or 3 uses per day for eligible AI/hosted tools. When the allowance is exhausted, the user is asked to subscribe to Pro to continue.</li>
+              <li>Free browser-based tools do not consume paid-tool quota. Ads are intended for the Free experience; active Pro access disables ads where supported.</li>
               <li>Pro access is granted only while an eligible paid subscription is active or an authorized admin has explicitly granted access. Admin grants can be scoped to selected tools and can expire or be revoked.</li>
               <li>Account creation supports email/mobile verification, password sign-in, and Google sign-in as those options are configured and verified.</li>
-              <li>Subscriptions and checkout are not active yet. No payment is collected; paid access will be enabled only after payment setup and testing.</li>
-              <li>Ads may support the free service, subject to provider approval and policies.</li>
+              <li>Checkout is not live yet. The proposed prices are ₹99/month and ₹699/year; real payments will be enabled only after Razorpay test payments, webhook verification and access-grant tests pass.</li>
             </ul>
           </div>
           <Link href="/tools" className="mt-8 inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 py-3 font-bold text-white hover:bg-blue-700">
