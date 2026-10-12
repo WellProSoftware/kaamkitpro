@@ -27,3 +27,15 @@ test("staging never injects the live AdSense script, including after navigation"
     await expect(page.locator('script[src*="pagead2.googlesyndication.com"]')).toHaveCount(0);
   }
 });
+
+test("anonymous staging access API stays free and keeps ads disabled", async ({ request }) => {
+  const response = await request.get("/api/access");
+  expect(response.status()).toBe(200);
+  await expect(response.json()).resolves.toMatchObject({
+    user: null,
+    plan: "free",
+    isPro: false,
+    adsEnabled: false,
+    selectedTools: [],
+  });
+});
