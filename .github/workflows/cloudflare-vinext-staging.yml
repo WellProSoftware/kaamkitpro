@@ -1,0 +1,636 @@
+# Safety note: this workflow must deploy only the kaamkitpro-staging Worker.
+name: Cloudflare Workers Free staging validation
+
+on:
+  push:
+    branches:
+      - cloudflare/vinext-staging
+  workflow_dispatch:
+    inputs:
+      deploy_to_workers_dev:
+        description: "Deploy the validated staging build to workers.dev (never production)"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kaamkitpro-cloudflare-staging-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Vinext compatibility, build, and browser checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      KAAMKITPRO_STAGING: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+
+    steps:
+      - name: Checkout staging branch
+        uses: actions/checkout@v5
+        with:
+          ref: cloudflare/vinext-staging
+          persist-credentials: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Regenerate staging lockfile for declared CSS build plugin
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Install existing application dependencies
+        run: npm ci
+
+      - name: Check Next.js API compatibility before migration
+        id: compatibility
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          npx vinext check 2>&1 | tee vinext-compatibility-report.txt
+          status=${PIPESTATUS[0]}
+          echo "$status" > vinext-compatibility-exit-code.txt
+          exit "$status"
+
+      - name: Initialize Cloudflare Workers config without paid add-ons
+        id: init
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f vite.config.ts ] || ! node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts['build:vinext'] ? 0 : 1)"; then
+            npx vinext init \
+              --platform=cloudflare \
+              --skip-check \
+              --data-cache=none \
+              --cdn-cache=workers-cache \
+              --image-optimization=none
+          else
+            echo "vinext config already initialized; retaining the staging configuration."
+          fi
+          test -f vite.config.ts
+          if [ ! -f cloudflare.config.ts ] && [ ! -f wrangler.jsonc ]; then
+            echo "Expected Cloudflare config (cloudflare.config.ts or wrangler.jsonc) was not generated."
+            exit 1
+          fi
+          node -e "const p=require('./package.json'); if (!p.scripts?.['build:vinext'] || !p.scripts?.['start:vinext']) process.exit(1)"
+
+      - name: Recheck compatibility after vinext initialization
+        id: compatibility_post
+        if: always() && steps.init.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          npx vinext check 2>&1 | tee vinext-postinit-compatibility-report.txt
+          status=${PIPESTATUS[0]}
+          echo "$status" > vinext-postinit-compatibility-exit-code.txt
+          exit "$status"
+
+      - name: Build the Cloudflare/vinext output
+        id: vinext_build
+        if: always() && steps.init.outcome == 'success'
+        continue-on-error: true
+        run: set -o pipefail; npm run build:vinext 2>&1 | tee vinext-build.log
+
+      - name: TypeScript check including generated Cloudflare types
+        id: types
+        if: always() && steps.init.outcome == 'success'
+        continue-on-error: true
+        run: set -o pipefail; npx tsc --noEmit 2>&1 | tee typescript-check.log
+
+      - name: Verify sitemap covers every static tool route
+        id: sitemap_coverage
+        if: always() && steps.init.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          import path from "node:path";
+          const root = "src/app/tools";
+          const sitemap = fs.readFileSync("src/app/sitemap.ts", "utf8");
+          const listed = new Set([...sitemap.matchAll(/"([^"]+)"/g)].map(match => match[1]).filter(value => value === "/tools" || value.startsWith("/tools/")));
+          const pages = [];
+          function walk(dir) {
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+              const full = path.join(dir, entry.name);
+              if (entry.isDirectory()) walk(full);
+              else if (entry.isFile() && entry.name === "page.tsx") {
+                const relative = path.relative(root, path.dirname(full)).split(path.sep).join("/");
+                if (relative && !relative.includes("[") && !relative.startsWith("api/")) pages.push("/tools/" + relative);
+              }
+            }
+          }
+          walk(root);
+          const missing = pages.filter(route => !listed.has(route));
+          if (missing.length) {
+            console.error("Tool pages missing from production sitemap:", missing.join(", "));
+            process.exit(1);
+          }
+          console.log(`Sitemap coverage passed: all ${pages.length} static tool page routes are listed.`);
+          NODE
+
+      - name: Lint
+        id: lint
+        if: always() && steps.init.outcome == 'success'
+        continue-on-error: true
+        run: set -o pipefail; npm run lint 2>&1 | tee lint.log
+
+      - name: Recheck the original Next.js build
+        id: next_build
+        if: always() && steps.init.outcome == 'success'
+        continue-on-error: true
+        run: set -o pipefail; npm run build 2>&1 | tee next-build.log
+
+      - name: Install isolated browser-test dependencies
+        id: playwright_install
+        if: always() && steps.vinext_build.outcome == 'success'
+        continue-on-error: true
+        run: |
+          npm install --no-save @playwright/test
+          npx playwright install --with-deps chromium
+
+      - name: Run existing regressions plus Cloudflare staging checks
+        id: browser_tests
+        if: always() && steps.playwright_install.outcome == 'success'
+        continue-on-error: true
+        run: set -o pipefail; npx playwright test -c playwright.cloudflare.config.mjs 2>&1 | tee cloudflare-playwright.log
+
+      - name: Commit generated Cloudflare source configuration to staging branch
+        if: always() && steps.init.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .gitignore package.json package-lock.json tsconfig.json vite.config.ts src/app/layout.tsx src/app/robots.ts
+          for config in cloudflare.config.ts wrangler.jsonc; do
+            if [ -f "$config" ]; then git add "$config"; fi
+          done
+          if git diff --cached --quiet; then
+            echo "No generated source changes to commit."
+          else
+            git commit -m "chore: initialize vinext Cloudflare staging"
+            git push origin HEAD:cloudflare/vinext-staging
+          fi
+
+      - name: Upload compatibility and test reports
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: kaamkitpro-cloudflare-staging-reports
+          if-no-files-found: warn
+          retention-days: 7
+          path: |
+            vinext-compatibility-report.txt
+            vinext-compatibility-exit-code.txt
+            vinext-postinit-compatibility-report.txt
+            vinext-postinit-compatibility-exit-code.txt
+            vinext-build.log
+            typescript-check.log
+            lint.log
+            next-build.log
+            cloudflare-playwright.log
+            test-results/
+            playwright-report/
+
+      - name: Enforce staging validation gate
+        if: always()
+        shell: bash
+        env:
+          COMPATIBILITY: ${{ steps.compatibility.outcome }}
+          INITIALIZATION: ${{ steps.init.outcome }}
+          COMPATIBILITY_POST: ${{ steps.compatibility_post.outcome }}
+          VINEXT_BUILD: ${{ steps.vinext_build.outcome }}
+          TYPESCRIPT: ${{ steps.types.outcome }}
+          LINT: ${{ steps.lint.outcome }}
+          NEXT_BUILD: ${{ steps.next_build.outcome }}
+          PLAYWRIGHT_INSTALL: ${{ steps.playwright_install.outcome }}
+          BROWSER_TESTS: ${{ steps.browser_tests.outcome }}
+        run: |
+          failed=0
+          for item in \
+            "vinext check:$COMPATIBILITY" \
+            "vinext init:$INITIALIZATION" \
+            "post-init vinext check:$COMPATIBILITY_POST" \
+            "vinext build:$VINEXT_BUILD" \
+            "TypeScript:$TYPESCRIPT" \
+            "lint:$LINT" \
+            "Next.js build:$NEXT_BUILD" \
+            "Playwright install:$PLAYWRIGHT_INSTALL" \
+            "browser tests:$BROWSER_TESTS"; do
+            echo "$item"
+            case "$item" in
+              *:success) ;;
+              *) failed=1 ;;
+            esac
+          done
+          if [ "$failed" -ne 0 ]; then
+            echo "One or more checks failed. Review the uploaded logs; do not deploy this branch until the failures are resolved."
+            exit 1
+          fi
+          echo "Compatibility, build, TypeScript, lint, and browser gates passed."
+
+  deploy-staging:
+    name: Deploy validated build to workers.dev only
+    if: needs.validate.result == 'success' && ((github.event_name == 'workflow_dispatch' && inputs.deploy_to_workers_dev == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[deploy-staging]')))
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      KAAMKITPRO_STAGING: "true"
+      KAAMKITPRO_ADMIN_EMAILS: kaamkitpro-staging-admin-${{ github.run_id }}@example.com
+      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_SUPABASE_URL: "https://stcahnjwonfcuzevfmyg.supabase.co"
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_pnD1QuYuIV9qYGRdYJTDGQ_UfwUycgY"
+    steps:
+      - name: Checkout staging branch only
+        uses: actions/checkout@v5
+        with:
+          ref: cloudflare/vinext-staging
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build staging output
+        run: npm run build:vinext
+      - name: Bind staging-only Supabase public configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const path = "dist/server/wrangler.json";
+            const config = JSON.parse(fs.readFileSync(path, "utf8"));
+            if (config.name !== "kaamkitpro-staging") throw new Error("Refusing to add auth config to a non-staging Worker");
+            config.vars = { ...(config.vars || {}), KAAMKITPRO_STAGING: "true", KAAMKITPRO_ADMIN_EMAILS: `kaamkitpro-staging-admin-${process.env.GITHUB_RUN_ID}@example.com`, NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY };
+            fs.writeFileSync(path, JSON.stringify(config, null, 2) + "\n");
+          '
+      - name: Verify worker is isolated from production
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+          test -n "$CLOUDFLARE_API_TOKEN"
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const p = JSON.parse(fs.readFileSync("dist/server/wrangler.json", "utf8"));
+            if (p.name !== "kaamkitpro-staging") throw new Error("Refusing deploy: unexpected Worker name");
+            if (p.routes?.length || p.route || p.custom_domains?.length || p.domains?.length) throw new Error("Refusing deploy: custom route/domain detected");
+            console.log("Verified staging-only Worker name and no custom routes/domains.");
+          '
+      - name: Configure staging-only Supabase secret
+        shell: bash
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "Missing repository secret SUPABASE_SERVICE_ROLE_KEY; refusing deployment."
+            exit 1
+          fi
+          printf '%s' "$SUPABASE_SERVICE_ROLE_KEY" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --name kaamkitpro-staging
+          echo "Configured Supabase server secret on the isolated staging Worker."
+      - name: Deploy to workers.dev
+        run: npx vinext-cloudflare deploy --config dist/server/wrangler.json
+      # Production domains and deployments are intentionally excluded from this smoke-test gate.
+      - name: Post-deploy smoke tests against staging workers.dev only
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          const base = "https://kaamkitpro-staging.ankitkd550.workers.dev";
+          const checks = [
+            ["/", async r => r.status === 200 && /noindex/i.test(await r.text()), "homepage + staging noindex"],
+            ["/pricing", async r => { const t = await r.text(); return r.status === 200 && /Useful tools/i.test(t) && /Paid plans and checkout are not available/i.test(t); }, "free-only pricing"],
+            ["/ads.txt", async r => r.status === 200 && (await r.text()).trim() === "google.com, pub-6738934686699082, DIRECT, f08c47fec0942fa0", "ads.txt publisher line"],
+            ["/robots.txt", async r => r.status === 200 && (await r.text()).includes("Disallow: /"), "robots.txt staging exclusion"],
+            ["/api/access", async r => { const t = await r.json(); return r.status === 200 && t.plan === "free" && t.isPro === false && t.adsEnabled === false; }, "anonymous access API + ads disabled on staging"],
+            ["/tools/json-formatter", async r => r.status === 200 && /JSON Formatter/.test(await r.text()), "JSON Formatter"],
+            ["/tools/pdf-merge", async r => r.status === 200 && /PDF Merge Tool/.test(await r.text()), "PDF Merge"],
+            ["/tools/image-rotate", async r => r.status === 200 && /Image Rotate Tool/.test(await r.text()), "Image Rotate"],
+            ["/tools/qr-code-generator", async r => r.status === 200 && /QR Code Generator/.test(await r.text()), "QR code generator"],
+            ["/tools/gst-calculator", async r => r.status === 200 && /GST Calculator/.test(await r.text()), "GST calculator"],
+          ];
+          let failures = 0;
+          for (const [path, verify, label] of checks) {
+            let ok = false;
+            let detail = "";
+            for (let attempt = 0; attempt < 5; attempt++) {
+              try {
+                const response = await fetch(base + path, { redirect: "follow" });
+                detail = "HTTP " + response.status;
+                if (await verify(response)) { ok = true; break; }
+              } catch (error) { detail = String(error); }
+              await new Promise(resolve => setTimeout(resolve, 1500));
+            }
+            console.log((ok ? "PASS " : "FAIL ") + label + " — " + detail);
+            if (!ok) failures++;
+          }
+          if (failures) process.exit(1);
+          console.log("All post-deploy checks passed for the isolated workers.dev staging URL.");
+          NODE
+
+      - name: Verify authenticated daily quota on staging with a disposable user
+        shell: bash
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { randomBytes } from "node:crypto";
+
+          const base = "https://kaamkitpro-staging.ankitkd550.workers.dev";
+          const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+          const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+          const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+          if (!projectUrl || !publishableKey || !serviceKey) throw new Error("Missing staging Supabase test configuration.");
+
+          const email = `kaamkitpro-staging-quota-${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}@example.com`;
+          const password = randomBytes(32).toString("base64url") + "Q7!";
+          let userId = null;
+          let failed = false;
+
+          async function expect(condition, message) {
+            if (!condition) throw new Error(message);
+          }
+
+          async function callUsage(cookie, action) {
+            return fetch(base + "/api/tools/usage", {
+              method: "POST",
+              headers: { "content-type": "application/json", cookie },
+              body: JSON.stringify({ tool_key: "ai-tool", action }),
+            });
+          }
+
+          try {
+            const createdResponse = await fetch(projectUrl + "/auth/v1/admin/users", {
+              method: "POST",
+              headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}`, "content-type": "application/json" },
+              body: JSON.stringify({ email, password, email_confirm: true }),
+            });
+            if (!createdResponse.ok) throw new Error(`Could not create disposable staging auth user (HTTP ${createdResponse.status}).`);
+            const created = await createdResponse.json();
+            userId = created.id;
+            await expect(typeof userId === "string" && userId.length > 0, "Supabase did not return the disposable user ID.");
+
+            const loginResponse = await fetch(projectUrl + "/auth/v1/token?grant_type=password", {
+              method: "POST",
+              headers: { apikey: publishableKey, "content-type": "application/json" },
+              body: JSON.stringify({ email, password }),
+            });
+            if (!loginResponse.ok) throw new Error(`Disposable user sign-in failed (HTTP ${loginResponse.status}).`);
+            const session = await loginResponse.json();
+            await expect(typeof session.access_token === "string", "Supabase did not return an access token.");
+            const cookie = `kk_access_token=${session.access_token}`;
+
+            const accessResponse = await fetch(base + "/api/access", { headers: { cookie, "cache-control": "no-store" } });
+            const access = await accessResponse.json();
+            await expect(accessResponse.ok && access.plan === "free" && access.isPro === false && access.adsEnabled === false,
+              "Signed-in staging account should remain Free with ads disabled.");
+
+            const initialResponse = await callUsage(cookie, "check");
+            const initial = await initialResponse.json();
+            await expect(initialResponse.ok && initial.allowed === true && initial.used === 0 && initial.remaining === 3 && initial.dailyLimit === 3,
+              "Initial daily quota should be 0/3.");
+
+            for (let used = 1; used <= 3; used++) {
+              const response = await callUsage(cookie, "consume");
+              const result = await response.json();
+              await expect(response.status === 200 && result.allowed === true && result.used === used && result.remaining === 3 - used,
+                `Quota consume ${used} did not return expected usage/remaining values.`);
+            }
+
+            const exhaustedResponse = await callUsage(cookie, "consume");
+            const exhausted = await exhaustedResponse.json();
+            await expect(exhaustedResponse.status === 429 && exhausted.allowed === false && exhausted.used === 3 && exhausted.remaining === 0,
+              "Fourth consume should be denied with HTTP 429 at the daily limit.");
+
+            console.log("PASS authenticated quota check: initial usage 0/3.");
+            console.log("PASS quota consumption: calls 1–3 allowed and usage counted correctly.");
+            console.log("PASS quota enforcement: fourth call denied at 3/3 with HTTP 429.");
+            console.log("PASS disposable signed-in user remains Free; staging ads stay disabled.");
+          } catch (error) {
+            failed = true;
+            console.error("FAIL authenticated quota integration:", String(error));
+          } finally {
+            if (userId) {
+              try {
+                const cleanup = await fetch(projectUrl + "/auth/v1/admin/users/" + encodeURIComponent(userId), {
+                  method: "DELETE",
+                  headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}` },
+                });
+                if (!cleanup.ok) {
+                  failed = true;
+                  console.error(`FAIL disposable-user cleanup (HTTP ${cleanup.status}); remove the temporary staging user manually.`);
+                } else {
+                  console.log("PASS disposable staging auth user cleaned up.");
+                }
+              } catch (error) {
+                failed = true;
+                console.error("FAIL disposable-user cleanup:", String(error));
+              }
+            }
+          }
+
+          if (failed) process.exit(1);
+          NODE
+
+      - name: Verify authenticated Admin Access grant and revoke on staging with a disposable admin
+        shell: bash
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { randomBytes } from "node:crypto";
+
+          const base = "https://kaamkitpro-staging.ankitkd550.workers.dev";
+          const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+          const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+          const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+          const adminEmail = `kaamkitpro-staging-admin-${process.env.GITHUB_RUN_ID}@example.com`;
+          const targetEmail = `kaamkitpro-staging-grantee-${process.env.GITHUB_RUN_ID}@example.com`;
+          if (!projectUrl || !publishableKey || !serviceKey) throw new Error("Missing staging Supabase test configuration.");
+
+          const password = randomBytes(32).toString("base64url") + "Q7!";
+          let userId = null;
+          let grantId = null;
+          let failed = false;
+          async function expect(condition, message) {
+            if (!condition) throw new Error(message);
+          }
+          async function adminCall(path, options = {}) {
+            return fetch(base + path, {
+              ...options,
+              headers: {
+                "content-type": "application/json",
+                cookie: `kk_access_token=${accessToken}`,
+                ...(options.headers || {}),
+              },
+            });
+          }
+          let accessToken = "";
+          try {
+            const createdResponse = await fetch(projectUrl + "/auth/v1/admin/users", {
+              method: "POST",
+              headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}`, "content-type": "application/json" },
+              body: JSON.stringify({ email: adminEmail, password, email_confirm: true }),
+            });
+            if (!createdResponse.ok) throw new Error(`Could not create disposable staging admin user (HTTP ${createdResponse.status}).`);
+            const created = await createdResponse.json();
+            userId = created.id;
+            await expect(typeof userId === "string" && userId.length > 0, "Supabase did not return the disposable admin user ID.");
+
+            const loginResponse = await fetch(projectUrl + "/auth/v1/token?grant_type=password", {
+              method: "POST",
+              headers: { apikey: publishableKey, "content-type": "application/json" },
+              body: JSON.stringify({ email: adminEmail, password }),
+            });
+            if (!loginResponse.ok) throw new Error(`Disposable admin sign-in failed (HTTP ${loginResponse.status}).`);
+            const session = await loginResponse.json();
+            await expect(typeof session.access_token === "string", "Supabase did not return an admin access token.");
+            accessToken = session.access_token;
+
+            const accessCheck = await adminCall("/api/access");
+            const accessCheckPayload = await accessCheck.json().catch(() => ({}));
+            console.log("Staging admin auth diagnostic:", JSON.stringify({ status: accessCheck.status, isAdmin: accessCheckPayload.isAdmin, returnedEmailMatches: accessCheckPayload.user?.email?.toLowerCase() === adminEmail.toLowerCase(), userPresent: Boolean(accessCheckPayload.user?.id) }));
+
+            const listBefore = await adminCall("/api/admin/access?email=" + encodeURIComponent(targetEmail));
+            await expect(listBefore.status === 200, `Authorized admin list failed (HTTP ${listBefore.status}): ${(await listBefore.clone().text()).slice(0, 300)}`);
+            const beforePayload = await listBefore.json();
+            await expect(Array.isArray(beforePayload.grants), "Admin grant list did not return a grants array.");
+            await expect(!beforePayload.grants.some(g => g.target_email === targetEmail && !g.revoked_at),
+              "A prior active test grant exists for this run-specific target.");
+
+            const grantResponse = await adminCall("/api/admin/access", {
+              method: "POST",
+              body: JSON.stringify({
+                email: targetEmail,
+                access_type: "selected_tools",
+                tool_keys: ["ai-tool"],
+                duration: "30",
+                reason: "testing",
+                note: "Automated staging grant/revoke integration test",
+              }),
+            });
+            const grantPayload = await grantResponse.json();
+            await expect(grantResponse.status === 201 && grantPayload.grant?.id,
+              `Admin grant creation failed (HTTP ${grantResponse.status}).`);
+            grantId = grantPayload.grant.id;
+            await expect(grantPayload.grant.target_email === targetEmail && grantPayload.grant.revoked_at == null,
+              "Created grant did not match the expected target or active state.");
+
+            const listed = await adminCall("/api/admin/access?email=" + encodeURIComponent(targetEmail));
+            const listedPayload = await listed.json();
+            await expect(listed.status === 200 && listedPayload.grants?.some(g => g.id === grantId && !g.revoked_at),
+              "New grant was not returned as active by the authenticated admin list.");
+
+            const revokeResponse = await adminCall("/api/admin/access", {
+              method: "PATCH",
+              body: JSON.stringify({ id: grantId }),
+            });
+            const revokePayload = await revokeResponse.json();
+            await expect(revokeResponse.status === 200 && revokePayload.grant?.id === grantId && !!revokePayload.grant.revoked_at,
+              `Admin revoke failed (HTTP ${revokeResponse.status}).`);
+
+            const listedAfter = await adminCall("/api/admin/access?email=" + encodeURIComponent(targetEmail));
+            const afterPayload = await listedAfter.json();
+            await expect(listedAfter.status === 200 && afterPayload.grants?.some(g => g.id === grantId && !!g.revoked_at),
+              "Revoked grant was not persisted in the authenticated admin list.");
+
+            console.log("PASS authenticated Admin Access listing.");
+            console.log("PASS Admin Access grant created and verified.");
+            console.log("PASS Admin Access revoke persisted and verified.");
+          } catch (error) {
+            failed = true;
+            console.error("FAIL authenticated Admin Access integration:", String(error));
+          } finally {
+            if (grantId) {
+              try {
+                const response = await fetch(projectUrl + "/rest/v1/user_access_grants?id=eq." + encodeURIComponent(grantId) + "&revoked_at=is.null", {
+                  method: "PATCH",
+                  headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}`, "content-type": "application/json", Prefer: "return=minimal" },
+                  body: JSON.stringify({ revoked_at: new Date().toISOString(), revoked_by: userId }),
+                });
+                if (!response.ok) {
+                  failed = true;
+                  console.error(`FAIL test grant cleanup (HTTP ${response.status}).`);
+                } else {
+                  console.log("PASS test grant cleanup.");
+                }
+              } catch (error) {
+                failed = true;
+                console.error("FAIL test grant cleanup:", String(error));
+              }
+            }
+            if (userId) {
+              try {
+                const cleanup = await fetch(projectUrl + "/auth/v1/admin/users/" + encodeURIComponent(userId), {
+                  method: "DELETE",
+                  headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}` },
+                });
+                if (!cleanup.ok) {
+                  failed = true;
+                  console.error(`FAIL disposable-admin cleanup (HTTP ${cleanup.status}); remove the temporary staging user manually.`);
+                } else {
+                  console.log("PASS disposable staging admin user cleaned up.");
+                }
+              } catch (error) {
+                failed = true;
+                console.error("FAIL disposable-admin cleanup:", String(error));
+              }
+            }
+          }
+          if (failed) process.exit(1);
+          NODE
+
+      - name: Focused diagnostics for failed client-page routes
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          node --input-type=module <<'NODE'
+          const base = "https://kaamkitpro-staging.ankitkd550.workers.dev";
+          const paths = [
+            "/tools/pdf-merge",
+            "/tools/image-rotate",
+            "/tools/pdf",
+            "/tools/image",
+            "/tools/pdf-metadata",
+            "/tools/image-converter",
+            "/_next/static/chunks/AdSenseLoader-BHk0gQEs.js"
+          ];
+          for (const path of paths) {
+            try {
+              const response = await fetch(base + path, { redirect: "follow" });
+              const body = await response.text();
+              console.log(JSON.stringify({
+                path,
+                status: response.status,
+                contentType: response.headers.get("content-type"),
+                cacheStatus: response.headers.get("cf-cache-status"),
+                length: body.length,
+                bodyPreview: body.slice(0, 240).replace(/\s+/g, " ")
+              }));
+            } catch (error) {
+              console.log(JSON.stringify({ path, error: String(error) }));
+            }
+          }
+          NODE
