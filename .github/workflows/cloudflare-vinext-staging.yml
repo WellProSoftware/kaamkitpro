@@ -290,7 +290,7 @@ jobs:
             const path = "dist/server/wrangler.json";
             const config = JSON.parse(fs.readFileSync(path, "utf8"));
             if (config.name !== "kaamkitpro-staging") throw new Error("Refusing to add auth config to a non-staging Worker");
-            config.vars = { ...(config.vars || {}), KAAMKITPRO_STAGING: "true", KAAMKITPRO_ADMIN_EMAILS: `kaamkitpro-staging-admin-${process.env.GITHUB_RUN_ID}@example.com`, NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY };
+            config.vars = { ...(config.vars || {}), KAAMKITPRO_STAGING: "true", KAAMKITPRO_ADMIN_EMAILS: `kaamkitpro-staging-admin-${process.env.GITHUB_RUN_ID}@example.com`, RAZORPAY_MODE: "test", RAZORPAY_LIVE_PAYMENTS_ENABLED: "false", NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY };
             fs.writeFileSync(path, JSON.stringify(config, null, 2) + "\n");
           '
       - name: Verify worker is isolated from production
