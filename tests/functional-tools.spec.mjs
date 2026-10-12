@@ -947,3 +947,33 @@ test("Age Calculator returns zero years, months, and days for today's birth date
   await expect(results.getByText("Days", { exact: true })).toBeVisible();
   await expect(results.getByText("0", { exact: true })).toHaveCount(3);
 });
+
+
+test("GST Calculator calculates each supported GST rate", async ({ page }) => {
+  await page.goto("/tools/gst-calculator");
+  await expect(page.getByRole("heading", { name: "GST Calculator", exact: true })).toBeVisible();
+
+  const amount = page.locator('input[type="number"]');
+  const rate = page.locator("select");
+  await amount.fill("1000");
+
+  for (const [gstRate, tax, total] of [
+    ["5", "₹50.00", "₹1050.00"],
+    ["12", "₹120.00", "₹1120.00"],
+    ["18", "₹180.00", "₹1180.00"],
+    ["28", "₹280.00", "₹1280.00"],
+  ]) {
+    await rate.selectOption(gstRate);
+    await expect(page.getByText(tax, { exact: true })).toBeVisible();
+    await expect(page.getByText(total, { exact: true })).toBeVisible();
+  }
+});
+
+test("GST Calculator handles a zero amount without producing invalid values", async ({ page }) => {
+  await page.goto("/tools/gst-calculator");
+  await page.locator('input[type="number"]').fill("0");
+  await page.getByRole("button", { name: "Add GST", exact: true }).click();
+
+  await expect(page.getByText("₹0.00", { exact: true })).toHaveCount(3);
+  await expect(page.getByText(/NaN|Infinity/)).toHaveCount(0);
+});
