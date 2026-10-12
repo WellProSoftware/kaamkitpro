@@ -67,7 +67,7 @@ test("SEO sitemap contains the utility and guide routes exactly once in producti
 
 test("login and invalid callback pages render without a Supabase session", async ({ page }) => {
   await page.goto("/login");
-  await expect(page.getByRole("heading", { name: "Sign in with email" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
 
   await page.waitForTimeout(250);
   await expect(page.locator("#google-adsense")).toHaveCount(0);
@@ -86,7 +86,7 @@ test("admin page and account routes redirect signed-out users safely", async ({ 
   await page.goto("/admin/access");
   await expect(page).toHaveURL(/\/login$/);
   await page.goto("/account");
-  await expect(page.getByRole("heading", { name: "Sign in with email" })).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible({ timeout: 10_000 });
   await expect(page).toHaveURL(/\/login$/);
 });
 
