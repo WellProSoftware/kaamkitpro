@@ -2,7 +2,7 @@
 
 **Har Digital Kaam, Ek Jagah.** KaamKitPro is a collection of free online utilities for PDFs, images, calculators, text, SEO, social media, and developer workflows.
 
-**Live website:** https://kaamkitpro.com
+**Current production website:** https://kaamkitpro.com
 
 ## Features
 
@@ -36,16 +36,18 @@ npm run build
 
 GitHub Actions also runs CI, browser regression tests, production smoke checks, and scheduled uptime checks.
 
-## Deployment
+## Deployment and migration policy
 
-The production site is deployed on Vercel at https://kaamkitpro.com. Changes merged into `main` are deployed through the connected Vercel Git integration.
+- The existing production site remains on Vercel until a separate Cloudflare production migration is explicitly verified and approved.
+- The migration target is Cloudflare Workers Free; staging deployment does not switch production hosting.
+- Do not change production Vercel settings, live domain/DNS, or production Supabase during staging validation.
+- Cloudflare validation/deployment is isolated to the `cloudflare/vinext-staging` branch and the `kaamkitpro-staging` Worker on `workers.dev`. Never add production domains or routes to the staging workflow.
 
 ## Current monetization and staging policy
 
 - Keep currently available tools free to use; advertising is the intended initial revenue model.
 - Paid plans, checkout, and payment collection stay disabled until payment onboarding is ready and explicitly approved.
 - AdSense delivery depends on Google approval and serving; the publisher line in `public/ads.txt` alone does not guarantee ads or revenue.
-- Cloudflare validation/deployment is isolated to the `cloudflare/vinext-staging` branch and the `kaamkitpro-staging` Worker on `workers.dev`. Never add production domains or routes to this workflow.
 - A staging deployment is gated behind successful build, compatibility, TypeScript, lint, and browser checks, and must be explicitly requested with the `[deploy-staging]` commit marker or the workflow's manual deployment input.
 
 ## Privacy and support
