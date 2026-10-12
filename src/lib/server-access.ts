@@ -42,12 +42,28 @@ export async function serviceRest(
   init: RequestInit = {},
 ): Promise<Response | null> {
   const config = getSupabaseConfig();
-  if (!config?.serviceKey) return null;
+  if (!config) return null;
+
+  // Cloudflare Worker secrets are runtime bindings, not build-time process.env values.
+  // Never inline the service-role key into the client or server bundle.
+  let serviceKey = config.serviceKey;
+  if (!serviceKey) {
+    try {
+      const runtime = await import("cloudflare:workers") as unknown as {
+        env?: Record<string, string | undefined>;
+      };
+      serviceKey = runtime.env?.SUPABASE_SERVICE_ROLE_KEY;
+    } catch {
+      // Local Next.js development has no Cloudflare runtime binding.
+    }
+  }
+  if (!serviceKey) return null;
+
   return fetch(`${config.url}/rest/v1/${path}`, {
     ...init,
     headers: {
-      apikey: config.serviceKey,
-      Authorization: `Bearer ${config.serviceKey}`,
+      apikey: serviceKey,
+      Authorization: `Bearer ${serviceKey}`,
       "Content-Type": "application/json",
       ...(init.headers || {}),
     },
