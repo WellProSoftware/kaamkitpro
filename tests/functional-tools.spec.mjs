@@ -849,3 +849,14 @@ test("EMI Calculator computes monthly EMI for a sample loan", async ({ page }) =
   await expect(page.getByText("₹8,885", { exact: true })).toBeVisible();
 });
 
+
+test("Age Calculator shows years, months, and days after a birth date is entered", async ({ page }) => {
+  await page.goto("/tools/age-calculator");
+  await expect(page.getByRole("heading", { name: "Age Calculator", exact: true })).toBeVisible();
+  await page.getByLabel("Date of Birth").fill("2000-01-01");
+  await page.getByRole("button", { name: "Calculate Age", exact: true }).click();
+  await expect(page.getByText("Years", { exact: true })).toBeVisible();
+  await expect(page.getByText("Months", { exact: true })).toBeVisible();
+  await expect(page.getByText("Days", { exact: true })).toBeVisible();
+  await expect(page.locator("main").getByText("26", { exact: true })).toBeVisible();
+});
