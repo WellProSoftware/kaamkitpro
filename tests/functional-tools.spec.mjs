@@ -732,3 +732,19 @@ test("Image Converter converts an uploaded image to WebP and downloads the resul
   expect(download.suggestedFilename()).toBe("kaamkitpro-converted.webp");
   await expect(page.getByText("Image converted to WEBP successfully.", { exact: true })).toBeVisible();
 });
+
+
+test("Staging robots file blocks indexing", async ({ request }) => {
+  const response = await request.get("/robots.txt");
+  expect(response.ok()).toBeTruthy();
+  const body = await response.text();
+  expect(body).toContain("Disallow: /");
+});
+
+test("Staging access API keeps advertising disabled for anonymous visitors", async ({ request }) => {
+  const response = await request.get("/api/access");
+  expect(response.ok()).toBeTruthy();
+  const body = await response.json();
+  expect(body.user).toBeNull();
+  expect(body.adsEnabled).toBe(false);
+});
