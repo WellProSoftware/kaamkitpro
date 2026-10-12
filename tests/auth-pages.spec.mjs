@@ -1,20 +1,39 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("KaamKitPro authentication pages", () => {
-  test("login page explains email magic-link sign-in", async ({ page }) => {
+  test("signup page offers email/mobile OTP, password and Google sign-in", async ({ page }) => {
     await page.goto("/login");
 
-    await expect(page.getByRole("heading", { name: "Sign in with email" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
+    await expect(page.getByLabel("Full name")).toBeVisible();
     await expect(page.getByLabel("Email address")).toHaveAttribute("type", "email");
-    await expect(page.getByRole("button", { name: "Email me a sign-in link" })).toBeVisible();
+    await expect(page.getByLabel("Create password")).toHaveAttribute("minlength", "10");
+    await expect(page.getByRole("button", { name: "Continue with Google" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Create account and send OTP" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Mobile number" }).click();
+    await expect(page.getByLabel("Mobile number")).toHaveAttribute("type", "tel");
   });
 
-  test("login page handles missing public Supabase configuration gracefully", async ({ page }) => {
+  test("signup handles missing public Supabase configuration gracefully", async ({ page }) => {
     await page.goto("/login");
+    await page.getByLabel("Full name").fill("Test User");
     await page.getByLabel("Email address").fill("test@example.com");
-    await page.getByRole("button", { name: "Email me a sign-in link" }).click();
+    await page.getByLabel("Create password").fill("long-enough-test-password");
+    await page.getByRole("button", { name: "Create account and send OTP" }).click();
 
-    await expect(page.getByText("Login is temporarily unavailable", { exact: false })).toBeVisible();
+    await expect(page.getByText("Account access is temporarily unavailable", { exact: false })).toBeVisible();
+  });
+
+  test("login supports password and one-time-code modes", async ({ page }) => {
+    await page.goto("/login");
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
+    await expect(page.getByLabel("Password")).toBeVisible();
+
+    await page.getByLabel("One-time code").check();
+    await expect(page.getByRole("button", { name: "Send one-time code" })).toBeVisible();
+    await expect(page.getByLabel("Password")).toHaveCount(0);
   });
 
   test("callback page rejects a URL without sign-in tokens", async ({ page }) => {
@@ -73,8 +92,6 @@ test.describe("KaamKitPro authentication pages", () => {
     await page.getByRole("link", { name: "Sign in" }).click();
 
     await expect(page).toHaveURL(/\/login$/);
-    await expect(
-      page.getByRole("heading", { name: "Sign in with email" }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
   });
 });
