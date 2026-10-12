@@ -1020,3 +1020,21 @@ test("URL Decoder reports malformed percent-encoded Unicode", async ({ page }) =
   await page.getByRole("button", { name: "Decode URL", exact: true }).click();
   await expect(page.getByText("Invalid URL encoded text.", { exact: true })).toBeVisible();
 });
+
+test("Base64 Encoder and Decoder explain empty input and Clear resets the form", async ({ page }) => {
+  await page.goto("/tools/base64");
+  await expect(page.getByRole("heading", { name: "Base64 Encoder & Decoder", exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Encode to Base64", exact: true }).click();
+  await expect(page.getByText("Please enter some text first.", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Decode from Base64", exact: true }).click();
+  await expect(page.getByText("Please enter Base64 text first.", { exact: true })).toBeVisible();
+
+  await page.getByPlaceholder("Enter text here...").fill("temporary");
+  await page.getByRole("button", { name: "Clear", exact: true }).click();
+  await expect(page.getByPlaceholder("Enter text here...")).toHaveValue("");
+  await expect(page.getByText("Please enter Base64 text first.", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Please enter some text first.", { exact: true })).toHaveCount(0);
+});
+
