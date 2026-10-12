@@ -914,3 +914,17 @@ test("BMI Calculator updates each weight category when measurements change", asy
   await fields.nth(1).fill("150");
   await expect(page.getByText("Obesity", { exact: true }).first()).toBeVisible();
 });
+
+
+test("EMI Calculator waits for all inputs and accepts an explicit zero interest rate", async ({ page }) => {
+  await page.goto("/tools/emi-calculator");
+  await expect(page.getByRole("heading", { name: "EMI Calculator", exact: true })).toBeVisible();
+  const fields = page.locator('input[type="number"]');
+  await fields.nth(0).fill("120000");
+  await fields.nth(2).fill("1");
+  await expect(page.getByText("Monthly EMI", { exact: true }).locator("..").getByText("₹0", { exact: true })).toBeVisible();
+
+  await fields.nth(1).fill("0");
+  await expect(page.getByText("₹10,000", { exact: true })).toBeVisible();
+  await expect(page.getByText("₹1,20,000", { exact: true })).toBeVisible();
+});
