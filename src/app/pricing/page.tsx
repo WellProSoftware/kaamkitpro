@@ -42,7 +42,6 @@ export default function PricingPage() {
               <li>Paid-capacity tools offer a small trial allowance: typically 2 uses for heavier cloud processing or 3 uses per day for eligible AI/hosted tools. When the allowance is exhausted, the user is asked to subscribe to Pro to continue.</li>
               <li>Free-plan users see ads across the Free experience when the ad provider serves them. Once a paid Pro subscription is verified, all KaamKitPro ads are disabled site-wide for that account for the active subscription period.</li>
               <li>Pro access is granted only while an eligible paid subscription is active or an authorized admin has explicitly granted access. Admin grants can be scoped to selected tools and can expire or be revoked.</li>
-              <li>Account creation supports email/mobile verification, password sign-in, and Google sign-in as those options are configured and verified.</li>
               <li>Checkout is not live yet. The proposed prices are ₹99/month and ₹699/year; real payments will be enabled only after Razorpay test payments, webhook verification and access-grant tests pass.</li>
             </ul>
           </div>
