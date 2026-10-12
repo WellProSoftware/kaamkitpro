@@ -788,3 +788,26 @@ test("Admin access API rejects cross-origin grant mutations", async ({ request }
   expect(response.status()).toBe(403);
   await expect(response.json()).resolves.toMatchObject({ error: "Invalid request origin." });
 });
+
+
+test("Anonymous access response is fail-safe and contains no elevated access", async ({ request }) => {
+  const response = await request.get("/api/access");
+  expect(response.ok()).toBeTruthy();
+  const body = await response.json();
+  expect(body).toMatchObject({
+    user: null,
+    plan: "free",
+    isPro: false,
+    adsEnabled: false,
+    selectedTools: [],
+  });
+});
+
+test("Admin access API rejects cross-origin revoke requests before authentication", async ({ request }) => {
+  const response = await request.patch("/api/admin/access", {
+    headers: { origin: "https://attacker.invalid" },
+    data: { id: "00000000-0000-4000-8000-000000000000" },
+  });
+  expect(response.status()).toBe(403);
+  await expect(response.json()).resolves.toMatchObject({ error: "Invalid request origin." });
+});
