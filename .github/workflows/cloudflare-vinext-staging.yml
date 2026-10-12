@@ -623,7 +623,6 @@ jobs:
           ];
           // Staging deliberately disables AdSense; hashed client chunk names are build-specific,
           // so do not probe a stale hard-coded chunk URL here.
-          ];
           for (const path of paths) {
             try {
               const response = await fetch(base + path, { redirect: "follow" });
