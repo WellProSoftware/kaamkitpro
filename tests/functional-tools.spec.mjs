@@ -860,3 +860,12 @@ test("Age Calculator shows years, months, and days after a birth date is entered
   await expect(page.getByText("Days", { exact: true })).toBeVisible();
   await expect(page.locator("main").getByText("26", { exact: true })).toBeVisible();
 });
+
+
+test("Age Calculator does not display an age for a future birth date", async ({ page }) => {
+  await page.goto("/tools/age-calculator");
+  await page.getByLabel("Date of Birth").fill("2099-01-01");
+  await page.getByRole("button", { name: "Calculate Age", exact: true }).click();
+  await expect(page.getByText("Enter your date of birth to calculate your age.", { exact: true })).toBeVisible();
+  await expect(page.getByText("Years", { exact: true })).toHaveCount(0);
+});
