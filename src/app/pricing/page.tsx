@@ -5,7 +5,7 @@ import BrandLogo from "@/components/BrandLogo";
 export const metadata: Metadata = {
   title: "Free Tools & Pro Access",
   description:
-    "Use KaamKitPro free tools without signing up. Create an account only when you need account-based or Pro features.",
+    "Use KaamKitPro free tools without signing up. Pro access requires an active paid subscription or an authorized admin grant.",
   alternates: { canonical: "https://kaamkitpro.com/pricing" },
 };
 
@@ -40,8 +40,9 @@ export default function PricingPage() {
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm sm:text-base">
               <li>Free tools stay open to everyone without signup.</li>
               <li>When you choose a Pro-only feature, you will be asked to sign in or create an account at that point.</li>
+              <li>Pro access is granted only while an eligible paid subscription is active or an authorized admin has explicitly granted access. Admin grants can be scoped to selected tools and can expire or be revoked.</li>
               <li>Account creation supports email/mobile verification, password sign-in, and Google sign-in as those options are configured and verified.</li>
-              <li>Pro subscriptions and checkout are not active yet. No payment is collected; paid access will be enabled only after payment setup and testing.</li>
+              <li>Subscriptions and checkout are not active yet. No payment is collected; paid access will be enabled only after payment setup and testing.</li>
               <li>Ads may support the free service, subject to provider approval and policies.</li>
             </ul>
           </div>
