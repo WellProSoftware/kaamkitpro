@@ -869,3 +869,16 @@ test("Age Calculator does not display an age for a future birth date", async ({ 
   await expect(page.getByText("Enter your date of birth to calculate your age.", { exact: true })).toBeVisible();
   await expect(page.getByText("Years", { exact: true })).toHaveCount(0);
 });
+
+
+test("EMI Calculator handles a zero-interest loan", async ({ page }) => {
+  await page.goto("/tools/emi-calculator");
+  await expect(page.getByRole("heading", { name: "EMI Calculator", exact: true })).toBeVisible();
+  const fields = page.locator('input[type="number"]');
+  await fields.nth(0).fill("120000");
+  await fields.nth(1).fill("0");
+  await fields.nth(2).fill("1");
+  await expect(page.getByText("₹10,000", { exact: true })).toBeVisible();
+  await expect(page.getByText("₹0", { exact: true })).toBeVisible();
+  await expect(page.getByText("₹1,20,000", { exact: true })).toBeVisible();
+});
