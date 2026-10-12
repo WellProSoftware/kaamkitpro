@@ -712,3 +712,23 @@ test("Image Cropper validates crop bounds and downloads the cropped image", asyn
   expect(download.suggestedFilename()).toBe("kaamkitpro-cropped.jpg");
   await expect(page.getByText("Image cropped successfully.", { exact: true })).toBeVisible();
 });
+
+
+test("Image Converter converts an uploaded image to WebP and downloads the result", async ({ page }) => {
+  await page.goto("/tools/image-converter");
+  await expect(page.getByRole("heading", { name: "Image Converter", exact: true })).toBeVisible();
+  await page.locator("#convert-file").setInputFiles({
+    name: "pixel.png",
+    mimeType: "image/png",
+    buffer: onePixelPng,
+  });
+  await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
+  await page.locator("select").selectOption("image/webp");
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Convert Image", exact: true }).click();
+  const download = await downloadPromise;
+
+  expect(download.suggestedFilename()).toBe("kaamkitpro-converted.webp");
+  await expect(page.getByText("Image converted to WEBP successfully.", { exact: true })).toBeVisible();
+});
