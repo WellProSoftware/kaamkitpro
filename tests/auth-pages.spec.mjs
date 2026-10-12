@@ -1,20 +1,39 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("KaamKitPro authentication pages", () => {
-  test("login page explains email magic-link sign-in", async ({ page }) => {
+  test("signup page offers email/mobile OTP, password and Google sign-in", async ({ page }) => {
     await page.goto("/login");
 
-    await expect(page.getByRole("heading", { name: "Sign in with email" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
+    await expect(page.getByLabel("Full name")).toBeVisible();
     await expect(page.getByLabel("Email address")).toHaveAttribute("type", "email");
-    await expect(page.getByRole("button", { name: "Email me a sign-in link" })).toBeVisible();
+    await expect(page.getByLabel("Create password")).toHaveAttribute("minlength", "10");
+    await expect(page.getByRole("button", { name: "Continue with Google" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Create account and send OTP" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Mobile number" }).click();
+    await expect(page.getByLabel("Mobile number")).toHaveAttribute("type", "tel");
   });
 
-  test("login page handles missing public Supabase configuration gracefully", async ({ page }) => {
+  test("signup handles missing public Supabase configuration gracefully", async ({ page }) => {
     await page.goto("/login");
+    await page.getByLabel("Full name").fill("Test User");
     await page.getByLabel("Email address").fill("test@example.com");
-    await page.getByRole("button", { name: "Email me a sign-in link" }).click();
+    await page.getByLabel("Create password").fill("long-enough-test-password");
+    await page.getByRole("button", { name: "Create account and send OTP" }).click();
 
-    await expect(page.getByText("Login is temporarily unavailable", { exact: false })).toBeVisible();
+    await expect(page.getByText("Account access is temporarily unavailable", { exact: false })).toBeVisible();
+  });
+
+  test("login supports password and one-time-code modes", async ({ page }) => {
+    await page.goto("/login");
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
+    await expect(page.getByLabel("Password")).toBeVisible();
+
+    await page.getByLabel("One-time code").check();
+    await expect(page.getByRole("button", { name: "Send one-time code" })).toBeVisible();
+    await expect(page.getByLabel("Password")).toHaveCount(0);
   });
 
   test("callback page rejects a URL without sign-in tokens", async ({ page }) => {
@@ -48,7 +67,25 @@ test.describe("KaamKitPro authentication pages", () => {
     expect(await response.json()).toMatchObject({ error: "Sign in before starting a subscription." });
   });
 
-  test("free tools stay available and metered tools require tracked usage", async ({ request }) => {
+  test("subscription status and cancellation APIs reject unauthenticated users", async ({ request }) => {
+    const status = await request.get("/api/billing/subscription");
+    expect(status.status()).toBe(401);
+    expect(await status.json()).toMatchObject({ error: "Please sign in first." });
+
+    const cancel = await request.post("/api/billing/cancel", {
+      data: { subscription_id: "00000000-0000-4000-8000-000000000000" },
+    });
+    expect(cancel.status()).toBe(401);
+    expect(await cancel.json()).toMatchObject({ error: "Please sign in first." });
+
+    const verify = await request.post("/api/billing/verify", {
+      data: {},
+    });
+    expect(verify.status()).toBe(401);
+    expect(await verify.json()).toMatchObject({ error: "Sign in before verifying a subscription." });
+  });
+
+  test("free tools stay available anonymously; account-based tools ask for sign-in", async ({ request }) => {
     const free = await request.post("/api/tools/usage", {
       data: { tool_key: "calculator", action: "check" },
     });
@@ -60,15 +97,15 @@ test.describe("KaamKitPro authentication pages", () => {
     });
     expect(metered.status()).toBe(401);
     expect(await metered.json()).toMatchObject({ allowed: false, requiresSignIn: true });
+
+    const proOnly = await request.post("/api/tools/usage", {
+      data: { tool_key: "bulk-ai-generation", action: "check" },
+    });
+    expect(proOnly.status()).toBe(401);
+    expect(await proOnly.json()).toMatchObject({ allowed: false, requiresSignIn: true });
   });
 
-  test("signed-out users resolve to Free with live ads disabled on staging", async ({ request }) => {
-    const response = await request.get("/api/access");
-    expect(response.ok()).toBeTruthy();
-    expect(await response.json()).toMatchObject({ plan: "free", isPro: false, adsEnabled: false });
-  });
-
-  test("staging never loads AdSense, even when ad consent is accepted", async ({ page, request }) => {
+  test("staging never loads AdSense, even when optional ads consent is accepted", async ({ page, request }) => {
     await page.addInitScript(() => {
       window.localStorage.setItem("kk_privacy_consent_v1", "accepted");
     });
@@ -91,13 +128,27 @@ test.describe("KaamKitPro authentication pages", () => {
     expect((await accessResponse.json()).adsEnabled).toBe(false);
   });
 
-  test("pricing page links to sign in", async ({ page }) => {
+
+  test("Pro subscription checkout requires explicit recurring billing consent", async ({ page }) => {
     await page.goto("/pricing");
+    await expect(page.getByRole("button", { name: "Choose monthly" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Choose monthly" }).click();
+    await expect(page.getByRole("status")).toContainText("accept the recurring billing terms");
+    await expect(page.locator('script[src*="checkout.razorpay.com"]')).toHaveCount(0);
+  });
+
+  test("pricing page explains that free tools do not need signup", async ({ page }) => {
+    await page.goto("/pricing");
+    await expect(page.getByRole("heading", { name: "Useful tools. No signup needed." })).toBeVisible();
+    await expect(page.getByText("Open any currently available free tool and start using it immediately.", { exact: false })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Use every tool without ads" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Choose monthly" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Choose yearly" })).toBeVisible();
+    await expect(page.getByText(/authorize recurring subscription payments/i)).toBeVisible();
     await page.getByRole("link", { name: "Sign in" }).click();
 
     await expect(page).toHaveURL(/\/login$/);
-    await expect(
-      page.getByRole("heading", { name: "Sign in with email" }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
   });
 });
