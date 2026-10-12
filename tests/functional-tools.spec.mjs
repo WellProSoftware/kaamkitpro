@@ -628,6 +628,9 @@ test("URL Encoder and Decoder preserve reserved and Unicode characters", async (
   const output = page.locator("textarea[readonly]");
   await expect(output).toHaveValue(encodeURIComponent(original));
   await page.getByRole("button", { name: "URL Decode", exact: true }).click();
+  await input.fill(encodeURIComponent(original));
+  await page.getByRole("button", { name: "Decode URL", exact: true }).click();
+  await expect(output).toHaveValue(original);
   await input.fill("%E0%A4%A");
   await page.getByRole("button", { name: "Decode URL", exact: true }).click();
   await expect(page.getByText("Invalid URL encoded text.", { exact: true })).toBeVisible();
