@@ -928,3 +928,22 @@ test("EMI Calculator waits for all inputs and accepts an explicit zero interest 
   await expect(page.getByText("₹10,000", { exact: true })).toBeVisible();
   await expect(page.getByText("₹1,20,000", { exact: true })).toBeVisible();
 });
+
+
+test("Age Calculator returns zero years, months, and days for today's birth date", async ({ page }) => {
+  await page.goto("/tools/age-calculator");
+  const today = await page.evaluate(() => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  });
+  await page.getByLabel("Date of Birth").fill(today);
+  await page.getByRole("button", { name: "Calculate Age", exact: true }).click();
+  const results = page.locator("main").locator(".grid").last();
+  await expect(results.getByText("Years", { exact: true })).toBeVisible();
+  await expect(results.getByText("Months", { exact: true })).toBeVisible();
+  await expect(results.getByText("Days", { exact: true })).toBeVisible();
+  await expect(results.getByText("0", { exact: true })).toHaveCount(3);
+});
