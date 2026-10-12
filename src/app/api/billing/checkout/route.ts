@@ -19,8 +19,24 @@ export async function POST(request: NextRequest) {
 
   const keyId = process.env.RAZORPAY_KEY_ID;
   const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  const mode = process.env.RAZORPAY_MODE || "test";
   if (!keyId || !keySecret) {
     return NextResponse.json({ error: "Subscription checkout is not configured yet." }, { status: 503 });
+  }
+
+  // Default to Test Mode. Live collection requires an explicit deployment-level
+  // opt-in and a live key, so merely adding credentials cannot start charging users.
+  if (mode === "test" && !keyId.startsWith("rzp_test_")) {
+    return NextResponse.json({ error: "Razorpay Test Mode requires a test key. Checkout remains disabled." }, { status: 503 });
+  }
+  if (mode === "live" && (
+    process.env.RAZORPAY_LIVE_PAYMENTS_ENABLED !== "true" ||
+    !keyId.startsWith("rzp_live_")
+  )) {
+    return NextResponse.json({ error: "Live payments are disabled until the account, plans, webhook and entitlement flow are verified." }, { status: 503 });
+  }
+  if (mode !== "test" && mode !== "live") {
+    return NextResponse.json({ error: "Invalid Razorpay mode. Use test or live." }, { status: 503 });
   }
 
   let body: { plan_id?: unknown };
