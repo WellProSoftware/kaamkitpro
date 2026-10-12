@@ -11,9 +11,10 @@ export default function AdSenseLoader({ disabled = false }: { disabled?: boolean
 
   useEffect(() => {
     let cancelled = false;
-
     const removeAds = () => document.getElementById(ADSENSE_SCRIPT_ID)?.remove();
-    const excluded = /^\\/(login|account|admin)(\\/|$)/.test(pathname) || pathname.startsWith("/auth/");
+    const excluded = ["/login", "/account", "/admin"].some(
+      (prefix) => pathname === prefix || pathname.startsWith(prefix + "/"),
+    ) || pathname.startsWith("/auth/");
 
     async function syncAds() {
       if (disabled || excluded) {
@@ -55,7 +56,6 @@ export default function AdSenseLoader({ disabled = false }: { disabled?: boolean
         script.dataset.adClient = "ca-pub-6738934686699082";
         document.head.appendChild(script);
       } catch {
-        // Fail closed if consent or entitlement cannot be verified.
         removeAds();
       }
     }
