@@ -41,10 +41,9 @@ test("anonymous staging access API stays free and keeps ads disabled", async ({ 
 });
 
 test("privacy consent choices persist and staging never loads optional trackers", async ({ page }) => {
-  await page.addInitScript(() => {
-    window.localStorage.removeItem("kk_privacy_consent_v1");
-  });
   await page.goto("/");
+  await page.evaluate(() => window.localStorage.removeItem("kk_privacy_consent_v1"));
+  await page.reload();
   const dialog = page.getByRole("dialog", { name: /Your privacy choices/i });
   await expect(dialog).toBeVisible();
   await page.getByRole("button", { name: "Essential only" }).click();
