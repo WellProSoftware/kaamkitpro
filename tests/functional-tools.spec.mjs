@@ -829,3 +829,23 @@ test("GST Calculator correctly adds and removes GST", async ({ page }) => {
   await expect(page.getByText("₹11800.00", { exact: true })).toBeVisible();
 });
 
+test("BMI Calculator updates BMI and category from entered measurements", async ({ page }) => {
+  await page.goto("/tools/bmi-calculator");
+  await expect(page.getByRole("heading", { name: "BMI Calculator", exact: true })).toBeVisible();
+  const fields = page.locator('input[type="number"]');
+  await fields.nth(0).fill("70");
+  await fields.nth(1).fill("175");
+  await expect(page.getByText("22.9", { exact: true })).toBeVisible();
+  await expect(page.getByText("Normal", { exact: true })).toBeVisible();
+});
+
+test("EMI Calculator computes monthly EMI for a sample loan", async ({ page }) => {
+  await page.goto("/tools/emi-calculator");
+  await expect(page.getByRole("heading", { name: "EMI Calculator", exact: true })).toBeVisible();
+  const fields = page.locator('input[type="number"]');
+  await fields.nth(0).fill("100000");
+  await fields.nth(1).fill("12");
+  await fields.nth(2).fill("1");
+  await expect(page.getByText("₹8,885", { exact: true })).toBeVisible();
+});
+
