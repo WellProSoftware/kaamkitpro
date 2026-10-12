@@ -189,3 +189,9 @@ test("Razorpay subscription verification signs payment ID before subscription ID
   expect(source).toContain('update(`${paymentId}|${subscriptionId}`)');
   expect(source).not.toContain('update(`${subscriptionId}|${paymentId}`)');
 });
+
+test("live subscription cancellation is gated by explicit live-payments authorization", async () => {
+  const source = await readFile(new URL("../src/app/api/billing/cancel/route.ts", import.meta.url), "utf8");
+  expect(source).toContain('getServerEnv("RAZORPAY_LIVE_PAYMENTS_ENABLED")');
+  expect(source).toContain('mode === "live" && livePaymentsEnabled !== "true"');
+});
