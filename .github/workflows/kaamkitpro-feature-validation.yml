@@ -5,6 +5,7 @@ on:
     branches:
       - feature/razorpay-staging-integration
       - feature/remove-otp-auth-staging
+      - fix/tool-access-clarity
 
 permissions:
   contents: read
