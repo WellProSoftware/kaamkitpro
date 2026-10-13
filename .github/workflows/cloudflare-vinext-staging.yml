@@ -35,6 +35,8 @@ jobs:
     env:
       KAAMKITPRO_STAGING: "true"
       NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_SUPABASE_URL: "https://stcahnjwonfcuzevfmyg.supabase.co"
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_pnD1QuYuIV9qYGRdYJTDGQ_UfwUycgY"
 
     steps:
       - name: Checkout explicitly selected staging source
