@@ -31,7 +31,7 @@ test.describe("Razorpay subscription lifecycle safety", () => {
   test("concurrent duplicate deliveries use an atomic processing lease and retry safely", async () => {
     const webhook = await source("../src/app/api/billing/webhook/route.ts");
     expect(webhook).toContain("processing_started_at: now.toISOString()");
-    expect(webhook).toContain("processed_at: \"is.null\"");
+    expect(webhook).toContain('processed_at: "is.null"');
     expect(webhook).toContain("processing_started_at.lt.");
     expect(webhook).toContain("5 * 60 * 1000");
     expect(webhook).toContain("Webhook event is already being processed; retry later.");
@@ -70,6 +70,22 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(verify).toContain("Date.parse(periodEnd) <= Date.now()");
     expect(verify).toContain("verified: false, pending: true");
     expect(verify).toContain('status: "not.in.(cancelled,expired)"');
+  });
+
+  test("Pro access expires when the verified billing period end is missing, invalid, or past", async () => {
+    const access = await source("../src/app/api/access/route.ts");
+    expect(access).toContain('typeof item.current_period_end === "string"');
+    expect(access).toContain("Number.isFinite(Date.parse(item.current_period_end))");
+    expect(access).toContain("Date.parse(item.current_period_end) > now");
+    expect(access).toContain("const isPro = fullGrant || proGrant || paidSubscription");
+    expect(access).toContain("adsEnabled: !isStagingBuild && !isPro");
+  });
+
+  test("manual access grants respect start, expiry and revocation timestamps", async () => {
+    const access = await source("../src/app/api/access/route.ts");
+    expect(access).toContain("!grant.revoked_at");
+    expect(access).toContain("Date.parse(grant.starts_at) <= now");
+    expect(access).toContain("Date.parse(grant.expires_at) > now");
   });
 
   test("cancellation is sent to Razorpay before local status changes", async () => {
