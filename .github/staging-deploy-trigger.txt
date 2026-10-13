@@ -1,0 +1,2 @@
+Staging-only deployment trigger for the validated support-chat end-to-end test.
+Production Vercel, domains, DNS, and live checkout are intentionally excluded.
