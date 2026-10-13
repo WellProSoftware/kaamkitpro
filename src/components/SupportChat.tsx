@@ -67,7 +67,7 @@ export default function SupportChat() {
         <section aria-label="KaamKitPro support chat" className="mb-3 flex h-[min(75vh,570px)] w-[min(92vw,380px)] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
           <header className="flex items-center justify-between bg-slate-900 px-4 py-3 text-white">
             <div><p className="font-bold">KaamKitPro Support</p><p className="text-xs text-slate-300">Help assistant · Admin handoff</p></div>
-            <button onClick={() => setOpen(false)} aria-label="Close support chat" className="rounded-lg px-3 py-2 hover:bg-white/10">✕</button>
+            <div className="flex gap-1"><button onClick={() => { setNotice(""); fetch("/api/support", { cache: "no-store" }).then(async response => { const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.error || "Refresh failed"); setConversation(data.conversation); }).catch(error => setNotice(error instanceof Error ? error.message : "Refresh failed")); }} aria-label="Refresh support messages" className="rounded-lg px-2 py-2 text-xs hover:bg-white/10">Refresh</button><button onClick={() => setOpen(false)} aria-label="Close support chat" className="rounded-lg px-3 py-2 hover:bg-white/10">✕</button></div>
           </header>
           <div className="flex-1 space-y-3 overflow-y-auto bg-slate-50 p-3">
             <div className="max-w-[92%] rounded-2xl rounded-tl-sm bg-white p-3 text-sm text-slate-800 shadow-sm">Namaste! Login, tool, payment ya subscription mein kya problem hai? Aap apni language mein message bhej sakte hain.</div>
