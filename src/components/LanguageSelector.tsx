@@ -105,7 +105,7 @@ export default function LanguageSelector() {
   return (
     <>
       <Script
-        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+        src="https://translate.google.com/translate_a/element.js"
         strategy="afterInteractive"
         onReady={() => {
           (window as GoogleTranslateWindow).googleTranslateElementInit = initTranslate;
