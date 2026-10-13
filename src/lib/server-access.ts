@@ -59,14 +59,20 @@ export async function serviceRest(
   }
   if (!serviceKey) return null;
 
-  return fetch(`${config.url}/rest/v1/${path}`, {
-    ...init,
-    headers: {
-      apikey: serviceKey,
-      Authorization: `Bearer ${serviceKey}`,
-      "Content-Type": "application/json",
-      ...(init.headers || {}),
-    },
-    cache: "no-store",
-  });
+  try {
+    return await fetch(`${config.url}/rest/v1/${path}`, {
+      ...init,
+      headers: {
+        apikey: serviceKey,
+        Authorization: `Bearer ${serviceKey}`,
+        "Content-Type": "application/json",
+        ...(init.headers || {}),
+      },
+      cache: "no-store",
+    });
+  } catch {
+    // Let API routes return their explicit fail-closed JSON response instead of
+    // an unhandled Worker exception that becomes an empty HTTP 503.
+    return null;
+  }
 }
