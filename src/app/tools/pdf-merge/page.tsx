@@ -2,7 +2,6 @@
 import { trackDownload, trackToolUsed } from "@/lib/analytics";
 
 import { useState } from "react";
-import { PDFDocument } from "pdf-lib";
 
 export default function PDFMergePage() {
   const [files, setFiles] = useState<File[]>([]);
@@ -53,6 +52,9 @@ export default function PDFMergePage() {
       setMerging(true);
       setMessage("");
 
+      // Load the PDF library only in the browser after the user starts merging.
+      // This avoids evaluating pdf-lib during Cloudflare Worker server rendering.
+      const { PDFDocument } = await import("pdf-lib");
       const mergedPdf = await PDFDocument.create();
 
       for (const file of files) {
