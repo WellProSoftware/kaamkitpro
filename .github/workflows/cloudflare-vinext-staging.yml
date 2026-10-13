@@ -268,7 +268,7 @@ jobs:
       - name: Checkout explicitly selected staging source only
         uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging' }}
+          ref: ${{ github.event_name == 'push' && github.ref == 'refs/heads/feature/remove-otp-auth-staging' && contains(github.event.head_commit.message, '[deploy-staging]') && 'feature/remove-otp-auth-staging' || (inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging') }}
       - name: Set up Node.js
         uses: actions/setup-node@v5
         with:
