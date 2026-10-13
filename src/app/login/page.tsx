@@ -99,7 +99,7 @@ export default function LoginPage() {
         <div className="mb-8 flex items-center justify-between gap-4"><BrandLogo /><Link href="/" className="text-sm font-semibold text-slate-500 hover:text-slate-900">Home</Link></div>
         <p className="text-sm font-bold uppercase tracking-widest text-blue-600">KaamKitPro account</p>
         <h1 className="mt-3 text-3xl font-extrabold tracking-tight">{mode === "signup" ? "Create your account" : "Welcome back"}</h1>
-        <p className="mt-3 leading-7 text-slate-600">{mode === "signup" ? "Enter your details. We’ll email you a verification link; after you verify, you’ll create your password." : "Sign in with your verified email and password, or continue securely with Google."}</p>
+        <p className="mt-3 leading-7 text-slate-600">{mode === "signup" ? "Enter your details. We’ll email you a verification link; after you verify, you’ll create your password. OTP sign-in is not offered." : "Sign in with your verified email and password, or continue securely with Google."}</p>
         <div className="mt-6 grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1">
           <button type="button" onClick={() => { setMode("signup"); setError(""); setNotice(""); }} className={`min-h-10 rounded-lg px-3 text-sm font-bold ${mode === "signup" ? "bg-white text-blue-700 shadow-sm" : "text-slate-600"}`}>Create account</button>
           <button type="button" onClick={() => { setMode("login"); setError(""); setNotice(""); }} className={`min-h-10 rounded-lg px-3 text-sm font-bold ${mode === "login" ? "bg-white text-blue-700 shadow-sm" : "text-slate-600"}`}>Sign in</button>
