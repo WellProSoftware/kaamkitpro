@@ -1,5 +1,7 @@
 "use client";
 
+// Staging validation target: email verification, password setup, and password recovery.
+
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import BrandLogo from "@/components/BrandLogo";
