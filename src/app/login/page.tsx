@@ -68,13 +68,18 @@ export default function LoginPage() {
           password: randomTemporaryPassword(),
           data: { full_name: fullName.trim(), display_name: fullName.trim(), account_setup_required: true },
         });
-        if (result.user?.identities?.length === 0) {
+        const existingAccount = result.user?.identities?.length === 0;
+        if (existingAccount) {
+          // Supabase deliberately avoids revealing account state in the signup response.
+          // Request a fresh link; verified users can ignore it and use the sign-in form.
           await requestJson("resend", { type: "signup", email: normalizedEmail, options: { emailRedirectTo: redirectTo } });
         }
         if (result.access_token || result.refresh_token) {
           throw new Error("Email confirmation must be enabled in Supabase Auth before signup can continue. Please contact support; do not sign in until your email is verified.");
         }
-        setNotice("Verification email sent. Please check your inbox (and spam folder), open the verification link, and create your password to finish setting up your account.");
+        setNotice(existingAccount
+          ? "An account already exists with this email address. If you have not verified it yet, a fresh verification link has been requested. If your email is already verified, switch to Sign in and use your email and password."
+          : "Verification email sent. Please check your inbox (and spam folder), open the verification link within 5 minutes, and create your password to finish setting up your account.");
         setSignupSent(true);
         return;
       }
