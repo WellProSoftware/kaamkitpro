@@ -1,39 +1,82 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("KaamKitPro authentication pages", () => {
-  test("signup page offers email/mobile OTP, password and Google sign-in", async ({ page }) => {
+  test("signup page uses email verification and hides Google and OTP options", async ({ page }) => {
     await page.goto("/login");
-
+    await page.waitForTimeout(500); // Allow vinext client hydration before interacting with auth controls.
     await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
     await expect(page.getByLabel("Full name")).toBeVisible();
     await expect(page.getByLabel("Email address")).toHaveAttribute("type", "email");
-    await expect(page.getByLabel("Create password")).toHaveAttribute("minlength", "10");
-    await expect(page.getByRole("button", { name: "Continue with Google" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Create account and send OTP" })).toBeVisible();
-
-    await page.getByRole("button", { name: "Mobile number" }).click();
-    await expect(page.getByLabel("Mobile number")).toHaveAttribute("type", "tel");
+    await expect(page.getByLabel("Create password")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Continue with Google" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Send verification email", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Mobile number" })).toHaveCount(0);
+    await expect(page.getByText(/OTP sign-in is not offered/i)).toHaveCount(0);
   });
 
-  test("signup handles missing public Supabase configuration gracefully", async ({ page }) => {
+  // Staging Supabase verification links are configured for a 120-second (2-minute) window.
+  test("successful signup replaces the form with email verification instructions", async ({ page }) => {
+    await page.route("**/auth/v1/signup**", async (route) => {
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ user: { id: "staging-test-user", email: "test@example.com", identities: [{ id: "staging-test-identity" }] } }) });
+    });
     await page.goto("/login");
+    await page.waitForTimeout(500); // Allow vinext client hydration before interacting with auth controls.
     await page.getByLabel("Full name").fill("Test User");
     await page.getByLabel("Email address").fill("test@example.com");
-    await page.getByLabel("Create password").fill("long-enough-test-password");
-    await page.getByRole("button", { name: "Create account and send OTP" }).click();
+    await page.getByRole("button", { name: "Send verification email" }).click();
+
+    await expect(page.getByRole("heading", { name: "Check your email" })).toBeVisible();
+    await expect(page.getByText(/open the verification link within 2 minutes, and create your password/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Send verification email", exact: true })).toHaveCount(0);
+    await expect(page.getByLabel("Full name")).toHaveCount(0);
+    await expect(page.getByLabel("Email address")).toHaveCount(0);
+  });
+
+  test("repeat signup explains that the email already has an account and requests a fresh link", async ({ page }) => {
+    await page.route("**/auth/v1/signup**", async (route) => {
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ user: { id: "existing-user", email: "test@example.com", identities: [] } }) });
+    });
+    await page.route("**/auth/v1/resend**", async (route) => {
+      const body = route.request().postDataJSON();
+      expect(body.type).toBe("signup");
+      expect(body.email).toBe("test@example.com");
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({}) });
+    });
+    await page.goto("/login");
+    await page.waitForTimeout(500); // Allow vinext client hydration before interacting with auth controls.
+    await page.getByLabel("Full name").fill("Test User");
+    await page.getByLabel("Email address").fill("test@example.com");
+    await page.getByRole("button", { name: "Send verification email" }).click();
+
+    await expect(page.getByText(/An account already exists with this email address/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Resend verification email" })).toBeVisible();
+  });
+
+  test("signup displays a clear error when Supabase rejects the signup request", async ({ page }) => {
+    await page.route("**/auth/v1/signup**", async (route) => {
+      await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ message: "Account access is temporarily unavailable. Please try again later." }) });
+    });
+    await page.goto("/login");
+    await page.waitForTimeout(500); // Allow vinext client hydration before interacting with auth controls.
+    await page.getByLabel("Full name").fill("Test User");
+    await page.getByLabel("Email address").fill("test@example.com");
+    // Signup password is created only after the email verification link is opened.
+    await page.getByRole("button", { name: "Send verification email" }).click();
 
     await expect(page.getByText("Account access is temporarily unavailable", { exact: false })).toBeVisible();
   });
 
-  test("login supports password and one-time-code modes", async ({ page }) => {
+  test("login supports email and password without Google or one-time-code mode", async ({ page }) => {
     await page.goto("/login");
+    await page.waitForTimeout(500); // Allow vinext client hydration before interacting with auth controls.
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
-    await expect(page.getByRole("textbox", { name: "Password" })).toBeVisible();
-
-    await page.getByLabel("One-time code").check();
-    await expect(page.getByRole("button", { name: "Send one-time code" })).toBeVisible();
-    await expect(page.getByRole("textbox", { name: "Password" })).toHaveCount(0);
+    await expect(page.getByLabel("Email address")).toBeVisible();
+    await expect(page.getByLabel("Password")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Continue with Google" })).toHaveCount(0);
+    await expect(page.getByLabel("Mobile number")).toHaveCount(0);
+    await expect(page.getByLabel("One-time code")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Send one-time code" })).toHaveCount(0);
   });
 
   test("callback page rejects a URL without sign-in tokens", async ({ page }) => {

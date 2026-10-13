@@ -216,3 +216,115 @@ test("representative free utility pages render on staging", async ({ page }) => 
   }
 });
 
+
+
+test("global account menu opens login and signup from the top-right icon", async ({ page }) => {
+  await page.route("**/api/auth/session", route =>
+    route.fulfill({ status: 401, contentType: "application/json", body: JSON.stringify({ error: "Not signed in." }) }),
+  );
+  await page.goto("/");
+  const menuButton = page.getByRole("button", { name: "Login or create account" });
+  await expect(menuButton).toBeVisible();
+  await menuButton.click();
+  await expect(page.getByText("Welcome to KaamKitPro")).toBeVisible();
+  await page.getByRole("link", { name: "Login", exact: true }).click();
+  await expect(page).toHaveURL(/\/login\?mode=login$/);
+  await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "Login or create account" }).click();
+  await page.getByRole("link", { name: "Sign up", exact: true }).click();
+  await expect(page).toHaveURL(/\/login\?mode=signup$/);
+  await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
+});
+
+test("global account menu shows signed-in plan details and sign-out action", async ({ page }) => {
+  await page.route("**/api/auth/session", route =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ user: { id: "staging-user", email: "member@example.test", fullName: "Staging Member" } }),
+    }),
+  );
+  await page.route("**/api/access", route =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ isAdmin: false, isPro: true, plan: "pro" }) }),
+  );
+  await page.route("**/api/billing/subscription", route =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ subscription: { status: "active", currentPeriodEnd: "2026-11-13T00:00:00.000Z", plan: { name: "Pro Monthly", billingInterval: "month", amountMinor: 9900, currency: "INR" } } }),
+    }),
+  );
+  await page.route("**/api/auth/session", async route => {
+    if (route.request().method() === "DELETE") {
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ success: true }) });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ user: { id: "staging-user", email: "member@example.test", fullName: "Staging Member" } }),
+    });
+  });
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "Open account menu" }).click();
+  await expect(page.getByText("Staging Member")).toBeVisible();
+  await expect(page.getByText("member@example.test")).toBeVisible();
+  await expect(page.getByText("Pro plan")).toBeVisible();
+  await expect(page.getByText(/₹99\/month/)).toBeVisible();
+  await expect(page.getByRole("link", { name: "My Account & Payment Details" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Logout / Sign out" })).toBeVisible();
+});
+
+
+test("subscription checkout requires recurring-payment consent before any checkout request", async ({ page }) => {
+  let checkoutRequests = 0;
+  await page.route("**/api/auth/session", route =>
+    route.fulfill({ status: 401, contentType: "application/json", body: JSON.stringify({ error: "Not signed in." }) }),
+  );
+  await page.route("**/api/billing/checkout", async route => {
+    checkoutRequests += 1;
+    await route.fulfill({ status: 401, contentType: "application/json", body: JSON.stringify({ error: "Sign in before starting a subscription." }) });
+  });
+  await page.goto("/pricing");
+  await page.getByRole("button", { name: "Choose monthly" }).click();
+  await expect(page.getByRole("status")).toContainText("Please accept the recurring billing terms");
+  expect(checkoutRequests).toBe(0);
+
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Choose monthly" }).click();
+  await expect(page.getByRole("status")).toContainText("Sign in before starting a subscription");
+  expect(checkoutRequests).toBe(1);
+});
+
+test("subscription checkout refuses a live Razorpay key in the browser before loading checkout.js", async ({ page }) => {
+  await page.route("**/api/auth/session", route =>
+    route.fulfill({ status: 401, contentType: "application/json", body: JSON.stringify({ error: "Not signed in." }) }),
+  );
+  await page.route("**/api/billing/checkout", route =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        key_id: "rzp_live_should_never_be_used_in_staging",
+        subscription_id: "sub_stagingtest123",
+        name: "KaamKitPro",
+        description: "Pro",
+        amount: 9900,
+        currency: "INR",
+      }),
+    }),
+  );
+  let razorpayScriptRequests = 0;
+  await page.route("https://checkout.razorpay.com/**", async route => {
+    razorpayScriptRequests += 1;
+    await route.abort();
+  });
+  await page.goto("/pricing");
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Choose monthly" }).click();
+  await expect(page.getByRole("status")).toContainText("Staging checkout is restricted to Razorpay Test Mode");
+  expect(razorpayScriptRequests).toBe(0);
+});

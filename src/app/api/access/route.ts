@@ -29,6 +29,23 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  const isAdmin = isAuthorizedAdmin(user.email);
+  // The explicitly allowlisted site administrator receives the same server-verified
+  // Full Pro entitlements as a full_pro grant: all tools, no ads, and quota bypass.
+  // Keep this check server-side; never infer administrator access from client state.
+  if (isAdmin) {
+    return NextResponse.json({
+      user: { id: user.id, email: user.email },
+      plan: "admin_full_access",
+      isPro: true,
+      fullAccess: true,
+      adsEnabled: false,
+      selectedTools: [],
+      isAdmin: true,
+      message: "Administrator Full Pro access is active. All tools are unlocked and ads are disabled.",
+    });
+  }
+
   const configQuery = new URLSearchParams({
     select: "access_type,tool_keys,starts_at,expires_at,revoked_at",
     target_email: `eq.${user.email.toLowerCase()}`,
@@ -37,6 +54,7 @@ export async function GET(request: NextRequest) {
   });
   const grantsResponse = await serviceRest(`user_access_grants?${configQuery.toString()}`);
   if (!grantsResponse?.ok) {
+    console.error("[api/access] grants lookup failed", { status: grantsResponse?.status ?? null, statusText: grantsResponse?.statusText ?? "no response" });
     return NextResponse.json({
       user: { id: user.id, email: user.email },
       plan: "access_check_unavailable",
@@ -66,6 +84,7 @@ export async function GET(request: NextRequest) {
   });
   const subscriptionResponse = await serviceRest(`subscriptions?${subscriptionQuery.toString()}`);
   if (!subscriptionResponse?.ok) {
+    console.error("[api/access] subscription lookup failed", { status: subscriptionResponse?.status ?? null, statusText: subscriptionResponse?.statusText ?? "no response" });
     return NextResponse.json({
       user: { id: user.id, email: user.email },
       plan: "access_check_unavailable",

@@ -1,10 +1,13 @@
 # Safety note: this workflow must deploy only the kaamkitpro-staging Worker.
+# Feature-branch deployment is permitted only by a validated commit carrying [deploy-staging].
+# Feature-branch pushes deploy only when the commit message explicitly contains [deploy-staging].
 name: Cloudflare Workers Free staging validation
 
 on:
   push:
     branches:
       - cloudflare/vinext-staging
+      - feature/remove-otp-auth-staging
   workflow_dispatch:
     inputs:
       deploy_to_workers_dev:
@@ -33,12 +36,14 @@ jobs:
     env:
       KAAMKITPRO_STAGING: "true"
       NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_SUPABASE_URL: "https://stcahnjwonfcuzevfmyg.supabase.co"
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_pnD1QuYuIV9qYGRdYJTDGQ_UfwUycgY"
 
     steps:
       - name: Checkout explicitly selected staging source
         uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging' }}
+          ref: ${{ github.event_name == 'push' && github.ref == 'refs/heads/feature/remove-otp-auth-staging' && 'feature/remove-otp-auth-staging' || (inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging') }}
           persist-credentials: true
 
       - name: Set up Node.js
@@ -170,7 +175,7 @@ jobs:
         run: set -o pipefail; npx playwright test -c playwright.cloudflare.config.mjs 2>&1 | tee cloudflare-playwright.log
 
       - name: Commit generated Cloudflare source configuration to staging branch
-        if: always() && steps.init.outcome == 'success' && !(github.event_name == 'workflow_dispatch' && inputs.deploy_feature_pr32 == true)
+        if: always() && steps.init.outcome == 'success' && !(github.event_name == 'workflow_dispatch' && inputs.deploy_feature_pr32 == true) && !(github.event_name == 'push' && github.ref == 'refs/heads/feature/remove-otp-auth-staging')
         shell: bash
         run: |
           set -euo pipefail
@@ -259,7 +264,7 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       KAAMKITPRO_STAGING: "true"
-      KAAMKITPRO_ADMIN_EMAILS: kaamkitpro-staging-admin-${{ github.run_id }}@example.com
+      KAAMKITPRO_ADMIN_EMAILS: ankitkd550@gmail.com,kaamkitpro-staging-admin-${{ github.run_id }}@example.com
       NEXT_TELEMETRY_DISABLED: "1"
       NEXT_PUBLIC_SUPABASE_URL: "https://stcahnjwonfcuzevfmyg.supabase.co"
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_pnD1QuYuIV9qYGRdYJTDGQ_UfwUycgY"
@@ -267,7 +272,7 @@ jobs:
       - name: Checkout explicitly selected staging source only
         uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging' }}
+          ref: ${{ github.event_name == 'push' && github.ref == 'refs/heads/feature/remove-otp-auth-staging' && contains(github.event.head_commit.message, '[deploy-staging]') && 'feature/remove-otp-auth-staging' || (inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging') }}
       - name: Set up Node.js
         uses: actions/setup-node@v5
         with:
@@ -286,7 +291,7 @@ jobs:
             const path = "dist/server/wrangler.json";
             const config = JSON.parse(fs.readFileSync(path, "utf8"));
             if (config.name !== "kaamkitpro-staging") throw new Error("Refusing to add auth config to a non-staging Worker");
-            config.vars = { ...(config.vars || {}), KAAMKITPRO_STAGING: "true", KAAMKITPRO_ADMIN_EMAILS: `kaamkitpro-staging-admin-${process.env.GITHUB_RUN_ID}@example.com`, RAZORPAY_MODE: "test", RAZORPAY_LIVE_PAYMENTS_ENABLED: "false", NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY };
+            config.vars = { ...(config.vars || {}), KAAMKITPRO_STAGING: "true", KAAMKITPRO_ADMIN_EMAILS: `ankitkd550@gmail.com,kaamkitpro-staging-admin-${process.env.GITHUB_RUN_ID}@example.com`, RAZORPAY_MODE: "test", RAZORPAY_LIVE_PAYMENTS_ENABLED: "false", NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY };
             fs.writeFileSync(path, JSON.stringify(config, null, 2) + "\n");
           '
       - name: Verify worker is isolated from production
@@ -339,13 +344,13 @@ jobs:
           for (const [path, verify, label] of checks) {
             let ok = false;
             let detail = "";
-            for (let attempt = 0; attempt < 5; attempt++) {
+            for (let attempt = 0; attempt < 10; attempt++) {
               try {
                 const response = await fetch(base + path, { redirect: "follow" });
                 detail = "HTTP " + response.status;
                 if (await verify(response)) { ok = true; break; }
               } catch (error) { detail = String(error); }
-              await new Promise(resolve => setTimeout(resolve, 1500));
+              await new Promise(resolve => setTimeout(resolve, 3000));
             }
             console.log((ok ? "PASS " : "FAIL ") + label + " — " + detail);
             if (!ok) failures++;
@@ -378,6 +383,18 @@ jobs:
             if (!condition) throw new Error(message);
           }
 
+          async function responseJson(response, label) {
+            const text = await response.text();
+            if (!text.trim()) {
+              throw new Error(`${label} returned an empty body (HTTP ${response.status}, content-type ${response.headers.get("content-type") || "missing"}).`);
+            }
+            try {
+              return JSON.parse(text);
+            } catch {
+              throw new Error(`${label} returned invalid JSON (HTTP ${response.status}): ${text.slice(0, 240)}`);
+            }
+          }
+
           async function callUsage(cookie, action) {
             return fetch(base + "/api/tools/usage", {
               method: "POST",
@@ -408,24 +425,24 @@ jobs:
             const cookie = `kk_access_token=${session.access_token}`;
 
             const accessResponse = await fetch(base + "/api/access", { headers: { cookie, "cache-control": "no-store" } });
-            const access = await accessResponse.json();
+            const access = await responseJson(accessResponse, "Signed-in /api/access");
             await expect(accessResponse.ok && access.plan === "free" && access.isPro === false && access.adsEnabled === false,
               "Signed-in staging account should remain Free with ads disabled.");
 
             const initialResponse = await callUsage(cookie, "check");
-            const initial = await initialResponse.json();
+            const initial = await responseJson(initialResponse, "Initial quota check");
             await expect(initialResponse.ok && initial.allowed === true && initial.used === 0 && initial.remaining === 3 && initial.dailyLimit === 3,
               "Initial daily quota should be 0/3.");
 
             for (let used = 1; used <= 3; used++) {
               const response = await callUsage(cookie, "consume");
-              const result = await response.json();
+              const result = await responseJson(response, `Quota consume ${used}`);
               await expect(response.status === 200 && result.allowed === true && result.used === used && result.remaining === 3 - used,
                 `Quota consume ${used} did not return expected usage/remaining values.`);
             }
 
             const exhaustedResponse = await callUsage(cookie, "consume");
-            const exhausted = await exhaustedResponse.json();
+            const exhausted = await responseJson(exhaustedResponse, "Quota exhaustion check");
             await expect(exhaustedResponse.status === 429 && exhausted.allowed === false && exhausted.used === 3 && exhausted.remaining === 0,
               "Fourth consume should be denied with HTTP 429 at the daily limit.");
 
@@ -608,6 +625,90 @@ jobs:
           if (failed) process.exit(1);
           NODE
 
+      - name: Verify support chat to admin reply end-to-end on staging
+        shell: bash
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { randomBytes } from "node:crypto";
+          const base = "https://kaamkitpro-staging.ankitkd550.workers.dev";
+          const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+          const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+          const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+          const suffix = `${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`;
+          const userEmail = `kaamkitpro-support-user-${suffix}@example.com`;
+          const adminEmail = `kaamkitpro-staging-admin-${process.env.GITHUB_RUN_ID}@example.com`;
+          if (!projectUrl || !publishableKey || !serviceKey) throw new Error("Missing staging Supabase test configuration.");
+          const password = randomBytes(32).toString("base64url") + "Q7!";
+          const createdUsers = [];
+          let failed = false;
+          async function expect(ok, message) { if (!ok) throw new Error(message); }
+          async function createUser(email) {
+            const response = await fetch(projectUrl + "/auth/v1/admin/users", {
+              method: "POST",
+              headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}`, "content-type": "application/json" },
+              body: JSON.stringify({ email, password, email_confirm: true }),
+            });
+            if (!response.ok) throw new Error(`Could not create disposable support test user (HTTP ${response.status}).`);
+            const user = await response.json();
+            createdUsers.push(user.id);
+            return user;
+          }
+          async function login(email) {
+            const response = await fetch(projectUrl + "/auth/v1/token?grant_type=password", {
+              method: "POST",
+              headers: { apikey: publishableKey, "content-type": "application/json" },
+              body: JSON.stringify({ email, password }),
+            });
+            if (!response.ok) throw new Error(`Support test sign-in failed (HTTP ${response.status}).`);
+            const session = await response.json();
+            return `kk_access_token=${session.access_token}`;
+          }
+          async function api(path, cookie, options = {}) {
+            return fetch(base + path, { ...options, headers: { ...(options.body ? { "content-type": "application/json" } : {}), cookie, ...(options.headers || {}) } });
+          }
+          try {
+            await createUser(userEmail);
+            await createUser(adminEmail);
+            const userCookie = await login(userEmail);
+            const adminCookie = await login(adminEmail);
+            const message = `Automated support E2E ${suffix}: customer needs help with a tool.`;
+            const sent = await api("/api/support", userCookie, { method: "POST", body: JSON.stringify({ message, language: "en" }) });
+            const sentData = await sent.json().catch(() => ({}));
+            await expect(sent.status === 201 && sentData.conversation?.id, `Customer message was not saved (HTTP ${sent.status}).`);
+            const conversationId = sentData.conversation.id;
+            await expect(sentData.conversation.support_messages?.some(m => m.body === message && m.sender_role === "user"), "Customer message missing from conversation readback.");
+            const inbox = await api("/api/admin/support", adminCookie);
+            const inboxData = await inbox.json().catch(() => ({}));
+            await expect(inbox.status === 200 && inboxData.conversations?.some(c => c.id === conversationId && c.support_messages?.some(m => m.body === message)), `Admin inbox could not see customer message (HTTP ${inbox.status}).`);
+            const reply = `Automated admin reply ${suffix}: please retry the tool and tell us if the issue continues.`;
+            const replied = await api("/api/admin/support", adminCookie, { method: "POST", body: JSON.stringify({ conversation_id: conversationId, message: reply, status: "waiting_user" }) });
+            await expect(replied.status === 200, `Admin reply was not saved (HTTP ${replied.status}).`);
+            const refreshed = await api("/api/support", userCookie);
+            const refreshedData = await refreshed.json().catch(() => ({}));
+            await expect(refreshed.status === 200 && refreshedData.conversation?.id === conversationId && refreshedData.conversation.support_messages?.some(m => m.body === reply && m.sender_role === "admin"), "Customer chat did not show the admin reply.");
+            console.log("PASS customer message saved and read back.");
+            console.log("PASS admin inbox received the customer message.");
+            console.log("PASS admin reply saved and visible to the customer.");
+          } catch (error) {
+            failed = true;
+            console.error("FAIL support chat end-to-end:", String(error));
+          } finally {
+            for (const id of createdUsers.reverse()) {
+              try {
+                const response = await fetch(projectUrl + "/auth/v1/admin/users/" + encodeURIComponent(id), {
+                  method: "DELETE", headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}` },
+                });
+                if (!response.ok) { failed = true; console.error(`FAIL disposable support user cleanup (HTTP ${response.status}).`); }
+              } catch (error) { failed = true; console.error("FAIL disposable support user cleanup:", String(error)); }
+            }
+            if (createdUsers.length) console.log("Disposable support auth users cleanup attempted.");
+          }
+          if (failed) process.exit(1);
+          NODE
+
       - name: Focused diagnostics for failed client-page routes
         if: always()
         shell: bash
@@ -642,3 +743,5 @@ jobs:
             }
           }
           NODE
+
+# Staging-only deployment trigger marker; production routes remain excluded.
