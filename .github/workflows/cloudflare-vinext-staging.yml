@@ -1,4 +1,5 @@
 # Safety note: this workflow must deploy only the kaamkitpro-staging Worker.
+# Feature-branch deployment is permitted only by a validated commit carrying [deploy-staging].
 # Feature-branch pushes deploy only when the commit message explicitly contains [deploy-staging].
 name: Cloudflare Workers Free staging validation
 
