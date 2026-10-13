@@ -17,8 +17,8 @@ test.describe("KaamKitPro authentication pages", () => {
     await page.goto("/login");
     await page.getByLabel("Full name").fill("Test User");
     await page.getByLabel("Email address").fill("test@example.com");
-    await page.getByLabel("Create password").fill("long-enough-test-password");
-    await page.getByRole("button", { name: "Create account and send OTP" }).click();
+    // Signup password is created only after the email verification link is opened.
+    await page.getByRole("button", { name: "Send verification email" }).click();
 
     await expect(page.getByText("Account access is temporarily unavailable", { exact: false })).toBeVisible();
   });
