@@ -184,6 +184,19 @@ test.describe("staging security regression checks", () => {
 
 });
 
+test("anonymous staging access stays on Free plan with ads disabled", async ({ request }) => {
+  const response = await request.get("/api/access");
+  expect(response.status()).toBe(200);
+  const body = await response.json();
+  expect(body).toMatchObject({
+    user: null,
+    plan: "free",
+    isPro: false,
+    adsEnabled: false,
+    selectedTools: [],
+  });
+});
+
 test("Razorpay subscription verification signs payment ID before subscription ID", async () => {
   const source = await readFile(new URL("../src/app/api/billing/verify/route.ts", import.meta.url), "utf8");
   expect(source).toContain('update(`${paymentId}|${subscriptionId}`)');
