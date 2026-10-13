@@ -29,6 +29,25 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page.getByLabel("Email address")).toHaveCount(0);
   });
 
+  test("repeat signup explains that the email already has an account and requests a fresh link", async ({ page }) => {
+    await page.route("**/auth/v1/signup**", async (route) => {
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ user: { id: "existing-user", email: "test@example.com", identities: [] } }) });
+    });
+    await page.route("**/auth/v1/resend**", async (route) => {
+      const body = route.request().postDataJSON();
+      expect(body.type).toBe("signup");
+      expect(body.email).toBe("test@example.com");
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({}) });
+    });
+    await page.goto("/login");
+    await page.getByLabel("Full name").fill("Test User");
+    await page.getByLabel("Email address").fill("test@example.com");
+    await page.getByRole("button", { name: "Send verification email" }).click();
+
+    await expect(page.getByText(/An account already exists with this email address/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Resend verification email" })).toBeVisible();
+  });
+
   test("signup handles missing public Supabase configuration gracefully", async ({ page }) => {
     await page.goto("/login");
     await page.getByLabel("Full name").fill("Test User");
