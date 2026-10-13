@@ -3,14 +3,16 @@
 // Staging validation target: email verification, password setup, and password recovery.
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { Suspense, FormEvent, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import BrandLogo from "@/components/BrandLogo";
 
 type AuthSession = { access_token?: string; refresh_token?: string; expires_in?: number };
 type AuthResponse = AuthSession & { msg?: string; message?: string; error_description?: string; user?: { id?: string; identities?: Array<{ id?: string }> | null; email?: string; email_confirmed_at?: string | null } };
 
-export default function LoginPage() {
-  const [mode, setMode] = useState<"signup" | "login" | "reset">("signup");
+function LoginForm() {
+  const searchParams = useSearchParams();
+  const [mode, setMode] = useState<"signup" | "login" | "reset">(() => searchParams.get("mode") === "login" ? "login" : "signup");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -126,4 +128,8 @@ export default function LoginPage() {
       </section>
     </main>
   );
+}
+
+export default function LoginPage() {
+  return <Suspense fallback={<main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 text-slate-700">Loading account…</main>}><LoginForm /></Suspense>;
 }
