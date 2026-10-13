@@ -22,7 +22,10 @@ export default function AdminSupportPage() {
     setTickets(data.conversations || []);
     setSelected(current => current || data.conversations?.[0]?.id || "");
   }
-  useEffect(() => { void load().catch(e => setError(e.message)); }, []);
+  useEffect(() => {
+    const timer = window.setTimeout(() => { void load().catch(e => setError(e.message)); }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
   const active = tickets.find(ticket => ticket.id === selected);
   async function send(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); if (!active || !reply.trim()) return;
