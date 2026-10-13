@@ -6,6 +6,7 @@ on:
       - feature/razorpay-staging-integration
       - feature/remove-otp-auth-staging
       - fix/staging-subscription-updated-event
+      - test/subscription-status-behavior
 
 permissions:
   contents: read
