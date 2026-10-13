@@ -6,9 +6,9 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
     await expect(page.getByLabel("Full name")).toBeVisible();
     await expect(page.getByLabel("Email address")).toHaveAttribute("type", "email");
-    await expect(page.getByLabel("Create password")).toHaveAttribute("minlength", "10");
+    await expect(page.getByLabel("Create password")).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Continue with Google" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Create account", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Send verification email", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Mobile number" })).toHaveCount(0);
     await expect(page.getByText(/OTP sign-in is not offered/i)).toBeVisible();
   });
