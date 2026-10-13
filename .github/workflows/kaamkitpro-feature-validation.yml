@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/razorpay-staging-integration
+      - feature/remove-otp-auth-staging
 
 permissions:
   contents: read
