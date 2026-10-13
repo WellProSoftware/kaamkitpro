@@ -104,9 +104,10 @@ export default function AccountPage() {
       <div className="mx-auto max-w-3xl">
         <header className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4">
           <BrandLogo />
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link href="/" className="rounded-xl bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700 sm:px-4">Home / Tools</Link>
             {isAdmin ? <Link href="/admin/access" className="text-sm font-bold text-blue-700 hover:underline">Admin access</Link> : null}
-            <button onClick={signOut} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold hover:border-blue-400 hover:text-blue-700">Sign out</button>
+            <button onClick={signOut} className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold hover:border-blue-400 hover:text-blue-700 sm:px-4">Sign out</button>
           </div>
         </header>
 
@@ -159,6 +160,11 @@ export default function AccountPage() {
               </>
             )}
             {billingMessage ? <p role="status" aria-live="polite" className="mt-4 rounded-xl bg-white p-3 text-sm text-slate-700">{billingMessage}</p> : null}
+          </div>
+
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <Link href="/" className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700">Explore tools / Go to homepage</Link>
+            <Link href="/pricing" className="inline-flex items-center justify-center rounded-xl border border-slate-300 px-5 py-3 text-sm font-bold text-slate-700 hover:border-blue-400 hover:text-blue-700">View plans</Link>
           </div>
         </section>
       </div>
