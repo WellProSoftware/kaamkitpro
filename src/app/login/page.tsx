@@ -5,7 +5,7 @@ import { FormEvent, useState } from "react";
 import BrandLogo from "@/components/BrandLogo";
 
 type AuthSession = { access_token?: string; refresh_token?: string; expires_in?: number };
-type AuthResponse = AuthSession & { msg?: string; message?: string; error_description?: string };
+type AuthResponse = AuthSession & { msg?: string; message?: string; error_description?: string; user?: { id?: string; identities?: Array<{ id?: string }> | null; email?: string; email_confirmed_at?: string | null } };
 
 export default function LoginPage() {
   const [mode, setMode] = useState<"signup" | "login">("signup");
@@ -68,6 +68,9 @@ export default function LoginPage() {
           password: randomTemporaryPassword(),
           data: { full_name: fullName.trim(), display_name: fullName.trim(), account_setup_required: true },
         });
+        if (result.user?.identities?.length === 0) {
+          await requestJson("resend", { type: "signup", email: normalizedEmail, options: { emailRedirectTo: redirectTo } });
+        }
         if (result.access_token || result.refresh_token) {
           throw new Error("Email confirmation must be enabled in Supabase Auth before signup can continue. Please contact support; do not sign in until your email is verified.");
         }
@@ -96,7 +99,7 @@ export default function LoginPage() {
           <button type="button" onClick={() => { setMode("signup"); setError(""); setNotice(""); setSignupSent(false); }} className={`min-h-10 rounded-lg px-3 text-sm font-bold ${mode === "signup" ? "bg-white text-blue-700 shadow-sm" : "text-slate-600"}`}>Create account</button>
           <button type="button" onClick={() => { setMode("login"); setError(""); setNotice(""); setSignupSent(false); }} className={`min-h-10 rounded-lg px-3 text-sm font-bold ${mode === "login" ? "bg-white text-blue-700 shadow-sm" : "text-slate-600"}`}>Sign in</button>
         </div> : null}
-        {signupSent && mode === "signup" ? <div className="mt-6 rounded-2xl bg-emerald-50 p-5 text-emerald-950" role="status"><h2 className="text-lg font-bold">Check your email</h2><p className="mt-2 text-sm leading-6">{notice}</p><p className="mt-3 text-sm leading-6">Once your email is verified, follow the link to create and confirm your password. You can then sign in to your account.</p><button type="button" onClick={() => { setMode("login"); setError(""); setNotice(""); setSignupSent(false); }} className="mt-4 font-bold text-blue-700 underline">Already verified? Sign in</button></div> : null}
+        {signupSent && mode === "signup" ? <div className="mt-6 rounded-2xl bg-emerald-50 p-5 text-emerald-950" role="status"><h2 className="text-lg font-bold">Check your email</h2><p className="mt-2 text-sm leading-6">{notice}</p><p className="mt-3 text-sm leading-6">Once your email is verified, follow the link to create and confirm your password. You can then sign in to your account.</p><button type="button" onClick={async () => { setError(""); setBusy(true); try { const normalizedEmail = email.trim().toLowerCase(); if (!normalizedEmail) throw new Error("Enter your email address first."); const redirectTo = `${window.location.origin}/auth/callback?flow=signup`; await requestJson("resend", { type: "signup", email: normalizedEmail, options: { emailRedirectTo: redirectTo } }); setNotice("A new verification email has been requested. Please check your inbox and spam folder."); } catch (cause) { setError(cause instanceof Error ? cause.message : "We could not resend the verification email. Please try again later."); } finally { setBusy(false); } }} disabled={busy} className="mt-4 block font-bold text-blue-700 underline disabled:opacity-60">{busy ? "Please wait…" : "Resend verification email"}</button><button type="button" onClick={() => { setMode("login"); setError(""); setNotice(""); setSignupSent(false); }} className="mt-3 font-bold text-blue-700 underline">Already verified? Sign in</button></div> : null}
         {!(signupSent && mode === "signup") ? <form onSubmit={handleSubmit} className="mt-5 space-y-4">
           {mode === "signup" ? <label className="block text-sm font-semibold text-slate-700">Full name<input required autoComplete="name" minLength={2} maxLength={100} value={fullName} onChange={(event) => setFullName(event.target.value)} placeholder="Your full name" className="mt-2 min-h-12 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" /></label> : null}
           <label className="block text-sm font-semibold text-slate-700">Email address<input required autoComplete="email" type="email" inputMode="email" maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" className="mt-2 min-h-12 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" /></label>
