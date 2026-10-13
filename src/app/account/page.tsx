@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import BrandLogo from "@/components/BrandLogo";
 
-type AccountUser = { id: string; email: string | null };
+type AccountUser = { id: string; email: string | null; fullName?: string | null };
 type AccountSubscription = {
   id: string;
   status: string;
@@ -117,7 +117,8 @@ export default function AccountPage() {
           {error ? <p className="mt-5 rounded-xl bg-red-50 p-3 text-sm text-red-700" role="alert">{error}</p> : null}
           {user ? (
             <div className="mt-6 rounded-2xl bg-slate-50 p-4">
-              <p className="text-sm text-slate-500">Signed in as</p>
+              <p className="text-sm text-slate-500">Profile</p>
+              {user.fullName ? <p className="mt-1 font-semibold">{user.fullName}</p> : null}
               <p className="mt-1 break-all font-semibold">{user.email || "Email not available"}</p>
               <p className="mt-2 text-xs text-slate-500">Account ID: {user.id}</p>
             </div>
