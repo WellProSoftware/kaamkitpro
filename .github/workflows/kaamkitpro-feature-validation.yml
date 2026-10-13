@@ -5,6 +5,8 @@ on:
     branches:
       - feature/razorpay-staging-integration
       - feature/remove-otp-auth-staging
+      - fix/staging-subscription-updated-event
+      - test/subscription-status-behavior
       - fix/tool-access-clarity
   pull_request:
     branches:
