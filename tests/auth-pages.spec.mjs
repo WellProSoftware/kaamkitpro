@@ -15,7 +15,7 @@ test.describe("KaamKitPro authentication pages", () => {
 
   test("successful signup replaces the form with email verification instructions", async ({ page }) => {
     await page.route("**/auth/v1/signup**", async (route) => {
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ id: "staging-test-user" }) });
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ user: { id: "staging-test-user", email: "test@example.com", identities: [{ id: "staging-test-identity" }] } }) });
     });
     await page.goto("/login");
     await page.getByLabel("Full name").fill("Test User");
