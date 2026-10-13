@@ -72,17 +72,20 @@ export default function SupportChat() {
   const [language, setLanguage] = useState<Language>("en");
   const t = copy[language];
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("kk-support-language");
-      if (saved === "en" || saved === "hi") setLanguage(saved);
-    } catch { /* Keep English as the default when storage is unavailable. */ }
-  }, []);
-
   function changeLanguage(next: Language) {
     setLanguage(next);
     try { localStorage.setItem("kk-support-language", next); } catch { /* Preference remains active for this session. */ }
     setNotice("");
+  }
+
+  function toggleChat() {
+    if (!open) {
+      try {
+        const saved = localStorage.getItem("kk-support-language");
+        if (saved === "en" || saved === "hi") setLanguage(saved);
+      } catch { /* English remains the default when storage is unavailable. */ }
+    }
+    setOpen(value => !value);
   }
 
   useEffect(() => {
@@ -153,7 +156,7 @@ export default function SupportChat() {
           </form>
         </section>
       ) : null}
-      <button type="button" onClick={() => setOpen(value => !value)} aria-label={open ? t.close : t.open} className="ml-auto flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 font-bold text-white shadow-xl transition hover:bg-blue-700">
+      <button type="button" onClick={toggleChat} aria-label={open ? t.close : t.open} className="ml-auto flex items-center gap-2 rounded-full bg-blue-600 px-5 py-3 font-bold text-white shadow-xl transition hover:bg-blue-700">
         <span aria-hidden="true">✦</span> {open ? t.close : t.open}
       </button>
     </div>
