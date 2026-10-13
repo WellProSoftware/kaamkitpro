@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - cloudflare/vinext-staging
+      - feature/remove-otp-auth-staging
   workflow_dispatch:
     inputs:
       deploy_to_workers_dev:
@@ -38,7 +39,7 @@ jobs:
       - name: Checkout explicitly selected staging source
         uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging' }}
+          ref: ${{ github.event_name == 'push' && github.ref == 'refs/heads/feature/remove-otp-auth-staging' && contains(github.event.head_commit.message, '[deploy-staging]') && 'feature/remove-otp-auth-staging' || (inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging') }}
           persist-credentials: true
 
       - name: Set up Node.js
@@ -170,7 +171,7 @@ jobs:
         run: set -o pipefail; npx playwright test -c playwright.cloudflare.config.mjs 2>&1 | tee cloudflare-playwright.log
 
       - name: Commit generated Cloudflare source configuration to staging branch
-        if: always() && steps.init.outcome == 'success' && !(github.event_name == 'workflow_dispatch' && inputs.deploy_feature_pr32 == true)
+        if: always() && steps.init.outcome == 'success' && !(github.event_name == 'workflow_dispatch' && inputs.deploy_feature_pr32 == true) && !(github.event_name == 'push' && github.ref == 'refs/heads/feature/remove-otp-auth-staging')
         shell: bash
         run: |
           set -euo pipefail
