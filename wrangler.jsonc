@@ -3,7 +3,8 @@
   "name": "kaamkitpro-staging",
   "compatibility_date": "2026-10-11",
   "compatibility_flags": [
-    "nodejs_compat"
+    "nodejs_compat",
+    "nodejs_compat_populate_process_env"
   ],
   "main": "vinext/server/fetch-handler",
   "assets": {
