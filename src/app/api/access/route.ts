@@ -54,6 +54,7 @@ export async function GET(request: NextRequest) {
   });
   const grantsResponse = await serviceRest(`user_access_grants?${configQuery.toString()}`);
   if (!grantsResponse?.ok) {
+    console.error("[api/access] grants lookup failed", { status: grantsResponse?.status ?? null });
     return NextResponse.json({
       user: { id: user.id, email: user.email },
       plan: "access_check_unavailable",
@@ -83,6 +84,7 @@ export async function GET(request: NextRequest) {
   });
   const subscriptionResponse = await serviceRest(`subscriptions?${subscriptionQuery.toString()}`);
   if (!subscriptionResponse?.ok) {
+    console.error("[api/access] subscription lookup failed", { status: subscriptionResponse?.status ?? null });
     return NextResponse.json({
       user: { id: user.id, email: user.email },
       plan: "access_check_unavailable",
