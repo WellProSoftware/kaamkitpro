@@ -97,4 +97,24 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(cancel).toContain("cancel_at_period_end: !ended");
     expect(cancel).toContain('status: "not.in.(cancelled,expired)"');
   });
+
+  test("access lookup failures fail closed instead of granting Pro or enabling ads", async () => {
+    const access = await source("../src/app/api/access/route.ts");
+    expect(access).toContain('plan: "access_check_unavailable"');
+    expect(access).toContain("isPro: false");
+    expect(access).toContain("adsEnabled: false");
+    expect(access).toContain("}, { status: 503 })");
+    expect(access).toContain("if (!grantsResponse?.ok)");
+    expect(access).toContain("if (!subscriptionResponse?.ok)");
+  });
+
+  test("Pro access disables ads site-wide while selected-tool access remains distinct", async () => {
+    const access = await source("../src/app/api/access/route.ts");
+    const loader = await source("../src/components/AdSenseLoader.tsx");
+    expect(access).toContain('plan: fullGrant ? "admin_full_access" : isPro ? "pro" : selectedTools.length ? "selected_tools" : "free"');
+    expect(access).toContain("adsEnabled: !isStagingBuild && !isPro");
+    expect(access).toContain("fullAccess: fullGrant");
+    expect(loader).toContain("data.adsEnabled !== true");
+    expect(loader).toContain('consent !== "accepted"');
+  });
 });
