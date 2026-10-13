@@ -613,6 +613,90 @@ jobs:
           if (failed) process.exit(1);
           NODE
 
+      - name: Verify support chat to admin reply end-to-end on staging
+        shell: bash
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { randomBytes } from "node:crypto";
+          const base = "https://kaamkitpro-staging.ankitkd550.workers.dev";
+          const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+          const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+          const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+          const suffix = `${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT}`;
+          const userEmail = `kaamkitpro-support-user-${suffix}@example.com`;
+          const adminEmail = `kaamkitpro-staging-admin-${process.env.GITHUB_RUN_ID}@example.com`;
+          if (!projectUrl || !publishableKey || !serviceKey) throw new Error("Missing staging Supabase test configuration.");
+          const password = randomBytes(32).toString("base64url") + "Q7!";
+          const createdUsers = [];
+          let failed = false;
+          async function expect(ok, message) { if (!ok) throw new Error(message); }
+          async function createUser(email) {
+            const response = await fetch(projectUrl + "/auth/v1/admin/users", {
+              method: "POST",
+              headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}`, "content-type": "application/json" },
+              body: JSON.stringify({ email, password, email_confirm: true }),
+            });
+            if (!response.ok) throw new Error(`Could not create disposable support test user (HTTP ${response.status}).`);
+            const user = await response.json();
+            createdUsers.push(user.id);
+            return user;
+          }
+          async function login(email) {
+            const response = await fetch(projectUrl + "/auth/v1/token?grant_type=password", {
+              method: "POST",
+              headers: { apikey: publishableKey, "content-type": "application/json" },
+              body: JSON.stringify({ email, password }),
+            });
+            if (!response.ok) throw new Error(`Support test sign-in failed (HTTP ${response.status}).`);
+            const session = await response.json();
+            return `kk_access_token=${session.access_token}`;
+          }
+          async function api(path, cookie, options = {}) {
+            return fetch(base + path, { ...options, headers: { ...(options.body ? { "content-type": "application/json" } : {}), cookie, ...(options.headers || {}) } });
+          }
+          try {
+            await createUser(userEmail);
+            await createUser(adminEmail);
+            const userCookie = await login(userEmail);
+            const adminCookie = await login(adminEmail);
+            const message = `Automated support E2E ${suffix}: customer needs help with a tool.`;
+            const sent = await api("/api/support", userCookie, { method: "POST", body: JSON.stringify({ message, language: "en" }) });
+            const sentData = await sent.json().catch(() => ({}));
+            await expect(sent.status === 201 && sentData.conversation?.id, `Customer message was not saved (HTTP ${sent.status}).`);
+            const conversationId = sentData.conversation.id;
+            await expect(sentData.conversation.support_messages?.some(m => m.body === message && m.sender_role === "user"), "Customer message missing from conversation readback.");
+            const inbox = await api("/api/admin/support", adminCookie);
+            const inboxData = await inbox.json().catch(() => ({}));
+            await expect(inbox.status === 200 && inboxData.conversations?.some(c => c.id === conversationId && c.support_messages?.some(m => m.body === message)), `Admin inbox could not see customer message (HTTP ${inbox.status}).`);
+            const reply = `Automated admin reply ${suffix}: please retry the tool and tell us if the issue continues.`;
+            const replied = await api("/api/admin/support", adminCookie, { method: "POST", body: JSON.stringify({ conversation_id: conversationId, message: reply, status: "waiting_user" }) });
+            await expect(replied.status === 200, `Admin reply was not saved (HTTP ${replied.status}).`);
+            const refreshed = await api("/api/support", userCookie);
+            const refreshedData = await refreshed.json().catch(() => ({}));
+            await expect(refreshed.status === 200 && refreshedData.conversation?.id === conversationId && refreshedData.conversation.support_messages?.some(m => m.body === reply && m.sender_role === "admin"), "Customer chat did not show the admin reply.");
+            console.log("PASS customer message saved and read back.");
+            console.log("PASS admin inbox received the customer message.");
+            console.log("PASS admin reply saved and visible to the customer.");
+          } catch (error) {
+            failed = true;
+            console.error("FAIL support chat end-to-end:", String(error));
+          } finally {
+            for (const id of createdUsers.reverse()) {
+              try {
+                const response = await fetch(projectUrl + "/auth/v1/admin/users/" + encodeURIComponent(id), {
+                  method: "DELETE", headers: { apikey: serviceKey, authorization: `Bearer ${serviceKey}` },
+                });
+                if (!response.ok) { failed = true; console.error(`FAIL disposable support user cleanup (HTTP ${response.status}).`); }
+              } catch (error) { failed = true; console.error("FAIL disposable support user cleanup:", String(error)); }
+            }
+            if (createdUsers.length) console.log("Disposable support auth users cleanup attempted.");
+          }
+          if (failed) process.exit(1);
+          NODE
+
       - name: Focused diagnostics for failed client-page routes
         if: always()
         shell: bash
