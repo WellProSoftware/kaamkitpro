@@ -79,7 +79,7 @@ export default function LoginPage() {
         }
         setNotice(existingAccount
           ? "An account already exists with this email address. If you have not verified it yet, a fresh verification link has been requested. If your email is already verified, switch to Sign in and use your email and password."
-          : "Verification email sent. Please check your inbox (and spam folder), open the verification link within 5 minutes, and create your password to finish setting up your account.");
+          : "Verification email sent. Please check your inbox (and spam folder), open the verification link within 1 minute, and create your password to finish setting up your account.");
         setSignupSent(true);
         return;
       }
