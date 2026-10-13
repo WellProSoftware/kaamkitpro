@@ -2,6 +2,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { serviceRest } from "@/lib/server-access";
 import { getServerEnv } from "@/lib/server-env";
+import { statusFor } from "@/lib/billing/subscription-status.mjs";
 
 
 type Payload = {
@@ -24,17 +25,6 @@ function dateFromUnix(value?: number | null) {
   return typeof value === "number" && value > 0 ? new Date(value * 1000).toISOString() : null;
 }
 
-function statusFor(event: string, providerStatus?: string) {
-  if (["subscription.activated", "subscription.charged", "subscription.resumed"].includes(event)) return "active";
-  if (event === "subscription.halted") return "past_due";
-  if (event === "subscription.cancelled") return "cancelled";
-  if (event === "subscription.completed") return "expired";
-  if (event === "subscription.pending" || event === "subscription.paused") return "incomplete";
-  // Ignore unknown event types even if their embedded entity says "active".
-  // Entitlement changes are allowed only for explicitly recognized lifecycle events.
-  void providerStatus;
-  return null;
-}
 
 export async function POST(request: NextRequest) {
   const secret = await getServerEnv("RAZORPAY_WEBHOOK_SECRET");
