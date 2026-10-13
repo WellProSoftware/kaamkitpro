@@ -48,6 +48,20 @@ test.describe("tool quota policy regression checks", () => {
     expect(route.indexOf('if (isAuthorizedAdmin(user.email))')).toBeLessThan(route.indexOf('const response = await serviceRest("rpc/consume_tool_usage"'));
   });
 
+
+  test("database quota RPC is atomic, bounded by the daily limit, and service-role only", async () => {
+    const migration = await readSource("../supabase/migrations/20261012000000_access_grants_and_tool_limits.sql");
+    expect(migration).toContain("primary key (user_id, tool_key, usage_date)");
+    expect(migration).toContain("on conflict (user_id, tool_key, usage_date)");
+    expect(migration).toContain("where public.tool_usage_daily.usage_count < p_daily_limit");
+    expect(migration).toContain("return query select true, current_count, p_daily_limit");
+    expect(migration).toContain("return query select false, coalesce(current_count, 0), p_daily_limit");
+    expect(migration).toContain("security definer");
+    expect(migration).toContain("set search_path = public, pg_temp");
+    expect(migration).toContain("revoke all on function public.consume_tool_usage(uuid, text, date, integer) from public, anon, authenticated");
+    expect(migration).toContain("grant execute on function public.consume_tool_usage(uuid, text, date, integer) to service_role");
+  });
+
   test("Pro entitlement requires a valid future billing period end in both access paths", async () => {
     for (const path of [
       "../src/app/api/access/route.ts",
