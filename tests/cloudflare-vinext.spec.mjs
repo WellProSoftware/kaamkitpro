@@ -277,3 +277,54 @@ test("global account menu shows signed-in plan details and sign-out action", asy
   await expect(page.getByRole("link", { name: "My Account & Payment Details" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Logout / Sign out" })).toBeVisible();
 });
+
+
+test("subscription checkout requires recurring-payment consent before any checkout request", async ({ page }) => {
+  let checkoutRequests = 0;
+  await page.route("**/api/auth/session", route =>
+    route.fulfill({ status: 401, contentType: "application/json", body: JSON.stringify({ error: "Not signed in." }) }),
+  );
+  await page.route("**/api/billing/checkout", async route => {
+    checkoutRequests += 1;
+    await route.fulfill({ status: 401, contentType: "application/json", body: JSON.stringify({ error: "Sign in before starting a subscription." }) });
+  });
+  await page.goto("/pricing");
+  await page.getByRole("button", { name: "Choose monthly" }).click();
+  await expect(page.getByRole("status")).toContainText("Please accept the recurring billing terms");
+  expect(checkoutRequests).toBe(0);
+
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Choose monthly" }).click();
+  await expect(page.getByRole("status")).toContainText("Sign in before starting a subscription");
+  expect(checkoutRequests).toBe(1);
+});
+
+test("subscription checkout refuses a live Razorpay key in the browser before loading checkout.js", async ({ page }) => {
+  await page.route("**/api/auth/session", route =>
+    route.fulfill({ status: 401, contentType: "application/json", body: JSON.stringify({ error: "Not signed in." }) }),
+  );
+  await page.route("**/api/billing/checkout", route =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        key_id: "rzp_live_should_never_be_used_in_staging",
+        subscription_id: "sub_stagingtest123",
+        name: "KaamKitPro",
+        description: "Pro",
+        amount: 9900,
+        currency: "INR",
+      }),
+    }),
+  );
+  let razorpayScriptRequests = 0;
+  await page.route("https://checkout.razorpay.com/**", async route => {
+    razorpayScriptRequests += 1;
+    await route.abort();
+  });
+  await page.goto("/pricing");
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Choose monthly" }).click();
+  await expect(page.getByRole("status")).toContainText("Staging checkout is restricted to Razorpay Test Mode");
+  expect(razorpayScriptRequests).toBe(0);
+});
