@@ -23,7 +23,7 @@ test.describe("KaamKitPro authentication pages", () => {
     await page.getByRole("button", { name: "Send verification email" }).click();
 
     await expect(page.getByRole("heading", { name: "Check your email" })).toBeVisible();
-    await expect(page.getByText(/open the verification link, and create your password/i)).toBeVisible();
+    await expect(page.getByText(/open the verification link within 1 minute, and create your password/i)).toBeVisible();
     await expect(page.getByRole("button", { name: "Send verification email" })).toHaveCount(0);
     await expect(page.getByLabel("Full name")).toHaveCount(0);
     await expect(page.getByLabel("Email address")).toHaveCount(0);
@@ -48,7 +48,10 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page.getByRole("button", { name: "Resend verification email" })).toBeVisible();
   });
 
-  test("signup handles missing public Supabase configuration gracefully", async ({ page }) => {
+  test("signup displays a clear error when Supabase rejects the signup request", async ({ page }) => {
+    await page.route("**/auth/v1/signup**", async (route) => {
+      await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ message: "Account access is temporarily unavailable. Please try again later." }) });
+    });
     await page.goto("/login");
     await page.getByLabel("Full name").fill("Test User");
     await page.getByLabel("Email address").fill("test@example.com");
