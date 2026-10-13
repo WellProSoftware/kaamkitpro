@@ -46,3 +46,26 @@ if [[ "$allowed_count" != "5" || "$denied_count" != "15" || "$used_count" != "5"
 fi
 
 echo "PASS quota concurrency: 20 parallel calls, exactly 5 allowed, 15 denied, stored count remains 5"
+
+# Verify actual PostgreSQL grants in the disposable CI database, not only SQL text.
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
+do $$
+begin
+  if not has_function_privilege('service_role', 'public.consume_tool_usage(uuid,text,date,integer)', 'EXECUTE') then
+    raise exception 'service_role must be able to execute consume_tool_usage';
+  end if;
+  if has_function_privilege('anon', 'public.consume_tool_usage(uuid,text,date,integer)', 'EXECUTE') then
+    raise exception 'anon must not be able to execute consume_tool_usage';
+  end if;
+  if has_function_privilege('authenticated', 'public.consume_tool_usage(uuid,text,date,integer)', 'EXECUTE') then
+    raise exception 'authenticated must not be able to execute consume_tool_usage';
+  end if;
+  if has_table_privilege('anon', 'public.tool_usage_daily', 'SELECT') or
+     has_table_privilege('authenticated', 'public.tool_usage_daily', 'SELECT') then
+    raise exception 'client roles must not read tool_usage_daily directly';
+  end if;
+end
+$$;
+SQL
+
+echo "PASS PostgreSQL grants: service_role can execute RPC; anon/authenticated cannot execute RPC or read quota table"
