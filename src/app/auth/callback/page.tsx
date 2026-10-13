@@ -18,6 +18,7 @@ export default function AuthCallbackPage() {
       let refreshToken = params.get("refresh_token");
       let expiresIn = Number(params.get("expires_in") || 3600);
 
+      const flow = query.get("flow");
       const tokenHash = query.get("token_hash");
       const otpType = query.get("type") || "email";
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
@@ -78,7 +79,7 @@ export default function AuthCallbackPage() {
         const result = (await response.json().catch(() => ({}))) as { error?: string };
         if (!response.ok) throw new Error(result.error || "Could not complete sign-in.");
 
-        if (!cancelled) window.location.replace("/account");
+        if (!cancelled) window.location.replace(flow === "signup" ? "/set-password" : "/account");
       } catch (cause) {
         if (!cancelled) {
           setFailed(true);
