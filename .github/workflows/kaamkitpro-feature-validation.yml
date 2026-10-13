@@ -1,0 +1,73 @@
+name: KaamKitPro Razorpay staging validation
+
+on:
+  push:
+    branches:
+      - feature/razorpay-staging-integration
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kaamkitpro-razorpay-staging-validation
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Build, typecheck, lint and browser regressions (no deployment)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      KAAMKITPRO_STAGING: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Checkout feature branch head
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Regenerate lockfile for the declared CSS build plugin
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check Vinext compatibility
+        run: npx vinext check
+
+      - name: Build Cloudflare/Vinext output
+        run: npm run build:vinext
+
+      - name: TypeScript
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Verify standard Next.js build
+        run: npm run build
+
+      - name: Install isolated browser-test dependencies
+        run: |
+          npm install --no-save @playwright/test
+          npx playwright install --with-deps chromium
+
+      - name: Run browser regressions against local staging build
+        run: npx playwright test -c playwright.cloudflare.config.mjs
+
+      - name: Upload browser diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: kaamkitpro-razorpay-staging-diagnostics
+          if-no-files-found: ignore
+          retention-days: 7
+          path: |
+            test-results/
+            playwright-report/

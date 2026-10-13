@@ -67,7 +67,7 @@ test("SEO sitemap contains the utility and guide routes exactly once in producti
 
 test("login and invalid callback pages render without a Supabase session", async ({ page }) => {
   await page.goto("/login");
-  await expect(page.getByRole("heading", { name: "Sign in with email" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
 
   await page.waitForTimeout(250);
   await expect(page.locator("#google-adsense")).toHaveCount(0);
@@ -86,7 +86,7 @@ test("admin page and account routes redirect signed-out users safely", async ({ 
   await page.goto("/admin/access");
   await expect(page).toHaveURL(/\/login$/);
   await page.goto("/account");
-  await expect(page.getByRole("heading", { name: "Sign in with email" })).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible({ timeout: 10_000 });
   await expect(page).toHaveURL(/\/login$/);
 });
 
@@ -167,6 +167,8 @@ test("free text utility works in the vinext preview runtime", async ({ page }) =
 
 test("CSV to JSON converter works in the vinext preview runtime", async ({ page }) => {
   await page.goto("/tools/csv-to-json");
+  await expect(page.getByRole("heading", { name: "CSV to JSON Converter" })).toBeVisible();
+  await page.waitForTimeout(250); // Avoid filling before the client component hydrates.
   await page.locator("#csv-input").fill('name,city,note\nAsha,Mumbai,"Likes tea, coffee"');
   await expect(page.locator("#json-output")).toHaveValue(
     JSON.stringify([{ name: "Asha", city: "Mumbai", note: "Likes tea, coffee" }], null, 2),

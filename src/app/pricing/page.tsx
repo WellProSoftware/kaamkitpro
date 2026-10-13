@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import BrandLogo from "@/components/BrandLogo";
+import ProSubscriptionCheckout from "@/components/ProSubscriptionCheckout";
 
 export const metadata: Metadata = {
   title: "Free Tools & Pro Access",
@@ -42,7 +43,7 @@ export default function PricingPage() {
               <li>Paid-capacity tools offer a small trial allowance: typically 2 uses for heavier cloud processing or 3 uses per day for eligible AI/hosted tools. When the allowance is exhausted, the user is asked to subscribe to Pro to continue.</li>
               <li>Free-plan users see ads across the Free experience when the ad provider serves them. Once a paid Pro subscription is verified, all KaamKitPro ads are disabled site-wide for that account for the active subscription period.</li>
               <li>Pro access is granted only while an eligible paid subscription is active or an authorized admin has explicitly granted access. Admin grants can be scoped to selected tools and can expire or be revoked.</li>
-              <li>Checkout is not live yet. The proposed prices are ₹99/month and ₹699/year; real payments will be enabled only after Razorpay test payments, webhook verification and access-grant tests pass.</li>
+              <li>Checkout on this staging branch is restricted to Razorpay Test Mode. Live collection remains disabled here; any production launch requires separate authorization after end-to-end billing, webhook, cancellation and entitlement tests pass.</li>
             </ul>
           </div>
           <Link href="/tools" className="mt-8 inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 py-3 font-bold text-white hover:bg-blue-700">
@@ -50,6 +51,10 @@ export default function PricingPage() {
           </Link>
         </div>
       </section>
+
+      <div className="mx-auto max-w-4xl px-4 pb-10 sm:px-6">
+        <ProSubscriptionCheckout />
+      </div>
 
       <section className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
         <div className="rounded-3xl border border-slate-200 bg-white p-7 sm:p-9">

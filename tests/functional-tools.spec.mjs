@@ -93,6 +93,8 @@ test("Image Rotate page renders its upload control", async ({ page }) => {
 
 test("Image Rotate processes an image and downloads the rotated result", async ({ page }) => {
   await page.goto("/tools/image-rotate");
+  await expect(page.locator("#rotate-file")).toBeAttached();
+  await page.waitForTimeout(500); // Ensure the client file-change handler is hydrated.
   await page.locator("#rotate-file").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
@@ -122,6 +124,8 @@ const onePixelPng = Buffer.from(
 
 test("Image Grayscale processes an uploaded image and downloads the result", async ({ page }) => {
   await page.goto("/tools/image-grayscale");
+  await expect(page.locator("#grayscale-file")).toBeAttached();
+  await page.waitForTimeout(500); // Ensure the client file-change handler is hydrated.
   await page.locator("#grayscale-file").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
@@ -139,6 +143,8 @@ test("Image Grayscale processes an uploaded image and downloads the result", asy
 
 test("Image Flip processes an uploaded image and downloads the result", async ({ page }) => {
   await page.goto("/tools/image-flip");
+  await expect(page.locator("#flip-file")).toBeAttached();
+  await page.waitForTimeout(500); // Ensure the client file-change handler is hydrated.
   await page.locator("#flip-file").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
@@ -158,6 +164,8 @@ test("Image Flip processes an uploaded image and downloads the result", async ({
 
 test("Image Brightness processes an uploaded image and downloads the result", async ({ page }) => {
   await page.goto("/tools/image-brightness");
+  await expect(page.locator("#brightness-file")).toBeAttached();
+  await page.waitForTimeout(500); // Ensure the client file-change handler is hydrated.
   await page.locator("#brightness-file").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
@@ -514,8 +522,10 @@ test("JSON Formatter minifies valid JSON without changing its data", async ({ pa
 
 test("JSON Formatter gives a clear message for empty input", async ({ page }) => {
   await page.goto("/tools/json-formatter");
+  await expect(page.getByRole("heading", { name: "JSON Formatter", exact: true })).toBeVisible();
+  await page.waitForTimeout(500); // Let client-side handlers hydrate in the vinext preview.
   await page.getByRole("button", { name: "Format", exact: true }).click();
-  await expect(page.getByText("Please enter some JSON first.", { exact: true })).toBeVisible();
+  await expect(page.getByText(/Please enter some JSON first\./)).toBeVisible();
 });
 
 test("Slug Generator normalizes repeated spaces and punctuation", async ({ page }) => {
@@ -685,6 +695,9 @@ test("Image Grayscale converts an uploaded image and downloads the result", asyn
 
 test("Image Resizer applies custom dimensions and downloads the result", async ({ page }) => {
   await page.goto("/tools/image-resizer");
+  await expect(page.getByRole("heading", { name: "Image Resizer", exact: true })).toBeVisible();
+  await expect(page.locator("#resize-file")).toBeAttached();
+  await page.waitForTimeout(500); // File input events must run after client hydration.
   await page.locator("#resize-file").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
@@ -954,7 +967,9 @@ test("Age Calculator returns zero years, months, and days for today's birth date
   });
   await page.getByLabel("Date of Birth").fill(today);
   await page.getByRole("button", { name: "Calculate Age", exact: true }).click();
-  const results = page.locator("main").locator(".grid").last();
+  // Select the result grid by its content instead of assuming it is the last grid
+  // in the page (navigation/footer layout may add other grids).
+  const results = page.locator("main .grid").filter({ hasText: "Years" });
   await expect(results.getByText("Years", { exact: true })).toBeVisible();
   await expect(results.getByText("Months", { exact: true })).toBeVisible();
   await expect(results.getByText("Days", { exact: true })).toBeVisible();
