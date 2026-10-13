@@ -1,16 +1,32 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("KaamKitPro authentication pages", () => {
-  test("signup page offers email/password and Google sign-in without OTP options", async ({ page }) => {
+  test("signup page uses email verification and hides Google and OTP options", async ({ page }) => {
     await page.goto("/login");
     await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
     await expect(page.getByLabel("Full name")).toBeVisible();
     await expect(page.getByLabel("Email address")).toHaveAttribute("type", "email");
     await expect(page.getByLabel("Create password")).toHaveCount(0);
-    await expect(page.getByRole("button", { name: "Continue with Google" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Continue with Google" })).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Send verification email", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Mobile number" })).toHaveCount(0);
-    await expect(page.getByText(/OTP sign-in is not offered/i)).toBeVisible();
+    await expect(page.getByText(/OTP sign-in is not offered/i)).toHaveCount(0);
+  });
+
+  test("successful signup replaces the form with email verification instructions", async ({ page }) => {
+    await page.route("**/auth/v1/signup**", async (route) => {
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ id: "staging-test-user" }) });
+    });
+    await page.goto("/login");
+    await page.getByLabel("Full name").fill("Test User");
+    await page.getByLabel("Email address").fill("test@example.com");
+    await page.getByRole("button", { name: "Send verification email" }).click();
+
+    await expect(page.getByRole("heading", { name: "Check your email" })).toBeVisible();
+    await expect(page.getByText(/open the verification link, and create your password/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Send verification email" })).toHaveCount(0);
+    await expect(page.getByLabel("Full name")).toHaveCount(0);
+    await expect(page.getByLabel("Email address")).toHaveCount(0);
   });
 
   test("signup handles missing public Supabase configuration gracefully", async ({ page }) => {
@@ -23,13 +39,13 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page.getByText("Account access is temporarily unavailable", { exact: false })).toBeVisible();
   });
 
-  test("login supports email password and Google without one-time-code mode", async ({ page }) => {
+  test("login supports email and password without Google or one-time-code mode", async ({ page }) => {
     await page.goto("/login");
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
     await expect(page.getByLabel("Email address")).toBeVisible();
     await expect(page.getByLabel("Password")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Continue with Google" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Continue with Google" })).toHaveCount(0);
     await expect(page.getByLabel("Mobile number")).toHaveCount(0);
     await expect(page.getByLabel("One-time code")).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Send one-time code" })).toHaveCount(0);
