@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - cloudflare/vinext-staging
+  push:
+    branches:
+      - feature/remove-otp-auth-staging
 
 permissions:
   contents: read
