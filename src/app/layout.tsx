@@ -6,6 +6,7 @@ import AdSenseLoader from "@/components/AdSenseLoader";
 import PrivacyConsent from "@/components/PrivacyConsent";
 import AnalyticsLoader from "@/components/AnalyticsLoader";
 import LanguageSelector from "@/components/LanguageSelector";
+import SupportChat from "@/components/SupportChat";
 
 const siteUrl = "https://kaamkitpro.com";
 const isStagingBuild = process.env.KAAMKITPRO_STAGING === "true" || process.env.VERCEL_ENV === "preview";
@@ -135,6 +136,8 @@ export default function RootLayout({
         <LanguageSelector />
 
         {children}
+
+        <SupportChat />
 
         <InternalLinks />
 
