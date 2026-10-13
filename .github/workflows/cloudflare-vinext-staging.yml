@@ -647,3 +647,5 @@ jobs:
             }
           }
           NODE
+
+# Staging-only deployment trigger marker; production routes remain excluded.
