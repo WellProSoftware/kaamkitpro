@@ -45,6 +45,7 @@ export async function POST(request: NextRequest) {
     if (!created?.ok || !Array.isArray(rows) || !rows[0]) return NextResponse.json({ error: "Could not open a support ticket." }, { status: 502 });
     conversation = rows[0];
   }
+  if (!conversation) return NextResponse.json({ error: "Could not open a support conversation." }, { status: 502 });
   const inserted = await serviceRest("support_messages", {
     method: "POST", headers: { Prefer: "return=representation" },
     body: JSON.stringify({ conversation_id: conversation.id, sender_role: "user", sender_user_id: user.id, body: message }),
