@@ -23,7 +23,7 @@ test.describe("KaamKitPro authentication pages", () => {
     await page.getByRole("button", { name: "Send verification email" }).click();
 
     await expect(page.getByRole("heading", { name: "Check your email" })).toBeVisible();
-    await expect(page.getByText(/open the verification link within 1 minute, and create your password/i)).toBeVisible();
+    await expect(page.getByText(/open the verification link within 2 minutes, and create your password/i)).toBeVisible();
     await expect(page.getByRole("button", { name: "Send verification email" })).toHaveCount(0);
     await expect(page.getByLabel("Full name")).toHaveCount(0);
     await expect(page.getByLabel("Email address")).toHaveCount(0);
