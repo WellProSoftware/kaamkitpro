@@ -31,7 +31,24 @@ test.describe("tool quota policy regression checks", () => {
     expect(route).toContain('remaining: Math.max(0, dailyLimit - (Number(usage?.used) || 0))');
   });
 
-  test("Pro entitlement requires a valid future billing period end in both access paths", async () => {
+  test("invalid JSON and missing or malformed tool keys fail before access or quota work", async () => {
+    const route = await readSource("../src/app/api/tools/usage/route.ts");
+    expect(route).toContain('return NextResponse.json({ error: "Invalid request body." }, { status: 400 });');
+    expect(route).toContain('if (!toolKey || toolKey.length > 100)');
+    expect(route).toContain('return NextResponse.json({ error: "A valid tool key is required." }, { status: 400 });');
+    expect(route.indexOf('if (!toolKey || toolKey.length > 100)')).toBeLessThan(route.indexOf('const policy = getToolPolicy(toolKey)'));
+  });
+
+  test("Free tools and authorized admins bypass metered quota consumption", async () => {
+    const route = await readSource("../src/app/api/tools/usage/route.ts");
+    expect(route).toContain('if (policy.tier === "free")');
+    expect(route).toContain('if (isAuthorizedAdmin(user.email))');
+    expect(route).toContain('tier: "admin_full_access"');
+    expect(route.indexOf('if (policy.tier === "free")')).toBeLessThan(route.indexOf('const response = await serviceRest("rpc/consume_tool_usage"'));
+    expect(route.indexOf('if (isAuthorizedAdmin(user.email))')).toBeLessThan(route.indexOf('const response = await serviceRest("rpc/consume_tool_usage"'));
+  });
+
+  test("Pro entitlement requires a valid future billing period end in both access paths", async () =>
     for (const path of [
       "../src/app/api/access/route.ts",
       "../src/app/api/tools/usage/route.ts",
