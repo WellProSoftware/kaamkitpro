@@ -125,7 +125,7 @@ jobs:
           const base = "https://kaamkitpro-production.ankitkd550.workers.dev";
           const checks = [
             ["/", async r => r.status === 200 && !/noindex/i.test(await r.text()), "homepage does not carry staging noindex"],
-            ["/pricing", async r => { const t = await r.text(); return r.status === 200 && /Useful tools/i.test(t) && /Paid plans and checkout are not available/i.test(t); }, "free-only pricing; checkout remains disabled"],
+            ["/pricing", async r => { const t = await r.text(); return r.status === 200 && /Useful tools/i.test(t) && /₹99/.test(t) && /₹699/.test(t); }, "pricing page and monthly/yearly plan amounts render"],
             ["/ads.txt", async r => r.status === 200 && (await r.text()).trim() === "google.com, pub-6738934686699082, DIRECT, f08c47fec0942fa0", "ads.txt publisher line"],
             ["/robots.txt", async r => r.status === 200 && !/Disallow: \/\s*$/.test(await r.text()), "production robots policy"],
             ["/api/access", async r => { const t = await r.json(); return r.status === 200 && t.plan === "free" && t.isPro === false; }, "anonymous access API"]
