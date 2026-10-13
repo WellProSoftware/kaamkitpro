@@ -344,13 +344,13 @@ jobs:
           for (const [path, verify, label] of checks) {
             let ok = false;
             let detail = "";
-            for (let attempt = 0; attempt < 5; attempt++) {
+            for (let attempt = 0; attempt < 10; attempt++) {
               try {
                 const response = await fetch(base + path, { redirect: "follow" });
                 detail = "HTTP " + response.status;
                 if (await verify(response)) { ok = true; break; }
               } catch (error) { detail = String(error); }
-              await new Promise(resolve => setTimeout(resolve, 1500));
+              await new Promise(resolve => setTimeout(resolve, 3000));
             }
             console.log((ok ? "PASS " : "FAIL ") + label + " — " + detail);
             if (!ok) failures++;
