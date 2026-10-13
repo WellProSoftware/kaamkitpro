@@ -195,3 +195,16 @@ test("live subscription cancellation is gated by explicit live-payments authoriz
   expect(source).toContain('getServerEnv("RAZORPAY_LIVE_PAYMENTS_ENABLED")');
   expect(source).toContain('mode === "live" && livePaymentsEnabled !== "true"');
 });
+
+test("subscription.updated maps only recognized Razorpay lifecycle statuses", async () => {
+  const source = await readFile(new URL("../src/app/api/billing/webhook/route.ts", import.meta.url), "utf8");
+  expect(source).toContain('if (event === "subscription.updated")');
+  expect(source).toContain('case "active": return "active"');
+  expect(source).toContain('case "pending":');
+  expect(source).toContain('case "authenticated": return "incomplete"');
+  expect(source).toContain('case "halted": return "past_due"');
+  expect(source).toContain('case "cancelled": return "cancelled"');
+  expect(source).toContain('case "completed":');
+  expect(source).toContain('case "expired": return "expired"');
+  expect(source).toContain("default: return null");
+});

@@ -30,9 +30,23 @@ function statusFor(event: string, providerStatus?: string) {
   if (event === "subscription.cancelled") return "cancelled";
   if (event === "subscription.completed") return "expired";
   if (event === "subscription.pending" || event === "subscription.paused") return "incomplete";
+
+  // subscription.updated can carry a legitimate lifecycle transition. Accept only
+  // known provider statuses; never infer access from arbitrary or unknown values.
+  if (event === "subscription.updated") {
+    switch (providerStatus) {
+      case "active": return "active";
+      case "pending":
+      case "authenticated": return "incomplete";
+      case "halted": return "past_due";
+      case "cancelled": return "cancelled";
+      case "completed":
+      case "expired": return "expired";
+      default: return null;
+    }
+  }
+
   // Ignore unknown event types even if their embedded entity says "active".
-  // Entitlement changes are allowed only for explicitly recognized lifecycle events.
-  void providerStatus;
   return null;
 }
 
