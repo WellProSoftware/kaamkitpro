@@ -13,13 +13,29 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(webhook).toContain('if (!signature || !validSignature(body, signature, secret))');
   });
 
-  test("webhook records event IDs idempotently and marks completed processing", async () => {
+  test("provider event IDs have a database uniqueness constraint", async () => {
+    const migration = await source("../supabase/migrations/20261011000000_subscription_billing.sql");
+    expect(migration).toMatch(/provider_event_id\s+text\s+not null\s+unique/i);
+  });
+
+  test("duplicate deliveries short-circuit after an event is already processed", async () => {
     const webhook = await source("../src/app/api/billing/webhook/route.ts");
+    const duplicateGuard = webhook.indexOf("if (row.processed_at) return NextResponse.json({ received: true, duplicate: true })");
+    const subscriptionMutation = webhook.indexOf('method: "PATCH"', webhook.indexOf("const currentQuery"));
     expect(webhook).toContain("payment_events?on_conflict=provider_event_id");
     expect(webhook).toContain("resolution=ignore-duplicates,return=minimal");
-    expect(webhook).toContain("if (row.processed_at) return NextResponse.json({ received: true, duplicate: true })");
-    expect(webhook).toContain("processing_started_at");
-    expect(webhook).toContain("processed_at: new Date().toISOString()");
+    expect(duplicateGuard).toBeGreaterThan(-1);
+    expect(subscriptionMutation).toBeGreaterThan(duplicateGuard);
+  });
+
+  test("concurrent duplicate deliveries use an atomic processing lease and retry safely", async () => {
+    const webhook = await source("../src/app/api/billing/webhook/route.ts");
+    expect(webhook).toContain("processing_started_at: now.toISOString()");
+    expect(webhook).toContain("processed_at: \"is.null\"");
+    expect(webhook).toContain("processing_started_at.lt.");
+    expect(webhook).toContain("5 * 60 * 1000");
+    expect(webhook).toContain("Webhook event is already being processed; retry later.");
+    expect(webhook).toContain("if (state?.processed_at) return NextResponse.json({ received: true, duplicate: true })");
   });
 
   test("only recognized lifecycle events can update entitlement status", async () => {
