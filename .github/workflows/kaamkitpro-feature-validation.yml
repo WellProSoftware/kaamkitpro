@@ -6,6 +6,9 @@ on:
       - feature/razorpay-staging-integration
       - feature/remove-otp-auth-staging
       - fix/tool-access-clarity
+  pull_request:
+    branches:
+      - recovery/restore-8-41pm
 
 permissions:
   contents: read
