@@ -67,7 +67,9 @@ export default function LoginPage() {
           password: randomTemporaryPassword(),
           data: { full_name: fullName.trim(), display_name: fullName.trim(), account_setup_required: true },
         });
-        if (await establishSession(result, "/set-password")) return;
+        if (result.access_token || result.refresh_token) {
+          throw new Error("Email confirmation must be enabled in Supabase Auth before signup can continue. Please contact support; do not sign in until your email is verified.");
+        }
         setNotice("Verification email sent. Open the link in your email; after verification, you will create your password.");
         return;
       }
