@@ -13,6 +13,7 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page.getByText(/OTP sign-in is not offered/i)).toHaveCount(0);
   });
 
+  // Staging Supabase verification links are configured for a 120-second (2-minute) window.
   test("successful signup replaces the form with email verification instructions", async ({ page }) => {
     await page.route("**/auth/v1/signup**", async (route) => {
       await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ user: { id: "staging-test-user", email: "test@example.com", identities: [{ id: "staging-test-identity" }] } }) });
