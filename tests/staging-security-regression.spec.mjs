@@ -197,6 +197,18 @@ test("anonymous staging access stays on Free plan with ads disabled", async ({ r
   });
 });
 
+test("session cookies are HttpOnly, same-site, bounded, and cleared on logout or failed refresh", async () => {
+  const session = await readFile(new URL("../src/app/api/auth/session/route.ts", import.meta.url), "utf8");
+  expect(session).toContain("httpOnly: true");
+  expect(session).toContain('sameSite: "lax"');
+  expect(session).toContain("secure: process.env.NODE_ENV === \"production\"");
+  expect(session).toContain("Math.max(60, Math.min(Math.floor(expiresIn), 3600))");
+  expect(session).toContain("const REFRESH_MAX_AGE = 60 * 60 * 24 * 60");
+  expect(session).toContain("if (!refreshResponse.ok)");
+  expect(session).toContain("clearCookies(response)");
+  expect(session).toContain("export async function DELETE()");
+});
+
 test("Razorpay subscription verification signs payment ID before subscription ID", async () => {
   const source = await readFile(new URL("../src/app/api/billing/verify/route.ts", import.meta.url), "utf8");
   expect(source).toContain('update(`${paymentId}|${subscriptionId}`)');
