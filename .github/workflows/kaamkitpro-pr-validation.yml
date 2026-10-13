@@ -20,6 +20,9 @@ jobs:
     env:
       KAAMKITPRO_STAGING: "true"
       NEXT_TELEMETRY_DISABLED: "1"
+      # Non-routable test-only public config lets Playwright intercept Supabase auth requests without real credentials.
+      NEXT_PUBLIC_SUPABASE_URL: "https://staging-test.invalid"
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "staging-test-publishable-key"
     steps:
       - name: Checkout the pull request head
         uses: actions/checkout@v5
