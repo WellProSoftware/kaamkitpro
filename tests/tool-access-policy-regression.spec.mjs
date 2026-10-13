@@ -48,7 +48,7 @@ test.describe("tool quota policy regression checks", () => {
     expect(route.indexOf('if (isAuthorizedAdmin(user.email))')).toBeLessThan(route.indexOf('const response = await serviceRest("rpc/consume_tool_usage"'));
   });
 
-  test("Pro entitlement requires a valid future billing period end in both access paths", async () =>
+  test("Pro entitlement requires a valid future billing period end in both access paths", async () => {
     for (const path of [
       "../src/app/api/access/route.ts",
       "../src/app/api/tools/usage/route.ts",
