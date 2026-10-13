@@ -383,6 +383,18 @@ jobs:
             if (!condition) throw new Error(message);
           }
 
+          async function responseJson(response, label) {
+            const text = await response.text();
+            if (!text.trim()) {
+              throw new Error(`${label} returned an empty body (HTTP ${response.status}, content-type ${response.headers.get("content-type") || "missing"}).`);
+            }
+            try {
+              return JSON.parse(text);
+            } catch {
+              throw new Error(`${label} returned invalid JSON (HTTP ${response.status}): ${text.slice(0, 240)}`);
+            }
+          }
+
           async function callUsage(cookie, action) {
             return fetch(base + "/api/tools/usage", {
               method: "POST",
@@ -413,24 +425,24 @@ jobs:
             const cookie = `kk_access_token=${session.access_token}`;
 
             const accessResponse = await fetch(base + "/api/access", { headers: { cookie, "cache-control": "no-store" } });
-            const access = await accessResponse.json();
+            const access = await responseJson(accessResponse, "Signed-in /api/access");
             await expect(accessResponse.ok && access.plan === "free" && access.isPro === false && access.adsEnabled === false,
               "Signed-in staging account should remain Free with ads disabled.");
 
             const initialResponse = await callUsage(cookie, "check");
-            const initial = await initialResponse.json();
+            const initial = await responseJson(initialResponse, "Initial quota check");
             await expect(initialResponse.ok && initial.allowed === true && initial.used === 0 && initial.remaining === 3 && initial.dailyLimit === 3,
               "Initial daily quota should be 0/3.");
 
             for (let used = 1; used <= 3; used++) {
               const response = await callUsage(cookie, "consume");
-              const result = await response.json();
+              const result = await responseJson(response, `Quota consume ${used}`);
               await expect(response.status === 200 && result.allowed === true && result.used === used && result.remaining === 3 - used,
                 `Quota consume ${used} did not return expected usage/remaining values.`);
             }
 
             const exhaustedResponse = await callUsage(cookie, "consume");
-            const exhausted = await exhaustedResponse.json();
+            const exhausted = await responseJson(exhaustedResponse, "Quota exhaustion check");
             await expect(exhaustedResponse.status === 429 && exhausted.allowed === false && exhausted.used === 3 && exhausted.remaining === 0,
               "Fourth consume should be denied with HTTP 429 at the daily limit.");
 
