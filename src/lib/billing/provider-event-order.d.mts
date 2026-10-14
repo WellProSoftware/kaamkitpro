@@ -3,3 +3,5 @@ export function shouldApplyProviderEvent(input: {
   lastEventAt?: string | null;
   eventAt: string;
 }): boolean;
+
+export function parseProviderEventTimestamp(value: unknown): string | null;
