@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { readFile } from "node:fs/promises";
+import { shouldApplyProviderEvent } from "../src/lib/billing/provider-event-order.mjs";
 
 const source = async (path) => readFile(new URL(path, import.meta.url), "utf8");
 
@@ -77,5 +78,34 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(cancel).toContain("provider.id !== local.provider_subscription_id");
     expect(cancel).toContain("cancel_at_period_end: !ended");
     expect(cancel).toContain('status: "not.in.(cancelled,expired)"');
+  });
+});
+
+test.describe("provider event ordering behavior", () => {
+  const older = "2026-10-13T10:00:00.000Z";
+  const newer = "2026-10-13T10:01:00.000Z";
+
+  test("rejects an older event after a newer event was applied", () => {
+    expect(shouldApplyProviderEvent({ currentStatus: "active", lastEventAt: newer, eventAt: older })).toBe(false);
+  });
+
+  test("accepts a strictly newer event for a non-terminal subscription", () => {
+    expect(shouldApplyProviderEvent({ currentStatus: "past_due", lastEventAt: older, eventAt: newer })).toBe(true);
+  });
+
+  test("never reopens cancelled or expired subscriptions, even for a newer event", () => {
+    for (const currentStatus of ["cancelled", "expired"]) {
+      expect(shouldApplyProviderEvent({ currentStatus, lastEventAt: older, eventAt: newer })).toBe(false);
+    }
+  });
+
+  test("rejects equal, missing, or invalid timestamps", () => {
+    expect(shouldApplyProviderEvent({ currentStatus: "active", lastEventAt: newer, eventAt: newer })).toBe(false);
+    expect(shouldApplyProviderEvent({ currentStatus: "active", lastEventAt: null, eventAt: "not-a-date" })).toBe(false);
+    expect(shouldApplyProviderEvent({ currentStatus: "active", lastEventAt: "not-a-date", eventAt: newer })).toBe(false);
+  });
+
+  test("allows a first valid event when no provider timestamp exists yet", () => {
+    expect(shouldApplyProviderEvent({ currentStatus: "incomplete", lastEventAt: null, eventAt: newer })).toBe(true);
   });
 });
