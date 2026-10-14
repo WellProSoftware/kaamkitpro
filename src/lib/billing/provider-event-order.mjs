@@ -13,3 +13,18 @@ export function shouldApplyProviderEvent({ currentStatus, lastEventAt, eventAt }
   }
   return true;
 }
+
+/**
+ * Convert a provider Unix timestamp (seconds) into an ISO timestamp.
+ * Returns null for missing, non-finite, non-positive, or out-of-range values.
+ * @param {unknown} value
+ * @returns {string | null}
+ */
+export function parseProviderEventTimestamp(value) {
+  if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) return null;
+  const milliseconds = value * 1000;
+  if (!Number.isFinite(milliseconds)) return null;
+  const date = new Date(milliseconds);
+  if (!Number.isFinite(date.getTime())) return null;
+  return date.toISOString();
+}
