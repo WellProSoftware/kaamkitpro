@@ -7,6 +7,7 @@ import { statusFor } from "@/lib/billing/subscription-status.mjs";
 
 type Payload = {
   event?: string;
+  created_at?: number;
   payload?: { subscription?: { entity?: {
     id?: string;
     status?: string;
@@ -45,6 +46,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid webhook payload." }, { status: 400 });
   }
   if (!payload.event) return NextResponse.json({ error: "Missing event type." }, { status: 400 });
+  if (typeof payload.created_at !== "number" || !Number.isFinite(payload.created_at) || payload.created_at <= 0) {
+    return NextResponse.json({ error: "Missing or invalid provider event timestamp." }, { status: 400 });
+  }
+  const providerEventAt = new Date(payload.created_at * 1000).toISOString();
 
   const saved = await serviceRest("payment_events?on_conflict=provider_event_id", {
     method: "POST",
@@ -99,7 +104,7 @@ export async function POST(request: NextRequest) {
     // Provider event timestamps, not arrival order, decide which event may update state.
     // Terminal subscription states still cannot be reopened.
     const currentQuery = new URLSearchParams({
-      select: "status",
+      select: "status,last_provider_event_at",
       provider_subscription_id: `eq.${sub.id}`,
       limit: "1",
     });
@@ -108,24 +113,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Could not verify subscription state." }, { status: 503 });
     }
     const currentRows = await currentResponse.json().catch(() => []);
-    const current = Array.isArray(currentRows) ? currentRows[0] as { status?: string } | undefined : undefined;
+    const current = Array.isArray(currentRows) ? currentRows[0] as { status?: string; last_provider_event_at?: string | null } | undefined : undefined;
     if (!current) {
       return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
     }
     const terminal = current.status === "cancelled" || current.status === "expired";
-    // Terminal state wins over every later-delivered lifecycle event.
-    if (!terminal) {
+    const lastProviderEventAt = current.last_provider_event_at ? Date.parse(current.last_provider_event_at) : Number.NEGATIVE_INFINITY;
+    const isStaleEvent = Number.isFinite(lastProviderEventAt) && Date.parse(providerEventAt) <= lastProviderEventAt;
+    // Terminal state and provider event chronology win over delivery order.
+    if (!terminal && !isStaleEvent) {
     // Enforce this in the UPDATE itself as well: a read-then-write guard alone
     // would still have a race if cancellation landed between those two requests.
     const patchQuery = new URLSearchParams({
       provider_subscription_id: `eq.${sub.id}`,
       status: "not.in.(cancelled,expired)",
+      or: `(last_provider_event_at.is.null,last_provider_event_at.lt.${providerEventAt})`,
     });
     const patch = await serviceRest(`subscriptions?${patchQuery.toString()}`, {
       method: "PATCH",
       headers: { Prefer: "return=representation" },
       body: JSON.stringify({
         status: nextStatus,
+        last_provider_event_at: providerEventAt,
         ...(dateFromUnix(sub.current_start) ? { current_period_start: dateFromUnix(sub.current_start) } : {}),
         ...(dateFromUnix(sub.current_end) ? { current_period_end: dateFromUnix(sub.current_end) } : {}),
         updated_at: new Date().toISOString(),
@@ -139,9 +148,9 @@ export async function POST(request: NextRequest) {
       const verify = await serviceRest(`subscriptions?${currentQuery.toString()}`);
       if (!verify?.ok) return NextResponse.json({ error: "Could not verify subscription state." }, { status: 503 });
       const verifyRows = await verify.json().catch(() => []);
-      const latest = Array.isArray(verifyRows) ? verifyRows[0] as { status?: string } | undefined : undefined;
+      const latest = Array.isArray(verifyRows) ? verifyRows[0] as { status?: string; last_provider_event_at?: string | null } | undefined : undefined;
       if (!latest) return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
-      if (latest.status !== "cancelled" && latest.status !== "expired") {
+      if (latest.status !== "cancelled" && latest.status !== "expired" && !(latest.last_provider_event_at && Date.parse(latest.last_provider_event_at) >= Date.parse(providerEventAt))) {
         return NextResponse.json({ error: "Subscription state changed; retry webhook." }, { status: 503 });
       }
     }
