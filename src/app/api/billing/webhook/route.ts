@@ -96,8 +96,8 @@ export async function POST(request: NextRequest) {
   const sub = payload.payload?.subscription?.entity;
   const nextStatus = statusFor(payload.event, sub?.status);
   if (nextStatus && sub?.id) {
-    // Never let a delayed activation/charge/resume event reopen a terminal
-    // subscription. Provider events can be delivered out of order.
+    // Provider event timestamps, not arrival order, decide which event may update state.
+    // Terminal subscription states still cannot be reopened.
     const currentQuery = new URLSearchParams({
       select: "status",
       provider_subscription_id: `eq.${sub.id}`,
