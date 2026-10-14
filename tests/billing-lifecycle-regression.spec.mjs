@@ -43,6 +43,7 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(webhook).toContain("shouldApplyProviderEvent(current, providerEventAt, nextStatus)");
     expect(webhook).toContain("Subscription identifier is required for this lifecycle event.");
     expect(webhook).toContain("if (nextStatus && !sub?.id)");
+    expect(webhook.indexOf("if (nextStatus && !sub?.id)")).toBeLessThan(webhook.indexOf('payment_events?on_conflict=provider_event_id'));
     expect(webhook).toContain("last_provider_event_at: providerEventAt");
     expect(webhook).toContain("last_provider_event_at.lt.${providerEventAt}");
   });
