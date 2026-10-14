@@ -97,6 +97,9 @@ export async function POST(request: NextRequest) {
 
   const sub = payload.payload?.subscription?.entity;
   const nextStatus = statusFor(payload.event, sub?.status);
+  if (nextStatus && !sub?.id) {
+    return NextResponse.json({ error: "Subscription identifier is required for this lifecycle event." }, { status: 400 });
+  }
   if (nextStatus && sub?.id) {
     const currentQuery = new URLSearchParams({
       select: "status,last_provider_event_at",
