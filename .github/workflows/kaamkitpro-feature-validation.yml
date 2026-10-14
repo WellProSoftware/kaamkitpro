@@ -5,12 +5,18 @@ on:
     branches:
       - feature/razorpay-staging-integration
       - feature/remove-otp-auth-staging
+      - fix/staging-subscription-updated-event
+      - test/subscription-status-behavior
+      - fix/tool-access-clarity
+  pull_request:
+    branches:
+      - recovery/restore-8-41pm
 
 permissions:
   contents: read
 
 concurrency:
-  group: kaamkitpro-razorpay-staging-validation
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -40,6 +46,22 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Run quota RPC concurrency test in disposable PostgreSQL
+        shell: bash
+        run: |
+          set -euo pipefail
+          container="kaamkitpro-quota-pg-${GITHUB_RUN_ID}"
+          cleanup() { docker rm -f "$container" >/dev/null 2>&1 || true; }
+          trap cleanup EXIT
+          docker run --detach --name "$container" -e POSTGRES_PASSWORD=ci_only -p 127.0.0.1:55432:5432 postgres:16
+          for attempt in $(seq 1 30); do
+            if docker exec "$container" pg_isready -U postgres >/dev/null 2>&1; then break; fi
+            sleep 1
+          done
+          docker exec "$container" psql -U postgres -v ON_ERROR_STOP=1 -c "create role anon nologin" -c "create role authenticated nologin" -c "create role service_role nologin bypassrls" -c "create schema auth" -c "create table auth.users (id uuid primary key)"
+          PGPASSWORD=ci_only psql "postgresql://postgres:ci_only@127.0.0.1:55432/postgres" -v ON_ERROR_STOP=1 -f supabase/migrations/20261012000000_access_grants_and_tool_limits.sql
+          DATABASE_URL="postgresql://postgres:ci_only@127.0.0.1:55432/postgres" bash tests/quota-rpc-concurrency.sh
 
       - name: Check Vinext compatibility
         run: npx vinext check
