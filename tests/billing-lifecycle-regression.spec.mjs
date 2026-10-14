@@ -4,6 +4,8 @@ import { shouldApplyProviderEvent } from "../src/lib/billing/provider-event-orde
 import { statusFor } from "../src/lib/billing/subscription-status.mjs";
 
 const source = async (path) => readFile(new URL(path, import.meta.url), "utf8");
+// Provider lifecycle mapper tests are code-level coverage; Test Mode webhook delivery still requires provider-generated events.
+
 
 test.describe("Razorpay subscription lifecycle safety", () => {
   test("webhook authenticates the raw body and requires a provider event ID", async () => {
