@@ -2,10 +2,13 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { serviceRest } from "@/lib/server-access";
 import { getServerEnv } from "@/lib/server-env";
+import { statusFor } from "@/lib/billing/subscription-status.mjs";
+import { parseProviderEventTimestamp, shouldApplyProviderEvent } from "@/lib/billing/provider-event-order.mjs";
 
 
 type Payload = {
   event?: string;
+  created_at?: number;
   payload?: { subscription?: { entity?: {
     id?: string;
     status?: string;
@@ -21,20 +24,11 @@ function validSignature(body: string, signature: string, secret: string) {
 }
 
 function dateFromUnix(value?: number | null) {
-  return typeof value === "number" && value > 0 ? new Date(value * 1000).toISOString() : null;
+  return typeof value === "number" && value > 0 && Number.isFinite(value * 1000) && Number.isFinite(new Date(value * 1000).getTime())
+    ? new Date(value * 1000).toISOString()
+    : null;
 }
 
-function statusFor(event: string, providerStatus?: string) {
-  if (["subscription.activated", "subscription.charged", "subscription.resumed"].includes(event)) return "active";
-  if (event === "subscription.halted") return "past_due";
-  if (event === "subscription.cancelled") return "cancelled";
-  if (event === "subscription.completed") return "expired";
-  if (event === "subscription.pending" || event === "subscription.paused") return "incomplete";
-  // Ignore unknown event types even if their embedded entity says "active".
-  // Entitlement changes are allowed only for explicitly recognized lifecycle events.
-  void providerStatus;
-  return null;
-}
 
 export async function POST(request: NextRequest) {
   const secret = await getServerEnv("RAZORPAY_WEBHOOK_SECRET");
@@ -55,6 +49,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid webhook payload." }, { status: 400 });
   }
   if (!payload.event) return NextResponse.json({ error: "Missing event type." }, { status: 400 });
+  const providerEventAt = parseProviderEventTimestamp(payload.created_at);
+  if (!providerEventAt) {
+    return NextResponse.json({ error: "Missing or invalid provider event timestamp." }, { status: 400 });
+  }
 
   const saved = await serviceRest("payment_events?on_conflict=provider_event_id", {
     method: "POST",
@@ -106,10 +104,10 @@ export async function POST(request: NextRequest) {
   const sub = payload.payload?.subscription?.entity;
   const nextStatus = statusFor(payload.event, sub?.status);
   if (nextStatus && sub?.id) {
-    // Never let a delayed activation/charge/resume event reopen a terminal
-    // subscription. Provider events can be delivered out of order.
+    // Provider event timestamps, not arrival order, decide which event may update state.
+    // Terminal state is protected even if a later event is delivered.
     const currentQuery = new URLSearchParams({
-      select: "status",
+      select: "status,last_provider_event_at",
       provider_subscription_id: `eq.${sub.id}`,
       limit: "1",
     });
@@ -118,43 +116,43 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Could not verify subscription state." }, { status: 503 });
     }
     const currentRows = await currentResponse.json().catch(() => []);
-    const current = Array.isArray(currentRows) ? currentRows[0] as { status?: string } | undefined : undefined;
+    const current = Array.isArray(currentRows) ? currentRows[0] as { status?: string; last_provider_event_at?: string | null } | undefined : undefined;
     if (!current) {
       return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
     }
-    const terminal = current.status === "cancelled" || current.status === "expired";
-    // Terminal state wins over every later-delivered lifecycle event.
-    if (!terminal) {
-    // Enforce this in the UPDATE itself as well: a read-then-write guard alone
-    // would still have a race if cancellation landed between those two requests.
-    const patchQuery = new URLSearchParams({
-      provider_subscription_id: `eq.${sub.id}`,
-      status: "not.in.(cancelled,expired)",
-    });
-    const patch = await serviceRest(`subscriptions?${patchQuery.toString()}`, {
-      method: "PATCH",
-      headers: { Prefer: "return=representation" },
-      body: JSON.stringify({
-        status: nextStatus,
-        ...(dateFromUnix(sub.current_start) ? { current_period_start: dateFromUnix(sub.current_start) } : {}),
-        ...(dateFromUnix(sub.current_end) ? { current_period_end: dateFromUnix(sub.current_end) } : {}),
-        updated_at: new Date().toISOString(),
-      }),
-    });
-    if (!patch?.ok) return NextResponse.json({ error: "Could not update subscription." }, { status: 503 });
-    const updated = await patch.json().catch(() => []);
-    if (!Array.isArray(updated) || updated.length === 0) {
-      // Another concurrent event may have made the subscription terminal.
-      // Confirm the row still exists; terminal rows are safely left unchanged.
-      const verify = await serviceRest(`subscriptions?${currentQuery.toString()}`);
-      if (!verify?.ok) return NextResponse.json({ error: "Could not verify subscription state." }, { status: 503 });
-      const verifyRows = await verify.json().catch(() => []);
-      const latest = Array.isArray(verifyRows) ? verifyRows[0] as { status?: string } | undefined : undefined;
-      if (!latest) return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
-      if (latest.status !== "cancelled" && latest.status !== "expired") {
-        return NextResponse.json({ error: "Subscription state changed; retry webhook." }, { status: 503 });
+    if (shouldApplyProviderEvent({ currentStatus: current.status, lastEventAt: current.last_provider_event_at, eventAt: providerEventAt })) {
+      // Enforce ordering in the UPDATE itself to protect against read/write races.
+      const patchQuery = new URLSearchParams({
+        provider_subscription_id: `eq.${sub.id}`,
+        status: "not.in.(cancelled,expired)",
+        or: `(last_provider_event_at.is.null,last_provider_event_at.lt.${providerEventAt})`,
+      });
+      const patch = await serviceRest(`subscriptions?${patchQuery.toString()}`, {
+        method: "PATCH",
+        headers: { Prefer: "return=representation" },
+        body: JSON.stringify({
+          status: nextStatus,
+          last_provider_event_at: providerEventAt,
+          ...(dateFromUnix(sub.current_start) ? { current_period_start: dateFromUnix(sub.current_start) } : {}),
+          ...(dateFromUnix(sub.current_end) ? { current_period_end: dateFromUnix(sub.current_end) } : {}),
+          updated_at: new Date().toISOString(),
+        }),
+      });
+      if (!patch?.ok) return NextResponse.json({ error: "Could not update subscription." }, { status: 503 });
+      const updated = await patch.json().catch(() => []);
+      if (!Array.isArray(updated) || updated.length === 0) {
+        // Another concurrent event may have won. Confirm the row still exists and
+        // that a newer event or terminal state explains the empty conditional update.
+        const verify = await serviceRest(`subscriptions?${currentQuery.toString()}`);
+        if (!verify?.ok) return NextResponse.json({ error: "Could not verify subscription state." }, { status: 503 });
+        const verifyRows = await verify.json().catch(() => []);
+        const latest = Array.isArray(verifyRows) ? verifyRows[0] as { status?: string; last_provider_event_at?: string | null } | undefined : undefined;
+        if (!latest) return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
+        const latestEventTime = latest.last_provider_event_at ? Date.parse(latest.last_provider_event_at) : Number.NaN;
+        if (latest.status !== "cancelled" && latest.status !== "expired" && (!Number.isFinite(latestEventTime) || latestEventTime < Date.parse(providerEventAt))) {
+          return NextResponse.json({ error: "Subscription state changed; retry webhook." }, { status: 503 });
+        }
       }
-    }
     }
   }
 

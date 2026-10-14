@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { readFile } from "node:fs/promises";
+import { parseProviderEventTimestamp, shouldApplyProviderEvent } from "../src/lib/billing/provider-event-order.mjs";
 
 const source = async (path) => readFile(new URL(path, import.meta.url), "utf8");
 
@@ -22,20 +23,33 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(webhook).toContain("processed_at: new Date().toISOString()");
   });
 
-  test("only recognized lifecycle events can update entitlement status", async () => {
+  test("webhook delegates lifecycle status decisions to the shared allow-listed mapper", async () => {
     const webhook = await source("../src/app/api/billing/webhook/route.ts");
-    expect(webhook).toContain('"subscription.activated", "subscription.charged", "subscription.resumed"');
-    expect(webhook).toContain('event === "subscription.halted"');
-    expect(webhook).toContain('event === "subscription.cancelled"');
-    expect(webhook).toContain('event === "subscription.completed"');
-    expect(webhook).toContain("return null");
+    const mapper = await source("../src/lib/billing/subscription-status.mjs");
+    expect(webhook).toContain('import { statusFor } from "@/lib/billing/subscription-status.mjs"');
+    expect(webhook).toContain("statusFor(payload.event, sub?.status)");
+    expect(mapper).toContain('"subscription.activated", "subscription.charged", "subscription.resumed"');
+    expect(mapper).toContain('event === "subscription.halted"');
+    expect(mapper).toContain('event === "subscription.cancelled"');
+    expect(mapper).toContain('event === "subscription.completed"');
+    expect(mapper).toContain("default: return null");
   });
 
-  test("terminal subscription status cannot be reopened by delayed webhook events", async () => {
+  test("webhook validates provider timestamps and applies the extracted event-order guard", async () => {
     const webhook = await source("../src/app/api/billing/webhook/route.ts");
-    expect(webhook).toContain('current.status === "cancelled" || current.status === "expired"');
+    expect(webhook).toContain('import { parseProviderEventTimestamp, shouldApplyProviderEvent } from "@/lib/billing/provider-event-order.mjs"');
+    expect(webhook).toContain("parseProviderEventTimestamp(payload.created_at)");
+    expect(webhook).toContain("Missing or invalid provider event timestamp.");
+    expect(webhook).toContain('select: "status,last_provider_event_at"');
+    expect(webhook).toContain("shouldApplyProviderEvent({ currentStatus: current.status, lastEventAt: current.last_provider_event_at, eventAt: providerEventAt })");
+    expect(webhook).toContain("last_provider_event_at: providerEventAt");
+    expect(webhook).toContain("last_provider_event_at.lt.${providerEventAt}");
+  });
+
+  test("conditional database update protects ordering and terminal states against races", async () => {
+    const webhook = await source("../src/app/api/billing/webhook/route.ts");
     expect(webhook).toContain('status: "not.in.(cancelled,expired)"');
-    expect(webhook).toContain('latest.status !== "cancelled" && latest.status !== "expired"');
+    expect(webhook).toContain("or: `(last_provider_event_at.is.null,last_provider_event_at.lt.${providerEventAt})`");
   });
 
   test("checkout stores provider subscription as incomplete before entitlement is granted", async () => {
@@ -64,5 +78,41 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(cancel).toContain("provider.id !== local.provider_subscription_id");
     expect(cancel).toContain("cancel_at_period_end: !ended");
     expect(cancel).toContain('status: "not.in.(cancelled,expired)"');
+  });
+});
+
+test.describe("provider event ordering behavior", () => {
+  const older = "2026-10-13T10:00:00.000Z";
+  const newer = "2026-10-13T10:01:00.000Z";
+
+  test("rejects an older event after a newer event was applied", () => {
+    expect(shouldApplyProviderEvent({ currentStatus: "active", lastEventAt: newer, eventAt: older })).toBe(false);
+  });
+
+  test("accepts a strictly newer event for a non-terminal subscription", () => {
+    expect(shouldApplyProviderEvent({ currentStatus: "past_due", lastEventAt: older, eventAt: newer })).toBe(true);
+  });
+
+  test("never reopens cancelled or expired subscriptions, even for a newer event", () => {
+    for (const currentStatus of ["cancelled", "expired"]) {
+      expect(shouldApplyProviderEvent({ currentStatus, lastEventAt: older, eventAt: newer })).toBe(false);
+    }
+  });
+
+  test("rejects equal, missing, or invalid ordering timestamps", () => {
+    expect(shouldApplyProviderEvent({ currentStatus: "active", lastEventAt: newer, eventAt: newer })).toBe(false);
+    expect(shouldApplyProviderEvent({ currentStatus: "active", lastEventAt: null, eventAt: "not-a-date" })).toBe(false);
+    expect(shouldApplyProviderEvent({ currentStatus: "active", lastEventAt: "not-a-date", eventAt: newer })).toBe(false);
+  });
+
+  test("allows a first valid event when no provider timestamp exists yet", () => {
+    expect(shouldApplyProviderEvent({ currentStatus: "incomplete", lastEventAt: null, eventAt: newer })).toBe(true);
+  });
+
+  test("converts valid provider Unix seconds and rejects malformed or out-of-range values", () => {
+    expect(parseProviderEventTimestamp(1791885600)).toBe("2026-10-13T10:00:00.000Z");
+    for (const invalid of [undefined, null, "1791885600", 0, -1, Number.NaN, Number.POSITIVE_INFINITY, 1e100]) {
+      expect(parseProviderEventTimestamp(invalid)).toBeNull();
+    }
   });
 });
