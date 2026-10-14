@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { serviceRest } from "@/lib/server-access";
 import { getServerEnv } from "@/lib/server-env";
 import { statusFor } from "@/lib/billing/subscription-status.mjs";
+import { shouldApplyProviderEvent } from "@/lib/billing/provider-event-order.mjs";
 
 
 type Payload = {
@@ -117,11 +118,8 @@ export async function POST(request: NextRequest) {
     if (!current) {
       return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
     }
-    const terminal = current.status === "cancelled" || current.status === "expired";
-    const lastProviderEventAt = current.last_provider_event_at ? Date.parse(current.last_provider_event_at) : Number.NEGATIVE_INFINITY;
-    const isStaleEvent = Number.isFinite(lastProviderEventAt) && Date.parse(providerEventAt) <= lastProviderEventAt;
     // Terminal state and provider event chronology win over delivery order.
-    if (!terminal && !isStaleEvent) {
+    if (shouldApplyProviderEvent({ currentStatus: current.status, lastEventAt: current.last_provider_event_at, eventAt: providerEventAt })) {
     // Enforce this in the UPDATE itself as well: a read-then-write guard alone
     // would still have a race if cancellation landed between those two requests.
     const patchQuery = new URLSearchParams({
