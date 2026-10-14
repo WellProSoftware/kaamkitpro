@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { readFile } from "node:fs/promises";
+import { shouldApplyProviderEvent } from "../src/lib/billing/provider-event-order.mjs";
 
 const source = async (path) => readFile(new URL(path, import.meta.url), "utf8");
 
@@ -39,7 +40,7 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(webhook).toContain('payload.created_at !== "number"');
     expect(webhook).toContain("Missing or invalid provider event timestamp.");
     expect(webhook).toContain('select: "status,last_provider_event_at"');
-    expect(webhook).toContain("Date.parse(providerEventAt) <= lastProviderEventAt");
+    expect(webhook).toContain("shouldApplyProviderEvent(current, providerEventAt)");
     expect(webhook).toContain("last_provider_event_at: providerEventAt");
     expect(webhook).toContain("last_provider_event_at.lt.${providerEventAt}");
   });
@@ -77,5 +78,33 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(cancel).toContain("provider.id !== local.provider_subscription_id");
     expect(cancel).toContain("cancel_at_period_end: !ended");
     expect(cancel).toContain('status: "not.in.(cancelled,expired)"');
+  });
+});
+
+
+test.describe("provider event ordering behavior", () => {
+  const active = { status: "active", last_provider_event_at: "2026-10-14T10:00:00.000Z" };
+
+  test("rejects stale and equal-time events but accepts a newer event", () => {
+    expect(shouldApplyProviderEvent(active, "2026-10-14T09:59:59.000Z")).toBe(false);
+    expect(shouldApplyProviderEvent(active, "2026-10-14T10:00:00.000Z")).toBe(false);
+    expect(shouldApplyProviderEvent(active, "2026-10-14T10:00:01.000Z")).toBe(true);
+  });
+
+  test("accepts the first valid event when no provider timestamp has been recorded", () => {
+    expect(shouldApplyProviderEvent({ status: "incomplete", last_provider_event_at: null }, "2026-10-14T10:00:00.000Z")).toBe(true);
+    expect(shouldApplyProviderEvent({ status: "incomplete" }, "2026-10-14T10:00:00.000Z")).toBe(true);
+  });
+
+  test("never reopens terminal states, even with a newer timestamp", () => {
+    for (const status of ["cancelled", "expired"]) {
+      expect(shouldApplyProviderEvent({ status, last_provider_event_at: "2026-10-14T10:00:00.000Z" }, "2026-10-15T10:00:00.000Z")).toBe(false);
+    }
+  });
+
+  test("fails closed for missing rows and invalid timestamps", () => {
+    expect(shouldApplyProviderEvent(null, "2026-10-14T10:00:00.000Z")).toBe(false);
+    expect(shouldApplyProviderEvent(active, "not-a-date")).toBe(false);
+    expect(shouldApplyProviderEvent({ status: "active", last_provider_event_at: "bad-date" }, "2026-10-15T10:00:00.000Z")).toBe(false);
   });
 });
