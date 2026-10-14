@@ -22,13 +22,16 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(webhook).toContain("processed_at: new Date().toISOString()");
   });
 
-  test("only recognized lifecycle events can update entitlement status", async () => {
+  test("webhook delegates lifecycle status decisions to the shared allow-listed mapper", async () => {
     const webhook = await source("../src/app/api/billing/webhook/route.ts");
-    expect(webhook).toContain('"subscription.activated", "subscription.charged", "subscription.resumed"');
-    expect(webhook).toContain('event === "subscription.halted"');
-    expect(webhook).toContain('event === "subscription.cancelled"');
-    expect(webhook).toContain('event === "subscription.completed"');
-    expect(webhook).toContain("return null");
+    const mapper = await source("../src/lib/billing/subscription-status.mjs");
+    expect(webhook).toContain('import { statusFor } from "@/lib/billing/subscription-status.mjs"');
+    expect(webhook).toContain("statusFor(payload.event, sub?.status)");
+    expect(mapper).toContain('"subscription.activated", "subscription.charged", "subscription.resumed"');
+    expect(mapper).toContain('event === "subscription.halted"');
+    expect(mapper).toContain('event === "subscription.cancelled"');
+    expect(mapper).toContain('event === "subscription.completed"');
+    expect(mapper).toContain('default: return null');
   });
 
   test("terminal subscription status cannot be reopened by delayed webhook events", async () => {
