@@ -47,7 +47,8 @@ test.describe("Razorpay subscription lifecycle safety", () => {
 
   test("terminal subscription status cannot be reopened by delayed webhook events", async () => {
     const webhook = await source("../src/app/api/billing/webhook/route.ts");
-    expect(webhook).toContain('current.status === "cancelled" || current.status === "expired"');
+    const ordering = await source("../src/lib/billing/provider-event-order.mjs");
+    expect(ordering).toContain('current.status === "cancelled" || current.status === "expired"');
     expect(webhook).toContain('status: "not.in.(cancelled,expired)"');
     expect(webhook).toContain('latest.status !== "cancelled" && latest.status !== "expired"');
   });
