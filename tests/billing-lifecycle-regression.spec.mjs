@@ -116,4 +116,11 @@ test.describe("provider event ordering behavior", () => {
     expect(shouldApplyProviderEvent(active, "not-a-date", "active")).toBe(false);
     expect(shouldApplyProviderEvent({ status: "active", last_provider_event_at: "bad-date" }, "2026-10-15T10:00:00.000Z", "active")).toBe(false);
   });
+
+  test("rejects stale terminal events but accepts newer terminal events", () => {
+    expect(shouldApplyProviderEvent(active, "2026-10-14T09:59:59.000Z", "cancelled")).toBe(false);
+    expect(shouldApplyProviderEvent(active, "2026-10-14T09:59:59.000Z", "expired")).toBe(false);
+    expect(shouldApplyProviderEvent(active, "2026-10-14T10:00:01.000Z", "cancelled")).toBe(true);
+    expect(shouldApplyProviderEvent(active, "2026-10-14T10:00:01.000Z", "expired")).toBe(true);
+  });
 });
