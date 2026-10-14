@@ -1,3 +1,4 @@
+# Explicit staging release request for the PR #38 candidate; deploy job remains workers.dev-only.
 # Safety note: this workflow must deploy only the kaamkitpro-staging Worker. Recovery branch is isolated from production.
 # Feature-branch deployment is permitted only by a validated commit carrying [deploy-staging].
 # Feature-branch pushes deploy only when the commit message explicitly contains [deploy-staging].
