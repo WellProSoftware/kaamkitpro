@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { shouldApplyProviderEvent } from "../src/lib/billing/provider-event-order.mjs";
+import { statusFor } from "../src/lib/billing/subscription-status.mjs";
 
 const source = async (path) => readFile(new URL(path, import.meta.url), "utf8");
 
@@ -33,6 +34,21 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(mapper).toContain('event === "subscription.cancelled"');
     expect(mapper).toContain('event === "subscription.completed"');
     expect(mapper).toContain("default: return null");
+  });
+
+
+  test("provider lifecycle mapper explicitly covers payment failure and terminal outcomes", () => {
+    expect(statusFor("subscription.activated", "active")).toBe("active");
+    expect(statusFor("subscription.charged", "active")).toBe("active");
+    expect(statusFor("subscription.resumed", "active")).toBe("active");
+    expect(statusFor("subscription.halted", "halted")).toBe("past_due");
+    expect(statusFor("subscription.cancelled", "cancelled")).toBe("cancelled");
+    expect(statusFor("subscription.completed", "completed")).toBe("expired");
+    expect(statusFor("subscription.pending", "pending")).toBe("incomplete");
+    expect(statusFor("subscription.paused", "paused")).toBe("incomplete");
+    expect(statusFor("subscription.updated", "expired")).toBe("expired");
+    expect(statusFor("subscription.updated", "unknown-provider-state")).toBeNull();
+    expect(statusFor("subscription.unknown", "active")).toBeNull();
   });
 
   test("webhook rejects missing provider timestamps and applies only chronologically newer events", async () => {
