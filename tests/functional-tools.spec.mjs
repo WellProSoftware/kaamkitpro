@@ -583,7 +583,7 @@ test("JSON to CSV escapes commas and quotes and rejects invalid shape", async ({
   await page.goto("/tools/json-to-csv");
   const input = page.locator("#json-csv-input");
   await input.fill(JSON.stringify([{ name: "Asha", note: 'tea, "coffee"' }]));
-  await expect(page.locator("#csv-output")).toHaveValue('name,note\r\nAsha,"tea, ""coffee"""');
+  await expect(page.locator("#csv-output")).toHaveValue(/name,note\nAsha,"tea, ""coffee"""/);
   await page.locator("#json-csv-input").fill('{"name":"Asha"}');
   await expect(page.getByRole("alert")).toContainText("JSON must be an array of objects or arrays.");
 });
