@@ -40,7 +40,7 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(webhook).toContain('payload.created_at !== "number"');
     expect(webhook).toContain("Missing or invalid provider event timestamp.");
     expect(webhook).toContain('select: "status,last_provider_event_at"');
-    expect(webhook).toContain("shouldApplyProviderEvent(current, providerEventAt)");
+    expect(webhook).toContain("shouldApplyProviderEvent(current, providerEventAt, nextStatus)");
     expect(webhook).toContain("last_provider_event_at: providerEventAt");
     expect(webhook).toContain("last_provider_event_at.lt.${providerEventAt}");
   });
@@ -86,26 +86,34 @@ test.describe("Razorpay subscription lifecycle safety", () => {
 test.describe("provider event ordering behavior", () => {
   const active = { status: "active", last_provider_event_at: "2026-10-14T10:00:00.000Z" };
 
-  test("rejects stale and equal-time events but accepts a newer event", () => {
-    expect(shouldApplyProviderEvent(active, "2026-10-14T09:59:59.000Z")).toBe(false);
-    expect(shouldApplyProviderEvent(active, "2026-10-14T10:00:00.000Z")).toBe(false);
-    expect(shouldApplyProviderEvent(active, "2026-10-14T10:00:01.000Z")).toBe(true);
+  test("rejects stale/equal non-terminal events but accepts a newer event", () => {
+    expect(shouldApplyProviderEvent(active, "2026-10-14T09:59:59.000Z", "active")).toBe(false);
+    expect(shouldApplyProviderEvent(active, "2026-10-14T10:00:00.000Z", "active")).toBe(false);
+    expect(shouldApplyProviderEvent(active, "2026-10-14T10:00:01.000Z", "active")).toBe(true);
+  });
+
+  test("equal-time terminal events take priority over non-terminal events", () => {
+    const sameTime = "2026-10-14T10:00:00.000Z";
+    expect(shouldApplyProviderEvent(active, sameTime, "cancelled")).toBe(true);
+    expect(shouldApplyProviderEvent(active, sameTime, "expired")).toBe(true);
+    expect(shouldApplyProviderEvent(active, sameTime, "active")).toBe(false);
+    expect(shouldApplyProviderEvent(active, sameTime, "past_due")).toBe(false);
   });
 
   test("accepts the first valid event when no provider timestamp has been recorded", () => {
-    expect(shouldApplyProviderEvent({ status: "incomplete", last_provider_event_at: null }, "2026-10-14T10:00:00.000Z")).toBe(true);
-    expect(shouldApplyProviderEvent({ status: "incomplete" }, "2026-10-14T10:00:00.000Z")).toBe(true);
+    expect(shouldApplyProviderEvent({ status: "incomplete", last_provider_event_at: null }, "2026-10-14T10:00:00.000Z", "active")).toBe(true);
+    expect(shouldApplyProviderEvent({ status: "incomplete" }, "2026-10-14T10:00:00.000Z", "active")).toBe(true);
   });
 
   test("never reopens terminal states, even with a newer timestamp", () => {
     for (const status of ["cancelled", "expired"]) {
-      expect(shouldApplyProviderEvent({ status, last_provider_event_at: "2026-10-14T10:00:00.000Z" }, "2026-10-15T10:00:00.000Z")).toBe(false);
+      expect(shouldApplyProviderEvent({ status, last_provider_event_at: "2026-10-14T10:00:00.000Z" }, "2026-10-15T10:00:00.000Z", "active")).toBe(false);
     }
   });
 
   test("fails closed for missing rows and invalid timestamps", () => {
-    expect(shouldApplyProviderEvent(null, "2026-10-14T10:00:00.000Z")).toBe(false);
-    expect(shouldApplyProviderEvent(active, "not-a-date")).toBe(false);
-    expect(shouldApplyProviderEvent({ status: "active", last_provider_event_at: "bad-date" }, "2026-10-15T10:00:00.000Z")).toBe(false);
+    expect(shouldApplyProviderEvent(null, "2026-10-14T10:00:00.000Z", "active")).toBe(false);
+    expect(shouldApplyProviderEvent(active, "not-a-date", "active")).toBe(false);
+    expect(shouldApplyProviderEvent({ status: "active", last_provider_event_at: "bad-date" }, "2026-10-15T10:00:00.000Z", "active")).toBe(false);
   });
 });
