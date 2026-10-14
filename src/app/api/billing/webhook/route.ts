@@ -67,9 +67,6 @@ export async function POST(request: NextRequest) {
   if (!row) return NextResponse.json({ error: "Event record missing." }, { status: 503 });
   if (row.processed_at) return NextResponse.json({ received: true, duplicate: true });
 
-  // Claim this event atomically. The conditional PATCH is a single database
-  // update, so concurrent deliveries cannot both own the same unprocessed event.
-  // A five-minute lease allows recovery if a server exits mid-processing.
   const now = new Date();
   const staleBefore = new Date(now.getTime() - 5 * 60 * 1000).toISOString();
   const claimQuery = new URLSearchParams({
@@ -95,15 +92,12 @@ export async function POST(request: NextRequest) {
     const states = await stateResponse.json().catch(() => []);
     const state = Array.isArray(states) ? states[0] as { processed_at?: string | null } | undefined : undefined;
     if (state?.processed_at) return NextResponse.json({ received: true, duplicate: true });
-    // Non-2xx asks the payment provider to retry rather than silently dropping an event.
     return NextResponse.json({ error: "Webhook event is already being processed; retry later." }, { status: 503 });
   }
 
   const sub = payload.payload?.subscription?.entity;
   const nextStatus = statusFor(payload.event, sub?.status);
   if (nextStatus && sub?.id) {
-    // Provider event timestamps, not arrival order, decide which event may update state.
-    // Terminal subscription states still cannot be reopened.
     const currentQuery = new URLSearchParams({
       select: "status,last_provider_event_at",
       provider_subscription_id: `eq.${sub.id}`,
@@ -115,44 +109,42 @@ export async function POST(request: NextRequest) {
     }
     const currentRows = await currentResponse.json().catch(() => []);
     const current = Array.isArray(currentRows) ? currentRows[0] as { status?: string; last_provider_event_at?: string | null } | undefined : undefined;
-    if (!current) {
-      return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
-    }
-    // Pure decision helper is behavior-tested; the conditional PATCH below also
-    // protects against concurrent events racing after this read.
-    if (shouldApplyProviderEvent(current, providerEventAt)) {
-    // Enforce this in the UPDATE itself as well: a read-then-write guard alone
-    // would still have a race if cancellation landed between those two requests.
-    const patchQuery = new URLSearchParams({
-      provider_subscription_id: `eq.${sub.id}`,
-      status: "not.in.(cancelled,expired)",
-      or: `(last_provider_event_at.is.null,last_provider_event_at.lt.${providerEventAt})`,
-    });
-    const patch = await serviceRest(`subscriptions?${patchQuery.toString()}`, {
-      method: "PATCH",
-      headers: { Prefer: "return=representation" },
-      body: JSON.stringify({
-        status: nextStatus,
-        last_provider_event_at: providerEventAt,
-        ...(dateFromUnix(sub.current_start) ? { current_period_start: dateFromUnix(sub.current_start) } : {}),
-        ...(dateFromUnix(sub.current_end) ? { current_period_end: dateFromUnix(sub.current_end) } : {}),
-        updated_at: new Date().toISOString(),
-      }),
-    });
-    if (!patch?.ok) return NextResponse.json({ error: "Could not update subscription." }, { status: 503 });
-    const updated = await patch.json().catch(() => []);
-    if (!Array.isArray(updated) || updated.length === 0) {
-      // Another concurrent event may have made the subscription terminal.
-      // Confirm the row still exists; terminal rows are safely left unchanged.
-      const verify = await serviceRest(`subscriptions?${currentQuery.toString()}`);
-      if (!verify?.ok) return NextResponse.json({ error: "Could not verify subscription state." }, { status: 503 });
-      const verifyRows = await verify.json().catch(() => []);
-      const latest = Array.isArray(verifyRows) ? verifyRows[0] as { status?: string; last_provider_event_at?: string | null } | undefined : undefined;
-      if (!latest) return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
-      if (latest.status !== "cancelled" && latest.status !== "expired" && !(latest.last_provider_event_at && Date.parse(latest.last_provider_event_at) >= Date.parse(providerEventAt))) {
-        return NextResponse.json({ error: "Subscription state changed; retry webhook." }, { status: 503 });
+    if (!current) return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
+
+    if (shouldApplyProviderEvent(current, providerEventAt, nextStatus)) {
+      // Equal-time terminal events are allowed; stale non-terminal events are not.
+      // The status guard always prevents reopening a cancelled/expired subscription.
+      const timeFilter = nextStatus === "cancelled" || nextStatus === "expired"
+        ? `(last_provider_event_at.is.null,last_provider_event_at.lt.${providerEventAt},last_provider_event_at.eq.${providerEventAt})`
+        : `(last_provider_event_at.is.null,last_provider_event_at.lt.${providerEventAt})`;
+      const patchQuery = new URLSearchParams({
+        provider_subscription_id: `eq.${sub.id}`,
+        status: "not.in.(cancelled,expired)",
+        or: timeFilter,
+      });
+      const patch = await serviceRest(`subscriptions?${patchQuery.toString()}`, {
+        method: "PATCH",
+        headers: { Prefer: "return=representation" },
+        body: JSON.stringify({
+          status: nextStatus,
+          last_provider_event_at: providerEventAt,
+          ...(dateFromUnix(sub.current_start) ? { current_period_start: dateFromUnix(sub.current_start) } : {}),
+          ...(dateFromUnix(sub.current_end) ? { current_period_end: dateFromUnix(sub.current_end) } : {}),
+          updated_at: new Date().toISOString(),
+        }),
+      });
+      if (!patch?.ok) return NextResponse.json({ error: "Could not update subscription." }, { status: 503 });
+      const updated = await patch.json().catch(() => []);
+      if (!Array.isArray(updated) || updated.length === 0) {
+        const verify = await serviceRest(`subscriptions?${currentQuery.toString()}`);
+        if (!verify?.ok) return NextResponse.json({ error: "Could not verify subscription state." }, { status: 503 });
+        const verifyRows = await verify.json().catch(() => []);
+        const latest = Array.isArray(verifyRows) ? verifyRows[0] as { status?: string; last_provider_event_at?: string | null } | undefined : undefined;
+        if (!latest) return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
+        const terminal = latest.status === "cancelled" || latest.status === "expired";
+        const timestampApplied = latest.last_provider_event_at && Date.parse(latest.last_provider_event_at) >= Date.parse(providerEventAt);
+        if (!terminal && !timestampApplied) return NextResponse.json({ error: "Subscription state changed; retry webhook." }, { status: 503 });
       }
-    }
     }
   }
 
