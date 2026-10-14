@@ -51,6 +51,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing or invalid provider event timestamp." }, { status: 400 });
   }
   const providerEventAt = new Date(payload.created_at * 1000).toISOString();
+  const sub = payload.payload?.subscription?.entity;
+  const nextStatus = statusFor(payload.event, sub?.status);
+  // Validate lifecycle identity before persisting/claiming the event; otherwise a 400
+  // could leave a claimed event unprocessed and the provider may not retry it.
+  if (nextStatus && !sub?.id) {
+    return NextResponse.json({ error: "Subscription identifier is required for this lifecycle event." }, { status: 400 });
+  }
 
   const saved = await serviceRest("payment_events?on_conflict=provider_event_id", {
     method: "POST",
@@ -95,11 +102,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Webhook event is already being processed; retry later." }, { status: 503 });
   }
 
-  const sub = payload.payload?.subscription?.entity;
-  const nextStatus = statusFor(payload.event, sub?.status);
-  if (nextStatus && !sub?.id) {
-    return NextResponse.json({ error: "Subscription identifier is required for this lifecycle event." }, { status: 400 });
-  }
   if (nextStatus && sub?.id) {
     const currentQuery = new URLSearchParams({
       select: "status,last_provider_event_at",
