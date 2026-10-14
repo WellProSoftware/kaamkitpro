@@ -32,7 +32,7 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(mapper).toContain('event === "subscription.halted"');
     expect(mapper).toContain('event === "subscription.cancelled"');
     expect(mapper).toContain('event === "subscription.completed"');
-    expect(mapper).toContain('default: return null');
+    expect(mapper).toContain("default: return null");
   });
 
   test("webhook rejects missing provider timestamps and applies only chronologically newer events", async () => {
@@ -50,7 +50,7 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     const ordering = await source("../src/lib/billing/provider-event-order.mjs");
     expect(ordering).toContain('current.status === "cancelled" || current.status === "expired"');
     expect(webhook).toContain('status: "not.in.(cancelled,expired)"');
-    expect(webhook).toContain('latest.status !== "cancelled" && latest.status !== "expired"');
+    expect(webhook).toContain('const terminal = latest.status === "cancelled" || latest.status === "expired"');
   });
 
   test("checkout stores provider subscription as incomplete before entitlement is granted", async () => {
