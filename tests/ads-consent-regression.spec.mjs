@@ -62,7 +62,7 @@ test.describe("AdSense consent and entitlement regression", () => {
     await page.addInitScript(({ key }) => localStorage.setItem(key, "accepted"), { key: CONSENT_KEY });
     await stubAccess(page, true);
     for (const path of ["/login", "/account", "/admin", "/auth/callback"]) {
-      await page.goto(path);
+      await page.goto(path, { waitUntil: "commit" });
       await expect(page.locator("#google-adsense"), path).toHaveCount(0);
     }
   });
