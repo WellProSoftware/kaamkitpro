@@ -57,3 +57,10 @@ Review the site's [Privacy Policy](https://kaamkitpro.com/privacy-policy), [Term
 ## Staging security regression tests
 
 The Cloudflare Workers Free staging workflow validates authenticated daily quota enforcement (three allowed uses, then HTTP 429) and Admin Access grant/revoke using disposable Supabase staging identities. These tests run only against the isolated `kaamkitpro-staging` Worker and clean up temporary test identities; they do not authorize or deploy production changes.
+
+## Staging email verification and password setup
+
+- Create an account using full name and email only.
+- Verify the account using the email link; the link opens the password setup page.
+- Set and confirm a password, then sign in with email and password. The signup confirmation replaces the form after the email is sent; Google sign-in and OTP sign-in are not shown.
+- This feature is deployed only to the isolated `kaamkitpro-staging` Worker when the explicitly marked staging workflow passes. Production Vercel, production Supabase, custom domains/DNS, and live checkout remain unchanged.

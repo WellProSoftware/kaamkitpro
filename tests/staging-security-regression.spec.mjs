@@ -26,6 +26,15 @@ test.describe("staging security regression checks", () => {
     expect(response.headers()["set-cookie"] || "").not.toMatch(/kk_access_token=|kk_refresh_token=/);
   });
 
+  test("password-setting API rejects signed-out requests without changing session cookies", async ({ request }) => {
+    const response = await request.post("/api/auth/password", {
+      data: { password: "NeverUseThisTestPassword123!" },
+    });
+    expect([401, 503]).toContain(response.status());
+    expect(response.headers()["set-cookie"] || "").not.toMatch(/kk_access_token=|kk_refresh_token=/);
+    expect(await response.json()).toHaveProperty("error");
+  });
+
   test("admin grant mutation rejects a cross-origin request before authentication", async ({ request }) => {
     const response = await request.post("/api/admin/access", {
       headers: { Origin: "https://attacker.example.invalid" },
@@ -182,6 +191,41 @@ test.describe("staging security regression checks", () => {
     expect(await advertise.text()).toMatch(/Partnership/i);
   });
 
+});
+
+test("anonymous staging access stays on Free plan with ads disabled", async ({ request }) => {
+  const response = await request.get("/api/access");
+  expect(response.status()).toBe(200);
+  const body = await response.json();
+  expect(body).toMatchObject({
+    user: null,
+    plan: "free",
+    isPro: false,
+    adsEnabled: false,
+    selectedTools: [],
+  });
+});
+
+test("session cookies are HttpOnly, same-site, bounded, and cleared on logout or failed refresh", async () => {
+  const session = await readFile(new URL("../src/app/api/auth/session/route.ts", import.meta.url), "utf8");
+  expect(session).toContain("httpOnly: true");
+  expect(session).toContain('sameSite: "lax"');
+  expect(session).toContain("secure: process.env.NODE_ENV === \"production\"");
+  expect(session).toContain("Math.max(60, Math.min(Math.floor(expiresIn), 3600))");
+  expect(session).toContain("const REFRESH_MAX_AGE = 60 * 60 * 24 * 60");
+  expect(session).toContain("if (!refreshResponse.ok)");
+  expect(session).toContain("clearCookies(response)");
+  expect(session).toContain("export async function DELETE()");
+});
+
+test("logout endpoint expires both session cookies without requiring a valid session", async ({ request }) => {
+  const response = await request.delete("/api/auth/session");
+  expect(response.status()).toBe(200);
+  expect(await response.json()).toMatchObject({ ok: true });
+  const cookies = response.headers()["set-cookie"] || "";
+  expect(cookies).toContain("kk_access_token=");
+  expect(cookies).toContain("kk_refresh_token=");
+  expect(cookies).toMatch(/Max-Age=0/i);
 });
 
 test("Razorpay subscription verification signs payment ID before subscription ID", async () => {

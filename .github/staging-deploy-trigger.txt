@@ -1,3 +1,4 @@
-Staging recovery trigger for validated billing base.
+Staging-only deployment trigger for the latest validated feature head.
 Deploy target: kaamkitpro-staging workers.dev only.
 Production domains, DNS, production data, and live checkout remain excluded.
+Validated feature head a5c954d2 passed CI; deploy this revision to isolated staging Worker only.

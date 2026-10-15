@@ -125,6 +125,7 @@ export default function AdminAccessPage() {
         <header className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4">
           <BrandLogo />
           <nav className="flex items-center gap-4 text-sm font-semibold">
+            <Link href="/admin/support" className="text-blue-700 hover:underline">Support Inbox</Link>
             <Link href="/account" className="text-blue-700 hover:underline">Account</Link>
             <Link href="/" className="text-slate-600 hover:text-slate-900">Home</Link>
           </nav>

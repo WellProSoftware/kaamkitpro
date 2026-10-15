@@ -32,7 +32,7 @@ async function getSupabaseUser(url: string, key: string, accessToken: string) {
     cache: "no-store",
   });
   if (!response.ok) return null;
-  return (await response.json()) as { id?: string; email?: string };
+  return (await response.json()) as { id?: string; email?: string; user_metadata?: { full_name?: string; display_name?: string } };
 }
 
 export async function POST(request: NextRequest) {
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
       : 3600;
 
   const response = NextResponse.json({
-    user: { id: user.id, email: user.email ?? null },
+    user: { id: user.id, email: user.email ?? null, fullName: user.user_metadata?.full_name ?? user.user_metadata?.display_name ?? null },
   });
   response.cookies.set(ACCESS_COOKIE, accessToken, cookieOptions(maxAge));
   response.cookies.set(REFRESH_COOKIE, refreshToken, cookieOptions(REFRESH_MAX_AGE));
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
 
   let user = await getSupabaseUser(config.url, config.key, accessToken);
   if (user?.id) {
-    return NextResponse.json({ user: { id: user.id, email: user.email ?? null } });
+    return NextResponse.json({ user: { id: user.id, email: user.email ?? null, fullName: user.user_metadata?.full_name ?? user.user_metadata?.display_name ?? null } });
   }
 
   if (!refreshToken) {
@@ -129,7 +129,7 @@ export async function GET(request: NextRequest) {
     access_token?: string;
     refresh_token?: string;
     expires_in?: number;
-    user?: { id?: string; email?: string };
+    user?: { id?: string; email?: string; user_metadata?: { full_name?: string; display_name?: string } };
   };
 
   if (!refreshed.access_token || !refreshed.refresh_token || !refreshed.user?.id) {
@@ -139,7 +139,7 @@ export async function GET(request: NextRequest) {
   }
 
   user = refreshed.user;
-  const response = NextResponse.json({ user: { id: user.id, email: user.email ?? null } });
+  const response = NextResponse.json({ user: { id: user.id, email: user.email ?? null, fullName: user.user_metadata?.full_name ?? user.user_metadata?.display_name ?? null } });
   response.cookies.set(
     ACCESS_COOKIE,
     refreshed.access_token,

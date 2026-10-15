@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRequestUser, serviceRest } from "@/lib/server-access";
+import { getRequestUser, isAuthorizedAdmin, serviceRest } from "@/lib/server-access";
 import { getToolPolicy, normalizeToolKey } from "@/lib/tool-access-policy";
 
 type Grant = {
@@ -106,6 +106,17 @@ export async function POST(request: NextRequest) {
       error: "Sign in to use this limited tool so your daily quota can be tracked fairly.",
       tool_key: toolKey,
     }, { status: 401 });
+  }
+
+  // Admin full access must bypass quota storage and subscription/grant lookups too.
+  // This uses the same server-side email allowlist as /api/access.
+  if (isAuthorizedAdmin(user.email)) {
+    return NextResponse.json({
+      allowed: true,
+      tier: "admin_full_access",
+      limited: false,
+      tool_key: toolKey,
+    });
   }
 
   const access = await accessFor(user.id, user.email);
