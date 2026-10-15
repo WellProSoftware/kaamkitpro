@@ -13,6 +13,12 @@ async function stubAccess(page, adsEnabled, status = 200) {
 }
 
 test.describe("AdSense consent and entitlement regression", () => {
+  test("ads remain disabled when no consent choice has been saved", async ({ page }) => {
+    await stubAccess(page, true);
+    await page.goto("/");
+    await expect(page.locator("#google-adsense")).toHaveCount(0);
+  });
+
   test("essential-only consent never loads AdSense", async ({ page }) => {
     await page.addInitScript(({ key }) => localStorage.setItem(key, "essential"), { key: CONSENT_KEY });
     await stubAccess(page, true);
