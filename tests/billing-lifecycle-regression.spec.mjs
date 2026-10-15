@@ -114,6 +114,17 @@ test.describe("Razorpay subscription lifecycle safety", () => {
   });
 });
 
+  test("webhook never auto-links dashboard-created subscriptions from untrusted notes", async () => {
+    const webhook = await source("../src/app/api/billing/webhook/route.ts");
+    expect(webhook).toContain('provider_subscription_id: `eq.${sub.id}`');
+    expect(webhook).toContain("if (!current) {");
+    expect(webhook).toContain("never grant access");
+    expect(webhook).not.toContain('serviceRest("subscriptions", {');
+    expect(webhook).not.toContain("payload.notes");
+    expect(webhook).not.toContain("sub.notes");
+  });
+
+
 
 test.describe("provider event ordering behavior", () => {
   const active = { status: "active", last_provider_event_at: "2026-10-14T10:00:00.000Z" };
