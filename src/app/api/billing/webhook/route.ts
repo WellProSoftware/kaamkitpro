@@ -28,6 +28,24 @@ function dateFromUnix(value?: number | null) {
 }
 
 
+/** Release a claimed event for retry when its subscription cannot be matched.
+ * Keep the event unprocessed and record a visible diagnostic; never grant access.
+ */
+async function releaseEventForRetry(eventId: string, reason: string) {
+  const query = new URLSearchParams({
+    provider_event_id: `eq.${eventId}`,
+    processed_at: "is.null",
+  });
+  return serviceRest(`payment_events?${query.toString()}`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      processing_started_at: null,
+      processing_error: reason,
+    }),
+  });
+}
+
+
 export async function POST(request: NextRequest) {
   const secret = await getServerEnv("RAZORPAY_WEBHOOK_SECRET");
   if (!secret) return NextResponse.json({ error: "Webhook is not configured." }, { status: 503 });
@@ -114,7 +132,14 @@ export async function POST(request: NextRequest) {
     }
     const currentRows = await currentResponse.json().catch(() => []);
     const current = Array.isArray(currentRows) ? currentRows[0] as { status?: string; last_provider_event_at?: string | null } | undefined : undefined;
-    if (!current) return NextResponse.json({ error: "Subscription record missing." }, { status: 503 });
+    if (!current) {
+      // Dashboard-created subscriptions may not belong to a local app user/plan.
+      // Do not fabricate a local subscription or grant entitlement. Release the
+      // processing lease and persist a diagnostic so the event is visible/retryable.
+      const released = await releaseEventForRetry(eventId, `Subscription record missing for provider subscription ${sub.id}.`);
+      if (!released?.ok) return NextResponse.json({ error: "Subscription record missing; could not release event for retry." }, { status: 503 });
+      return NextResponse.json({ error: "Subscription record missing; event released for retry and requires reconciliation." }, { status: 503 });
+    }
 
     if (shouldApplyProviderEvent(current, providerEventAt, nextStatus)) {
       // Equal-time terminal events are allowed; stale non-terminal events are not.
