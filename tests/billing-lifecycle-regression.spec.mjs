@@ -26,6 +26,17 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(webhook).toContain("processed_at: new Date().toISOString()");
   });
 
+  test("unmatched provider subscriptions are released for retry without granting access", async () => {
+    const webhook = await source("../src/app/api/billing/webhook/route.ts");
+    expect(webhook).toContain("async function releaseEventForRetry(eventId: string, reason: string)");
+    expect(webhook).toContain("processing_started_at: null");
+    expect(webhook).toContain("processing_error: reason");
+    expect(webhook).toContain("Subscription record missing; event released for retry and requires reconciliation.");
+    expect(webhook).toContain("if (!current) {");
+    expect(webhook.indexOf("releaseEventForRetry(eventId")).toBeGreaterThan(webhook.indexOf("if (!current) {"));
+    expect(webhook).toContain("return NextResponse.json({ error: \"Subscription record missing; event released for retry and requires reconciliation.\" }, { status: 503 });");
+  });
+
   test("webhook delegates lifecycle status decisions to the shared allow-listed mapper", async () => {
     const webhook = await source("../src/app/api/billing/webhook/route.ts");
     const mapper = await source("../src/lib/billing/subscription-status.mjs");
