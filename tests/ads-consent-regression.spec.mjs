@@ -2,10 +2,10 @@ import { expect, test } from "@playwright/test";
 
 const CONSENT_KEY = "kk_privacy_consent_v1";
 
-async function stubAccess(page, adsEnabled) {
+async function stubAccess(page, adsEnabled, status = 200) {
   await page.route("**/api/access", async (route) => {
     await route.fulfill({
-      status: 200,
+      status,
       contentType: "application/json",
       body: JSON.stringify({ user: null, plan: adsEnabled ? "free" : "pro", isPro: !adsEnabled, adsEnabled, selectedTools: [] }),
     });
@@ -20,15 +20,13 @@ test.describe("AdSense consent and entitlement regression", () => {
     await expect(page.locator("#google-adsense")).toHaveCount(0);
   });
 
-  test("accepted consent loads AdSense only when access API enables ads", async ({ page }) => {
+  test("accepted consent still cannot enable ads in the staging build", async ({ page }) => {
     await page.addInitScript(({ key }) => localStorage.setItem(key, "accepted"), { key: CONSENT_KEY });
     await stubAccess(page, true);
     await page.route("https://pagead2.googlesyndication.com/**", (route) => route.abort());
     await page.goto("/");
-    await expect(page.locator("#google-adsense")).toHaveAttribute(
-      "src",
-      /pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js/,
-    );
+    // Staging must remain ad-free even if a mocked access response says ads are allowed.
+    await expect(page.locator("#google-adsense")).toHaveCount(0);
   });
 
   test("Pro entitlement keeps AdSense disabled even when consent is accepted", async ({ page }) => {
@@ -38,21 +36,10 @@ test.describe("AdSense consent and entitlement regression", () => {
     await expect(page.locator("#google-adsense")).toHaveCount(0);
   });
 
-  test("access change removes previously loaded AdSense when entitlement changes to Pro", async ({ page }) => {
+  test("access API failure fails closed and does not load AdSense", async ({ page }) => {
     await page.addInitScript(({ key }) => localStorage.setItem(key, "accepted"), { key: CONSENT_KEY });
-    let adsEnabled = true;
-    await page.route("**/api/access", async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ user: null, plan: adsEnabled ? "free" : "pro", isPro: !adsEnabled, adsEnabled, selectedTools: [] }),
-      });
-    });
-    await page.route("https://pagead2.googlesyndication.com/**", (route) => route.abort());
+    await stubAccess(page, true, 503);
     await page.goto("/");
-    await expect(page.locator("#google-adsense")).toHaveCount(1);
-    adsEnabled = false;
-    await page.evaluate(() => window.dispatchEvent(new Event("kaamkitpro:access-changed")));
     await expect(page.locator("#google-adsense")).toHaveCount(0);
   });
 });
