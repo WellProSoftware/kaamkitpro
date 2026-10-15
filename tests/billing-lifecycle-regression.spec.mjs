@@ -33,7 +33,7 @@ test.describe("Razorpay subscription lifecycle safety", () => {
     expect(webhook).toContain("processing_error: reason");
     expect(webhook).toContain("Subscription record missing; event released for retry and requires reconciliation.");
     expect(webhook).toContain("if (!current) {");
-    expect(webhook.indexOf("releaseEventForRetry(eventId")).toBeGreaterThan(webhook.indexOf("if (!current) {"));
+    expect(webhook.indexOf("const released = await releaseEventForRetry(eventId")).toBeGreaterThan(webhook.indexOf("if (!current) {"));
     expect(webhook).toContain("return NextResponse.json({ error: \"Subscription record missing; event released for retry and requires reconciliation.\" }, { status: 503 });");
   });
 
