@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { readFile } from "node:fs/promises";
+import { statusFor } from "../src/lib/billing/subscription-status.mjs";
 
 test.describe("staging security regression checks", () => {
   test("server-only Supabase credentials are not exposed in public HTML", async ({ request }) => {
@@ -194,4 +195,34 @@ test("live subscription cancellation is gated by explicit live-payments authoriz
   const source = await readFile(new URL("../src/app/api/billing/cancel/route.ts", import.meta.url), "utf8");
   expect(source).toContain('getServerEnv("RAZORPAY_LIVE_PAYMENTS_ENABLED")');
   expect(source).toContain('mode === "live" && livePaymentsEnabled !== "true"');
+});
+
+test("subscription.updated maps recognized Razorpay statuses behaviorally", () => {
+  const cases = [
+    ["active", "active"],
+    ["pending", "incomplete"],
+    ["authenticated", "incomplete"],
+    ["halted", "past_due"],
+    ["cancelled", "cancelled"],
+    ["completed", "expired"],
+    ["expired", "expired"],
+  ];
+  for (const [providerStatus, expected] of cases) {
+    expect(statusFor("subscription.updated", providerStatus), providerStatus).toBe(expected);
+  }
+  for (const unknown of [undefined, "", "unknown", "created", "paused", "authorized"]) {
+    expect(statusFor("subscription.updated", unknown), String(unknown)).toBeNull();
+  }
+  expect(statusFor("unrecognized.event", "active")).toBeNull();
+});
+
+test("recognized subscription lifecycle events retain their established mappings", () => {
+  expect(statusFor("subscription.activated")).toBe("active");
+  expect(statusFor("subscription.charged")).toBe("active");
+  expect(statusFor("subscription.resumed")).toBe("active");
+  expect(statusFor("subscription.halted")).toBe("past_due");
+  expect(statusFor("subscription.cancelled")).toBe("cancelled");
+  expect(statusFor("subscription.completed")).toBe("expired");
+  expect(statusFor("subscription.pending")).toBe("incomplete");
+  expect(statusFor("subscription.paused")).toBe("incomplete");
 });

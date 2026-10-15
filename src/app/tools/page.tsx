@@ -44,31 +44,37 @@ const popularTools = [
     href: "/tools/qr-code-generator",
     title: "QR Code Generator",
     description: "Create QR codes online quickly.",
+    access: "FREE",
   },
   {
     href: "/tools/pdf-merge",
     title: "PDF Merge",
     description: "Combine multiple PDF files into one.",
+    access: "FREE",
   },
   {
     href: "/tools/image-compressor",
     title: "Image Compressor",
     description: "Reduce image file size in your browser.",
+    access: "FREE",
   },
   {
     href: "/tools/word-counter",
     title: "Word Counter",
     description: "Count words and characters in text.",
+    access: "FREE",
   },
   {
     href: "/tools/json-formatter",
     title: "JSON Formatter",
     description: "Format and validate JSON data.",
+    access: "FREE",
   },
   {
     href: "/tools/emi-calculator",
     title: "EMI Calculator",
     description: "Calculate loan EMI and repayment details.",
+    access: "FREE",
   },
 ];
 
@@ -88,13 +94,13 @@ export default function ToolsPage() {
           </p>
 
           <h1 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            Free Online Tools
+            Online Tools
           </h1>
 
           <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
-            Explore free online tools for PDF files, images, calculations,
-            text, SEO, social media and developer tasks. Choose a category
-            below or jump directly to a popular utility.
+            Explore browser-based tools for PDF files, images, calculations,
+            text, SEO, social media and developer tasks. Popular tools below are marked FREE.
+            Check individual tool pages for any usage limits or plan requirements.
           </p>
         </div>
       </section>
@@ -149,9 +155,14 @@ export default function ToolsPage() {
               href={tool.href}
               className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-300 hover:shadow-md"
             >
-              <h3 className="font-semibold text-slate-900">
-                {tool.title}
-              </h3>
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="font-semibold text-slate-900">
+                  {tool.title}
+                </h3>
+                <span className="shrink-0 rounded-md bg-emerald-100 px-2 py-1 text-xs font-bold text-emerald-800">
+                  {tool.access}
+                </span>
+              </div>
 
               <p className="mt-1 text-sm leading-6 text-slate-600">
                 {tool.description}

@@ -1,3 +1,4 @@
+# Explicit staging release request for the PR #38 candidate; deploy job remains workers.dev-only. Support chat response normalization fix included.
 # Safety note: this workflow must deploy only the kaamkitpro-staging Worker. Recovery branch is isolated from production.
 # Feature-branch deployment is permitted only by a validated commit carrying [deploy-staging].
 # Feature-branch pushes deploy only when the commit message explicitly contains [deploy-staging].
@@ -9,6 +10,7 @@ on:
       - cloudflare/vinext-staging
       - feature/remove-otp-auth-staging
       - recovery/restore-8-41pm
+      - fix/webhook-event-ordering
   workflow_dispatch:
     inputs:
       deploy_to_workers_dev:
@@ -18,6 +20,11 @@ on:
         default: false
       deploy_feature_pr32:
         description: "Use PR #32 feature branch instead of the staging base branch (requires deploy_to_workers_dev=true)"
+        required: true
+        type: boolean
+        default: false
+      deploy_pr38:
+        description: "Use PR #38 webhook-ordering branch for isolated staging deployment (requires deploy_to_workers_dev=true)"
         required: true
         type: boolean
         default: false
@@ -44,7 +51,7 @@ jobs:
       - name: Checkout explicitly selected staging source
         uses: actions/checkout@v5
         with:
-          ref: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/feature/remove-otp-auth-staging' || github.ref == 'refs/heads/recovery/restore-8-41pm') && github.ref_name || (inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging') }}
+          ref: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/feature/remove-otp-auth-staging' || github.ref == 'refs/heads/recovery/restore-8-41pm' || github.ref == 'refs/heads/fix/webhook-event-ordering') && github.ref_name || (inputs.deploy_pr38 && inputs.deploy_to_workers_dev && 'fix/webhook-event-ordering' || (inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging')) }}
           persist-credentials: true
 
       - name: Set up Node.js
@@ -176,7 +183,7 @@ jobs:
         run: set -o pipefail; npx playwright test -c playwright.cloudflare.config.mjs 2>&1 | tee cloudflare-playwright.log
 
       - name: Commit generated Cloudflare source configuration to staging branch
-        if: always() && steps.init.outcome == 'success' && !(github.event_name == 'workflow_dispatch' && inputs.deploy_feature_pr32 == true) && !(github.event_name == 'push' && (github.ref == 'refs/heads/feature/remove-otp-auth-staging' || github.ref == 'refs/heads/recovery/restore-8-41pm'))
+        if: always() && steps.init.outcome == 'success' && !(github.event_name == 'workflow_dispatch' && (inputs.deploy_feature_pr32 == true || inputs.deploy_pr38 == true)) && !(github.event_name == 'push' && (github.ref == 'refs/heads/feature/remove-otp-auth-staging' || github.ref == 'refs/heads/recovery/restore-8-41pm' || github.ref == 'refs/heads/fix/webhook-event-ordering'))
         shell: bash
         run: |
           set -euo pipefail
@@ -254,7 +261,7 @@ jobs:
 
   deploy-staging:
     name: Deploy validated build to workers.dev only
-    if: needs.validate.result == 'success' && ((github.event_name == 'workflow_dispatch' && inputs.deploy_to_workers_dev == true && (!inputs.deploy_feature_pr32 || github.ref == 'refs/heads/cloudflare/vinext-staging')) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[deploy-staging]')))
+    if: needs.validate.result == 'success' && ((github.event_name == 'workflow_dispatch' && inputs.deploy_to_workers_dev == true && ((inputs.deploy_pr38 && github.ref == 'refs/heads/fix/webhook-event-ordering') || (inputs.deploy_feature_pr32 && github.ref == 'refs/heads/cloudflare/vinext-staging') || (!inputs.deploy_pr38 && !inputs.deploy_feature_pr32 && github.ref == 'refs/heads/cloudflare/vinext-staging'))) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[deploy-staging]')))
     needs: validate
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -273,7 +280,7 @@ jobs:
       - name: Checkout explicitly selected staging source only
         uses: actions/checkout@v5
         with:
-          ref: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[deploy-staging]') && (github.ref == 'refs/heads/feature/remove-otp-auth-staging' || github.ref == 'refs/heads/recovery/restore-8-41pm') && github.ref_name || (inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging') }}
+          ref: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[deploy-staging]') && (github.ref == 'refs/heads/feature/remove-otp-auth-staging' || github.ref == 'refs/heads/recovery/restore-8-41pm' || github.ref == 'refs/heads/fix/webhook-event-ordering') && github.ref_name || (inputs.deploy_pr38 && inputs.deploy_to_workers_dev && 'fix/webhook-event-ordering' || (inputs.deploy_feature_pr32 && inputs.deploy_to_workers_dev && 'feature/razorpay-staging-integration' || 'cloudflare/vinext-staging')) }}
       - name: Set up Node.js
         uses: actions/setup-node@v5
         with:

@@ -5,6 +5,15 @@ import { FormEvent, useEffect, useState } from "react";
 type Language = "en" | "hi";
 type Message = { id: string; sender_role: "user" | "admin" | "assistant"; body: string; created_at: string };
 type Conversation = { id: string; subject: string; status: string; messages: Message[] };
+type ApiConversation = Omit<Conversation, "messages"> & { messages?: Message[]; support_messages?: Message[] };
+
+function normalizeConversation(value: ApiConversation | null | undefined): Conversation | null {
+  if (!value) return null;
+  const messages = [...(value.messages ?? value.support_messages ?? [])].sort(
+    (a, b) => Date.parse(a.created_at) - Date.parse(b.created_at),
+  );
+  return { id: value.id, subject: value.subject, status: value.status, messages };
+}
 
 const copy = {
   en: {
@@ -98,7 +107,7 @@ export default function SupportChat() {
         if (response.status === 401) { setSignedIn(false); return; }
         if (!response.ok) throw new Error(data.error || t.loadError);
         setSignedIn(true);
-        if (data.conversation) setConversation(data.conversation);
+        if (data.conversation) setConversation(normalizeConversation(data.conversation));
       })
       .catch(() => { if (active) setNotice(t.loadError); });
     return () => { active = false; };
@@ -121,7 +130,7 @@ export default function SupportChat() {
       const data = await response.json().catch(() => ({}));
       if (response.status === 401) { setSignedIn(false); throw new Error(t.loginFirst); }
       if (!response.ok) throw new Error(data.error || t.sendError);
-      setConversation(data.conversation);
+      setConversation(normalizeConversation(data.conversation));
       setText("");
       setNotice(answer);
     } catch (error) {
@@ -140,7 +149,7 @@ export default function SupportChat() {
                 <button type="button" onClick={() => changeLanguage("en")} aria-pressed={language === "en"} className={`rounded-md px-2 py-1.5 text-xs font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-white ${language === "en" ? "bg-white text-slate-900" : "text-white hover:bg-white/10"}`}>English</button>
                 <button type="button" onClick={() => changeLanguage("hi")} aria-pressed={language === "hi"} className={`rounded-md px-2 py-1.5 text-xs font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-white ${language === "hi" ? "bg-white text-slate-900" : "text-white hover:bg-white/10"}`}>हिंदी</button>
               </div>
-              <button type="button" onClick={() => { setNotice(""); fetch("/api/support", { cache: "no-store" }).then(async response => { const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.error || t.refreshError); setConversation(data.conversation); }).catch(error => setNotice(error instanceof Error ? error.message : t.refreshError)); }} aria-label={t.refresh} className="rounded-lg px-2 py-2 text-xs hover:bg-white/10">{t.refresh}</button>
+              <button type="button" onClick={() => { setNotice(""); fetch("/api/support", { cache: "no-store" }).then(async response => { const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.error || t.refreshError); setConversation(normalizeConversation(data.conversation)); }).catch(error => setNotice(error instanceof Error ? error.message : t.refreshError)); }} aria-label={t.refresh} className="rounded-lg px-2 py-2 text-xs hover:bg-white/10">{t.refresh}</button>
               <button type="button" onClick={() => setOpen(false)} aria-label={t.close} className="rounded-lg px-2 py-2 hover:bg-white/10">✕</button>
             </div>
           </header>
