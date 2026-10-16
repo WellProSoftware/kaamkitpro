@@ -177,3 +177,13 @@ test("checkout refuses to create duplicate subscriptions for active or unresolve
   expect(checkout).toContain("A Pro subscription is already pending or needs attention. Check your account status before trying again; no new subscription was created.");
   expect(checkout).toContain("if (existingSubscription)");
 });
+
+
+test("duplicate checkout guard runs before any provider subscription is created", async () => {
+  const checkout = await source("../src/app/api/billing/checkout/route.ts");
+  const guardIndex = checkout.indexOf("if (existingSubscription)");
+  const providerCreateIndex = checkout.indexOf('fetch("https://api.razorpay.com/v1/subscriptions"');
+  expect(guardIndex).toBeGreaterThan(-1);
+  expect(providerCreateIndex).toBeGreaterThan(-1);
+  expect(guardIndex).toBeLessThan(providerCreateIndex);
+});
