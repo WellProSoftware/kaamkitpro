@@ -16,6 +16,7 @@ function activeGrant(grant: Grant, now: number) {
 }
 
 export async function GET(request: NextRequest) {
+  try {
   const isStagingBuild = process.env.KAAMKITPRO_STAGING === "true" || process.env.VERCEL_ENV === "preview";
   const user = await getRequestUser(request);
   if (!user?.email) {
@@ -97,4 +98,16 @@ export async function GET(request: NextRequest) {
         ? "Special access is active for selected tools."
         : "Free plan is active. Basic tools remain available; metered tools have daily limits.",
   });
+  } catch (error) {
+    // Preserve fail-closed access behavior while surfacing unexpected Worker failures.
+    console.error("[api/access] unexpected handler failure", error);
+    return NextResponse.json({
+      user: null,
+      plan: "access_check_unavailable",
+      isPro: false,
+      adsEnabled: false,
+      selectedTools: [],
+      message: "Access status could not be verified. Ads are disabled until the check succeeds.",
+    }, { status: 503 });
+  }
 }
