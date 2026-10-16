@@ -140,7 +140,7 @@ export default function RootLayout({
 
         <PrivacyConsent />
 
-        <AnalyticsLoader disabled={isStagingBuild} />
+        <AnalyticsLoader />
       </body>
     </html>
   );
