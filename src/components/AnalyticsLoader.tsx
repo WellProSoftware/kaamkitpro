@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const CONSENT_KEY = "kk_privacy_consent_v1";
 const SCRIPT_ID = "google-analytics-script";
-const MEASUREMENT_ID = "G-M9190XP42G";
+const MEASUREMENT_ID = "G-8B6JX70RH8";
 
 export default function AnalyticsLoader({ disabled = false }: { disabled?: boolean }) {
   const pathname = usePathname();
