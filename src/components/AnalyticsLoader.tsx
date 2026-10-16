@@ -12,8 +12,6 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
   const lastTrackedToolPath = useRef("");
 
   useEffect(() => {
-    let cancelled = false;
-
     function removeAnalytics() {
       document.getElementById(SCRIPT_ID)?.remove();
     }
@@ -37,36 +35,37 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
       }
       if (document.getElementById(SCRIPT_ID)) return;
 
+      const analyticsWindow = window as Window & {
+        dataLayer?: unknown[][];
+        gtag?: (...args: unknown[]) => void;
+      };
+
+      // Queue gtag commands before loading Google's script so config/page_view
+      // are not lost if the external script finishes loading before onload setup.
+      analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
+      analyticsWindow.gtag = function gtag(...args: unknown[]) {
+        analyticsWindow.dataLayer?.push(args);
+      };
+      analyticsWindow.gtag("js", new Date());
+      analyticsWindow.gtag("config", MEASUREMENT_ID);
+
+      if (window.location.pathname.startsWith("/tools/")) {
+        analyticsWindow.gtag("event", "tool_used", {
+          tool_name: window.location.pathname,
+        });
+        lastTrackedToolPath.current = window.location.pathname;
+      }
+
       const script = document.createElement("script");
       script.id = SCRIPT_ID;
       script.async = true;
       script.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
-      script.onload = () => {
-        if (cancelled) return;
-        const analyticsWindow = window as Window & {
-          dataLayer?: unknown[][];
-          gtag?: (...args: unknown[]) => void;
-        };
-        analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
-        analyticsWindow.gtag = function gtag(...args: unknown[]) {
-          analyticsWindow.dataLayer?.push(args);
-        };
-        analyticsWindow.gtag("js", new Date());
-        analyticsWindow.gtag("config", MEASUREMENT_ID);
-        if (window.location.pathname.startsWith("/tools/")) {
-          analyticsWindow.gtag("event", "tool_used", {
-            tool_name: window.location.pathname,
-          });
-          lastTrackedToolPath.current = window.location.pathname;
-        }
-      };
       document.head.appendChild(script);
     }
 
     loadAnalyticsIfConsented();
     window.addEventListener("kaamkitpro:consent", loadAnalyticsIfConsented);
     return () => {
-      cancelled = true;
       window.removeEventListener("kaamkitpro:consent", loadAnalyticsIfConsented);
     };
   }, [disabled]);
