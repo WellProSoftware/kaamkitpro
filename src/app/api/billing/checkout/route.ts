@@ -79,6 +79,30 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "This plan is not available for checkout yet." }, { status: 409 });
   }
 
+  // Never create a second provider subscription while this account already has
+  // an active or unresolved local subscription. This prevents accidental duplicate
+  // recurring mandates when a customer revisits pricing from their account page.
+  const existingQuery = new URLSearchParams({
+    select: "id,status,plan_id",
+    user_id: `eq.${user.id}`,
+    status: "in.(active,incomplete,past_due,trialing)",
+    limit: "1",
+  });
+  const existingResponse = await serviceRest(`subscriptions?${existingQuery.toString()}`);
+  if (!existingResponse?.ok) {
+    return NextResponse.json({ error: "Existing subscription status could not be verified. No new subscription was created." }, { status: 503 });
+  }
+  const existingRows = await existingResponse.json().catch(() => []);
+  const existingSubscription = Array.isArray(existingRows) ? existingRows[0] as { id?: string; status?: string; plan_id?: string } | undefined : undefined;
+  if (existingSubscription) {
+    return NextResponse.json({
+      error: existingSubscription.status === "active"
+        ? "You already have an active Pro subscription. Manage it from your account page; no new subscription was created."
+        : "A Pro subscription is already pending or needs attention. Check your account status before trying again; no new subscription was created.",
+      existing_subscription: true,
+    }, { status: 409 });
+  }
+
   // Keep recurring billing finite and explicit; customers can cancel through the provider.
   const totalCount = plan.billing_interval === "month" ? 120 : 10;
   let providerResponse: Response;
