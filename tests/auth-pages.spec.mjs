@@ -1,51 +1,51 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("KaamKitPro authentication pages", () => {
-  test("signup page offers email/mobile OTP, password and Google sign-in", async ({ page }) => {
+  test("signup offers email verification link only; no Google or OTP options", async ({ page }) => {
     await page.goto("/login");
-
     await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
     await expect(page.getByLabel("Full name")).toBeVisible();
     await expect(page.getByLabel("Email address")).toHaveAttribute("type", "email");
-    await expect(page.getByLabel("Create password")).toHaveAttribute("minlength", "10");
-    await expect(page.getByRole("button", { name: "Continue with Google" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Create account and send OTP" })).toBeVisible();
-
-    await page.getByRole("button", { name: "Mobile number" }).click();
-    await expect(page.getByLabel("Mobile number")).toHaveAttribute("type", "tel");
+    await expect(page.getByRole("button", { name: "Send verification link" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Google|OTP|one-time code|mobile number/i })).toHaveCount(0);
+    await expect(page.getByText(/Google sign-in, mobile OTP and email OTP codes are not offered/i)).toBeVisible();
+    await expect(page.getByLabel("Password")).toHaveCount(0);
   });
 
   test("signup handles missing public Supabase configuration gracefully", async ({ page }) => {
     await page.goto("/login");
     await page.getByLabel("Full name").fill("Test User");
     await page.getByLabel("Email address").fill("test@example.com");
-    await page.getByLabel("Create password").fill("long-enough-test-password");
-    await page.getByRole("button", { name: "Create account and send OTP" }).click();
-
+    await page.getByRole("button", { name: "Send verification link" }).click();
     await expect(page.getByText("Account access is temporarily unavailable", { exact: false })).toBeVisible();
   });
 
-  test("login supports password and one-time-code modes", async ({ page }) => {
+  test("login supports email and password only", async ({ page }) => {
     await page.goto("/login");
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Welcome back" })).toBeVisible();
-    await expect(page.getByRole("textbox", { name: "Password" })).toBeVisible();
-
-    await page.getByLabel("One-time code").check();
-    await expect(page.getByRole("button", { name: "Send one-time code" })).toBeVisible();
-    await expect(page.getByRole("textbox", { name: "Password" })).toHaveCount(0);
+    await expect(page.getByLabel("Email address")).toHaveAttribute("type", "email");
+    await expect(page.getByLabel("Password")).toBeVisible();
+    await expect(page.getByRole("button", { name: /Google|OTP|one-time code|mobile number/i })).toHaveCount(0);
   });
 
-  test("callback page rejects a URL without sign-in tokens", async ({ page }) => {
+  test("callback page rejects a URL without verification tokens", async ({ page }) => {
     await page.goto("/auth/callback");
+    await expect(page.getByRole("heading", { name: "Verification link not accepted" })).toBeVisible();
+    await expect(page.getByText("This verification link is invalid or expired", { exact: false })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Return to sign in" })).toHaveAttribute("href", "/login");
+  });
 
-    await expect(
-      page.getByRole("heading", { name: "Sign-in link not accepted" }),
-    ).toBeVisible();
-    await expect(page.getByText("This sign-in link is invalid, expired", { exact: false })).toBeVisible();
-    await expect(
-      page.getByRole("link", { name: "Request a new link" }),
-    ).toHaveAttribute("href", "/login");
+  test("set-password page asks for password confirmation", async ({ page }) => {
+    await page.goto("/set-password");
+    await expect(page.getByRole("heading", { name: "Create your password" })).toBeVisible();
+    await expect(page.getByLabel("Password")).toHaveAttribute("minlength", "10");
+    await expect(page.getByLabel("Confirm password")).toHaveAttribute("minlength", "10");
+  });
+
+  test("password API rejects requests without an authenticated session", async ({ request }) => {
+    const response = await request.post("/api/auth/password", { data: { password: "test-password-123" } });
+    expect(response.status()).toBe(401);
   });
 
   test("admin access page requires a signed-in allowlisted account", async ({ page }) => {
@@ -60,9 +60,7 @@ test.describe("KaamKitPro authentication pages", () => {
   });
 
   test("subscription checkout rejects requests without an authenticated user", async ({ request }) => {
-    const response = await request.post("/api/billing/checkout", {
-      data: { plan_id: "pro-monthly-inr" },
-    });
+    const response = await request.post("/api/billing/checkout", { data: { plan_id: "pro-monthly-inr" } });
     expect(response.status()).toBe(401);
     expect(await response.json()).toMatchObject({ error: "Sign in before starting a subscription." });
   });
@@ -71,63 +69,34 @@ test.describe("KaamKitPro authentication pages", () => {
     const status = await request.get("/api/billing/subscription");
     expect(status.status()).toBe(401);
     expect(await status.json()).toMatchObject({ error: "Please sign in first." });
-
-    const cancel = await request.post("/api/billing/cancel", {
-      data: { subscription_id: "00000000-0000-4000-8000-000000000000" },
-    });
+    const cancel = await request.post("/api/billing/cancel", { data: { subscription_id: "00000000-0000-4000-8000-000000000000" } });
     expect(cancel.status()).toBe(401);
     expect(await cancel.json()).toMatchObject({ error: "Please sign in first." });
-
-    const verify = await request.post("/api/billing/verify", {
-      data: {},
-    });
+    const verify = await request.post("/api/billing/verify", { data: {} });
     expect(verify.status()).toBe(401);
     expect(await verify.json()).toMatchObject({ error: "Sign in before verifying a subscription." });
   });
 
   test("all tool tiers are temporarily free without sign-in while paid plans are paused", async ({ request }) => {
-    const free = await request.post("/api/tools/usage", {
-      data: { tool_key: "calculator", action: "check" },
-    });
-    expect(free.ok()).toBeTruthy();
-    expect(await free.json()).toMatchObject({ allowed: true, tier: "free_pro_access", limited: false });
-
-    const metered = await request.post("/api/tools/usage", {
-      data: { tool_key: "ai-tool", action: "check" },
-    });
-    expect(metered.ok()).toBeTruthy();
-    expect(await metered.json()).toMatchObject({ allowed: true, tier: "free_pro_access", limited: false });
-
-    const proOnly = await request.post("/api/tools/usage", {
-      data: { tool_key: "bulk-ai-generation", action: "check" },
-    });
-    expect(proOnly.ok()).toBeTruthy();
-    expect(await proOnly.json()).toMatchObject({ allowed: true, tier: "free_pro_access", limited: false });
+    for (const tool_key of ["calculator", "ai-tool", "bulk-ai-generation"]) {
+      const response = await request.post("/api/tools/usage", { data: { tool_key, action: "check" } });
+      expect(response.ok()).toBeTruthy();
+      expect(await response.json()).toMatchObject({ allowed: true, tier: "free_pro_access", limited: false });
+    }
   });
 
   test("staging never loads AdSense, even when optional ads consent is accepted", async ({ page, request }) => {
-    await page.addInitScript(() => {
-      window.localStorage.setItem("kk_privacy_consent_v1", "accepted");
-    });
-
-    const adScriptRequests = [];
-    page.on("request", (requestEvent) => {
-      if (requestEvent.url().includes("googlesyndication.com")) {
-        adScriptRequests.push(requestEvent.url());
-      }
-    });
-
+    await page.addInitScript(() => { window.localStorage.setItem("kk_privacy_consent_v1", "accepted"); });
+    const adScriptRequests: string[] = [];
+    page.on("request", event => { if (event.url().includes("googlesyndication.com")) adScriptRequests.push(event.url()); });
     await page.goto("/");
     await page.waitForTimeout(500);
-
     expect(adScriptRequests).toHaveLength(0);
     await expect(page.locator("#google-adsense")).toHaveCount(0);
-
     const accessResponse = await request.get("/api/access");
     expect(accessResponse.ok()).toBeTruthy();
     expect((await accessResponse.json()).adsEnabled).toBe(false);
   });
-
 
   test("paid plans and checkout remain paused on the pricing page", async ({ page }) => {
     await page.goto("/pricing");
@@ -143,7 +112,6 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page.getByRole("heading", { name: "Paid plans are on hold" })).toBeVisible();
     await expect(page.getByRole("button", { name: /choose monthly|choose yearly|checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
     await page.getByRole("link", { name: "Sign in" }).click();
-
     await expect(page).toHaveURL(/\/login$/);
     await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
   });
