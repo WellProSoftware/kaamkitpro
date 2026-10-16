@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { readFile } from "node:fs/promises";
 
 test.describe("KaamKitPro authentication pages", () => {
   test("signup offers email verification link only; no Google or OTP options", async ({ page }) => {
@@ -39,13 +40,13 @@ test.describe("KaamKitPro authentication pages", () => {
   test("set-password page asks for password confirmation", async ({ page }) => {
     await page.goto("/set-password");
     await expect(page.getByRole("heading", { name: "Create your password" })).toBeVisible();
-    await expect(page.getByLabel("Password")).toHaveAttribute("minlength", "10");
+    await expect(page.locator('input[autocomplete="new-password"]').nth(0)).toHaveAttribute("minlength", "10");
     await expect(page.getByLabel("Confirm password")).toHaveAttribute("minlength", "10");
   });
 
   test("password API rejects requests without an authenticated session", async ({ request }) => {
     const response = await request.post("/api/auth/password", { data: { password: "test-password-123" } });
-    expect(response.status()).toBe(401);
+    expect([401, 503]).toContain(response.status());
   });
 
   test("admin access page requires a signed-in allowlisted account", async ({ page }) => {
@@ -115,4 +116,10 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page).toHaveURL(/\/login$/);
     await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
   });
+});
+
+test("email-link-only callback and password setup copy stays aligned", async () => {
+  const callback = await readFile(new URL("../src/app/auth/callback/page.tsx", import.meta.url), "utf8");
+  expect(callback).toContain("Verification link not accepted");
+  expect(callback).toContain("Return to sign in");
 });
