@@ -129,23 +129,19 @@ test.describe("KaamKitPro authentication pages", () => {
   });
 
 
-  test("Pro subscription checkout requires explicit recurring billing consent", async ({ page }) => {
+  test("paid plans and checkout remain paused on the pricing page", async ({ page }) => {
     await page.goto("/pricing");
-    await expect(page.getByRole("button", { name: "Choose monthly" })).toBeVisible();
-
-    await page.getByRole("button", { name: "Choose monthly" }).click();
-    await expect(page.getByRole("status")).toContainText("accept the recurring billing terms");
+    await expect(page.getByRole("heading", { name: "Paid plans are on hold" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /choose monthly|choose yearly|checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
     await expect(page.locator('script[src*="checkout.razorpay.com"]')).toHaveCount(0);
   });
 
   test("pricing page explains that free tools do not need signup", async ({ page }) => {
     await page.goto("/pricing");
     await expect(page.getByRole("heading", { name: "Useful tools. No signup needed." })).toBeVisible();
-    await expect(page.getByText("Open any currently available free tool and start using it immediately.", { exact: false })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Use every tool without ads" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Choose monthly" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Choose yearly" })).toBeVisible();
-    await expect(page.getByText(/authorize recurring subscription payments/i)).toBeVisible();
+    await expect(page.getByText("Use the available free tools right away.", { exact: false })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Paid plans are on hold" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /choose monthly|choose yearly|checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
     await page.getByRole("link", { name: "Sign in" }).click();
 
     await expect(page).toHaveURL(/\/login$/);
