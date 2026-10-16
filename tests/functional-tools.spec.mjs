@@ -11,6 +11,7 @@ async function createOnePagePdf(label) {
 test("JSON Formatter formats valid JSON", async ({ page }) => {
   await page.goto("/tools/json-formatter");
   await expect(page.getByRole("heading", { name: "JSON Formatter", exact: true })).toBeVisible();
+  await page.waitForTimeout(500); // Wait for the client component to hydrate before interacting.
 
   await page.getByPlaceholder('{"name":"KaamKitPro","tools":10}').fill('{"name":"KaamKitPro","tools":10}');
   await page.getByRole("button", { name: "Format", exact: true }).click();
