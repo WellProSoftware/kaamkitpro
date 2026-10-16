@@ -1,12 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import BrandLogo from "@/components/BrandLogo";
-import ProSubscriptionCheckout from "@/components/ProSubscriptionCheckout";
 
 export const metadata: Metadata = {
-  title: "Free Tools & Pro Access",
+  title: "Free Online Tools",
   description:
-    "Use KaamKitPro free tools without signing up. Pro access requires an active paid subscription or an authorized admin grant.",
+    "Use KaamKitPro's free online tools without signing up. Paid plans and checkout are paused while we focus on improving the free tools.",
   alternates: { canonical: "https://kaamkitpro.com/pricing" },
 };
 
@@ -34,27 +33,21 @@ export default function PricingPage() {
             Useful tools. No signup needed.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-            Open any currently available free tool and start using it immediately. No account, email, or phone number is required for free browser-based tools.
+            Use the available free tools right away. We are focusing on improving the tools and website before introducing paid plans.
           </p>
+
           <div className="mx-auto mt-8 max-w-2xl rounded-2xl border border-blue-200 bg-blue-50 p-5 text-left leading-7 text-blue-950">
-            <h2 className="font-bold">How access works</h2>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm sm:text-base">
-              <li>Free tools remain free permanently and can be used without signup; ads may support the free service.</li>
-              <li>Paid-capacity tools offer a small trial allowance: typically 2 uses for heavier cloud processing or 3 uses per day for eligible AI/hosted tools. When the allowance is exhausted, the user is asked to subscribe to Pro to continue.</li>
-              <li>Free-plan users see ads across the Free experience when the ad provider serves them. Once a paid Pro subscription is verified, all KaamKitPro ads are disabled site-wide for that account for the active subscription period.</li>
-              <li>Pro access is granted only while an eligible paid subscription is active or an authorized admin has explicitly granted access. Admin grants can be scoped to selected tools and can expire or be revoked.</li>
-              <li>Checkout on this staging branch is restricted to Razorpay Test Mode. Live collection remains disabled here; any production launch requires separate authorization after end-to-end billing, webhook, cancellation and entitlement tests pass.</li>
-            </ul>
+            <h2 className="font-bold">Paid plans are on hold</h2>
+            <p className="mt-2 text-sm sm:text-base">
+              Subscription plans and checkout are temporarily unavailable while we build and improve KaamKitPro. No payment is required to use the currently available free tools. We will announce paid plans separately when they are ready.
+            </p>
           </div>
+
           <Link href="/tools" className="mt-8 inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-6 py-3 font-bold text-white hover:bg-blue-700">
             Explore free tools
           </Link>
         </div>
       </section>
-
-      <div className="mx-auto max-w-4xl px-4 pb-10 sm:px-6">
-        <ProSubscriptionCheckout />
-      </div>
 
       <section className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
         <div className="rounded-3xl border border-slate-200 bg-white p-7 sm:p-9">
