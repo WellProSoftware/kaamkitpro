@@ -92,6 +92,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "A valid tool key is required." }, { status: 400 });
   }
 
+  // Temporary launch mode: all tool tiers are free while paid plans are on hold.
+  // Do not consume daily quota or require sign-in until paid plans are explicitly launched.
+  return NextResponse.json({
+    allowed: true,
+    tier: "free_pro_access",
+    limited: false,
+    tool_key: toolKey,
+  });
+
   const policy = getToolPolicy(toolKey);
   const user = await getRequestUser(request);
 
