@@ -167,3 +167,13 @@ test.describe("provider event ordering behavior", () => {
     expect(shouldApplyProviderEvent(active, "2026-10-14T10:00:01.000Z", "expired")).toBe(true);
   });
 });
+
+
+test("checkout refuses to create duplicate subscriptions for active or unresolved accounts", async () => {
+  const checkout = await source("../src/app/api/billing/checkout/route.ts");
+  expect(checkout).toContain('status: "in.(active,incomplete,past_due,trialing)"');
+  expect(checkout).toContain("Existing subscription status could not be verified. No new subscription was created.");
+  expect(checkout).toContain("You already have an active Pro subscription. Manage it from your account page; no new subscription was created.");
+  expect(checkout).toContain("A Pro subscription is already pending or needs attention. Check your account status before trying again; no new subscription was created.");
+  expect(checkout).toContain("if (existingSubscription)");
+});
