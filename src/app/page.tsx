@@ -438,6 +438,8 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <BrandLogo />
 
+          <a href="/login" className="inline-flex min-h-10 items-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 md:hidden">Sign in</a>
+
           <nav className="hidden gap-6 text-sm font-medium md:flex">
             <a href="/tools" className="text-slate-600 hover:text-slate-900">
               Tools
