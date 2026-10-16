@@ -87,7 +87,7 @@ test.describe("KaamKitPro authentication pages", () => {
 
   test("staging never loads AdSense, even when optional ads consent is accepted", async ({ page, request }) => {
     await page.addInitScript(() => { window.localStorage.setItem("kk_privacy_consent_v1", "accepted"); });
-    const adScriptRequests: string[] = [];
+    const adScriptRequests = [];
     page.on("request", event => { if (event.url().includes("googlesyndication.com")) adScriptRequests.push(event.url()); });
     await page.goto("/");
     await page.waitForTimeout(500);
