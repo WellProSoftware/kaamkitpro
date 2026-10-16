@@ -62,7 +62,7 @@ test.describe("staging security regression checks", () => {
     expect(revoke.status()).toBe(401);
   });
 
-  test("quota API rejects malformed input and does not grant anonymous metered access", async ({ request }) => {
+  test("quota API rejects malformed input but allows valid tools during temporary free-Pro mode", async ({ request }) => {
     const malformed = await request.post("/api/tools/usage", {
       data: { action: "check" },
     });
@@ -72,8 +72,8 @@ test.describe("staging security regression checks", () => {
     const metered = await request.post("/api/tools/usage", {
       data: { tool_key: "ai-tool", action: "consume" },
     });
-    expect(metered.status()).toBe(401);
-    expect(await metered.json()).toMatchObject({ allowed: false, requiresSignIn: true });
+    expect(metered.ok()).toBeTruthy();
+    expect(await metered.json()).toMatchObject({ allowed: true, tier: "free_pro_access", limited: false });
   });
 
   test("billing checkout and account routes reject signed-out requests", async ({ request }) => {
@@ -123,17 +123,16 @@ test.describe("staging security regression checks", () => {
     );
   });
 
-  test("subscription access fails closed for missing or invalid period-end timestamps", async () => {
-    for (const path of [
-      "../src/app/api/access/route.ts",
-      "../src/app/api/tools/usage/route.ts",
-    ]) {
-      const source = await readFile(new URL(path, import.meta.url), "utf8");
-      expect(source).toContain('typeof item.current_period_end === "string"');
-      expect(source).toContain("Number.isFinite(Date.parse(item.current_period_end))");
-      expect(source).toContain("Date.parse(item.current_period_end) > now");
-      expect(source).not.toContain("!item.current_period_end || Date.parse(item.current_period_end) > now");
-    }
+  test("temporary free-Pro access bypasses subscription lookup while checkout remains paused", async () => {
+    const access = await readFile(new URL("../src/app/api/access/route.ts", import.meta.url), "utf8");
+    const usage = await readFile(new URL("../src/app/api/tools/usage/route.ts", import.meta.url), "utf8");
+    const pricing = await readFile(new URL("../src/app/pricing/page.tsx", import.meta.url), "utf8");
+    expect(access).toContain('plan: "free_pro_access"');
+    expect(access).toContain("adsEnabled: !isStagingBuild");
+    expect(usage).toContain('tier: "free_pro_access"');
+    expect(usage).toContain("limited: false");
+    expect(pricing).toContain("Paid plans are on hold");
+    expect(pricing).not.toContain("ProSubscriptionCheckout");
   });
   test("staging does not load the live AdSense script", async ({ page }) => {
     await page.goto("/");
@@ -160,7 +159,7 @@ test.describe("staging security regression checks", () => {
     expect(loader).toContain('consent !== "accepted"');
     expect(loader).toContain("if (!response.ok)");
     expect(layout).toContain('<AdSenseLoader disabled={isStagingBuild} />');
-    expect(access).toContain("adsEnabled: !isStagingBuild && !isPro");
+    expect(access).toContain("adsEnabled: !isStagingBuild");
     expect(access).toContain("adsEnabled: false");
   });
 

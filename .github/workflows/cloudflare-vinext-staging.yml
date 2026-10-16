@@ -328,7 +328,7 @@ jobs:
             ["/pricing", async r => { const t = await r.text(); return r.status === 200 && /Useful tools\. No signup needed\./i.test(t) && /Paid plans are on hold/i.test(t) && /Explore free tools/i.test(t) && !/ProSubscriptionCheckout|Razorpay Test Mode|Subscribe now/i.test(t); }, "free-first pricing; paid checkout remains paused"],
             ["/ads.txt", async r => r.status === 200 && (await r.text()).trim() === "google.com, pub-6738934686699082, DIRECT, f08c47fec0942fa0", "ads.txt publisher line"],
             ["/robots.txt", async r => r.status === 200 && (await r.text()).includes("Disallow: /"), "robots.txt staging exclusion"],
-            ["/api/access", async r => { const t = await r.json(); return r.status === 200 && t.plan === "free" && t.isPro === false && t.adsEnabled === false; }, "anonymous access API + ads disabled on staging"],
+            ["/api/access", async r => { const t = await r.json(); return r.status === 200 && t.plan === "free_pro_access" && t.isPro === true && t.adsEnabled === false; }, "anonymous temporary free-Pro access + staging ads disabled"],
             ["/tools/json-formatter", async r => r.status === 200 && /JSON Formatter/.test(await r.text()), "JSON Formatter"],
             ["/tools/pdf-merge", async r => r.status === 200 && /PDF Merge Tool/.test(await r.text()), "PDF Merge"],
             ["/tools/image-rotate", async r => r.status === 200 && /Image Rotate Tool/.test(await r.text()), "Image Rotate"],
@@ -409,30 +409,30 @@ jobs:
 
             const accessResponse = await fetch(base + "/api/access", { headers: { cookie, "cache-control": "no-store" } });
             const access = await accessResponse.json();
-            await expect(accessResponse.ok && access.plan === "free" && access.isPro === false && access.adsEnabled === false,
-              "Signed-in staging account should remain Free with ads disabled.");
+            await expect(accessResponse.ok && access.plan === "free_pro_access" && access.isPro === true && access.adsEnabled === false,
+              "Signed-in staging account should receive temporary free-Pro access with ads disabled on staging.");
 
             const initialResponse = await callUsage(cookie, "check");
             const initial = await initialResponse.json();
-            await expect(initialResponse.ok && initial.allowed === true && initial.used === 0 && initial.remaining === 3 && initial.dailyLimit === 3,
-              "Initial daily quota should be 0/3.");
+            await expect(initialResponse.ok && initial.allowed === true && initial.tier === "free_pro_access" && initial.limited === false,
+              "Temporary free-Pro access should bypass daily quotas.");
 
             for (let used = 1; used <= 3; used++) {
               const response = await callUsage(cookie, "consume");
               const result = await response.json();
-              await expect(response.status === 200 && result.allowed === true && result.used === used && result.remaining === 3 - used,
-                `Quota consume ${used} did not return expected usage/remaining values.`);
+              await expect(response.status === 200 && result.allowed === true && result.tier === "free_pro_access" && result.limited === false,
+                `Temporary free-Pro use ${used} was unexpectedly restricted.`);
             }
 
             const exhaustedResponse = await callUsage(cookie, "consume");
             const exhausted = await exhaustedResponse.json();
-            await expect(exhaustedResponse.status === 429 && exhausted.allowed === false && exhausted.used === 3 && exhausted.remaining === 0,
-              "Fourth consume should be denied with HTTP 429 at the daily limit.");
+            await expect(exhaustedResponse.ok && exhausted.allowed === true && exhausted.tier === "free_pro_access",
+              "Temporary free-Pro mode must not enforce the old daily quota.");
 
-            console.log("PASS authenticated quota check: initial usage 0/3.");
-            console.log("PASS quota consumption: calls 1–3 allowed and usage counted correctly.");
-            console.log("PASS quota enforcement: fourth call denied at 3/3 with HTTP 429.");
-            console.log("PASS disposable signed-in user remains Free; staging ads stay disabled.");
+            console.log("PASS authenticated access bypasses daily quotas during temporary free-Pro mode.");
+            console.log("PASS repeated usage requests remain allowed without quota consumption.");
+            console.log("PASS quota limits remain paused until paid plans launch.");
+            console.log("PASS disposable signed-in user receives free-Pro access; staging ads stay disabled.");
           } catch (error) {
             failed = true;
             console.error("FAIL authenticated quota integration:", String(error));

@@ -91,13 +91,13 @@ test("admin page and account routes redirect signed-out users safely", async ({ 
   await expect(page).toHaveURL(/\/login$/);
 });
 
-test("signed-out access API resolves to Free and live ads stay disabled on staging", async ({ request, page }) => {
+test("signed-out access API grants temporary free-Pro access while ads stay disabled on staging", async ({ request, page }) => {
   const response = await request.get("/api/access");
   expect(response.ok()).toBeTruthy();
   expect(await response.json()).toMatchObject({
     user: null,
-    plan: "free",
-    isPro: false,
+    plan: "free_pro_access",
+    isPro: true,
     adsEnabled: false,
     selectedTools: [],
   });
@@ -128,24 +128,25 @@ test("admin grant and revoke mutations reject unauthenticated callers", async ({
   expect(revoke.status()).toBe(401);
 });
 
-test("free quota policy stays open while metered quota requires authentication", async ({ request }) => {
+test("temporary free-Pro mode allows all valid tool tiers without quota enforcement", async ({ request }) => {
   const free = await request.post("/api/tools/usage", {
     data: { tool_key: "calculator", action: "check" },
   });
   expect(free.ok()).toBeTruthy();
   expect(await free.json()).toMatchObject({
     allowed: true,
-    tier: "free",
+    tier: "free_pro_access",
     limited: false,
   });
 
   const metered = await request.post("/api/tools/usage", {
     data: { tool_key: "ai-tool", action: "check" },
   });
-  expect(metered.status()).toBe(401);
+  expect(metered.ok()).toBeTruthy();
   expect(await metered.json()).toMatchObject({
-    allowed: false,
-    requiresSignIn: true,
+    allowed: true,
+    tier: "free_pro_access",
+    limited: false,
   });
 });
 
@@ -184,14 +185,14 @@ test("quota endpoint validates malformed and unknown tool keys safely", async ({
   const anonymousConsume = await request.post("/api/tools/usage", {
     data: { tool_key: "ai-tool", action: "consume" },
   });
-  expect(anonymousConsume.status()).toBe(401);
-  expect(await anonymousConsume.json()).toMatchObject({ requiresSignIn: true });
+  expect(anonymousConsume.ok()).toBeTruthy();
+  expect(await anonymousConsume.json()).toMatchObject({ allowed: true, tier: "free_pro_access", limited: false });
 
   const freeConsume = await request.post("/api/tools/usage", {
     data: { tool_key: "calculator", action: "consume" },
   });
   expect(freeConsume.ok()).toBeTruthy();
-  expect(await freeConsume.json()).toMatchObject({ allowed: true, tier: "free", limited: false });
+  expect(await freeConsume.json()).toMatchObject({ allowed: true, tier: "free_pro_access", limited: false });
 });
 
 test("billing webhook rejects unsigned requests without changing subscription state", async ({ request }) => {

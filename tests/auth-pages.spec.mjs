@@ -85,24 +85,24 @@ test.describe("KaamKitPro authentication pages", () => {
     expect(await verify.json()).toMatchObject({ error: "Sign in before verifying a subscription." });
   });
 
-  test("free tools stay available anonymously; account-based tools ask for sign-in", async ({ request }) => {
+  test("all tool tiers are temporarily free without sign-in while paid plans are paused", async ({ request }) => {
     const free = await request.post("/api/tools/usage", {
       data: { tool_key: "calculator", action: "check" },
     });
     expect(free.ok()).toBeTruthy();
-    expect(await free.json()).toMatchObject({ allowed: true, tier: "free", limited: false });
+    expect(await free.json()).toMatchObject({ allowed: true, tier: "free_pro_access", limited: false });
 
     const metered = await request.post("/api/tools/usage", {
       data: { tool_key: "ai-tool", action: "check" },
     });
-    expect(metered.status()).toBe(401);
-    expect(await metered.json()).toMatchObject({ allowed: false, requiresSignIn: true });
+    expect(metered.ok()).toBeTruthy();
+    expect(await metered.json()).toMatchObject({ allowed: true, tier: "free_pro_access", limited: false });
 
     const proOnly = await request.post("/api/tools/usage", {
       data: { tool_key: "bulk-ai-generation", action: "check" },
     });
-    expect(proOnly.status()).toBe(401);
-    expect(await proOnly.json()).toMatchObject({ allowed: false, requiresSignIn: true });
+    expect(proOnly.ok()).toBeTruthy();
+    expect(await proOnly.json()).toMatchObject({ allowed: true, tier: "free_pro_access", limited: false });
   });
 
   test("staging never loads AdSense, even when optional ads consent is accepted", async ({ page, request }) => {

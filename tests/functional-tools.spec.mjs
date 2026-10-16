@@ -11,6 +11,7 @@ async function createOnePagePdf(label) {
 test("JSON Formatter formats valid JSON", async ({ page }) => {
   await page.goto("/tools/json-formatter");
   await expect(page.getByRole("heading", { name: "JSON Formatter", exact: true })).toBeVisible();
+  await page.waitForTimeout(500); // Wait for the client component to hydrate before interacting.
 
   await page.getByPlaceholder('{"name":"KaamKitPro","tools":10}').fill('{"name":"KaamKitPro","tools":10}');
   await page.getByRole("button", { name: "Format", exact: true }).click();
@@ -505,6 +506,7 @@ test("QR Code Generator creates a downloadable QR code for entered text", async 
 test("Slug Generator converts a title into a clean URL slug", async ({ page }) => {
   await page.goto("/tools/slug-generator");
   await expect(page.getByRole("heading", { name: "Slug Generator", exact: true })).toBeVisible();
+  await page.waitForTimeout(500); // Wait for client hydration before entering text.
   await page.getByPlaceholder("Example: Best Free Online Tools for Students").fill("  Crème & Coffee — Best Online Tools!  ");
   await page.getByRole("button", { name: "Generate Slug" }).click();
   await expect(page.getByText("creme-coffee-best-online-tools", { exact: true })).toBeVisible();
@@ -816,14 +818,14 @@ test("Admin access API rejects cross-origin grant mutations", async ({ request }
 });
 
 
-test("Anonymous access response is fail-safe and contains no elevated access", async ({ request }) => {
+test("Anonymous access response grants temporary free-Pro access but keeps staging ads disabled", async ({ request }) => {
   const response = await request.get("/api/access");
   expect(response.ok()).toBeTruthy();
   const body = await response.json();
   expect(body).toMatchObject({
     user: null,
-    plan: "free",
-    isPro: false,
+    plan: "free_pro_access",
+    isPro: true,
     adsEnabled: false,
     selectedTools: [],
   });
@@ -945,6 +947,7 @@ test("BMI Calculator updates each weight category when measurements change", asy
 test("EMI Calculator waits for all inputs and accepts an explicit zero interest rate", async ({ page }) => {
   await page.goto("/tools/emi-calculator");
   await expect(page.getByRole("heading", { name: "EMI Calculator", exact: true })).toBeVisible();
+  await page.waitForTimeout(500); // Wait for client hydration before entering values.
   const fields = page.locator('input[type="number"]');
   await fields.nth(0).fill("120000");
   await fields.nth(2).fill("1");
@@ -959,6 +962,7 @@ test("EMI Calculator waits for all inputs and accepts an explicit zero interest 
 
 test("Age Calculator returns zero years, months, and days for today's birth date", async ({ page }) => {
   await page.goto("/tools/age-calculator");
+  await page.waitForTimeout(500); // Wait for client hydration before entering the date.
   const today = await page.evaluate(() => {
     const date = new Date();
     const year = date.getFullYear();
@@ -970,11 +974,10 @@ test("Age Calculator returns zero years, months, and days for today's birth date
   await page.getByRole("button", { name: "Calculate Age", exact: true }).click();
   // Select the result grid by its content instead of assuming it is the last grid
   // in the page (navigation/footer layout may add other grids).
-  const results = page.locator("main .grid").filter({ hasText: "Years" });
-  await expect(results.getByText("Years", { exact: true })).toBeVisible();
-  await expect(results.getByText("Months", { exact: true })).toBeVisible();
-  await expect(results.getByText("Days", { exact: true })).toBeVisible();
-  await expect(results.getByText("0", { exact: true })).toHaveCount(3);
+  await expect(page.locator("main").getByText("Years", { exact: true })).toBeVisible();
+  await expect(page.locator("main").getByText("Months", { exact: true })).toBeVisible();
+  await expect(page.locator("main").getByText("Days", { exact: true })).toBeVisible();
+  await expect(page.locator("main").getByText("0", { exact: true })).toHaveCount(3);
 });
 
 

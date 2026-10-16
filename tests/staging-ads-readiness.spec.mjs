@@ -28,13 +28,13 @@ test("staging never injects the live AdSense script, including after navigation"
   }
 });
 
-test("anonymous staging access API stays free and keeps ads disabled", async ({ request }) => {
+test("anonymous staging access API grants temporary free-Pro access and keeps ads disabled", async ({ request }) => {
   const response = await request.get("/api/access");
   expect(response.status()).toBe(200);
   await expect(response.json()).resolves.toMatchObject({
     user: null,
-    plan: "free",
-    isPro: false,
+    plan: "free_pro_access",
+    isPro: true,
     adsEnabled: false,
     selectedTools: [],
   });
