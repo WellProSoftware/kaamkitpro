@@ -95,12 +95,6 @@ jobs:
           console.log("Production Worker config validated: workers.dev only; no custom domain or route.");
           NODE
 
-      - name: Configure server-side production Supabase secret
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf '%s' "$SUPABASE_SERVICE_ROLE_KEY" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --name kaamkitpro-production
-
       - name: Verify final deployment config before production deploy
         shell: bash
         run: |
@@ -116,6 +110,14 @@ jobs:
 
       - name: Deploy production worker to workers.dev only
         run: npx wrangler deploy --config dist/server/wrangler.json
+
+      # Wrangler requires a deployed Worker version before updating secrets when versioning is enabled.
+      # Apply the production secret only after the production Worker deployment succeeds.
+      - name: Configure server-side production Supabase secret
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s' "$SUPABASE_SERVICE_ROLE_KEY" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --name kaamkitpro-production
 
       - name: Smoke-test production worker without changing DNS
         shell: bash
