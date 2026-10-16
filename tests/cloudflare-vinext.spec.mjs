@@ -17,7 +17,8 @@ test("staging pages explicitly opt out of search indexing", async ({ page, reque
 test("pricing explains the Free plan and keeps checkout behavior explicit", async ({ page }) => {
   await page.goto("/pricing");
   await expect(page.getByRole("heading", { name: /Useful tools\./ })).toBeVisible();
-  await expect(page.getByText(/Open any currently available free tool and start using it immediately/i)).toBeVisible();
+  await expect(page.getByText(/Use the available free tools right away/i)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Paid plans are on hold" })).toBeVisible();
 
   const monthlyButton = page.getByRole("button", { name: "Choose monthly" });
   if (await monthlyButton.count()) {
