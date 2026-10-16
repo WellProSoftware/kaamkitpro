@@ -102,12 +102,6 @@ const tools: Tool[] = [
     category: "Developer Tools",
   },
   {
-    name: "HTML Entity Encoder & Decoder",
-    description: "Encode special characters as HTML entities or decode them in your browser.",
-    href: "/tools/html-entity-encoder",
-    category: "Developer Tools",
-  },
-  {
     name: "UUID Generator",
     description: "Generate unique UUIDs in seconds.",
     href: "/tools/uuid-generator",
