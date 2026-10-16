@@ -40,7 +40,7 @@ test("anonymous staging access API grants temporary free-Pro access and keeps ad
   });
 });
 
-test("privacy consent choices persist and staging never loads optional trackers", async ({ page }) => {
+test("privacy consent choices persist; staging uses only its test Analytics ID and never loads AdSense", async ({ page }) => {
   await page.goto("/");
   await page.evaluate(() => window.localStorage.removeItem("kk_privacy_consent_v1"));
   await page.reload();
@@ -52,6 +52,7 @@ test("privacy consent choices persist and staging never loads optional trackers"
   await page.reload();
   await expect(page.getByRole("dialog", { name: /Your privacy choices/i })).toHaveCount(0);
   await expect(page.locator("#google-analytics-script, #google-adsense")).toHaveCount(0);
+  await expect(page.locator('script[src*="googletagmanager.com/gtag/js"], script[src*="pagead2.googlesyndication.com"]')).toHaveCount(0);
 
   await page.evaluate(() => window.localStorage.removeItem("kk_privacy_consent_v1"));
   await page.reload();
@@ -59,10 +60,11 @@ test("privacy consent choices persist and staging never loads optional trackers"
   await page.getByRole("button", { name: "Accept analytics & ads" }).click();
   await expect.poll(() => page.evaluate(() => window.localStorage.getItem("kk_privacy_consent_v1"))).toBe("accepted");
   await expect(page.getByRole("dialog", { name: /Your privacy choices/i })).toHaveCount(0);
-  await expect(page.locator("#google-analytics-script, #google-adsense")).toHaveCount(0);
-  await expect(page.locator('script[src*="googletagmanager.com/gtag/js"], script[src*="pagead2.googlesyndication.com"]')).toHaveCount(0);
+  await expect(page.locator("#google-analytics-script")).toHaveAttribute("src", /G-8B6JX70RH8/);
+  await expect(page.locator("#google-adsense")).toHaveCount(0);
+  await expect(page.locator('script[src*="pagead2.googlesyndication.com"]')).toHaveCount(0);
+  await expect(page.locator('script[src*="googletagmanager.com/gtag/js"]')).toHaveAttribute("src", /G-8B6JX70RH8/);
 });
-
 test("visitors can reopen privacy choices and switch to essential-only", async ({ page }) => {
   await page.goto("/");
   await page.evaluate(() => window.localStorage.setItem("kk_privacy_consent_v1", "accepted"));
