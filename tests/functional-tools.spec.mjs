@@ -414,7 +414,8 @@ test("Duplicate-line guide is discoverable and included once in the sitemap", as
 test("Pricing page explains Free access and presents Pro checkout only when available", async ({ page }) => {
   await page.goto("/pricing");
   await expect(page.getByRole("heading", { name: /Useful tools\./ })).toBeVisible();
-  await expect(page.getByText(/Open any currently available free tool and start using it immediately/i)).toBeVisible();
+  await expect(page.getByText(/Use the available free tools right away/i)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Paid plans are on hold" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Sign in", exact: true })).toHaveAttribute("href", "/login");
 
   const monthlyButton = page.getByRole("button", { name: "Choose monthly" });
