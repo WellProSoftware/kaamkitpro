@@ -5,7 +5,7 @@ import BrandLogo from "@/components/BrandLogo";
 export const metadata: Metadata = {
   title: "Online Tools Guides",
   description:
-    "Original, practical guides for PDF compression, merging files, GST calculations, JSON formatting, image optimization and QR codes.",
+    "Original, practical guides for text sorting, CSV and JSON conversion, PDF tools, GST calculations, image optimization and QR codes.",
   alternates: {
     canonical: "https://kaamkitpro.com/guides",
   },
@@ -56,6 +56,57 @@ const guides = [
     href: "/guides/json-formatting",
     tool: "/tools/json-formatter",
     category: "Developer Tools",
+  },
+  {
+    title: "How to Compare Two Texts Online",
+    description:
+      "Find added, removed, and unchanged lines between two drafts, lists, or plain-text versions.",
+    href: "/guides/text-diff-checker",
+    tool: "/tools/text-diff-checker",
+    category: "Text Tools",
+  },
+  {
+    title: "How to Sort Lines of Text Online",
+    description:
+      "Organize lists, filenames, product codes and keywords with alphabetical or natural sorting, then keep cleaning the list.",
+    href: "/guides/line-sorter",
+    tool: "/tools/line-sorter",
+    category: "Text Tools",
+  },
+  {
+    title: "How to Convert JSON to CSV Online",
+    description: "Turn JSON arrays into spreadsheet-ready rows and handle quoting, nested data, and common conversion issues.",
+    href: "/guides/json-to-csv",
+    tool: "/tools/json-to-csv",
+    category: "Developer Tools",
+  },
+  {
+    title: "How to Convert CSV to JSON Online",
+    description: "Turn CSV rows into JSON objects, handle quoted fields, and fix common conversion issues.",
+    href: "/guides/csv-to-json",
+    tool: "/tools/csv-to-json",
+    category: "Developer Tools",
+  },
+  {
+    title: "How to Count Words and Characters Online",
+    description: "Count words, characters, sentences and spaces in drafts, captions and documents with a free browser-based tool.",
+    href: "/guides/word-counter",
+    tool: "/tools/word-counter",
+    category: "Text Tools",
+  },
+  {
+    title: "How to Create an SEO-Friendly URL Slug",
+    description: "Learn how to turn a page title into a readable URL slug and avoid common URL formatting mistakes.",
+    href: "/guides/slug-generator",
+    tool: "/tools/slug-generator",
+    category: "SEO Tools",
+  },
+  {
+    title: "How to Remove Duplicate Lines from a List",
+    description: "Clean repeated names, keywords, IDs and copied spreadsheet lines while choosing how whitespace and letter case should be treated.",
+    href: "/guides/remove-duplicate-lines",
+    tool: "/tools/remove-duplicate-lines",
+    category: "Text Tools",
   },
 ];
 

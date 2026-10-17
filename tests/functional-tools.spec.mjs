@@ -253,3 +253,154 @@ test("Homepage category filter shows matching tools", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Percentage Calculator", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "PDF Merge", exact: true })).toHaveCount(0);
 });
+
+
+test("Line Sorter sorts naturally and ignores case when selected", async ({ page }) => {
+  await page.goto("/tools/line-sorter");
+  await expect(page.getByRole("heading", { name: "Online Line Sorter" })).toBeVisible();
+  await page.locator("#line-input").fill("Item 10\nitem 2\nApple");
+  await expect(page.locator("#line-output")).toHaveValue("Apple\nitem 2\nItem 10");
+});
+
+test("Duplicate Line Remover preserves first occurrence", async ({ page }) => {
+  await page.goto("/tools/remove-duplicate-lines");
+  await page.locator("#duplicate-input").fill("apple\nbanana\napple");
+  await expect(page.locator("#duplicate-output")).toHaveValue("apple\nbanana");
+  await expect(page.getByText("2 kept · 1 removed")).toBeVisible();
+});
+
+test("CSV to JSON converts quoted fields and commas", async ({ page }) => {
+  await page.goto("/tools/csv-to-json");
+  await page.locator("#csv-input").fill('name,city,note\nAsha,Mumbai,"Likes tea, coffee"');
+  await expect(page.locator("#json-output")).toHaveValue(JSON.stringify([{ name: "Asha", city: "Mumbai", note: "Likes tea, coffee" }], null, 2));
+});
+
+test("JSON to CSV converts object arrays and escapes commas", async ({ page }) => {
+  await page.goto("/tools/json-to-csv");
+  await expect(page.getByRole("heading", { name: "JSON to CSV Converter" })).toBeVisible();
+  await page.locator("#json-csv-input").fill('[{"name":"Asha","note":"Tea, coffee"},{"name":"Sam","note":"Hello"}]');
+  await expect(page.locator("#csv-output")).toHaveValue('name,note\nAsha,"Tea, coffee"\nSam,Hello');
+});
+
+test("Text Diff Checker reports added and removed lines", async ({ page }) => {
+  await page.goto("/tools/text-diff-checker");
+  await expect(page.getByRole("heading", { name: "Text Diff Checker" })).toBeVisible();
+  await page.locator("#diff-before").fill("alpha\nbeta");
+  await page.locator("#diff-after").fill("alpha\ngamma");
+  await expect(page.getByText("+ 1 added")).toBeVisible();
+  await expect(page.getByText("− 1 removed")).toBeVisible();
+  await expect(page.locator("pre")).toContainText("+ gamma");
+  await expect(page.locator("pre")).toContainText("− beta");
+});
+
+
+test("Sitemap lists each new utility route exactly once", async ({ request }) => {
+  const response = await request.get("/sitemap.xml");
+  expect(response.ok()).toBeTruthy();
+  const xml = await response.text();
+  for (const route of ["json-to-csv", "text-diff-checker"]) {
+    const matches = xml.match(new RegExp("https://kaamkitpro\\.com/tools/" + route, "g")) || [];
+    expect(matches).toHaveLength(1);
+  }
+});
+
+
+test("CSV to JSON guide is discoverable and included once in the sitemap", async ({ page }) => {
+  await page.goto("/guides/csv-to-json");
+  await expect(page.getByRole("heading", { name: "How to Convert CSV to JSON Online for Free", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open Free CSV to JSON Converter" })).toHaveAttribute("href", "/tools/csv-to-json");
+
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  const sitemap = await sitemapResponse.text();
+  expect(sitemap.match(/https:\/\/kaamkitpro\.com\/guides\/csv-to-json/g)).toHaveLength(1);
+});
+
+
+test("JSON to CSV guide is discoverable and included once in the sitemap", async ({ page }) => {
+  await page.goto("/guides/json-to-csv");
+  await expect(page.getByRole("heading", { name: "How to Convert JSON to CSV Online for Free", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open Free JSON to CSV Converter" })).toHaveAttribute("href", "/tools/json-to-csv");
+
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  const sitemap = await sitemapResponse.text();
+  expect(sitemap.match(/https:\/\/kaamkitpro\.com\/guides\/json-to-csv/g)).toHaveLength(1);
+});
+
+
+test("Line sorter guide is discoverable and included once in the sitemap", async ({ page }) => {
+  await page.goto("/guides/line-sorter");
+  await expect(page.getByRole("heading", { name: "How to Sort Lines of Text Online for Free", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open Free Line Sorter" })).toHaveAttribute("href", "/tools/line-sorter");
+  await expect(page.getByRole("link", { name: "Duplicate Line Remover" })).toHaveAttribute("href", "/tools/remove-duplicate-lines");
+
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  const sitemap = await sitemapResponse.text();
+  expect(sitemap.match(/https:\/\/kaamkitpro\.com\/guides\/line-sorter/g)).toHaveLength(1);
+});
+
+
+test("Text diff guide is discoverable and included once in the sitemap", async ({ page }) => {
+  await page.goto("/guides/text-diff-checker");
+  await expect(page.getByRole("heading", { name: "How to Compare Two Texts Online for Free", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open Free Text Diff Checker" })).toHaveAttribute("href", "/tools/text-diff-checker");
+  await expect(page.getByRole("link", { name: "Free Line Sorter" })).toHaveAttribute("href", "/tools/line-sorter");
+
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  const sitemap = await sitemapResponse.text();
+  expect(sitemap.match(/https:\/\/kaamkitpro\.com\/guides\/text-diff-checker/g)).toHaveLength(1);
+});
+
+
+test("Word counter guide is discoverable and included once in the sitemap", async ({ page }) => {
+  await page.goto("/guides/word-counter");
+  await expect(page.getByRole("heading", { name: "How to Count Words and Characters Online", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open Free Word Counter" })).toHaveAttribute("href", "/tools/word-counter");
+
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  expect((await sitemapResponse.text()).match(/https:\/\/kaamkitpro\.com\/guides\/word-counter/g)).toHaveLength(1);
+});
+
+test("Slug generator guide is discoverable and included once in the sitemap", async ({ page }) => {
+  await page.goto("/guides/slug-generator");
+  await expect(page.getByRole("heading", { name: "How to Create an SEO-Friendly URL Slug", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open Free Slug Generator" })).toHaveAttribute("href", "/tools/slug-generator");
+
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  expect((await sitemapResponse.text()).match(/https:\/\/kaamkitpro\.com\/guides\/slug-generator/g)).toHaveLength(1);
+});
+
+test("Duplicate-line guide is discoverable and included once in the sitemap", async ({ page }) => {
+  await page.goto("/guides/remove-duplicate-lines");
+  await expect(page.getByRole("heading", { name: "How to Remove Duplicate Lines from a List", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Open Free Duplicate Line Remover" })).toHaveAttribute("href", "/tools/remove-duplicate-lines");
+
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  expect((await sitemapResponse.text()).match(/https:\/\/kaamkitpro\.com\/guides\/remove-duplicate-lines/g)).toHaveLength(1);
+});
+
+
+test("Pricing page keeps tools free, checkout inactive, and sign-in available", async ({ page }) => {
+  await page.goto("/pricing");
+  await expect(page.getByRole("heading", { name: "Useful tools. Free to use." })).toBeVisible();
+  await expect(page.getByText("All currently available tools are free; no paid subscription is required.", { exact: false })).toBeVisible();
+  await expect(page.getByText("Paid plans and checkout are not available and no payment is being collected.", { exact: false })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Sign in", exact: true })).toHaveAttribute("href", "/login");
+  await expect(page.getByRole("link", { name: /checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
+});
+
+test("Subscription checkout rejects unauthenticated requests", async ({ request }) => {
+  const response = await request.post("/api/billing/checkout", {
+    data: { plan_id: "pro-monthly-inr" },
+  });
+  expect(response.status()).toBe(401);
+  await expect(response.json()).resolves.toMatchObject({
+    error: "Sign in before starting a subscription.",
+  });
+});
