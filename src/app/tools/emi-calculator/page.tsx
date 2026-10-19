@@ -153,6 +153,24 @@ export default function EMICalculatorPage() {
           </ol>
         </section>
 
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+          <h2 className="text-2xl font-bold">How EMI is calculated</h2>
+          <p className="mt-4 leading-7 text-slate-600">
+            For a standard fixed-rate loan with monthly repayments, EMI is based on the principal, the monthly interest rate, and the number of monthly payments. A higher rate or shorter tenure generally increases the monthly instalment; a longer tenure can reduce the EMI while increasing the total interest paid.
+          </p>
+          <h3 className="mt-6 text-lg font-semibold">Compare offers carefully</h3>
+          <ul className="mt-3 list-disc space-y-2 pl-5 leading-7 text-slate-600">
+            <li>Enter the annual interest rate as a percentage and check the loan tenure before comparing results.</li>
+            <li>Compare both the monthly EMI and total interest—not only the instalment amount.</li>
+            <li>Check lender processing fees, insurance, floating-rate changes, prepayment terms, and other charges separately.</li>
+            <li>Use the lender's repayment schedule as the final source for a real loan; rounding and lender-specific fees can change the actual amount.</li>
+          </ul>
+          <p className="mt-5 leading-7 text-slate-600">
+            This calculator provides an estimate for a standard repayment model. It is not a loan offer, approval, or financial recommendation, and it may not represent loans with irregular payments or changing rates.
+          </p>
+          <Link href="/guides/emi-calculator" className="mt-4 inline-block font-semibold text-blue-700 hover:underline">Read the EMI calculation guide →</Link>
+        </section>
+
         <div className="mt-8 text-center">
           <a
             href="/"
