@@ -206,6 +206,23 @@ export default function PDFCompressorPage() {
             </ol>
           </div>
 
+          <section className="mt-8 rounded-xl border border-slate-200 bg-white p-5">
+            <h2 className="text-lg font-semibold text-slate-900">What PDF compression can change</h2>
+            <p className="mt-3 leading-7 text-slate-600">
+              A smaller PDF can be easier to email or upload, but the amount saved depends on how the original document was created. Text-based PDFs may already be compact, and re-saving a document does not guarantee a smaller file.
+            </p>
+            <ul className="mt-3 list-disc space-y-2 pl-5 leading-7 text-slate-600">
+              <li>Compare the original and output sizes instead of assuming compression always helps.</li>
+              <li>Open the output and inspect pages, fonts, diagrams, and image quality before sharing it.</li>
+              <li>Compression is not the same as password protection, redaction, or removing confidential metadata.</li>
+              <li>Keep the original file until you have verified the compressed copy.</li>
+            </ul>
+            <p className="mt-5 leading-7 text-slate-600">
+              Some PDFs have limited room for size reduction, and certain document features may not be preserved by every processing method. Test with a non-sensitive copy first if the file is important.
+            </p>
+            <a href="/guides/pdf-compression" className="mt-4 inline-block font-semibold text-blue-700 hover:underline">Read the PDF compression guide →</a>
+          </section>
+
           <p className="mt-6 text-center text-xs text-slate-500">
             Your PDF is processed directly in your browser and is not uploaded
             to KaamKitPro servers.
