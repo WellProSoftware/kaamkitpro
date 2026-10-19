@@ -2,6 +2,7 @@
 import { trackCopy, trackToolUsed } from "@/lib/analytics";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export default function JSONFormatterPage() {
   const [input, setInput] = useState("");
