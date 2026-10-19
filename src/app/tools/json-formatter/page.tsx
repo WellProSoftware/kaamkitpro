@@ -272,6 +272,28 @@ export default function JSONFormatterPage() {
           </p>
         </section>
 
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+          <h2 className="text-2xl font-bold">JSON syntax: common errors to check</h2>
+          <p className="mt-4 leading-7 text-slate-600">
+            JSON is commonly used to exchange data between APIs, applications, and configuration files. Formatting changes whitespace to make valid JSON easier to read; minifying removes unnecessary whitespace. Neither operation decides whether the data is correct for a particular application.
+          </p>
+          <ul className="mt-4 list-disc space-y-2 pl-5 leading-7 text-slate-600">
+            <li>Use double quotes around property names and string values.</li>
+            <li>Remove trailing commas after the final item in an object or array.</li>
+            <li>Use JSON values such as true, false, and null in lowercase.</li>
+            <li>Escape quotation marks and backslashes inside strings when required.</li>
+            <li>Check brackets and braces are balanced and in the correct order.</li>
+          </ul>
+          <h3 className="mt-6 text-lg font-semibold">Example: valid syntax is not the same as valid data</h3>
+          <p className="mt-2 leading-7 text-slate-600">
+            An object like {"{ name: \"Asha\" }"} is not valid JSON because the property name is not quoted. By contrast, {"{ \"quantity\": -2 }"} is valid JSON syntax, even if a particular inventory system does not allow negative quantities. A formatter can check syntax, but application-specific rules require a schema or separate validation.
+          </p>
+          <p className="mt-5 leading-7 text-slate-600">
+            Do not paste API keys, passwords, access tokens, customer records, or other confidential data into a tool unless you have confirmed the data-handling requirements for your situation. Keep an original copy before transforming important configuration data.
+          </p>
+          <Link href="/guides/json-formatting" className="mt-4 inline-block font-semibold text-blue-700 hover:underline">Read the JSON formatting guide →</Link>
+        </section>
+
         {/* Back */}
         <div className="mt-8 text-center">
           <a
