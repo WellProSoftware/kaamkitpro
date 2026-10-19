@@ -235,6 +235,23 @@ export default function ImageCompressorPage() {
             </ol>
           </div>
 
+          <section className="mt-8 rounded-xl border border-slate-200 bg-white p-5">
+            <h2 className="text-lg font-semibold text-slate-900">Choose image quality for your use case</h2>
+            <p className="mt-3 leading-7 text-slate-600">
+              Compression trades some image data for a smaller file. Start with a higher quality setting, compare the downloaded image at its intended display size, and reduce quality gradually only if the file still needs to be smaller.
+            </p>
+            <ul className="mt-3 list-disc space-y-2 pl-5 leading-7 text-slate-600">
+              <li>For photographs on a website, compare detail in faces, gradients, and fine textures.</li>
+              <li>For logos, screenshots, diagrams, or text-heavy graphics, inspect edges and small lettering closely; a lossless format may be more suitable.</li>
+              <li>Keep the original file until you have checked both the visual quality and the final file size.</li>
+              <li>Compression does not resize image dimensions, remove sensitive metadata in every format, or guarantee a smaller output for every input.</li>
+            </ul>
+            <p className="mt-5 leading-7 text-slate-600">
+              The output format and browser support can affect the result. Open the downloaded file and confirm that it is the expected format before uploading it to a website or sending it to someone else.
+            </p>
+            <a href="/guides/image-compression" className="mt-4 inline-block font-semibold text-blue-700 hover:underline">Read the image compression guide →</a>
+          </section>
+
           <p className="mt-6 text-center text-xs text-slate-500">
             Your image is processed directly in your browser.
           </p>
