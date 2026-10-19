@@ -82,7 +82,7 @@ export default function ChoosingOnlineToolsGuide() {
             </div>
             <div>
               <h3 className="font-semibold">Estimating a loan payment</h3>
-              <p className="mt-2 leading-7 text-slate-700">Enter the principal, annual interest rate, and loan tenure using the units requested by the calculator. Compare the estimate with a lender's official repayment schedule; fees, rate changes, and lender-specific rules may affect the actual amount.</p>
+              <p className="mt-2 leading-7 text-slate-700">Enter the principal, annual interest rate, and loan tenure using the units requested by the calculator. Compare the estimate with a lender&apos;s official repayment schedule; fees, rate changes, and lender-specific rules may affect the actual amount.</p>
               <Link className="mt-2 inline-block font-semibold text-blue-700 hover:underline" href="/tools/emi-calculator">Open EMI Calculator →</Link>
             </div>
           </div>
