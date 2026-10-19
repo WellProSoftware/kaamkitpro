@@ -163,7 +163,7 @@ export default function EMICalculatorPage() {
             <li>Enter the annual interest rate as a percentage and check the loan tenure before comparing results.</li>
             <li>Compare both the monthly EMI and total interest—not only the instalment amount.</li>
             <li>Check lender processing fees, insurance, floating-rate changes, prepayment terms, and other charges separately.</li>
-            <li>Use the lender's repayment schedule as the final source for a real loan; rounding and lender-specific fees can change the actual amount.</li>
+            <li>Use the lender&apos;s repayment schedule as the final source for a real loan; rounding and lender-specific fees can change the actual amount.</li>
           </ul>
           <p className="mt-5 leading-7 text-slate-600">
             This calculator provides an estimate for a standard repayment model. It is not a loan offer, approval, or financial recommendation, and it may not represent loans with irregular payments or changing rates.
