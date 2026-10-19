@@ -113,6 +113,23 @@ export default function QRCodeGeneratorPage() {
             <li>Click “Download QR Code” to save it as a PNG image.</li>
           </ol>
         </div>
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+          <h2 className="text-2xl font-bold">Before you print or share a QR code</h2>
+          <p className="mt-4 leading-7 text-slate-600">
+            Enter the exact destination URL or text you want people to open. Download the PNG, then scan it with a phone camera and confirm the decoded content before printing it on a poster, package, menu, or business card.
+          </p>
+          <ul className="mt-4 list-disc space-y-2 pl-5 leading-7 text-slate-600">
+            <li>Use a short, stable URL when possible, and check that it opens correctly on a mobile device.</li>
+            <li>Leave enough clear space around the code and print it large enough for the expected scanning distance.</li>
+            <li>Test the printed version under the lighting and size people will encounter in real use.</li>
+            <li>A QR code stores the content you entered; it does not host a webpage or automatically update if the destination changes.</li>
+            <li>Do not encode private or confidential information into a code that will be publicly displayed.</li>
+          </ul>
+          <p className="mt-5 leading-7 text-slate-600">
+            QR codes can be scanned by anyone who can see them. Check the destination carefully, especially before sharing codes that direct people to sign-in or payment pages.
+          </p>
+          <a href="/guides/qr-code" className="mt-4 inline-block font-semibold text-blue-700 hover:underline">Read the QR code guide →</a>
+        </section>
       </div>
     </main>
   );
