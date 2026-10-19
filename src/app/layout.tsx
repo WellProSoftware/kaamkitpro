@@ -5,6 +5,7 @@ import InternalLinks from "@/components/InternalLinks";
 import AdSenseLoader from "@/components/AdSenseLoader";
 import PrivacyConsent from "@/components/PrivacyConsent";
 import AnalyticsLoader from "@/components/AnalyticsLoader";
+import ToolEditorialContent from "@/components/ToolEditorialContent";
 import SupportChat from "@/components/SupportChat";
 
 const siteUrl = "https://kaamkitpro.com";
@@ -133,6 +134,8 @@ export default function RootLayout({
         <AdSenseLoader disabled={isStagingBuild} />
 
         {children}
+
+        <ToolEditorialContent />
 
         <SupportChat />
 
