@@ -168,7 +168,7 @@ export default function EMICalculatorPage() {
           <p className="mt-5 leading-7 text-slate-600">
             This calculator provides an estimate for a standard repayment model. It is not a loan offer, approval, or financial recommendation, and it may not represent loans with irregular payments or changing rates.
           </p>
-          <Link href="/guides/emi-calculator" className="mt-4 inline-block font-semibold text-blue-700 hover:underline">Read the EMI calculation guide →</Link>
+          <Link href="/tools/calculators" className="mt-4 inline-block font-semibold text-blue-700 hover:underline">Browse all calculators →</Link>
         </section>
 
         <div className="mt-8 text-center">
