@@ -45,8 +45,8 @@ export const metadata: Metadata = {
   creator: "KaamKitPro",
   publisher: "KaamKitPro",
 
-  alternates: {
-    canonical: siteUrl,
+  other: {
+    "google-adsense-account": "ca-pub-6738934686699082",
   },
 
   openGraph: {
