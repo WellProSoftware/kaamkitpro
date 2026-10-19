@@ -64,6 +64,22 @@ export default function TextDiffCheckerPage() {
           <pre className="whitespace-pre-wrap break-words font-mono text-sm">{diff.map((line, index) => (line.kind === "same" ? "  " : line.kind === "added" ? "+ " : "− ") + (line.text || " ") + (index < diff.length - 1 ? "\n" : "")).join("")}</pre>
         </div>
         <div className="mt-4 flex flex-wrap gap-3 text-sm"><span className="rounded-md bg-green-50 px-2 py-1 text-green-800">+ Added lines</span><span className="rounded-md bg-red-50 px-2 py-1 text-red-800">− Removed lines</span><span className="rounded-md bg-slate-100 px-2 py-1 text-slate-700">Unchanged lines</span></div>
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6">
+          <h2 className="text-xl font-bold">When to compare two text versions</h2>
+          <p className="mt-3 leading-7 text-slate-600">
+            A line-by-line comparison is useful for reviewing document edits, configuration changes, product descriptions, policy drafts, and copied lists. Keep the original and revised versions separate so you can see which lines were added, removed, or left unchanged.
+          </p>
+          <ul className="mt-3 list-disc space-y-2 pl-5 leading-7 text-slate-600">
+            <li>Use the same line breaks in both versions when possible; moving a paragraph can make many lines appear different.</li>
+            <li>Review surrounding context before accepting a change—the comparison shows text differences, not whether a change is correct.</li>
+            <li>For code or structured data, run the relevant parser, tests, or validator after comparing.</li>
+            <li>Do not paste credentials, private customer information, or confidential business text unless permitted by your data-handling requirements.</li>
+          </ul>
+          <p className="mt-4 leading-7 text-slate-600">
+            This tool compares lines, so a small edit inside a long line may show the whole line as changed rather than highlighting individual words. Always review the final version in its intended application.
+          </p>
+          <a href="/guides/text-diff-checker" className="mt-4 inline-block font-semibold text-blue-700 hover:underline">Read the text comparison guide →</a>
+        </section>
         <Link href="/tools/text" className="mt-7 inline-block text-sm font-medium text-blue-700 hover:underline">← Browse text tools</Link>
       </div>
     </main>
