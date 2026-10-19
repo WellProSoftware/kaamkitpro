@@ -39,7 +39,7 @@ const steps = [
 export default function ChoosingOnlineToolsGuide() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-      <Breadcrumbs items={[{ label: "Guides", href: "/tools" }, { label: "Choosing Online Tools" }]} />
+      <Breadcrumbs items={[{ label: "Guides", href: "/guides" }, { label: "Choosing Online Tools" }]} />
       <article className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         <header className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-10">
           <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">KaamKitPro practical guide</p>
