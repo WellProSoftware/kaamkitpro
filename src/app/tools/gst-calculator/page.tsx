@@ -151,6 +151,22 @@ export default function GSTCalculatorPage() {
           </ol>
         </section>
 
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+          <h2 className="text-2xl font-bold">GST calculation examples</h2>
+          <p className="mt-4 leading-7 text-slate-600">
+            For an example base price of ₹1,000 at an illustrative 18% rate, GST is ₹180 and the total after adding GST is ₹1,180. If ₹1,180 is already GST-inclusive at 18%, the base value is ₹1,000 and the GST component is ₹180. These examples explain the arithmetic; the applicable rate depends on the product or service and current rules.
+          </p>
+          <h3 className="mt-6 text-lg font-semibold">Add GST versus remove GST</h3>
+          <ul className="mt-3 list-disc space-y-2 pl-5 leading-7 text-slate-600">
+            <li><strong>Add GST:</strong> treats the entered amount as the pre-tax base and calculates tax on top of it.</li>
+            <li><strong>Remove GST:</strong> treats the entered amount as tax-inclusive and works backward to estimate the base and tax component.</li>
+          </ul>
+          <p className="mt-5 leading-7 text-slate-600">
+            The calculator offers common rate choices, but it does not determine tax classification, exemptions, place-of-supply rules, input tax credit, or whether a particular transaction is taxable. Confirm the applicable rate and treatment with current official guidance or a qualified tax professional before using the result on an invoice or tax return.
+          </p>
+          <a href="/guides/gst-calculator" className="mt-4 inline-block font-semibold text-blue-700 hover:underline">Read the GST calculation guide →</a>
+        </section>
+
         <div className="mt-8 text-center">
           <a
             href="/"
