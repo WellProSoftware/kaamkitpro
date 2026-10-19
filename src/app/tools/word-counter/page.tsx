@@ -159,6 +159,29 @@ export default function WordCounterPage() {
           </p>
         </section>
 
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
+          <h2 className="text-2xl font-bold">When a word counter is useful</h2>
+          <p className="mt-4 leading-7 text-slate-600">
+            Check a draft before submitting an assignment, editing a blog post, preparing a product description, or writing a social caption. Character counts are especially useful when a form or publishing service sets a limit. Different services may count punctuation, spaces, emoji, and line breaks differently, so compare the destination's own counter when the limit is strict.
+          </p>
+          <h3 className="mt-6 text-lg font-semibold">How these counts are estimated</h3>
+          <ul className="mt-3 list-disc space-y-2 pl-5 leading-7 text-slate-600">
+            <li>Words are groups separated by whitespace; hyphenated words and punctuation may be treated differently by other editors.</li>
+            <li>Characters includes spaces and line breaks. Some emoji or combined Unicode symbols may count as more than one code unit.</li>
+            <li>Characters without spaces removes whitespace characters, not just ordinary spaces.</li>
+            <li>Sentence and paragraph counts are practical estimates based on punctuation and blank lines, not a full language-aware grammar analysis.</li>
+            <li>Reading time is an estimate using roughly 200 words per minute; actual reading speed varies.</li>
+          </ul>
+          <h3 className="mt-6 text-lg font-semibold">Example</h3>
+          <p className="mt-2 leading-7 text-slate-600">
+            For the text “Good tools save time.” the word count is 4. The character count includes the spaces and final full stop. If you are checking a strict application limit, paste the final version and verify it in the destination form too.
+          </p>
+          <p className="mt-5 leading-7 text-slate-600">
+            This tool counts the text you enter in the page. It does not judge writing quality, grammar, originality, or whether a draft meets a publisher's requirements. Review the final text yourself before submitting it.
+          </p>
+          <Link href="/guides/word-counter" className="mt-4 inline-block font-semibold text-blue-700 hover:underline">Read the word-counting guide →</Link>
+        </section>
+
         {/* Back */}
         <div className="mt-8 text-center">
           <a
