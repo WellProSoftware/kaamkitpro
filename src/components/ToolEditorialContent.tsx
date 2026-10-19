@@ -23,9 +23,6 @@ const entries: Record<string, Entry> = {
   "json-to-csv": { title: "JSON to CSV Converter", intro: "JSON to CSV conversion turns a compatible JSON collection into rows and columns for spreadsheet review. It is useful when an API or application exports records as JSON but the next step is filtering, sorting or analysing the data in a spreadsheet.", details: "A flat array of objects with consistent keys is usually the easiest input. Nested objects and arrays do not fit naturally into a simple table, so they may need to be flattened or converted into separate columns. Review the header names, missing values and escaping in the output. CSV files do not carry data types reliably, so spreadsheet software may interpret identifiers as numbers or change date formats; verify important IDs and dates after opening the file.", uses: ["Reviewing API responses in a spreadsheet", "Preparing tabular reports from JSON records", "Sharing structured data with non-developers", "Checking fields across a collection of objects"], tips: ["Prefer a flat array of similarly shaped objects.", "Inspect nested fields and missing values before conversion.", "Check leading zeros and date formats after opening CSV in a spreadsheet."], faqs: [{q:"What JSON shape works best?",a:"An array of objects with consistent field names is generally easiest to represent as a table."},{q:"Will nested arrays become separate tables automatically?",a:"Not necessarily; nested structures may need to be flattened or handled separately."}] }
 };
 
-function labelFromSlug(slug: string) {
-  return slug.split("-").map((part) => part ? part[0].toUpperCase() + part.slice(1) : part).join(" ");
-}
 
 export default function ToolEditorialContent() {
   const pathname = usePathname();
