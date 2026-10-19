@@ -247,6 +247,87 @@ const toolSeo: Record<string, ToolSeo> = {
       "Create catchy YouTube title ideas for videos, channels and content.",
     keywords: ["YouTube title generator", "YouTube titles", "video title ideas"],
   },
+  "image-brightness": {
+    title: "Image Brightness Tool",
+    description: "Adjust the brightness of an image and review the result before downloading it.",
+    keywords: ["image brightness tool","brighten image online","adjust photo brightness"],
+  },
+  "image-flip": {
+    title: "Image Flip Tool",
+    description: "Mirror an image horizontally or vertically with this free online image utility.",
+    keywords: ["image flip tool","flip image online","mirror image"],
+  },
+  "image-grayscale": {
+    title: "Image Grayscale Converter",
+    description: "Convert an image to grayscale for monochrome graphics, documents and photo projects.",
+    keywords: ["grayscale image converter","black and white image","convert image to grayscale"],
+  },
+  "image-rotate": {
+    title: "Image Rotate Tool",
+    description: "Rotate an image to the required orientation and check the result before saving.",
+    keywords: ["rotate image online","image rotation tool","turn photo"],
+  },
+  "line-sorter": {
+    title: "Text Line Sorter",
+    description: "Sort a line-by-line text list into a consistent order for easier review and reuse.",
+    keywords: ["line sorter","sort lines online","alphabetical text sorter"],
+  },
+  "pdf-extract-text": {
+    title: "PDF Text Extractor",
+    description: "Extract selectable text from PDF documents for searching, reviewing and reuse.",
+    keywords: ["PDF text extractor","extract text from PDF","PDF to text"],
+  },
+  "pdf-metadata": {
+    title: "PDF Metadata Viewer",
+    description: "Review descriptive PDF properties such as title, author and creation details when available.",
+    keywords: ["PDF metadata viewer","PDF properties","view PDF metadata"],
+  },
+  "pdf-page-number": {
+    title: "PDF Page Number Tool",
+    description: "Add page numbers to a PDF and review placement before using or printing the document.",
+    keywords: ["add page numbers to PDF","PDF page numbering","number PDF pages"],
+  },
+  "pdf-protect": {
+    title: "PDF Protection Guide",
+    description: "Understand PDF passwords, permissions and security limits before sharing a document.",
+    keywords: ["PDF protection","protect PDF","PDF password security"],
+  },
+  "pdf-rotate": {
+    title: "PDF Rotate Tool",
+    description: "Rotate PDF pages to correct sideways or upside-down documents before sharing or printing.",
+    keywords: ["rotate PDF","PDF page rotation","turn PDF pages"],
+  },
+  "pdf-watermark": {
+    title: "PDF Watermark Guide",
+    description: "Learn how PDF watermarks label drafts, samples and documents for review or distribution.",
+    keywords: ["PDF watermark","add watermark to PDF","watermark PDF document"],
+  },
+  "percentage-calculator": {
+    title: "Percentage Calculator",
+    description: "Calculate a percentage of a value, compare shares and estimate percentage increases or decreases.",
+    keywords: ["percentage calculator","percentage increase calculator","calculate percent"],
+  },
+  "remove-duplicate-lines": {
+    title: "Remove Duplicate Lines",
+    description: "Clean a line-based text list by identifying and removing repeated entries.",
+    keywords: ["remove duplicate lines","duplicate line remover","deduplicate text list"],
+  },
+  "text-diff-checker": {
+    title: "Text Diff Checker",
+    description: "Compare two text versions and review additions, removals and changes side by side.",
+    keywords: ["text diff checker","compare text online","text difference tool"],
+  },
+  "csv-to-json": {
+    title: "CSV to JSON Converter",
+    description: "Convert compatible CSV table data into JSON for APIs, scripts and data workflows.",
+    keywords: ["CSV to JSON","CSV JSON converter","convert CSV data"],
+  },
+  "json-to-csv": {
+    title: "JSON to CSV Converter",
+    description: "Convert compatible JSON records into CSV for spreadsheets, reports and data review.",
+    keywords: ["JSON to CSV","JSON CSV converter","convert JSON to spreadsheet"],
+  },
+
 };
 
 export function getToolSeo(slug: string): ToolSeo | undefined {
