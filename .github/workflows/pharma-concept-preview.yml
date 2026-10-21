@@ -1,0 +1,117 @@
+name: Pharma concept isolated preview
+
+on:
+  push:
+    branches:
+      - design/pharma-purchase-concept
+    paths:
+      - "src/app/pharma-purchase/**"
+      - "src/app/layout.tsx"
+      - "src/app/globals.css"
+      - "package.json"
+      - "package-lock.json"
+      - "vite.config.ts"
+      - "wrangler.jsonc"
+      - ".github/workflows/pharma-concept-preview.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kaamkitpro-pharma-preview
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    name: Build and deploy isolated concept preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      KAAMKITPRO_STAGING: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+      RAZORPAY_MODE: "test"
+      RAZORPAY_LIVE_PAYMENTS_ENABLED: "false"
+    steps:
+      - name: Checkout concept branch only
+        uses: actions/checkout@v5
+        with:
+          ref: design/pharma-purchase-concept
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build Cloudflare/Vinext output
+        run: npm run build:vinext
+      - name: Force isolated preview configuration and reject custom routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const path = "dist/server/wrangler.json";
+          const config = JSON.parse(fs.readFileSync(path, "utf8"));
+          config.name = "kaamkitpro-pharma-preview";
+          config.workers_dev = true;
+          delete config.route;
+          delete config.routes;
+          delete config.custom_domains;
+          delete config.domains;
+          config.vars = {
+            ...(config.vars || {}),
+            KAAMKITPRO_STAGING: "true",
+            RAZORPAY_MODE: "test",
+            RAZORPAY_LIVE_PAYMENTS_ENABLED: "false"
+          };
+          if (config.name !== "kaamkitpro-pharma-preview" ||
+              config.routes?.length || config.custom_domains?.length || config.domains?.length) {
+            throw new Error("Refusing deployment: preview isolation check failed.");
+          }
+          fs.writeFileSync(path, JSON.stringify(config, null, 2) + "\n");
+          console.log("Preview worker name and no-custom-domain guard verified.");
+          NODE
+      - name: Verify deployment credentials exist
+        shell: bash
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "Missing CLOUDFLARE_ACCOUNT_ID; no deployment attempted."; exit 1; }
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "Missing CLOUDFLARE_API_TOKEN; no deployment attempted."; exit 1; }
+      - name: Deploy isolated workers.dev preview only
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx vinext-cloudflare deploy --config dist/server/wrangler.json
+      - name: Smoke-test concept preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          const url = "https://kaamkitpro-pharma-preview.ankitkd550.workers.dev/pharma-purchase";
+          let last = "";
+          for (let attempt = 0; attempt < 6; attempt++) {
+            try {
+              const response = await fetch(url, { redirect: "follow" });
+              const body = await response.text();
+              last = "HTTP " + response.status;
+              if (response.status === 200 &&
+                  body.includes("Pharma") &&
+                  body.includes("No live payments") &&
+                  body.includes("No business data is collected")) {
+                console.log("PASS isolated pharma concept preview: " + url);
+                process.exit(0);
+              }
+              last += "; expected concept safety copy not found";
+            } catch (error) {
+              last = String(error);
+            }
+            await new Promise(resolve => setTimeout(resolve, 2000));
+          }
+          console.error("Preview smoke test failed: " + last);
+          process.exit(1);
+          NODE
