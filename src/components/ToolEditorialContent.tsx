@@ -34,7 +34,7 @@ export default function ToolEditorialContent() {
   return (
     <section aria-labelledby="editorial-tool-content" className="mx-auto mt-8 max-w-5xl px-4 pb-10 sm:px-6 lg:px-8">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
-        <h2 id="editorial-tool-content" className="text-2xl font-bold text-slate-900">About {entry.title}</h2>
+        <h2 id="editorial-tool-content" className="text-2xl font-bold text-slate-900">How this tool works</h2>
         <p className="mt-4 leading-7 text-slate-700">{entry.intro}</p>
         <p className="mt-4 leading-7 text-slate-700">{entry.details}</p>
         <h3 className="mt-7 text-xl font-semibold text-slate-900">Common uses</h3>
