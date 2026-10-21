@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import BrandLogo from "@/components/BrandLogo";
 
 type PurchaseTool = {
@@ -143,7 +143,7 @@ export default function PharmaPurchaseConceptPage() {
   const proPrice = billing === "monthly" ? "₹499" : "₹4,990";
   const teamPrice = billing === "monthly" ? "₹3,999" : "₹39,990";
 
-  function handleDemoSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleDemoSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFormMessage(
       "Preview only: this form is not connected yet, so no information has been sent or saved.",
