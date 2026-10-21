@@ -1,4 +1,5 @@
 # Safety note: this workflow must deploy only the kaamkitpro-staging Worker.
+# Recovery deployment: restore staging from this branch after an isolated-preview misconfiguration.
 name: Cloudflare Workers Free staging validation
 
 on:
