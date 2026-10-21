@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import BrandLogo from "@/components/BrandLogo";
 export default function ContactPage() {
   return (
@@ -144,3 +145,8 @@ export default function ContactPage() {
     </main>
   );
 }
+export const metadata: Metadata = {
+  title: "Contact KaamKitPro",
+  description: "Contact KaamKitPro for support, questions and feedback about the online tools.",
+  alternates: { canonical: "https://kaamkitpro.com/contact" },
+};

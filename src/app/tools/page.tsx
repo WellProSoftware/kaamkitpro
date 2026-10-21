@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
+
+export const metadata: Metadata = {
+  title: "Free Online Tools Directory",
+  description: "Browse KaamKitPro tools for PDFs, images, calculators, text, SEO and developer workflows.",
+  alternates: { canonical: "https://kaamkitpro.com/tools" },
+};
 
 const categories = [
   {

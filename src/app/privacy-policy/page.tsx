@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import BrandLogo from "@/components/BrandLogo";
 export default function PrivacyPolicyPage() {
   return (
@@ -264,3 +265,8 @@ export default function PrivacyPolicyPage() {
     </main>
   );
 }
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "Read how KaamKitPro handles information and privacy when you use its online tools.",
+  alternates: { canonical: "https://kaamkitpro.com/privacy-policy" },
+};

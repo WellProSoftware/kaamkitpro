@@ -5,6 +5,9 @@ import InternalLinks from "@/components/InternalLinks";
 import AdSenseLoader from "@/components/AdSenseLoader";
 import PrivacyConsent from "@/components/PrivacyConsent";
 import AnalyticsLoader from "@/components/AnalyticsLoader";
+import ToolEditorialContent from "@/components/ToolEditorialContent";
+import ToolEditorialContentBatchTwo from "@/components/ToolEditorialContentBatchTwo";
+import ToolEditorialContentBatchThree from "@/components/ToolEditorialContentBatchThree";
 import SupportChat from "@/components/SupportChat";
 
 const siteUrl = "https://kaamkitpro.com";
@@ -46,6 +49,10 @@ export const metadata: Metadata = {
 
   alternates: {
     canonical: siteUrl,
+  },
+
+  other: {
+    "google-adsense-account": "ca-pub-6738934686699082",
   },
 
   openGraph: {
@@ -133,6 +140,12 @@ export default function RootLayout({
         <AdSenseLoader disabled={isStagingBuild} />
 
         {children}
+
+        <ToolEditorialContent />
+
+        <ToolEditorialContentBatchTwo />
+
+        <ToolEditorialContentBatchThree />
 
         <SupportChat />
 

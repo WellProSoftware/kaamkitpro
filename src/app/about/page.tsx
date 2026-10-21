@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import BrandLogo from "@/components/BrandLogo";
 export default function AboutPage() {
   return (
@@ -178,3 +179,8 @@ export default function AboutPage() {
     </main>
   );
 }
+export const metadata: Metadata = {
+  title: "About KaamKitPro",
+  description: "Learn about KaamKitPro and its free online tools for everyday digital work.",
+  alternates: { canonical: "https://kaamkitpro.com/about" },
+};
