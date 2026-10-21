@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import BrandLogo from "@/components/BrandLogo";
 export default function TermsPage() {
   return (
@@ -237,3 +238,8 @@ export default function TermsPage() {
     </main>
   );
 }
+export const metadata: Metadata = {
+  title: "Terms and Conditions",
+  description: "Review the terms and conditions for using KaamKitPro online tools.",
+  alternates: { canonical: "https://kaamkitpro.com/terms" },
+};
