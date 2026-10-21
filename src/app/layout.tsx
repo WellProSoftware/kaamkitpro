@@ -7,6 +7,7 @@ import PrivacyConsent from "@/components/PrivacyConsent";
 import AnalyticsLoader from "@/components/AnalyticsLoader";
 import ToolEditorialContent from "@/components/ToolEditorialContent";
 import ToolEditorialContentBatchTwo from "@/components/ToolEditorialContentBatchTwo";
+import ToolEditorialContentBatchThree from "@/components/ToolEditorialContentBatchThree";
 import SupportChat from "@/components/SupportChat";
 
 const siteUrl = "https://kaamkitpro.com";
@@ -143,6 +144,8 @@ export default function RootLayout({
         <ToolEditorialContent />
 
         <ToolEditorialContentBatchTwo />
+
+        <ToolEditorialContentBatchThree />
 
         <SupportChat />
 
