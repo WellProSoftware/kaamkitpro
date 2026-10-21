@@ -317,7 +317,7 @@ export default function PharmaPurchaseConceptPage() {
           ))}
         </div>
         {filteredTools.length === 0 && <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center"><p className="font-bold text-slate-900">No matching tools</p><p className="mt-2 text-sm text-slate-500">Try a different search or category.</p></div>}
-        <p className="mt-5 text-xs leading-5 text-slate-500">These are proposed tools and navigation concepts. The links lead to this preview's relevant sections until individual tools are built.</p>
+        <p className="mt-5 text-xs leading-5 text-slate-500">These are proposed tools and navigation concepts. The links lead to this preview&apos;s relevant sections until individual tools are built.</p>
       </section>
 
       <section id="how-it-works" className="bg-[#102c2a] text-white">
@@ -325,7 +325,7 @@ export default function PharmaPurchaseConceptPage() {
           <div className="max-w-2xl">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">A calmer workflow</p>
             <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">From scattered sheets to a clearer process</h2>
-            <p className="mt-4 leading-7 text-emerald-50/75">The goal is not another complicated ERP. It is a practical set of purchase tools that can grow with the team's needs.</p>
+            <p className="mt-4 leading-7 text-emerald-50/75">The goal is not another complicated ERP. It is a practical set of purchase tools that can grow with the team&apos;s needs.</p>
           </div>
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             {[
