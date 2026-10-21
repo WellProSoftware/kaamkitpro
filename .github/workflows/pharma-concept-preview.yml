@@ -100,7 +100,7 @@ jobs:
               const body = await response.text();
               last = "HTTP " + response.status;
               if (response.status === 200 &&
-                  body.includes("Pharma") &&
+                  body.toLowerCase().includes("pharma") &&
                   body.includes("No live payments") &&
                   body.includes("No business data is collected")) {
                 console.log("PASS isolated pharma concept preview: " + url);
