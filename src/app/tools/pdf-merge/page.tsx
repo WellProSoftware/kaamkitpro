@@ -238,6 +238,24 @@ export default function PDFMergePage() {
             </ol>
           </div>
 
+          <section className="mt-8 rounded-xl border border-slate-200 bg-white p-5">
+            <h2 className="text-lg font-semibold text-slate-900">Check the merged PDF before sharing</h2>
+            <p className="mt-3 leading-7 text-slate-600">
+              Arrange files in reading order before merging. After download, open the new PDF and check the page count, page orientation, first and last pages, and any pages that contain forms or important tables. Keep the original files until you have confirmed the result.
+            </p>
+            <h3 className="mt-5 font-semibold text-slate-900">What this tool does—and does not do</h3>
+            <ul className="mt-3 list-disc space-y-2 pl-5 leading-7 text-slate-600">
+              <li>It combines the pages of selected PDFs in the order shown in the list.</li>
+              <li>It does not perform OCR, so scanned pages remain scanned images and their text may not be searchable.</li>
+              <li>Merging does not automatically compress a PDF or redact confidential information.</li>
+              <li>Password-protected, damaged, or unusually structured PDFs may fail to process. Use a permitted, accessible copy and try again.</li>
+            </ul>
+            <p className="mt-5 leading-7 text-slate-600">
+              Use a small, non-sensitive sample first if you are unsure how a file will behave. This page processes selected PDF bytes in the browser; still avoid using sensitive documents on a shared device and verify the downloaded file before relying on it.
+            </p>
+            <a href="/guides/pdf-merge" className="mt-4 inline-block font-semibold text-blue-700 hover:underline">Read the PDF merge guide →</a>
+          </section>
+
           <p className="mt-6 text-center text-xs text-slate-500">
             Files are processed in your browser and are not uploaded to
             KaamKitPro servers.

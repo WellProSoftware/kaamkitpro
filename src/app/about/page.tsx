@@ -93,6 +93,32 @@ export default function AboutPage() {
           </div>
         </section>
 
+        <section className="mt-6 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
+          <h2 className="text-2xl font-bold">How to get a reliable result</h2>
+          <p className="mt-4 leading-7 text-slate-600">
+            Choose a tool based on the task you need to complete, then check its result before using it elsewhere. For file tools, keep the original until you have opened and reviewed the output. For calculators, confirm the units and assumptions; for text and developer tools, validate the result in the application where it will be used.
+          </p>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-2xl bg-slate-50 p-5">
+              <h3 className="font-bold">Browse by task</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Explore PDF, image, text, calculator, SEO, social and developer tool categories to find a utility that matches your goal.
+              </p>
+              <a href="/tools" className="mt-3 inline-block font-semibold text-blue-700 hover:underline">Explore all tools →</a>
+            </div>
+            <div className="rounded-2xl bg-slate-50 p-5">
+              <h3 className="font-bold">Learn before you use</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Our guides explain practical workflows, common mistakes, limitations and checks to perform before relying on a result.
+              </p>
+              <a href="/guides" className="mt-3 inline-block font-semibold text-blue-700 hover:underline">Browse practical guides →</a>
+            </div>
+          </div>
+          <p className="mt-5 leading-7 text-slate-600">
+            Results can depend on the input, browser, file format, rounding rules or the requirements of another service. If something looks incorrect, compare it with a trusted source and contact us with the tool name and a description of the issue. Please do not send passwords, payment details or confidential source files.
+          </p>
+        </section>
+
         <section className="mt-6 rounded-3xl bg-blue-50 p-6 sm:p-8">
           <h2 className="text-2xl font-bold">
             Our Goal

@@ -108,6 +108,13 @@ const guides = [
     tool: "/tools/remove-duplicate-lines",
     category: "Text Tools",
   },
+  {
+    title: "How to Choose and Use Online Tools",
+    description: "Choose a utility for the task, test with a small sample, verify outputs, and protect sensitive information.",
+    href: "/guides/choosing-online-tools",
+    tool: "/tools",
+    category: "Everyday Tools",
+  },
 ];
 
 export default function GuidesPage() {
