@@ -34,7 +34,7 @@ export default function PDFPageNumberPage() {
       const output = await pdf.save();
       const url = URL.createObjectURL(new Blob([output as BlobPart], {type:"application/pdf"}));
       const link=document.createElement("a"); link.href=url; link.download="kaamkitpro-numbered.pdf";
-      document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+      document.body.appendChild(link); link.click(); link.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
       setMessage("Page numbers added successfully.");
     } catch (error) { console.error(error); setMessage("Could not process this PDF. Please make sure it is valid."); }
     finally { setProcessing(false); }
