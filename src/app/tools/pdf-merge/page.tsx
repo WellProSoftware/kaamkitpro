@@ -238,6 +238,25 @@ export default function PDFMergePage() {
             </ol>
           </div>
 
+          <div className="mt-6 rounded-xl border border-slate-200 p-5">
+            <h2 className="text-lg font-semibold text-slate-900">
+              When is PDF merging useful?
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-slate-600">
+              Combine related invoices, purchase orders, reports, application
+              documents or scanned pages into one file. Arrange the documents
+              in the required reading order before you merge them, then open
+              the downloaded PDF to verify the page sequence.
+            </p>
+            <h3 className="mt-4 font-semibold text-slate-900">A few things to check</h3>
+            <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-600">
+              <li>Choose PDF files only; other file formats are not accepted.</li>
+              <li>Check the order carefully because the merged document follows the displayed file order.</li>
+              <li>Password-protected, damaged or unsupported PDFs may fail to process.</li>
+              <li>Merging scanned pages combines them but does not make their text searchable with OCR.</li>
+            </ul>
+          </div>
+
           <p className="mt-6 text-center text-xs text-slate-500">
             Files are processed in your browser and are not uploaded to
             KaamKitPro servers.
