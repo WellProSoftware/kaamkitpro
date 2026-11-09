@@ -238,7 +238,24 @@ export default function PdfToolsPage() {
             </p>
 
             <p className="leading-7">
-              Need numbered pages? Use the{" "}\n              <Link href="/tools/pdf-page-number" className="font-medium text-slate-900 underline underline-offset-4">PDF Page Number Tool</Link>{" "}\n              to add page numbers to every page. You can also add a simple text watermark with the{" "}\n              <Link href="/tools/pdf-watermark" className="font-medium text-slate-900 underline underline-offset-4">PDF Watermark Tool</Link>.\n            </p>\n\n            <p className="leading-7">\n              When a PDF contains unnecessary document data, the{" "}
+              Need numbered pages? Use the{" "}
+              <Link
+                href="/tools/pdf-page-number"
+                className="font-medium text-slate-900 underline underline-offset-4"
+              >
+                PDF Page Number Tool
+              </Link>{" "}
+              to add page numbers to every page. You can also add a simple text watermark with the{" "}
+              <Link
+                href="/tools/pdf-watermark"
+                className="font-medium text-slate-900 underline underline-offset-4"
+              >
+                PDF Watermark Tool
+              </Link>.
+            </p>
+
+            <p className="leading-7">
+              When a PDF contains unnecessary document data, the{" "}
               <Link
                 href="/tools/pdf-compressor"
                 className="font-medium text-slate-900 underline underline-offset-4"
