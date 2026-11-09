@@ -36,11 +36,6 @@ const tools = [
     name: "Text Diff Checker",
     description: "Compare two versions of text and inspect line changes.",
   },
-  {
-    href: "/tools/text-diff-checker",
-    name: "Text Diff Checker",
-    description: "Compare two versions of text and inspect line changes.",
-  },
 ];
 
 export default function TextToolsPage() {
