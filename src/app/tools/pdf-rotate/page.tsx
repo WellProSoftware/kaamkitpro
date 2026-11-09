@@ -31,7 +31,7 @@ export default function PDFRotatePage() {
       document.body.appendChild(link);
       link.click();
       link.remove();
-      URL.revokeObjectURL(url);
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
       setMessage(`PDF rotated ${angle}° successfully.`);
     } catch (error) {
       console.error(error);
