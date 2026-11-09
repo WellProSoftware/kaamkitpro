@@ -206,6 +206,24 @@ export default function PDFCompressorPage() {
             </ol>
           </div>
 
+          <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-5">
+            <h2 className="text-lg font-semibold text-slate-900">
+              What this PDF optimizer changes
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-slate-700">
+              This tool re-saves the PDF with optimized object streams and
+              updates document metadata. It does not re-encode embedded images
+              or promise a smaller file for every document. Results depend on
+              how the original PDF was created; an already optimized PDF may
+              stay the same size or become slightly larger.
+            </p>
+            <p className="mt-3 text-sm leading-7 text-slate-700">
+              Always compare the original and downloaded files and check that
+              important pages, forms and signatures still appear as expected
+              before sharing the optimized copy.
+            </p>
+          </div>
+
           <p className="mt-6 text-center text-xs text-slate-500">
             Your PDF is processed directly in your browser and is not uploaded
             to KaamKitPro servers.
