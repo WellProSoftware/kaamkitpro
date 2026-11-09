@@ -139,6 +139,25 @@ export default function PDFSplitPage() {
             </ol>
           </div>
 
+          <div className="mt-6 rounded-xl border border-slate-200 p-5">
+            <h2 className="text-lg font-semibold text-slate-900">
+              When should you split a PDF?
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-slate-600">
+              Splitting is useful when you need to share only selected
+              information, separate individual invoice or report pages, or
+              create standalone copies of scanned documents. This tool creates
+              one PDF download for each page in the source document.
+            </p>
+            <h3 className="mt-4 font-semibold text-slate-900">Before you start</h3>
+            <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-600">
+              <li>Check the page count before splitting because every page is saved separately.</li>
+              <li>Your browser may ask you to allow multiple downloads.</li>
+              <li>Password-protected, damaged or unsupported PDFs may fail to process.</li>
+              <li>This tool separates pages; it does not extract text or perform OCR.</li>
+            </ul>
+          </div>
+
           <p className="mt-6 text-center text-xs text-slate-500">
             Your PDF is processed directly in your browser.
           </p>
