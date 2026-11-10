@@ -38,3 +38,20 @@ test("public SEO pages expose canonical URLs and staging noindex", async ({ page
     expect(href, `canonical for ${path}`).toMatch(/^https:\/\/kaamkitpro\.com(?:\/.*)?$/);
   }
 });
+
+
+test("public internal links do not expose retired tools or guides", async ({ page }) => {
+  await page.goto("/");
+  for (const route of ["/tools/emi-calculator", "/tools/percentage-calculator", "/guides/qr-code"]) {
+    await expect(page.locator(`a[href="${route}"]`)).toHaveCount(0);
+  }
+});
+
+test("sitemap excludes retired tool categories and guides", async ({ request }) => {
+  const response = await request.get("/sitemap.xml");
+  expect(response.ok()).toBeTruthy();
+  const xml = await response.text();
+  for (const route of ["/tools/text", "/tools/seo", "/tools/social", "/tools/developer", "/guides/qr-code", "/guides/json-formatting", "/guides/csv-to-json", "/guides/json-to-csv", "/guides/line-sorter", "/guides/text-diff-checker", "/guides/word-counter", "/guides/slug-generator", "/guides/remove-duplicate-lines"]) {
+    expect(xml).not.toContain(route);
+  }
+});
