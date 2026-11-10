@@ -74,7 +74,7 @@ export default function FileImportDropzone({
           {buttonLabel}
         </button>
         <p className="mt-3 max-w-full break-all text-xs text-slate-500" aria-live="polite">
-          {fileNames.length ? `Selected: ${fileNames.join(", ")}` : "Drag and drop " + (multiple ? "files" : "a file") + " here"}
+          {fileNames.length ? <><span>Selected {fileNames.length} {fileNames.length === 1 ? "file" : "files"}:</span><span className="mt-1 flex flex-wrap justify-center gap-2">{fileNames.map((name) => <span key={name} className="rounded-md bg-white px-2 py-1 text-xs font-medium text-slate-700">{name}</span>)}</span></> : "Drag and drop " + (multiple ? "files" : "a file") + " here"}
         </p>
       </div>
     </div>
