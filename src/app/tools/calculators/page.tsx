@@ -3,19 +3,9 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 
 const tools = [
   {
-    href: "/tools/percentage-calculator",
-    title: "Percentage Calculator",
-    description: "Calculate percentages and common percentage problems quickly.",
-  },
-  {
     href: "/tools/gst-calculator",
     title: "GST Calculator",
     description: "Calculate GST amounts and final prices online.",
-  },
-  {
-    href: "/tools/emi-calculator",
-    title: "EMI Calculator",
-    description: "Calculate monthly loan EMI, interest and total payment.",
   },
   {
     href: "/tools/age-calculator",
@@ -37,13 +27,11 @@ const tools = [
 export const metadata = {
   title: "Free Online Calculators",
   description:
-    "Free online calculators for percentage, GST, EMI, age, BMI and SIP calculations.",
+    "Free online calculators for GST, age, BMI and SIP calculations.",
   keywords: [
     "online calculators",
     "free calculators",
-    "percentage calculator",
     "GST calculator",
-    "EMI calculator",
     "age calculator",
     "BMI calculator",
     "SIP calculator",
@@ -118,24 +106,6 @@ export default function CalculatorsPage() {
           </h2>
 
           <div className="mt-6 space-y-5 text-slate-600">
-            <p className="leading-7">
-              For loan planning, use the{" "}
-              <Link
-                href="/tools/emi-calculator"
-                className="font-medium text-slate-900 underline underline-offset-4"
-              >
-                EMI Calculator
-              </Link>
-              . For investments, the{" "}
-              <Link
-                href="/tools/sip-calculator"
-                className="font-medium text-slate-900 underline underline-offset-4"
-              >
-                SIP Calculator
-              </Link>{" "}
-              can help estimate potential returns.
-            </p>
-
             <p className="leading-7">
               For business pricing and tax calculations, use the{" "}
               <Link
