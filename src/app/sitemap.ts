@@ -7,7 +7,7 @@ const toolRoutes = [
   "/tools/developer", "/tools/gst-calculator", "/tools/image", "/tools/image-brightness",
   "/tools/image-compressor", "/tools/image-converter", "/tools/image-cropper", "/tools/image-flip",
   "/tools/image-grayscale", "/tools/image-resizer", "/tools/image-rotate", "/tools/item-master-matcher", "/tools/excel-combiner",
-  "/tools/jpg-to-pdf", "/tools/pdf", "/tools/pdf-compressor", "/tools/pdf-extract-text",
+  "/tools/jpg-to-pdf", "/tools/pdf-to-excel", "/tools/pdf-to-word", "/tools/jpg-to-excel", "/tools/jpg-to-word", "/tools/pdf", "/tools/pdf-compressor", "/tools/pdf-extract-text",
   "/tools/pdf-merge", "/tools/pdf-metadata", "/tools/pdf-page-number", "/tools/pdf-protect",
   "/tools/pdf-rotate", "/tools/pdf-split", "/tools/pdf-to-jpg", "/tools/pdf-watermark",
   "/tools/seo", "/tools/sip-calculator", "/tools/social", "/tools/text", "/tools/vendor-quotation-comparison",
