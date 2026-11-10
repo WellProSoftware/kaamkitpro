@@ -36,12 +36,6 @@ const tools: Tool[] = [
     category: "Text Tools",
   },
   {
-    name: "Case Converter",
-    description: "Convert text to uppercase, lowercase and more.",
-    href: "/tools/case-converter",
-    category: "Text Tools",
-  },
-  {
     name: "Remove Extra Spaces",
     description: "Clean unnecessary spaces from your text.",
     href: "/tools/remove-extra-spaces",
