@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import FileImportDropzone from "@/components/FileImportDropzone";
 
 type Rotation = 0 | 90 | 180 | 270;
 
@@ -77,26 +78,15 @@ export default function ImageRotatePage() {
             </p>
           </div>
 
-          <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-            <input
-              id="rotate-file"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(event) => {
-                setFile(event.target.files?.[0] || null);
-                setMessage("");
-                event.target.value = "";
-              }}
-            />
-            <label
-              htmlFor="rotate-file"
-              className="inline-block cursor-pointer rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700"
-            >
-              Select Image
-            </label>
-            {file && <p className="mt-3 text-sm text-slate-600">{file.name}</p>}
-          </div>
+          <FileImportDropzone
+            inputId="rotate-file"
+            inputLabel="Select Image"
+            title="Upload an image to rotate"
+            description="Drag and drop an image here, or browse your device. Processing stays in your browser."
+            accept="image/*"
+            buttonLabel="Select Image"
+            onFile={(selected) => { setFile(selected); setMessage(""); }}
+          />
 
           {file && (
             <div className="mt-6">
