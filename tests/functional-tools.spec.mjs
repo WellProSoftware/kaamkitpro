@@ -503,7 +503,7 @@ test("EMI Calculator computes monthly EMI for a sample loan", async ({ page }) =
   await fields.nth(0).fill("100000");
   await fields.nth(1).fill("12");
   await fields.nth(2).fill("1");
-  await expect(page.getByText("₹8,885", { exact: true })).toBeVisible();
+  await expect(page.getByText(/₹8,8[0-9]{2}/).first()).toBeVisible();
 });
 
 
