@@ -22,25 +22,19 @@ export const metadata: Metadata = {
   },
 
   description:
-    "KaamKitPro provides free online tools for PDF, images, calculators, text, SEO, social media, developer utilities and everyday digital work.",
+    "KaamKitPro provides free online PDF tools, image tools, calculators and hospital procurement utilities for everyday work.",
 
   keywords: [
     "free online tools",
     "online tools",
     "PDF tools",
     "image tools",
-    "word counter",
-    "character counter",
-    "QR code generator",
-    "password generator",
+    "calculator tools",
+    "hospital procurement tools",
+    "vendor quotation comparison",
     "GST calculator",
     "EMI calculator",
     "SIP calculator",
-    "JSON formatter",
-    "Base64 encoder decoder",
-    "UUID generator",
-    "SEO tools",
-    "developer tools",
   ],
 
   authors: [{ name: "KaamKitPro" }],
@@ -58,7 +52,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "KaamKitPro - Free Online Tools",
     description:
-      "Free online tools for PDF, images, calculators, text, SEO, social media, developer utilities and everyday digital work.",
+      "Free online PDF tools, image tools, calculators and hospital procurement utilities for everyday work.",
     url: siteUrl,
     type: "website",
     siteName: "KaamKitPro",
@@ -69,7 +63,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "KaamKitPro - Free Online Tools",
     description:
-      "Useful free online tools for everyday digital work.",
+      "Useful free online tools for everyday digital and business tasks.",
   },
 
   robots: {
@@ -101,7 +95,7 @@ const websiteSchema = {
   "@type": "WebSite",
   name: "KaamKitPro",
   url: siteUrl,
-  description: "Free online tools for everyday digital work.",
+  description: "Free online tools for everyday digital and business tasks.",
 };
 
 const organizationSchema = {
@@ -110,7 +104,7 @@ const organizationSchema = {
   name: "KaamKitPro",
   url: siteUrl,
   description:
-    "KaamKitPro provides free online tools for everyday digital work.",
+    "KaamKitPro provides free online tools for everyday digital and business tasks.",
 };
 
 export default function RootLayout({
