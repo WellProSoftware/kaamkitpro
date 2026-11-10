@@ -20,21 +20,9 @@ const categories = [
 
 const tools: Tool[] = [
   {
-    name: "Percentage Calculator",
-    description: "Calculate percentages quickly and accurately.",
-    href: "/tools/percentage-calculator",
-    category: "Calculators",
-  },
-  {
     name: "GST Calculator",
     description: "Calculate GST inclusive and exclusive prices.",
     href: "/tools/gst-calculator",
-    category: "Calculators",
-  },
-  {
-    name: "EMI Calculator",
-    description: "Calculate loan EMI, interest and total payment.",
-    href: "/tools/emi-calculator",
     category: "Calculators",
   },
   {
@@ -203,8 +191,6 @@ const popularTools = [
   "PDF Merge",
   "Image Compressor",
   "GST Calculator",
-  "Percentage Calculator",
-  "EMI Calculator",
 ];
 
 export default function Home() {
@@ -336,7 +322,7 @@ export default function Home() {
           >
             <span className="font-semibold text-slate-900">Calculators</span>
             <span className="mt-1 block text-sm text-slate-600">
-              EMI, GST, SIP, BMI, age and percentage calculators.
+              GST, SIP, BMI and age calculators.
             </span>
           </a>
 
