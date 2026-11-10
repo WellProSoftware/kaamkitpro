@@ -12,7 +12,8 @@ test.describe("HospitalProcure staging MVP", () => {
   test("calculates landed costs and responds to quantity and rate changes", async ({ page }) => {
     await page.goto("/hospital-procurement");
     await page.getByRole("button", { name: /Quotation comparison/i }).click();
-    await expect(page.getByText("Lowest landed rate")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Vendor quotation comparison" })).toBeVisible();
+    await expect(page.getByText("Lowest landed rate", { exact: true })).toBeVisible();
     await page.getByLabel("Required quantity").fill("200");
     await expect(page.getByText(/200 ×/)).toBeVisible();
     await page.getByLabel("Base rate 2").fill("1000");
@@ -25,7 +26,7 @@ test.describe("HospitalProcure staging MVP", () => {
     await page.goto("/hospital-procurement");
     await page.getByRole("button", { name: /Purchase orders/i }).click();
     await expect(page.getByText("PO-2026-0142")).toBeVisible();
-    await page.getByRole("button", { name: /Inventory watch/i }).click();
+    await page.getByRole("navigation", { name: "Procurement modules" }).getByRole("button", { name: "Inventory watch", exact: true }).click();
     await expect(page.getByText("Nitrile Examination Gloves")).toBeVisible();
   });
 
