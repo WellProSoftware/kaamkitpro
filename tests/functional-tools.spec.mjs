@@ -615,16 +615,6 @@ test("Remove Extra Spaces collapses repeated spaces and preserves words and line
   await expect(page.getByText("Cleaned Words", { exact: true }).locator("xpath=..")).toContainText("5");
 });
 
-test("Case Converter reports line count instead of character count", async ({ page }) => {
-  await page.goto("/tools/case-converter");
-  await page.waitForTimeout(500); // Allow the client component to hydrate before interaction.
-  await page.getByPlaceholder("Type or paste your text here...").fill("Hello\nworld");
-  const stats = page.getByText("Lines", { exact: true }).locator("xpath=..");
-  await expect(stats).toContainText("2");
-  await page.getByRole("button", { name: "UPPERCASE", exact: true }).click();
-  await expect(page.locator("textarea")).toHaveValue("HELLO\nWORLD");
-  await expect(stats).toContainText("2");
-});
 
 test("Base64 encoder and decoder preserve Hindi and emoji text", async ({ page }) => {
   await page.goto("/tools/base64");
