@@ -22,7 +22,7 @@ const categories = [
   {
     title: "Calculators",
     href: "/tools/calculators",
-    description: "EMI, GST, SIP, BMI, age and percentage calculators.",
+    description: "GST, SIP, BMI and age calculators.",
   },
   {
     title: "Hospital Procurement",
@@ -41,11 +41,6 @@ const popularTools = [
     href: "/tools/image-compressor",
     title: "Image Compressor",
     description: "Reduce image file size in your browser.",
-  },
-  {
-    href: "/tools/emi-calculator",
-    title: "EMI Calculator",
-    description: "Calculate loan EMI and repayment details.",
   },
   {
     href: "/tools/vendor-quotation-comparison",
@@ -188,7 +183,7 @@ export default function ToolsPage() {
           </h2>
 
           <p className="mt-4 leading-7 text-slate-600">
-            KaamKitPro brings useful browser-based utilities together under one platform. Work with PDF files, compress images, calculate EMIs or compare hospital supplier quotations through the category pages above.
+            KaamKitPro brings useful browser-based utilities together under one platform. Work with PDF files, compress images, calculate GST or compare hospital supplier quotations through the category pages above.
           </p>
         </div>
       </section>
