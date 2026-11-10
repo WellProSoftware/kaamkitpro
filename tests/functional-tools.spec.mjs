@@ -626,7 +626,7 @@ test("Item Mapping loads a CSV master, matches items and exports results", async
   await page.getByLabel("Item master file").setInputFiles({
     name: "item-master.csv",
     mimeType: "text/csv",
-    buffer: Buffer.from("Item No,Item Id,Item Name,Category,Unit Name\\n1001,MED001,PARACETAMOL 500 MG TABLET,Medicine,TABLET\\n1002,MED002,AMOXICILLIN 250 MG CAPSULE,Medicine,CAPSULE"),
+    buffer: Buffer.from("Item No,Item Id,Item Name,Category,Unit Name\n1001,MED001,PARACETAMOL 500 MG TABLET,Medicine,TABLET\n1002,MED002,AMOXICILLIN 250 MG CAPSULE,Medicine,CAPSULE"),
   });
   await expect(page.getByText(/2 items loaded and saved in this browser/)).toBeVisible();
 
@@ -634,7 +634,7 @@ test("Item Mapping loads a CSV master, matches items and exports results", async
   await page.getByRole("button", { name: "Check item" }).click();
   await expect(page.getByText("PARACETAMOL 500 MG TABLET")).toBeVisible();
 
-  await page.getByLabel("Bulk item names").fill("PARACETAMOL 500 MG TABLET\\nUNKNOWN SURGICAL ITEM");
+  await page.getByLabel("Bulk item names").fill("PARACETAMOL 500 MG TABLET\nUNKNOWN SURGICAL ITEM");
   await page.getByRole("button", { name: "Run bulk check" }).click();
   await expect(page.getByRole("heading", { name: "4. Match results" })).toBeVisible();
   await expect(page.getByText("NEW ITEM", { exact: true })).toBeVisible();
