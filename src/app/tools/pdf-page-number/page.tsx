@@ -1,5 +1,7 @@
 "use client";
 
+
+import FileImportDropzone from "@/components/FileImportDropzone";
 import { useState } from "react";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
@@ -46,11 +48,7 @@ export default function PDFPageNumberPage() {
         <a href="/tools/pdf" className="text-sm font-medium text-blue-600 hover:underline">← Browse all PDF tools</a>
         <div className="mt-4 rounded-2xl bg-white p-6 shadow-sm md:p-8">
           <div className="mb-8 text-center"><h1 className="text-3xl font-bold text-slate-900">PDF Page Number Tool</h1><p className="mt-3 text-slate-600">Add page numbers to every page of a PDF directly in your browser.</p></div>
-          <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-            <input id="pdf-file" type="file" accept=".pdf,application/pdf" className="hidden" onChange={(e)=>{setFile(e.target.files?.[0]||null);setMessage("");e.target.value="";}}/>
-            <label htmlFor="pdf-file" className="inline-block cursor-pointer rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">Select PDF</label>
-            <p className="mt-3 text-sm text-slate-500">Choose one PDF file.</p>
-          </div>
+          <FileImportDropzone inputId="pdf-file" inputLabel="Select PDF" title="PDF Page Number" description="Drop a PDF here, or browse your device. Your file is processed locally in your browser." accept=".pdf,application/pdf" buttonLabel="Select PDF" onFile={(selectedFile) => { setFile(selectedFile); setMessage(""); }} />
           {file && <div className="mt-6 rounded-xl border border-slate-200 p-5">
             <p className="font-medium text-slate-900">{file.name}</p>
             <div className="mt-5"><label htmlFor="position" className="text-sm font-medium text-slate-700">Position</label>
