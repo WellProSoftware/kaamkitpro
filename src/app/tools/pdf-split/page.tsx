@@ -1,5 +1,7 @@
 "use client";
 
+
+import FileImportDropzone from "@/components/FileImportDropzone";
 import { useState } from "react";
 import { PDFDocument } from "pdf-lib";
 
@@ -77,31 +79,7 @@ export default function PDFSplitPage() {
             </p>
           </div>
 
-          <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-            <input
-              id="pdf-file"
-              type="file"
-              accept=".pdf,application/pdf"
-              className="hidden"
-              onChange={(event) => {
-                const selected = event.target.files?.[0] || null;
-                setFile(selected);
-                setMessage("");
-                event.target.value = "";
-              }}
-            />
-
-            <label
-              htmlFor="pdf-file"
-              className="inline-block cursor-pointer rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
-            >
-              Select PDF
-            </label>
-
-            <p className="mt-3 text-sm text-slate-500">
-              Select one PDF file to split.
-            </p>
-          </div>
+          <FileImportDropzone inputId="pdf-file" inputLabel="Select PDF" title="PDF Split" description="Drop a PDF here, or browse your device. Your file is processed locally in your browser." accept=".pdf,application/pdf" buttonLabel="Select PDF" onFile={(file) => { const selectedFile = file; setFile(selectedFile); setMessage(""); }} />
 
           {file && (
             <div className="mt-6 rounded-xl border border-slate-200 p-5">
