@@ -17,7 +17,13 @@ export default function AgeCalculatorPage() {
     const birth = new Date(`${birthDate}T00:00:00`);
     const today = new Date();
 
-    if (birth > today) {
+    if (
+      Number.isNaN(birth.getTime()) ||
+      birth.getFullYear() !== Number(birthDate.slice(0, 4)) ||
+      birth.getMonth() + 1 !== Number(birthDate.slice(5, 7)) ||
+      birth.getDate() !== Number(birthDate.slice(8, 10)) ||
+      birth > today
+    ) {
       setAge(null);
       return;
     }
@@ -123,9 +129,9 @@ export default function AgeCalculatorPage() {
           </h2>
 
           <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-600">
-            <li>Date of birth select karo.</li>
-            <li>Calculate Age button click karo.</li>
-            <li>Exact age years, months aur days mein dekho.</li>
+            <li>Select your date of birth.</li>
+            <li>Click the Calculate Age button.</li>
+            <li>View your age in years, months and days.</li>
           </ol>
         </section>
 
