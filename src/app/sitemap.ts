@@ -4,7 +4,7 @@ const baseUrl = "https://kaamkitpro.com";
 
 const toolRoutes = [
   "/tools/age-calculator", "/tools/base64", "/tools/bmi-calculator", "/tools/calculators",
-  "/tools/case-converter", "/tools/character-counter", "/tools/color-converter", "/tools/css-formatter",
+  "/tools/color-converter", "/tools/css-formatter",
   "/tools/developer", "/tools/emi-calculator", "/tools/gst-calculator", "/tools/hash-generator",
   "/tools/hashtag-generator", "/tools/html-formatter", "/tools/image", "/tools/image-brightness",
   "/tools/image-compressor", "/tools/image-converter", "/tools/image-cropper", "/tools/image-flip",
