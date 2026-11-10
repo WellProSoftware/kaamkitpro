@@ -7,11 +7,6 @@ const tools = [
     description: "Count words, characters and paragraphs instantly.",
   },
   {
-    href: "/tools/character-counter",
-    name: "Character Counter",
-    description: "Count characters with and without spaces.",
-  },
-  {
     href: "/tools/case-converter",
     name: "Case Converter",
     description: "Convert text to uppercase, lowercase, title case and more.",
@@ -94,22 +89,7 @@ export default function TextToolsPage() {
           </p>
 
           <p className="mt-4 leading-7 text-slate-600">
-            For writing projects, start with the{" "}
-            <Link
-              href="/tools/word-counter"
-              className="font-semibold text-blue-600 hover:underline"
-            >
-              Word Counter
-            </Link>{" "}
-            to check length, use the{" "}
-            <Link
-              href="/tools/character-counter"
-              className="font-semibold text-blue-600 hover:underline"
-            >
-              Character Counter
-            </Link>{" "}
-            for character limits, and use the{" "}
-            <Link
+            For writing projects, use the <Link
               href="/tools/case-converter"
               className="font-semibold text-blue-600 hover:underline"
             >
