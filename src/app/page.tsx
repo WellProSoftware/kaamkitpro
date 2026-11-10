@@ -20,6 +20,12 @@ const categories = [
 
 const tools: Tool[] = [
   {
+    name: "Item Master Matcher",
+    description: "Match hospital purchase items against your item master.",
+    href: "/tools/item-master-matcher",
+    category: "Data Tools",
+  },
+  {
     name: "GST Calculator",
     description: "Calculate GST inclusive and exclusive prices.",
     href: "/tools/gst-calculator",
