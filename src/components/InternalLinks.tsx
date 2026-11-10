@@ -7,9 +7,7 @@ const toolLinks = [
   { href: "/tools/pdf-to-jpg", label: "PDF to JPG" },
   { href: "/tools/pdf-compressor", label: "PDF Compressor" },
   { href: "/tools/image-compressor", label: "Image Compressor" },
-  { href: "/tools/emi-calculator", label: "EMI Calculator" },
   { href: "/tools/gst-calculator", label: "GST Calculator" },
-  { href: "/tools/percentage-calculator", label: "Percentage Calculator" },
   { href: "/tools/sip-calculator", label: "SIP Calculator" },
 ];
 
@@ -19,7 +17,6 @@ const guideLinks = [
     href: "/guides/image-compression",
     label: "How to Compress Images Online",
   },
-  { href: "/guides/qr-code", label: "How to Create a QR Code" },
 ];
 
 export default function InternalLinks() {
