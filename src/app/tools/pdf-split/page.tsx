@@ -44,9 +44,10 @@ export default function PDFSplitPage() {
         link.click();
         link.remove();
 
-        URL.revokeObjectURL(url);
+        // Keep the object URL alive long enough for the browser to start the download.
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 
-        await new Promise((resolve) => setTimeout(resolve, 150));
+        await new Promise((resolve) => setTimeout(resolve, 300));
       }
 
       setMessage(
