@@ -68,7 +68,15 @@ export default function HospitalProcurementPage() {
       current.map((quote) => {
         if (quote.id !== id) return quote;
         if (field === "vendor" || field === "availability") return { ...quote, [field]: value };
-        return { ...quote, [field]: Math.max(0, Number(value) || 0) };
+        const numericValue = Number(value);
+        const safeValue = Number.isFinite(numericValue) ? Math.max(0, numericValue) : 0;
+        if (field === "discount" || field === "gst") {
+          return { ...quote, [field]: Math.min(100, safeValue) };
+        }
+        if (field === "deliveryDays") {
+          return { ...quote, deliveryDays: Math.floor(safeValue) };
+        }
+        return { ...quote, unitPrice: safeValue };
       }),
     );
   }
