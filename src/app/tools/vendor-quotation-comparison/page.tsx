@@ -23,15 +23,24 @@ export default function VendorQuotationComparisonPage() {
   const [freight, setFreight] = useState<Record<string, string>>({});
 
   const totals = useMemo(() => vendors.map((vendor) => {
+    const missingRates = items.filter((item) => {
+      const rawRate = item.rates[vendor.id];
+      return rawRate === undefined || rawRate.trim() === "" || !Number.isFinite(Number(rawRate)) || Number(rawRate) < 0;
+    }).length;
+    const invalidItems = items.filter((item) =>
+      !item.name.trim() || !Number.isFinite(Number(item.quantity)) || Number(item.quantity) <= 0
+    ).length;
+    const complete = items.length > 0 && missingRates === 0 && invalidItems === 0;
     const subtotal = items.reduce((sum, item) => sum + Math.max(0, Number(item.quantity) || 0) * Math.max(0, Number(item.rates[vendor.id]) || 0), 0);
     const discount = Math.min(subtotal, Math.max(0, Number(discounts[vendor.id]) || 0));
     const taxable = subtotal - discount;
     const gst = taxable * Math.max(0, Number(gstRate) || 0) / 100;
     const shipping = Math.max(0, Number(freight[vendor.id]) || 0);
-    return { id: vendor.id, subtotal, discount, taxable, gst, freight: shipping, total: taxable + gst + shipping };
+    return { id: vendor.id, subtotal, discount, taxable, gst, freight: shipping, total: taxable + gst + shipping, complete, missingRates, invalidItems };
   }), [vendors, items, gstRate, discounts, freight]);
 
-  const lowest = totals.length ? Math.min(...totals.map((entry) => entry.total)) : 0;
+  const completeTotals = totals.filter((entry) => entry.complete);
+  const lowest = completeTotals.length ? Math.min(...completeTotals.map((entry) => entry.total)) : null;
   const updateItem = (id: string, patch: Partial<Item>) => setItems((current) => current.map((item) => item.id === id ? { ...item, ...patch } : item));
   const updateRate = (itemId: string, vendorId: string, value: string) => setItems((current) => current.map((item) => item.id === itemId ? { ...item, rates: { ...item.rates, [vendorId]: value } } : item));
 
@@ -97,8 +106,9 @@ export default function VendorQuotationComparisonPage() {
           <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {vendors.map((vendor) => {
               const total = totals.find((entry) => entry.id === vendor.id)!;
-              return <div key={vendor.id} className={`rounded-xl border p-4 ${total.total === lowest && lowest > 0 ? "border-emerald-400 bg-emerald-50" : "border-slate-200 bg-white"}`}>
-                <div className="flex items-center justify-between gap-2"><h3 className="font-semibold">{vendor.name || "Unnamed vendor"}</h3>{total.total === lowest && lowest > 0 && <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs font-semibold text-emerald-800">Lowest total</span>}</div>
+              return <div key={vendor.id} className={`rounded-xl border p-4 ${total.complete && total.total === lowest ? "border-emerald-400 bg-emerald-50" : "border-slate-200 bg-white"}`}>
+                <div className="flex items-center justify-between gap-2"><h3 className="font-semibold">{vendor.name || "Unnamed vendor"}</h3>{total.complete && total.total === lowest ? <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs font-semibold text-emerald-800">Lowest total</span> : !total.complete ? <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-800">Incomplete quote</span> : null}</div>
+                {!total.complete && <p className="mt-2 text-xs leading-5 text-amber-800">{total.missingRates} missing or invalid rate(s); {total.invalidItems} item row(s) need a name and positive quantity. This vendor is excluded from lowest-total ranking.</p>}
                 <label className="mt-4 block text-xs font-medium text-slate-600">Discount amount (₹)</label>
                 <input type="number" min="0" value={discounts[vendor.id] || ""} onChange={(event) => setDiscounts((current) => ({ ...current, [vendor.id]: event.target.value }))} className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" />
                 <label className="mt-3 block text-xs font-medium text-slate-600">Freight / delivery (₹)</label>
@@ -118,7 +128,7 @@ export default function VendorQuotationComparisonPage() {
         <section className="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-5 text-sm leading-6 text-blue-950">
           <h2 className="font-semibold">Calculation notes</h2>
           <p className="mt-2">Estimated total = (quantity × unit rate − discount) + GST on the discounted item value + freight. Freight is added after GST in this comparison. Confirm each supplier&apos;s tax treatment, freight taxability, unit of measure, pack size, brand, specification, delivery terms and quote validity before issuing a purchase order.</p>
-          <p className="mt-2">This tool compares the figures entered; it does not verify supplier credentials, product equivalence, regulatory compliance or quotation authenticity. For mixed GST rates, enter and compare items in separate rate groups.</p>
+          <p className="mt-2">Only vendors with a valid rate for every item and a name plus positive quantity on every item row are included in the lowest-total ranking. This tool compares the figures entered; it does not verify supplier credentials, product equivalence, regulatory compliance or quotation authenticity. For mixed GST rates, enter and compare items in separate rate groups.</p>
         </section>
       </div>
     </main>
