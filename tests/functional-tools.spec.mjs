@@ -589,6 +589,7 @@ test("GST Calculator handles a zero amount without producing invalid values", as
 
 test("GST Calculator shows unavailable results until a valid amount is entered", async ({ page }) => {
   await page.goto("/tools/gst-calculator");
+  await page.waitForTimeout(500); // Wait for client hydration before entering the amount.
   await expect(page.getByText("₹—", { exact: true })).toHaveCount(3);
   await page.locator('input[type="number"]').fill("1000");
   await expect(page.getByText("₹1180.00", { exact: true })).toBeVisible();
