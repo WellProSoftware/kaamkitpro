@@ -629,7 +629,7 @@ test("Item Mapping loads a CSV master, matches items and exports results", async
     mimeType: "text/csv",
     buffer: Buffer.from("Item No,Item Id,Item Name,Category,Unit Name\n1001,MED001,PARACETAMOL 500 MG TABLET,Medicine,TABLET\n1002,MED002,AMOXICILLIN 250 MG CAPSULE,Medicine,CAPSULE"),
   });
-  await expect(page.getByText(/2 items loaded and saved in this browser/)).toBeVisible();
+  await expect(page.getByText(/2 items loaded in this temporary guest session — not saved/)).toBeVisible();
 
   await page.getByLabel("Single item name").fill("PARACETAMOL 500MG TABLET");
   await page.getByRole("button", { name: "Check item" }).click();
@@ -644,6 +644,10 @@ test("Item Mapping loads a CSV master, matches items and exports results", async
   await page.getByRole("button", { name: "Download Excel results" }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("KaamKitPro_Item_Match_Result.xlsx");
+
+  // Signed-out guest workspaces are page-session only and must not survive a reload.
+  await page.reload();
+  await expect(page.getByText("0 master items ready", { exact: true })).toBeVisible();
 });
 
 
