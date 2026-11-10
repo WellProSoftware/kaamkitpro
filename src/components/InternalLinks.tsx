@@ -7,9 +7,6 @@ const toolLinks = [
   { href: "/tools/pdf-to-jpg", label: "PDF to JPG" },
   { href: "/tools/pdf-compressor", label: "PDF Compressor" },
   { href: "/tools/image-compressor", label: "Image Compressor" },
-  { href: "/tools/qr-code-generator", label: "QR Code Generator" },
-  { href: "/tools/word-counter", label: "Word Counter" },
-  { href: "/tools/json-formatter", label: "JSON Formatter" },
   { href: "/tools/emi-calculator", label: "EMI Calculator" },
   { href: "/tools/gst-calculator", label: "GST Calculator" },
   { href: "/tools/percentage-calculator", label: "Percentage Calculator" },
@@ -68,8 +65,7 @@ export default function InternalLinks() {
         </div>
 
         <p className="mt-8 text-sm leading-6 text-slate-500">
-          KaamKitPro provides free online utilities for PDF, image, calculator,
-          text, SEO, social media and developer tasks.
+          KaamKitPro provides free online utilities for PDF, image, calculator and hospital procurement tasks.
         </p>
       </div>
     </section>
