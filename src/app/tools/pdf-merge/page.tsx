@@ -3,6 +3,7 @@ import { trackDownload, trackToolUsed } from "@/lib/analytics";
 
 import { useState } from "react";
 import { PDFDocument } from "pdf-lib";
+import FileImportDropzone from "@/components/FileImportDropzone";
 
 export default function PDFMergePage() {
   const [files, setFiles] = useState<File[]>([]);
@@ -111,30 +112,16 @@ export default function PDFMergePage() {
             </p>
           </div>
 
-          <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-            <input
-              id="pdf-upload"
-              type="file"
-              accept=".pdf,application/pdf"
-              multiple
-              className="hidden"
-              onChange={(event) => {
-                addFiles(event.target.files);
-                event.target.value = "";
-              }}
-            />
-
-            <label
-              htmlFor="pdf-upload"
-              className="inline-block cursor-pointer rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
-            >
-              Select PDF Files
-            </label>
-
-            <p className="mt-3 text-sm text-slate-500">
-              Select two or more PDF files.
-            </p>
-          </div>
+          <FileImportDropzone
+            inputId="pdf-upload"
+            inputLabel="Select PDF Files"
+            title="Add PDFs to merge"
+            description="Drop multiple PDF files here, or browse your device. Arrange their order after importing."
+            accept=".pdf,application/pdf"
+            multiple
+            buttonLabel="Select PDF Files"
+            onFiles={addFiles}
+          />
 
           {files.length > 0 && (
             <div className="mt-8">
