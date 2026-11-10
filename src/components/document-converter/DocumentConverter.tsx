@@ -51,10 +51,11 @@ export default function DocumentConverter({mode}:{mode:Mode}){
   const isPdf=mode.startsWith("pdf"),isExcel=mode.endsWith("excel"),title=titles[mode];
   async function exportExcel(rows:string[][]){
     await loadScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",()=>Boolean(getXlsx()));
-    if(!getXlsx())throw new Error("Excel export library is unavailable.");
-    const wb=getXlsx().utils.book_new();
-    getXlsx().utils.book_append_sheet(wb,getXlsx().utils.aoa_to_sheet(rows.length?rows:[["No text detected"]]),"Converted Data");
-    getXlsx().writeFile(wb,"KaamKitPro_Converted.xlsx");
+    const xlsx=getXlsx();
+    if(!xlsx)throw new Error("Excel export library is unavailable.");
+    const wb=xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb,xlsx.utils.aoa_to_sheet(rows.length?rows:[["No text detected"]]),"Converted Data");
+    xlsx.writeFile(wb,"KaamKitPro_Converted.xlsx");
   }
   async function convert(){
     if(!file){setMessage("Please select a file first.");return;}
