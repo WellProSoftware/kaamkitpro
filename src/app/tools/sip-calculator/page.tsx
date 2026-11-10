@@ -14,18 +14,30 @@ export default function SIPCalculatorPage() {
 
   const months = duration * 12;
   const monthlyRate = yearlyReturn / 12 / 100;
+  const validInputs =
+    monthlyInvestment.trim() !== "" &&
+    annualReturn.trim() !== "" &&
+    years.trim() !== "" &&
+    Number.isFinite(investment) &&
+    investment > 0 &&
+    Number.isFinite(yearlyReturn) &&
+    yearlyReturn >= 0 &&
+    yearlyReturn <= 100 &&
+    Number.isFinite(months) &&
+    months > 0 &&
+    months <= 1200;
 
-  const futureValue =
-    investment > 0 && months > 0
-      ? monthlyRate > 0
-        ? investment *
-          (((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) *
-            (1 + monthlyRate))
-        : investment * months
-      : 0;
-
-  const totalInvested = investment * months;
-  const estimatedReturns = futureValue - totalInvested;
+  const calculatedFutureValue = validInputs
+    ? monthlyRate === 0
+      ? investment * months
+      : investment *
+        (((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate) *
+          (1 + monthlyRate))
+    : 0;
+  const validResult = validInputs && Number.isFinite(calculatedFutureValue);
+  const futureValue = validResult ? calculatedFutureValue : 0;
+  const totalInvested = validResult ? investment * months : 0;
+  const estimatedReturns = validResult ? futureValue - totalInvested : 0;
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-12 text-slate-900">
@@ -54,6 +66,8 @@ export default function SIPCalculatorPage() {
 
               <input
                 type="number"
+                min="0.01"
+                step="0.01"
                 value={monthlyInvestment}
                 onChange={(e) =>
                   setMonthlyInvestment(e.target.value)
@@ -70,6 +84,8 @@ export default function SIPCalculatorPage() {
 
               <input
                 type="number"
+                min="0"
+                max="100"
                 step="0.1"
                 value={annualReturn}
                 onChange={(e) => setAnnualReturn(e.target.value)}
@@ -85,6 +101,9 @@ export default function SIPCalculatorPage() {
 
               <input
                 type="number"
+                min="0.01"
+                max="100"
+                step="0.01"
                 value={years}
                 onChange={(e) => setYears(e.target.value)}
                 placeholder="e.g. 10"
@@ -100,9 +119,9 @@ export default function SIPCalculatorPage() {
               </p>
 
               <p className="mt-2 text-3xl font-bold text-blue-600">
-                ₹{totalInvested.toLocaleString("en-IN", {
+                {validResult ? "₹" + totalInvested.toLocaleString("en-IN", {
                   maximumFractionDigits: 0,
-                })}
+                }) : "—"}
               </p>
             </div>
 
@@ -112,9 +131,9 @@ export default function SIPCalculatorPage() {
               </p>
 
               <p className="mt-2 text-3xl font-bold text-emerald-600">
-                ₹{Math.max(0, estimatedReturns).toLocaleString("en-IN", {
+                {validResult ? "₹" + estimatedReturns.toLocaleString("en-IN", {
                   maximumFractionDigits: 0,
-                })}
+                }) : "—"}
               </p>
             </div>
 
@@ -124,9 +143,9 @@ export default function SIPCalculatorPage() {
               </p>
 
               <p className="mt-2 text-3xl font-bold text-orange-600">
-                ₹{futureValue.toLocaleString("en-IN", {
+                {validResult ? "₹" + futureValue.toLocaleString("en-IN", {
                   maximumFractionDigits: 0,
-                })}
+                }) : "—"}
               </p>
             </div>
           </div>
