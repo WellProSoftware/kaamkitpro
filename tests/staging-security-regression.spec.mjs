@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 
 test.describe("staging security regression checks", () => {
   test("server-only Supabase credentials are not exposed in public HTML", async ({ request }) => {
-    for (const path of ["/", "/login", "/pricing", "/tools/json-formatter"]) {
+    for (const path of ["/", "/login", "/pricing", "/tools/pdf-merge", "/tools/vendor-quotation-comparison"]) {
       const response = await request.get(path);
       expect(response.status(), path).toBe(200);
       const html = await response.text();
