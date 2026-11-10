@@ -49,12 +49,6 @@ const toolSeo: Record<string, ToolSeo> = {
       "Format and organize CSS code into a cleaner and more readable structure online.",
     keywords: ["CSS formatter", "format CSS", "CSS beautifier"],
   },
-  "emi-calculator": {
-    title: "EMI Calculator Online",
-    description:
-      "Calculate monthly loan EMI, total interest and total payment using this free EMI calculator.",
-    keywords: ["EMI calculator", "loan EMI calculator", "monthly EMI calculator"],
-  },
   "gst-calculator": {
     title: "GST Calculator Online",
     description:
@@ -301,11 +295,6 @@ const toolSeo: Record<string, ToolSeo> = {
     title: "PDF Watermark Guide",
     description: "Learn how PDF watermarks label drafts, samples and documents for review or distribution.",
     keywords: ["PDF watermark","add watermark to PDF","watermark PDF document"],
-  },
-  "percentage-calculator": {
-    title: "Percentage Calculator",
-    description: "Calculate a percentage of a value, compare shares and estimate percentage increases or decreases.",
-    keywords: ["percentage calculator","percentage increase calculator","calculate percent"],
   },
   "remove-duplicate-lines": {
     title: "Remove Duplicate Lines",
