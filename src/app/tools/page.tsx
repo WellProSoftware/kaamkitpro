@@ -47,6 +47,11 @@ const popularTools = [
     title: "Vendor Quotation Comparison",
     description: "Compare supplier rates and estimated landed costs.",
   },
+  {
+    href: "/tools/item-master-matcher",
+    title: "Item Master Matcher",
+    description: "Match purchase descriptions against your hospital item master.",
+  },
 ];
 
 export default function ToolsPage() {
