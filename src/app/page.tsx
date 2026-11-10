@@ -26,8 +26,8 @@ const tools: Tool[] = [
     category: "Data Tools",
   },
   {
-    name: "Excel Combiner",
-    description: "Combine multiple Excel and CSV files into one workbook.",
+    name: "Excel Merge",
+    description: "Merge multiple Excel and CSV files into one workbook.",
     href: "/tools/excel-combiner",
     category: "Data Tools",
   },
