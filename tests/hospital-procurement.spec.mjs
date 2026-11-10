@@ -35,4 +35,14 @@ test.describe("HospitalProcure staging MVP", () => {
     await expect(page.getByRole("heading", { name: "HospitalProcure" })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   });
+
+  test("clamps discount and GST percentages to valid ranges", async ({ page }) => {
+    await page.goto("/hospital-procurement");
+    await page.getByRole("button", { name: /Quotation comparison/i }).click();
+    await page.getByLabel("Discount 1").fill("150");
+    await expect(page.getByLabel("Discount 1")).toHaveValue("100");
+    await page.getByLabel("GST 1").fill("150");
+    await expect(page.getByLabel("GST 1")).toHaveValue("100");
+    await expect(page.getByText(/-₹/)).toHaveCount(0);
+  });
 });
