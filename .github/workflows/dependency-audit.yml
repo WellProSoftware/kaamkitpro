@@ -1,0 +1,67 @@
+name: KaamKitPro dependency security audit
+
+on:
+  push:
+    branches:
+      - cloudflare/vinext-staging
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/dependency-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout staging branch
+        uses: actions/checkout@v5
+        with:
+          ref: cloudflare/vinext-staging
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Align lockfile with declared dependencies
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Install dependencies
+        run: npm ci
+      - name: Run npm audit and print actionable summary
+        shell: bash
+        run: |
+          set +e
+          npm audit --json > npm-audit.json
+          audit_status=$?
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const report = JSON.parse(fs.readFileSync("npm-audit.json", "utf8"));
+          const counts = report.metadata?.vulnerabilities ?? {};
+          console.log("NPM AUDIT SUMMARY");
+          console.log(JSON.stringify(counts, null, 2));
+          for (const [name, item] of Object.entries(report.vulnerabilities ?? {})) {
+            console.log(JSON.stringify({
+              package: name,
+              severity: item.severity,
+              direct: item.isDirect,
+              installedRange: item.range,
+              fixAvailable: item.fixAvailable,
+              via: (item.via ?? []).map(v => typeof v === "string" ? v : ({
+                name: v.name, title: v.title, range: v.range, url: v.url
+              }))
+            }));
+          }
+          NODE
+          echo "npm audit exit status: $audit_status"
+          exit 0
+      - name: Upload complete audit report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: kaamkitpro-npm-audit
+          path: npm-audit.json
+          retention-days: 14
