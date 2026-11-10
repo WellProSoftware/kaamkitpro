@@ -49,8 +49,8 @@ const popularTools = [
   },
   {
     href: "/tools/item-master-matcher",
-    title: "Item Master Matcher",
-    description: "Match purchase descriptions against your hospital item master.",
+    title: "Item Mapping",
+    description: "Map purchase descriptions to your hospital item master.",
   },
 ];
 

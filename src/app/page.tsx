@@ -20,9 +20,15 @@ const categories = [
 
 const tools: Tool[] = [
   {
-    name: "Item Master Matcher",
-    description: "Match hospital purchase items against your item master.",
+    name: "Item Mapping",
+    description: "Map hospital purchase items to your item master.",
     href: "/tools/item-master-matcher",
+    category: "Data Tools",
+  },
+  {
+    name: "Excel Combiner",
+    description: "Combine multiple Excel and CSV files into one workbook.",
+    href: "/tools/excel-combiner",
     category: "Data Tools",
   },
   {
