@@ -44,7 +44,7 @@ test("JPG to PDF converts an uploaded image into a valid one-page PDF", async ({
     ),
   });
 
-  await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
+  await expect(page.getByText(/1\. pixel\.png/)).toBeVisible();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Convert to PDF", exact: true }).click();
   const download = await downloadPromise;
