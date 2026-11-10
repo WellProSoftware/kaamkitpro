@@ -77,10 +77,11 @@ export default function DocumentConverter({mode}:{mode:Mode}){
           for(const line of lines){
             line.items.sort((a,b)=>a.x-b.x);
             const cells:string[]=[];
+            let previousX:number|undefined;
             for(const item of line.items){
-              const last=cells[cells.length-1];
-              if(last!==undefined && item.x-(line.items.find(x=>x.text===last)?.x??item.x)<18) cells[cells.length-1]=last+" "+item.text;
+              if(previousX!==undefined && item.x-previousX<18) cells[cells.length-1]=cells[cells.length-1]+" "+item.text;
               else cells.push(item.text);
+              previousX=item.x;
             }
             pageRows.push(cells.length?cells:[line.items.map(x=>x.text).join(" ")]);
           }
