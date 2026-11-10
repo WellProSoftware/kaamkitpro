@@ -491,6 +491,7 @@ test("tool pages publish page-specific canonical URLs", async ({ page }) => {
 
 test("QR Code Generator creates a downloadable QR code for entered text", async ({ page }) => {
   await page.goto("/tools/qr-code-generator");
+  await page.waitForTimeout(500); // Allow client-side React hydration before interacting.
   await expect(page.getByRole("heading", { name: "QR Code Generator", exact: true })).toBeVisible();
   const input = page.locator("#qr-text");
   await expect(page.getByRole("button", { name: "Download QR Code" })).toBeDisabled();
@@ -626,6 +627,7 @@ test("Case Converter reports line count instead of character count", async ({ pa
 
 test("Base64 encoder and decoder preserve Hindi and emoji text", async ({ page }) => {
   await page.goto("/tools/base64");
+  await page.waitForTimeout(500); // Allow client-side React hydration before interacting.
   const input = page.getByPlaceholder("Enter text here...");
   await input.fill("नमस्ते KaamKitPro 🌟");
   await page.getByRole("button", { name: "Encode to Base64", exact: true }).click();
