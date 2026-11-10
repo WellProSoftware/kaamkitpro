@@ -29,7 +29,7 @@ for (const tool of uncoveredDocumentTools) {
 test("JPG to PDF converts an uploaded image into a valid one-page PDF", async ({ page }) => {
   await page.goto("/tools/jpg-to-pdf");
   await expect(page.locator("#image-files")).toBeAttached();
-  await page.waitForTimeout(500); // Allow the client upload handler to hydrate before setting the file.
+  await page.waitForTimeout(1500); // This route hydrates later than the initial server-rendered input.
   await page.locator("#image-files").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
