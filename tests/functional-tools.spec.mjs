@@ -684,6 +684,7 @@ test("Image Brightness adjusts an uploaded image and downloads the result", asyn
 
 test("Image Grayscale converts an uploaded image and downloads the result", async ({ page }) => {
   await page.goto("/tools/image-grayscale");
+  await page.waitForTimeout(500); // File input events must run after client hydration.
   await page.locator("#grayscale-file").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
