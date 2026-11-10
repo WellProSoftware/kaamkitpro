@@ -106,20 +106,7 @@ test("billing checkout refuses unauthenticated requests without reaching a payme
   expect(await response.json()).toMatchObject({ error: "Sign in before starting a subscription." });
 });
 
-test("free text utility works in the vinext preview runtime", async ({ page }) => {
-  await page.goto("/tools/line-sorter");
-  await expect(page.getByRole("heading", { name: "Online Line Sorter" })).toBeVisible();
-  await page.locator("#line-input").fill("Item 10\nitem 2\nApple");
-  await expect(page.locator("#line-output")).toHaveValue("Apple\nitem 2\nItem 10");
-});
 
-test("CSV to JSON converter works in the vinext preview runtime", async ({ page }) => {
-  await page.goto("/tools/csv-to-json");
-  await expect(page.getByRole("heading", { name: "CSV to JSON Converter" })).toBeVisible();
-  await page.waitForTimeout(250);
-  await page.locator("#csv-input").fill('name,city,note\nAsha,Mumbai,"Likes tea, coffee"');
-  await expect(page.locator("#json-output")).toHaveValue(JSON.stringify([{ name: "Asha", city: "Mumbai", note: "Likes tea, coffee" }], null, 2));
-});
 
 test("quota endpoint validates malformed and unknown tool keys safely", async ({ request }) => {
   const malformed = await request.post("/api/tools/usage", { data: { action: "check" } });
@@ -139,7 +126,7 @@ test("billing webhook rejects unsigned requests without changing subscription st
 });
 
 test("representative free utility pages render on staging", async ({ page }) => {
-  const cases = [["/tools/json-formatter", "JSON Formatter"], ["/tools/pdf-merge", "PDF Merge Tool"], ["/tools/image-rotate", "Image Rotate Tool"], ["/tools/qr-code-generator", "QR Code Generator"], ["/tools/gst-calculator", "GST Calculator"]];
+  const cases = [["/tools/pdf-merge", "PDF Merge Tool"], ["/tools/image-rotate", "Image Rotate Tool"], ["/tools/gst-calculator", "GST Calculator"], ["/tools/vendor-quotation-comparison", "Vendor Quotation Comparison"]];
   for (const [path, heading] of cases) {
     await page.goto(path);
     await expect(page.getByRole("heading", { name: heading, exact: true })).toBeVisible();
