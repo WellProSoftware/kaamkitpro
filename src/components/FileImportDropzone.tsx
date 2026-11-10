@@ -13,11 +13,12 @@ type Props = {
   buttonLabel?: string;
   multiple?: boolean;
   disabled?: boolean;
+  showFileName?: boolean;
 };
 
 export default function FileImportDropzone({
   title, description, accept, onFile, onFiles, inputLabel = title,
-  inputId, buttonLabel = "Browse files", multiple = false, disabled = false,
+  inputId, buttonLabel = "Browse files", multiple = false, disabled = false, showFileName = true,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -74,7 +75,7 @@ export default function FileImportDropzone({
           {buttonLabel}
         </button>
         <p className="mt-3 max-w-full break-all text-xs text-slate-500" aria-live="polite">
-          {fileNames.length ? `${fileNames.length} ${multiple ? "files" : "file"} selected` : "Drag and drop " + (multiple ? "files" : "a file") + " here"}
+          {fileNames.length ? (multiple ? `${fileNames.length} files selected` : showFileName ? fileNames[0] : "1 file selected") : "Drag and drop " + (multiple ? "files" : "a file") + " here"}
         </p>
       </div>
     </div>
