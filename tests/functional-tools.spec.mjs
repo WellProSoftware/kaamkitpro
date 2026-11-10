@@ -617,6 +617,7 @@ test("Remove Extra Spaces collapses repeated spaces and preserves words and line
 
 test("Case Converter reports line count instead of character count", async ({ page }) => {
   await page.goto("/tools/case-converter");
+  await page.waitForTimeout(500); // Allow the client component to hydrate before interaction.
   await page.getByPlaceholder("Type or paste your text here...").fill("Hello\nworld");
   const stats = page.getByText("Lines", { exact: true }).locator("xpath=..");
   await expect(stats).toContainText("2");
