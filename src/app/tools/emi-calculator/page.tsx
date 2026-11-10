@@ -159,10 +159,10 @@ export default function EMICalculatorPage() {
           </h2>
 
           <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-600">
-            <li>Loan amount enter karo.</li>
-            <li>Annual interest rate enter karo.</li>
-            <li>Loan tenure years mein enter karo.</li>
-            <li>Monthly EMI automatically calculate hogi.</li>
+            <li>Enter the loan amount.</li>
+            <li>Enter the annual interest rate.</li>
+            <li>Enter the loan tenure in years.</li>
+            <li>Your monthly EMI will be calculated automatically.</li>
           </ol>
         </section>
 
