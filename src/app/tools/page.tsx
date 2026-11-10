@@ -4,7 +4,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Free Online Tools Directory",
-  description: "Browse KaamKitPro tools for PDFs, images, calculators, text, SEO and developer workflows.",
+  description: "Browse KaamKitPro tools for PDFs, images, calculators and hospital procurement workflows.",
   alternates: { canonical: "https://kaamkitpro.com/tools" },
 };
 
@@ -25,26 +25,6 @@ const categories = [
     description: "EMI, GST, SIP, BMI, age and percentage calculators.",
   },
   {
-    title: "Text Tools",
-    href: "/tools/text",
-    description: "Count, convert and clean text quickly.",
-  },
-  {
-    title: "SEO Tools",
-    href: "/tools/seo",
-    description: "Meta tags, keywords, slugs and sitemap utilities.",
-  },
-  {
-    title: "Social Tools",
-    href: "/tools/social",
-    description: "Hashtags, captions, YouTube and social tools.",
-  },
-  {
-    title: "Developer Tools",
-    href: "/tools/developer",
-    description: "Format code, encode URLs, generate hashes and convert colors.",
-  },
-  {
     title: "Hospital Procurement",
     href: "/tools/vendor-quotation-comparison",
     description: "Compare supplier quotations, GST, discounts and landed costs.",
@@ -52,11 +32,6 @@ const categories = [
 ];
 
 const popularTools = [
-  {
-    href: "/tools/qr-code-generator",
-    title: "QR Code Generator",
-    description: "Create QR codes online quickly.",
-  },
   {
     href: "/tools/pdf-merge",
     title: "PDF Merge",
@@ -66,16 +41,6 @@ const popularTools = [
     href: "/tools/image-compressor",
     title: "Image Compressor",
     description: "Reduce image file size in your browser.",
-  },
-  {
-    href: "/tools/word-counter",
-    title: "Word Counter",
-    description: "Count words and characters in text.",
-  },
-  {
-    href: "/tools/json-formatter",
-    title: "JSON Formatter",
-    description: "Format and validate JSON data.",
   },
   {
     href: "/tools/emi-calculator",
@@ -109,9 +74,7 @@ export default function ToolsPage() {
           </h1>
 
           <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
-            Explore free online tools for PDF files, images, calculations,
-            text, SEO, social media and developer tasks. Choose a category
-            below or jump directly to a popular utility.
+            Explore free online tools for PDF files, images, calculations and hospital procurement. Choose a category below or jump directly to a popular utility.
           </p>
         </div>
       </section>
@@ -225,11 +188,7 @@ export default function ToolsPage() {
           </h2>
 
           <p className="mt-4 leading-7 text-slate-600">
-            KaamKitPro brings useful browser-based utilities together under
-            one platform. Whether you need to work with a PDF, compress an
-            image, calculate an EMI, clean text, prepare SEO data, create
-            social content or format code, you can find the relevant tool
-            through the category pages above.
+            KaamKitPro brings useful browser-based utilities together under one platform. Work with PDF files, compress images, calculate EMIs or compare hospital supplier quotations through the category pages above.
           </p>
         </div>
       </section>
