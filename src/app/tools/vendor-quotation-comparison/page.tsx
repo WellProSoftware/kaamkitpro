@@ -45,7 +45,7 @@ export default function VendorQuotationComparisonPage() {
       const safeValue = /^[\\s]*[=+\\-@]/.test(value) ? `'${value}` : value;
       return `"${safeValue.replace(/"/g, '""')}"`;
     };
-    const csv = "\\uFEFF" + rows.map((row) => row.map(escapeCsvCell).join(",")).join("\\n");
+    const csv = "\uFEFF" + rows.map((row) => row.map(escapeCsvCell).join(",")).join("\n");
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
     const link = document.createElement("a");
     link.href = url;
