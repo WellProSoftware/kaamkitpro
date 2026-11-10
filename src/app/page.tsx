@@ -15,10 +15,6 @@ const categories = [
   "PDF Tools",
   "Image Tools",
   "Calculators",
-  "Text Tools",
-  "SEO Tools",
-  "Social Tools",
-  "Developer Tools",
   "Data Tools",
 ];
 
@@ -165,7 +161,7 @@ const faqSchema = {
       name: "What is KaamKitPro?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "KaamKitPro is a free online tools platform for everyday digital work, including PDF, image, calculator, text, SEO, social media and developer utilities.",
+        text: "KaamKitPro is a free online tools platform for PDF, image, calculator and hospital procurement workflows.",
       },
     },
     {
@@ -206,17 +202,9 @@ const faqSchema = {
 const popularTools = [
   "PDF Merge",
   "Image Compressor",
-  "Word Counter",
-  "Password Generator",
   "GST Calculator",
   "Percentage Calculator",
   "EMI Calculator",
-  "JSON Formatter",
-  "Meta Tag Generator",
-  "YouTube Title Generator",
-  "HTML Formatter",
-  "URL Encoder & Decoder",
-  "Hash Generator",
 ];
 
 export default function Home() {
@@ -284,14 +272,12 @@ export default function Home() {
           </div>
 
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-            Har Digital Kaam,
-            <span className="block text-blue-600">Ek Jagah.</span>
+            Practical Online Tools,
+            <span className="block text-blue-600">All in One Place.</span>
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-            KaamKitPro par PDF, images, calculators, text, SEO, social media
-            aur developer tools ek hi jagah use karein — fast, simple aur
-            online.
+            Use PDF, image and calculator tools, plus practical hospital procurement utilities — all in one place.
           </p>
 
           <div className="mx-auto mt-8 flex max-w-2xl flex-col gap-3 sm:flex-row">
@@ -319,7 +305,7 @@ export default function Home() {
         <div className="mb-6">
           <h2 className="text-2xl font-bold sm:text-3xl">Browse Categories</h2>
           <p className="mt-2 text-slate-600">
-            Apne kaam ke hisaab se tools choose karein.
+            Choose a category to find the right tool for your task.
           </p>
         </div>
 
@@ -354,45 +340,9 @@ export default function Home() {
             </span>
           </a>
 
-          <a
-            href="/tools/text"
-            className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
-          >
-            <span className="font-semibold text-slate-900">Text Tools</span>
-            <span className="mt-1 block text-sm text-slate-600">
-              Count, format and clean text quickly.
-            </span>
-          </a>
 
-          <a
-            href="/tools/seo"
-            className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
-          >
-            <span className="font-semibold text-slate-900">SEO Tools</span>
-            <span className="mt-1 block text-sm text-slate-600">
-              Meta tags, slugs, keywords and sitemap tools.
-            </span>
-          </a>
 
-          <a
-            href="/tools/social"
-            className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
-          >
-            <span className="font-semibold text-slate-900">Social Tools</span>
-            <span className="mt-1 block text-sm text-slate-600">
-              Hashtags, captions, YouTube and social sharing tools.
-            </span>
-          </a>
 
-          <a
-            href="/tools/developer"
-            className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
-          >
-            <span className="font-semibold text-slate-900">Developer Tools</span>
-            <span className="mt-1 block text-sm text-slate-600">
-              Format code, encode URLs, hashes and colors.
-            </span>
-          </a>
         </div>
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
