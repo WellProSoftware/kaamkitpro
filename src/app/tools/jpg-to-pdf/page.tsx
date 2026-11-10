@@ -13,8 +13,9 @@ export default function JPGToPDFPage() {
 
     const images = Array.from(fileList).filter(
       (file) =>
-        file.type.startsWith("image/") ||
-        /\.(jpg|jpeg|png|webp)$/i.test(file.name)
+        file.type === "image/jpeg" ||
+        file.type === "image/png" ||
+        /\.(jpg|jpeg|png)$/i.test(file.name)
     );
 
     setFiles((current) => [...current, ...images]);
