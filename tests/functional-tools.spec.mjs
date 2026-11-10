@@ -604,3 +604,17 @@ test("SIP Calculator handles a zero-return estimate without adding gains", async
   await expect(page.getByText("₹60,000", { exact: true })).toHaveCount(2);
   await expect(page.getByText("₹0", { exact: true })).toBeVisible();
 });
+
+
+test("Vendor Quotation Comparison excludes incomplete quotes from lowest-total ranking", async ({ page }) => {
+  await page.goto("/tools/vendor-quotation-comparison");
+  await expect(page.getByText("Lowest total", { exact: true })).toHaveCount(1);
+
+  await page.getByLabel("Vendor B unit rate").fill("");
+  const vendorBCard = page.getByRole("heading", { name: "Vendor B" }).locator("..").locator("..");
+
+  await expect(vendorBCard.getByText("Incomplete quote", { exact: true })).toBeVisible();
+  await expect(vendorBCard).toContainText("excluded from lowest-total ranking");
+  await expect(page.getByText("Lowest total", { exact: true })).toHaveCount(1);
+  await expect(page.getByRole("heading", { name: "Vendor A" }).locator("..").locator("..")).toContainText("Lowest total");
+});
