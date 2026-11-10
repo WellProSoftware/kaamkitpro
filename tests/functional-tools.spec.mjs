@@ -644,3 +644,36 @@ test("Item Mapping loads a CSV master, matches items and exports results", async
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("KaamKitPro_Item_Match_Result.xlsx");
 });
+
+
+test("Excel Merge combines CSV files by header and downloads an Excel workbook", async ({ page }) => {
+  await page.goto("/tools/excel-combiner");
+  await expect(page.getByRole("heading", { name: "Excel Merge", exact: true })).toBeVisible();
+  await expect(page.getByText("Excel engine ready.", { exact: true })).toBeVisible();
+
+  await page.getByLabel("Select Excel and CSV files").setInputFiles([
+    {
+      name: "vendor-a.csv",
+      mimeType: "text/csv",
+      buffer: Buffer.from("Item Name,Quantity\\nParacetamol,10\\nGrand Total,10"),
+    },
+    {
+      name: "vendor-b.csv",
+      mimeType: "text/csv",
+      buffer: Buffer.from("Quantity,Item Name\\n20,Amoxicillin"),
+    },
+  ]);
+
+  await expect(page.getByText("vendor-a.csv · 1 sheet(s)", { exact: true })).toBeVisible();
+  await expect(page.getByText("vendor-b.csv · 1 sheet(s)", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Combine files", exact: true }).click();
+
+  await expect(page.getByText("Combined 2 file(s) into 2 row(s). 1 total row(s) removed.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("cell", { name: "Paracetamol", exact: true })).toBeVisible();
+  await expect(page.getByRole("cell", { name: "Amoxicillin", exact: true })).toBeVisible();
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download Excel", exact: true }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("KaamKitPro_Combined.xlsx");
+});
