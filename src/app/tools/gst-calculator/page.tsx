@@ -12,9 +12,11 @@ export default function GSTCalculatorPage() {
   const numericRate = Number(gstRate);
 
   const valid =
-    amount !== "" &&
+    amount.trim() !== "" &&
     Number.isFinite(numericAmount) &&
-    Number.isFinite(numericRate);
+    numericAmount >= 0 &&
+    Number.isFinite(numericRate) &&
+    numericRate >= 0;
 
   const gst =
     valid && mode === "add"
@@ -59,6 +61,8 @@ export default function GSTCalculatorPage() {
 
               <input
                 type="number"
+                min="0"
+                step="0.01"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="e.g. 10000"
