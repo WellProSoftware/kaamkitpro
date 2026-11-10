@@ -12,7 +12,7 @@ declare global {
     Tesseract?: { recognize: (image: File, language: string, options?: any) => Promise<any> };
   }
 }
-const titles: Record<Mode,string> = {
+const getXlsx = () => window.XLSX;\nconst getTesseract = () => window.Tesseract;\nconst titles: Record<Mode,string> = {
   "pdf-excel":"PDF to Excel", "pdf-word":"PDF to Word",
   "jpg-excel":"JPG to Excel", "jpg-word":"JPG to Word"
 };
