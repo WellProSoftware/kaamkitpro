@@ -1,4 +1,6 @@
 "use client";
+
+import FileImportDropzone from "@/components/FileImportDropzone";
 import { trackDownload, trackToolUsed } from "@/lib/analytics";
 import Link from "next/link";
 
@@ -122,31 +124,7 @@ export default function ImageCompressorPage() {
             </p>
           </div>
 
-          <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-            <input
-              id="image-file"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(event) => {
-                setFile(event.target.files?.[0] || null);
-                setMessage("");
-                setResult(null);
-                event.target.value = "";
-              }}
-            />
-
-            <label
-              htmlFor="image-file"
-              className="inline-block cursor-pointer rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700"
-            >
-              Select Image
-            </label>
-
-            <p className="mt-3 text-sm text-slate-500">
-              JPG, PNG, WebP and other common image formats.
-            </p>
-          </div>
+          <FileImportDropzone inputId="image-file" inputLabel="Select Image" title="Image Compressor" description="Drop a image here, or browse your device. Your file is processed locally in your browser." accept="image/*" buttonLabel="Select Image" showFileName={false} onFile={(selectedFile) => { setFile(selectedFile); setMessage(""); setResult(null); }} />
 
           {file && (
             <div className="mt-6 rounded-xl border border-slate-200 p-5">

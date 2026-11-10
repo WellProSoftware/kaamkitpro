@@ -1,5 +1,7 @@
 "use client";
 
+
+import FileImportDropzone from "@/components/FileImportDropzone";
 import { useState } from "react";
 
 export default function ImageGrayscalePage() {
@@ -86,26 +88,7 @@ export default function ImageGrayscalePage() {
             </p>
           </div>
 
-          <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-            <input
-              id="grayscale-file"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(event) => {
-                setFile(event.target.files?.[0] || null);
-                setMessage("");
-                event.target.value = "";
-              }}
-            />
-            <label
-              htmlFor="grayscale-file"
-              className="inline-block cursor-pointer rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700"
-            >
-              Select Image
-            </label>
-            {file && <p className="mt-3 text-sm text-slate-600">{file.name}</p>}
-          </div>
+          <FileImportDropzone inputId="grayscale-file" inputLabel="Select Image" title="Image Grayscale" description="Drop a image here, or browse your device. Your file is processed locally in your browser." accept="image/*" buttonLabel="Select Image" onFile={(selectedFile) => { setFile(selectedFile); setMessage(""); }} />
 
           <button
             type="button"

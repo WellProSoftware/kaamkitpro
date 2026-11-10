@@ -1,4 +1,6 @@
 "use client";
+
+import FileImportDropzone from "@/components/FileImportDropzone";
 import Link from "next/link";
 
 import { useState } from "react";
@@ -137,29 +139,7 @@ export default function ImageCropperPage() {
             </p>
           </div>
 
-          <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-            <input
-              id="crop-file"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(event) => {
-                handleFile(event.target.files?.[0] || null);
-                event.target.value = "";
-              }}
-            />
-
-            <label
-              htmlFor="crop-file"
-              className="inline-block cursor-pointer rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700"
-            >
-              Select Image
-            </label>
-
-            {file && (
-              <p className="mt-3 text-sm text-slate-600">{file.name}</p>
-            )}
-          </div>
+          <FileImportDropzone inputId="crop-file" inputLabel="Select Image" title="Image Cropper" description="Drop a image here, or browse your device. Your file is processed locally in your browser." accept="image/*" buttonLabel="Select Image" onFile={(selectedFile) => { handleFile(selectedFile); }} />
 
           {file && (
             <div className="mt-6 rounded-xl border border-slate-200 p-5">

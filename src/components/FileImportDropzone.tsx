@@ -13,11 +13,12 @@ type Props = {
   buttonLabel?: string;
   multiple?: boolean;
   disabled?: boolean;
+  showFileName?: boolean;
 };
 
 export default function FileImportDropzone({
   title, description, accept, onFile, onFiles, inputLabel = title,
-  inputId, buttonLabel = "Browse files", multiple = false, disabled = false,
+  inputId, buttonLabel = "Browse files", multiple = false, disabled = false, showFileName = true,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -67,14 +68,14 @@ export default function FileImportDropzone({
       />
       <div className="flex flex-col items-center text-center">
         <span aria-hidden="true" className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-2xl shadow-sm">⇧</span>
-        <h3 className="mt-3 text-sm font-bold text-slate-900">{title}</h3>
+        <p className="mt-3 text-sm font-bold text-slate-900">{title}</p>
         <p className="mt-1 max-w-xl text-xs leading-5 text-slate-500">{description}</p>
         <p className="mt-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">Supported: {accept.replaceAll(".", "").replaceAll(",", " · ")}</p>
         <button type="button" disabled={disabled} onClick={() => inputRef.current?.click()} className="mt-4 inline-flex min-h-10 items-center justify-center rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed">
           {buttonLabel}
         </button>
         <p className="mt-3 max-w-full break-all text-xs text-slate-500" aria-live="polite">
-          {fileNames.length ? (multiple ? `${fileNames.length} files selected` : fileNames[0]) : "Drag and drop " + (multiple ? "files" : "a file") + " here"}
+          {fileNames.length ? (multiple ? `${fileNames.length} files selected` : showFileName ? fileNames[0] : "1 file selected") : "Drag and drop " + (multiple ? "files" : "a file") + " here"}
         </p>
       </div>
     </div>

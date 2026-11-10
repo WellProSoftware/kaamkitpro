@@ -1,5 +1,7 @@
 "use client";
 
+
+import FileImportDropzone from "@/components/FileImportDropzone";
 import { useEffect, useState } from "react";
 import type * as PDFJS from "pdfjs-dist";
 
@@ -98,29 +100,7 @@ export default function PDFExtractTextPage() {
             </p>
           </div>
 
-          <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-            <input
-              id="pdf-file"
-              type="file"
-              accept=".pdf,application/pdf"
-              className="hidden"
-              onChange={(event) => {
-                setFile(event.target.files?.[0] || null);
-                setText("");
-                setMessage("");
-                event.target.value = "";
-              }}
-            />
-
-            <label
-              htmlFor="pdf-file"
-              className="inline-block cursor-pointer rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700"
-            >
-              Select PDF
-            </label>
-
-            {file && <p className="mt-3 text-sm text-slate-600">{file.name}</p>}
-          </div>
+          <FileImportDropzone inputId="pdf-file" inputLabel="Select PDF" title="PDF Text Extractor" description="Drop a PDF here, or browse your device. Your file is processed locally in your browser." accept=".pdf,application/pdf" buttonLabel="Select PDF" onFile={(selectedFile) => { setFile(selectedFile); setText(""); setMessage(""); }} />
 
           <button
             type="button"

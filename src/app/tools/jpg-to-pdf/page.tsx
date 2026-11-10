@@ -1,5 +1,7 @@
 "use client";
 
+
+import FileImportDropzone from "@/components/FileImportDropzone";
 import { useState } from "react";
 import { PDFDocument } from "pdf-lib";
 
@@ -138,30 +140,7 @@ export default function JPGToPDFPage() {
             </p>
           </div>
 
-          <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-            <input
-              id="image-files"
-              type="file"
-              accept=".jpg,.jpeg,.png,image/jpeg,image/png"
-              multiple
-              className="hidden"
-              onChange={(event) => {
-                addFiles(event.target.files);
-                event.target.value = "";
-              }}
-            />
-
-            <label
-              htmlFor="image-files"
-              className="inline-block cursor-pointer rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700"
-            >
-              Select Images
-            </label>
-
-            <p className="mt-3 text-sm text-slate-500">
-              Select one or more JPG, JPEG or PNG files.
-            </p>
-          </div>
+          <FileImportDropzone inputId="image-files" inputLabel="Select Images" title="Upload images" description="Drop JPG, JPEG or PNG files here, or browse your device. Files are processed locally in your browser." accept=".jpg,.jpeg,.png,image/jpeg,image/png" buttonLabel="Select Images" multiple onFiles={addFiles} />
 
           {files.length > 0 && (
             <div className="mt-8">

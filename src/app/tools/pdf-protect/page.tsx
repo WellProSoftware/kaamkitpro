@@ -1,5 +1,7 @@
 "use client";
 
+
+import FileImportDropzone from "@/components/FileImportDropzone";
 import { useState } from "react";
 
 export default function PDFProtectPage() {
@@ -30,11 +32,7 @@ export default function PDFProtectPage() {
             <h1 className="text-3xl font-bold text-slate-900">PDF Protect Tool</h1>
             <p className="mt-3 text-slate-600">Check password-protection support before sharing a PDF.</p>
           </div>
-          <div className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-            <input id="pdf-file" type="file" accept=".pdf,application/pdf" className="hidden" onChange={(event) => { setFile(event.target.files?.[0] || null); setMessage(""); event.target.value = ""; }} />
-            <label htmlFor="pdf-file" className="inline-block cursor-pointer rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">Select PDF</label>
-            {file && <p className="mt-3 break-all text-sm text-slate-600">{file.name}</p>}
-          </div>
+          <FileImportDropzone inputId="pdf-file" inputLabel="Select PDF" title="PDF Protect" description="Drop a PDF here, or browse your device. Your file is processed locally in your browser." accept=".pdf,application/pdf" buttonLabel="Select PDF" onFile={(selectedFile) => { setFile(selectedFile); setMessage(""); }} />
           <div className="mt-6 rounded-xl border border-slate-200 p-5">
             <label htmlFor="password" className="block text-sm font-medium text-slate-700">Password you intended to use</label>
             <input id="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} className="mt-2 w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900" placeholder="Enter a password" autoComplete="new-password" />
