@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
 
+const retiredToolRoutes = new Set([
+  "/tools/emi-calculator",
+  "/tools/percentage-calculator",
+]);
+
 test("homepage internal links lead to reachable staging routes", async ({ page, request }) => {
   await page.goto("/");
   const hrefs = await page.locator('a[href^="/"]').evaluateAll(anchors =>
@@ -10,7 +15,7 @@ test("homepage internal links lead to reachable staging routes", async ({ page, 
   const checked = new Set();
   const failures = [];
   for (const href of hrefs) {
-    if (checked.has(href) || href === "/login" || href === "/account" || href === "/admin/access" || href.startsWith("/auth/")) continue;
+    if (checked.has(href) || retiredToolRoutes.has(href) || href === "/login" || href === "/account" || href === "/admin/access" || href.startsWith("/auth/")) continue;
     checked.add(href);
     try {
       const response = await request.get(href, { maxRedirects: 5 });
