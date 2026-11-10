@@ -649,7 +649,7 @@ test("Item Mapping loads a CSV master, matches items and exports results", async
 test("Excel Merge combines CSV files by header and downloads an Excel workbook", async ({ page }) => {
   await page.goto("/tools/excel-combiner");
   await expect(page.getByRole("heading", { name: "Excel Merge", exact: true })).toBeVisible();
-  await expect(page.getByText("Excel engine ready.", { exact: true })).toBeVisible();
+  await expect(page.locator("main").getByText(/Excel engine ready\./)).toBeVisible();
 
   await page.getByLabel("Select Excel and CSV files").setInputFiles([
     {
