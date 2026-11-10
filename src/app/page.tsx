@@ -36,12 +36,6 @@ const tools: Tool[] = [
     category: "Text Tools",
   },
   {
-    name: "Character Counter",
-    description: "Count characters with and without spaces.",
-    href: "/tools/character-counter",
-    category: "Text Tools",
-  },
-  {
     name: "Case Converter",
     description: "Convert text to uppercase, lowercase and more.",
     href: "/tools/case-converter",
