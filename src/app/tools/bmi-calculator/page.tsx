@@ -10,10 +10,18 @@ export default function BMICalculatorPage() {
   const weightValue = Number(weight);
   const heightValue = Number(height);
 
-  const bmi =
-    weightValue > 0 && heightValue > 0
-      ? weightValue / Math.pow(heightValue / 100, 2)
-      : 0;
+  const validInputs =
+    weight.trim() !== "" &&
+    height.trim() !== "" &&
+    Number.isFinite(weightValue) &&
+    Number.isFinite(heightValue) &&
+    weightValue > 0 &&
+    heightValue > 0;
+  const calculatedBmi = validInputs
+    ? weightValue / Math.pow(heightValue / 100, 2)
+    : 0;
+  const validResult = validInputs && Number.isFinite(calculatedBmi);
+  const bmi = validResult ? calculatedBmi : 0;
 
   let category = "";
 
@@ -53,6 +61,8 @@ export default function BMICalculatorPage() {
 
               <input
                 type="number"
+                min="0.1"
+                step="0.1"
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
                 placeholder="e.g. 70"
@@ -67,6 +77,8 @@ export default function BMICalculatorPage() {
 
               <input
                 type="number"
+                min="1"
+                step="0.1"
                 value={height}
                 onChange={(e) => setHeight(e.target.value)}
                 placeholder="e.g. 175"
@@ -81,11 +93,11 @@ export default function BMICalculatorPage() {
             </p>
 
             <p className="mt-2 text-5xl font-bold text-blue-600">
-              {bmi > 0 ? bmi.toFixed(1) : "—"}
+              {validResult ? bmi.toFixed(1) : "—"}
             </p>
 
             <p className="mt-4 text-lg font-semibold">
-              {category || "Enter your details"}
+              {validResult ? category : "Enter valid height and weight"}
             </p>
           </div>
 
@@ -122,9 +134,9 @@ export default function BMICalculatorPage() {
           </h2>
 
           <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-600">
-            <li>Weight kilograms mein enter karo.</li>
-            <li>Height centimeters mein enter karo.</li>
-            <li>BMI automatically calculate ho jayega.</li>
+            <li>Enter your weight in kilograms.</li>
+            <li>Enter your height in centimeters.</li>
+            <li>Your BMI will be calculated automatically.</li>
           </ol>
         </section>
 
