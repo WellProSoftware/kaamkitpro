@@ -33,7 +33,6 @@ export const metadata: Metadata = {
     "hospital procurement tools",
     "vendor quotation comparison",
     "GST calculator",
-    "EMI calculator",
     "SIP calculator",
   ],
 
