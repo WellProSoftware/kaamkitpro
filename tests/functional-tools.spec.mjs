@@ -677,3 +677,24 @@ test("Excel Merge combines CSV files by header and downloads an Excel workbook",
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("KaamKitPro_Combined.xlsx");
 });
+
+
+test("PDF converters do not create empty files for scanned PDFs without selectable text", async ({ page }) => {
+  const document = await PDFDocument.create();
+  document.addPage([300, 200]);
+  const blankPdf = Buffer.from(await document.save());
+
+  for (const route of ["/tools/pdf-to-excel", "/tools/pdf-to-word"]) {
+    await page.goto(route);
+    await page.locator("#converter-file").setInputFiles({
+      name: "scanned.pdf",
+      mimeType: "application/pdf",
+      buffer: blankPdf,
+    });
+    const downloadPromise = page.waitForEvent("download", { timeout: 2000 }).catch(() => null);
+    await page.getByRole("button", { name: route.endsWith("excel") ? "Convert to Excel" : "Convert to Word" }).click();
+    await expect(page.getByRole("status")).toContainText("No selectable text was found");
+    await expect(page.getByRole("status")).toContainText("No output file was created");
+    expect(await downloadPromise).toBeNull();
+  }
+});
