@@ -618,3 +618,29 @@ test("Vendor Quotation Comparison excludes incomplete quotes from lowest-total r
   await expect(page.getByText("Lowest total", { exact: true })).toHaveCount(1);
   await expect(page.getByRole("heading", { name: "Vendor A" }).locator("..").locator("..")).toContainText("Lowest total");
 });
+
+
+test("Item Master Matcher loads a CSV master, matches items and exports results", async ({ page }) => {
+  await page.goto("/tools/item-master-matcher");
+  await expect(page.getByRole("heading", { name: "Item Master Matcher" })).toBeVisible();
+  await page.getByLabel("Item master file").setInputFiles({
+    name: "item-master.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from("Item No,Item Id,Item Name,Category,Unit Name\\n1001,MED001,PARACETAMOL 500 MG TABLET,Medicine,TABLET\\n1002,MED002,AMOXICILLIN 250 MG CAPSULE,Medicine,CAPSULE"),
+  });
+  await expect(page.getByText(/2 items loaded and saved in this browser/)).toBeVisible();
+
+  await page.getByLabel("Single item name").fill("PARACETAMOL 500MG TABLET");
+  await page.getByRole("button", { name: "Check item" }).click();
+  await expect(page.getByText("PARACETAMOL 500 MG TABLET")).toBeVisible();
+
+  await page.getByLabel("Bulk item names").fill("PARACETAMOL 500 MG TABLET\\nUNKNOWN SURGICAL ITEM");
+  await page.getByRole("button", { name: "Run bulk check" }).click();
+  await expect(page.getByRole("heading", { name: "4. Match results" })).toBeVisible();
+  await expect(page.getByText("NEW ITEM", { exact: true })).toBeVisible();
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download Excel results" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("KaamKitPro_Item_Match_Result.xlsx");
+});
