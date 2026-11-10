@@ -31,9 +31,11 @@ export default function GSTCalculatorPage() {
       : numericAmount;
 
   const total =
-    mode === "add"
-      ? numericAmount + gst
-      : numericAmount;
+    valid
+      ? mode === "add"
+        ? numericAmount + gst
+        : numericAmount
+      : 0;
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-12 text-slate-900">
@@ -148,10 +150,10 @@ export default function GSTCalculatorPage() {
           </h2>
 
           <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-600">
-            <li>Amount enter karo.</li>
-            <li>GST rate select karo.</li>
-            <li>Add GST ya Remove GST choose karo.</li>
-            <li>Result automatically calculate ho jayega.</li>
+            <li>Enter the amount.</li>
+            <li>Select the GST rate.</li>
+            <li>Choose Add GST or Remove GST.</li>
+            <li>The result will be calculated automatically.</li>
           </ol>
         </section>
 
