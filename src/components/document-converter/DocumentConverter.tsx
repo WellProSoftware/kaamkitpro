@@ -47,11 +47,11 @@ export default function DocumentConverter({mode}:{mode:Mode}){
   const [file,setFile]=useState<File|null>(null),[busy,setBusy]=useState(false),[message,setMessage]=useState(""),[preview,setPreview]=useState<string[]>([]);
   const isPdf=mode.startsWith("pdf"),isExcel=mode.endsWith("excel"),title=titles[mode];
   async function exportExcel(rows:string[][]){
-    await loadScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",()=>Boolean(window.XLSX));
-    if(!window.XLSX)throw new Error("Excel export library is unavailable.");
-    const wb=window.XLSX.utils.book_new();
-    window.XLSX.utils.book_append_sheet(wb,window.XLSX.utils.aoa_to_sheet(rows.length?rows:[["No text detected"]]),"Converted Data");
-    window.XLSX.writeFile(wb,"KaamKitPro_Converted.xlsx");
+    await loadScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js",()=>Boolean(getXlsx()));
+    if(!getXlsx())throw new Error("Excel export library is unavailable.");
+    const wb=getXlsx().utils.book_new();
+    getXlsx().utils.book_append_sheet(wb,getXlsx().utils.aoa_to_sheet(rows.length?rows:[["No text detected"]]),"Converted Data");
+    getXlsx().writeFile(wb,"KaamKitPro_Converted.xlsx");
   }
   async function convert(){
     if(!file){setMessage("Please select a file first.");return;}
@@ -101,10 +101,10 @@ export default function DocumentConverter({mode}:{mode:Mode}){
         }
         if(!text.trim())setMessage("No selectable text was found. This may be a scanned PDF; OCR is not included in this PDF converter.");
       }else{
-        await loadScript("https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js",()=>Boolean(window.Tesseract));
-        if(!window.Tesseract)throw new Error("OCR engine is unavailable.");
+        await loadScript("https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js",()=>Boolean(getTesseract()));
+        if(!getTesseract())throw new Error("OCR engine is unavailable.");
         setMessage("Reading image text with OCR. This may take a little time…");
-        const result=await window.Tesseract.recognize(file,"eng",{logger:(event:any)=>{if(event.status==="recognizing text")setMessage("Recognizing text: "+Math.round((event.progress||0)*100)+"%");}});
+        const result=await getTesseract().recognize(file,"eng",{logger:(event:any)=>{if(event.status==="recognizing text")setMessage("Recognizing text: "+Math.round((event.progress||0)*100)+"%");}});
         text=String(result.data.text||"").trim();
         if(!text)throw new Error("No readable text was detected. Try a clearer, higher-resolution image.");
         if(isExcel){
