@@ -102,7 +102,6 @@ const content: Record<string, ToolSeoContent> = {
     ],
     relatedTools: [
       { href: "/tools/age-calculator", label: "Age Calculator" },
-      { href: "/tools/emi-calculator", label: "EMI Calculator" },
     ],
   },
 
@@ -221,34 +220,6 @@ const content: Record<string, ToolSeoContent> = {
     ],
   },
 
-  "emi-calculator": {
-    title: "Online EMI Calculator",
-    description:
-      "Calculate estimated monthly loan EMI, total interest and total repayment using the KaamKitPro EMI calculator. Enter the loan amount, interest rate and tenure to estimate your payments.",
-    howToUse: [
-      "Enter the loan amount.",
-      "Enter the annual interest rate.",
-      "Enter the loan tenure.",
-      "Review the estimated EMI, interest and total payment.",
-    ],
-    benefits: commonBenefits,
-    faq: [
-      {
-        question: "What is EMI?",
-        answer:
-          "EMI stands for Equated Monthly Instalment. It is a periodic payment used to repay a loan over a defined tenure.",
-      },
-      {
-        question: "Is the EMI result an official bank quote?",
-        answer:
-          "No. The calculator provides an estimate based on the values entered and should be used for planning purposes.",
-      },
-    ],
-    relatedTools: [
-      { href: "/tools/sip-calculator", label: "SIP Calculator" },
-      { href: "/tools/gst-calculator", label: "GST Calculator" },
-    ],
-  },
 
   "gst-calculator": {
     title: "Online GST Calculator",
@@ -274,7 +245,6 @@ const content: Record<string, ToolSeoContent> = {
       },
     ],
     relatedTools: [
-      { href: "/tools/emi-calculator", label: "EMI Calculator" },
       { href: "/tools/sip-calculator", label: "SIP Calculator" },
     ],
   },
@@ -956,7 +926,6 @@ const content: Record<string, ToolSeoContent> = {
       },
     ],
     relatedTools: [
-      { href: "/tools/emi-calculator", label: "EMI Calculator" },
       { href: "/tools/gst-calculator", label: "GST Calculator" },
     ],
   },
