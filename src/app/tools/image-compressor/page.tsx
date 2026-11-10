@@ -124,7 +124,7 @@ export default function ImageCompressorPage() {
             </p>
           </div>
 
-          <FileImportDropzone inputId="image-file" inputLabel="Select Image" title="Image Compressor" description="Drop a image here, or browse your device. Your file is processed locally in your browser." accept="image/*" buttonLabel="Select Image" onFile={(selectedFile) => { setFile(selectedFile); setMessage(""); setResult(null); }} />
+          <FileImportDropzone inputId="image-file" inputLabel="Select Image" title="Image Compressor" description="Drop a image here, or browse your device. Your file is processed locally in your browser." accept="image/*" buttonLabel="Select Image" showFileName={false} onFile={(selectedFile) => { setFile(selectedFile); setMessage(""); setResult(null); }} />
 
           {file && (
             <div className="mt-6 rounded-xl border border-slate-200 p-5">
