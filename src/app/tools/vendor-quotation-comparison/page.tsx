@@ -42,7 +42,7 @@ export default function VendorQuotationComparisonPage() {
     ];
     const escapeCsvCell = (value: string) => {
       // Prevent spreadsheet formula execution when vendor-controlled text is opened in Excel.
-      const safeValue = /^[\\s]*[=+\\-@]/.test(value) ? `'${value}` : value;
+      const safeValue = /^\s*[=+@-]/.test(value) ? `'${value}` : value;
       return `"${safeValue.replace(/"/g, '""')}"`;
     };
     const csv = "\uFEFF" + rows.map((row) => row.map(escapeCsvCell).join(",")).join("\n");
