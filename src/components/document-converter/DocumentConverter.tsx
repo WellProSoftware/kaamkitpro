@@ -91,7 +91,7 @@ export default function DocumentConverter({mode}:{mode:Mode}){
           }
           pageRows.push([]);
         }
-        const hasSelectableText=pageRows.some(row=>row.some(cell=>cell.trim()&&!/^Page \\d+$/.test(cell)));
+        const hasSelectableText=pageRows.some(row=>row.some(cell=>cell.trim()&&!/^Page \d+$/.test(cell)));
         if(!hasSelectableText){
           setMessage("No selectable text was found. This may be a scanned PDF; OCR is not included in this PDF converter. No output file was created.");
           return;
