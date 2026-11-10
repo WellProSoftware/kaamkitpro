@@ -580,7 +580,7 @@ test("EMI Calculator waits for all inputs and accepts an explicit zero interest 
   const fields = page.locator('input[type="number"]');
   await fields.nth(0).fill("120000");
   await fields.nth(2).fill("1");
-  await expect(page.getByText("Monthly EMI", { exact: true }).locator("..").getByText("₹0", { exact: true })).toBeVisible();
+  await expect(page.locator("main").getByText("—", { exact: true })).toHaveCount(3);
 
   await fields.nth(1).fill("0");
   await expect(fields.nth(1)).toHaveValue("0");
