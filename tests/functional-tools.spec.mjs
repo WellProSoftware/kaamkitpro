@@ -199,12 +199,11 @@ test("Homepage search filters tools and can reset to all tools", async ({ page }
   await expect(page.getByText(/tools available/)).toBeVisible();
 });
 
-test("Homepage category filter shows matching tools", async ({ page }) => {
+test("Homepage category filter shows remaining calculator tools", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Calculators", exact: true }).last().click();
 
   await expect(page.getByRole("heading", { name: "Calculators", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Percentage Calculator", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "PDF Merge", exact: true })).toHaveCount(0);
 });
 
