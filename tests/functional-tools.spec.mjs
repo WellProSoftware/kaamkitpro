@@ -32,8 +32,8 @@ test("PDF Merge lists selected files and supports removing one", async ({ page }
   await page.getByRole("button", { name: "Remove", exact: true }).first().click();
 
   await expect(page.getByText("1 files", { exact: true })).toBeVisible();
-  await expect(page.getByText("second.pdf", { exact: false })).toBeVisible();
-  await expect(page.getByText("first.pdf", { exact: false })).toHaveCount(0);
+  await expect(page.getByText("1. second.pdf", { exact: true })).toBeVisible();
+  await expect(page.getByText("1. first.pdf", { exact: true })).toHaveCount(0);
 });
 
 test("PDF Merge creates and downloads a valid merged PDF", async ({ page }) => {
