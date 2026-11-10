@@ -15,22 +15,28 @@ export default function EMICalculatorPage() {
   const months = Number(years) * 12;
 
   const monthlyRate = annualRate / 12 / 100;
-  const inputsComplete = loan !== "" && rate !== "" && years !== "";
+  const inputsComplete = loan.trim() !== "" && rate.trim() !== "" && years.trim() !== "";
+  const validInputs =
+    inputsComplete &&
+    Number.isFinite(principal) &&
+    principal > 0 &&
+    Number.isFinite(annualRate) &&
+    annualRate >= 0 &&
+    annualRate <= 100 &&
+    Number.isFinite(months) &&
+    months > 0 &&
+    months <= 1200;
 
-  const emi =
-    inputsComplete && principal > 0 && months > 0
-      ? annualRate > 0
-        ? (principal *
-            monthlyRate *
-            Math.pow(1 + monthlyRate, months)) /
-          (Math.pow(1 + monthlyRate, months) - 1)
-        : annualRate === 0
-          ? principal / months
-          : 0
-      : 0;
-
+  const factor = Math.pow(1 + monthlyRate, months);
+  const calculatedEmi = validInputs
+    ? annualRate === 0
+      ? principal / months
+      : (principal * monthlyRate * factor) / (factor - 1)
+    : 0;
+  const validResult = validInputs && Number.isFinite(calculatedEmi);
+  const emi = validResult ? calculatedEmi : 0;
   const totalPayment = emi * months;
-  const totalInterest = totalPayment - principal;
+  const totalInterest = Math.max(0, totalPayment - principal);
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-12 text-slate-900">
@@ -58,6 +64,8 @@ export default function EMICalculatorPage() {
 
               <input
                 type="number"
+                min="0.01"
+                step="0.01"
                 value={loan}
                 onChange={(e) => {
                   if (!trackedInteraction.current && e.target.value) {
@@ -78,6 +86,8 @@ export default function EMICalculatorPage() {
 
               <input
                 type="number"
+                min="0"
+                max="100"
                 step="0.01"
                 value={rate}
                 onChange={(e) => setRate(e.target.value)}
@@ -93,6 +103,9 @@ export default function EMICalculatorPage() {
 
               <input
                 type="number"
+                min="0.01"
+                max="100"
+                step="0.01"
                 value={years}
                 onChange={(e) => setYears(e.target.value)}
                 placeholder="e.g. 20"
@@ -108,9 +121,9 @@ export default function EMICalculatorPage() {
               </p>
 
               <p className="mt-2 text-3xl font-bold text-blue-600">
-                ₹{emi.toLocaleString("en-IN", {
+                {validResult ? "₹" + emi.toLocaleString("en-IN", {
                   maximumFractionDigits: 0,
-                })}
+                }) : "—"}
               </p>
             </div>
 
@@ -120,9 +133,9 @@ export default function EMICalculatorPage() {
               </p>
 
               <p className="mt-2 text-3xl font-bold text-orange-600">
-                ₹{Math.max(0, totalInterest).toLocaleString("en-IN", {
+                {validResult ? "₹" + totalInterest.toLocaleString("en-IN", {
                   maximumFractionDigits: 0,
-                })}
+                }) : "—"}
               </p>
             </div>
 
@@ -132,9 +145,9 @@ export default function EMICalculatorPage() {
               </p>
 
               <p className="mt-2 text-3xl font-bold text-emerald-600">
-                ₹{totalPayment.toLocaleString("en-IN", {
+                {validResult ? "₹" + totalPayment.toLocaleString("en-IN", {
                   maximumFractionDigits: 0,
-                })}
+                }) : "—"}
               </p>
             </div>
           </div>
