@@ -40,7 +40,12 @@ export default function VendorQuotationComparisonPage() {
       ["Vendor", "Subtotal", "Discount", "Taxable Value", "GST", "Freight", "Grand Total"],
       ...totals.map((entry) => [vendors.find((vendor) => vendor.id === entry.id)?.name || "", entry.subtotal, entry.discount, entry.taxable, entry.gst, entry.freight, entry.total].map(String)),
     ];
-    const csv = rows.map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(",")).join("\n");
+    const escapeCsvCell = (value: string) => {
+      // Prevent spreadsheet formula execution when vendor-controlled text is opened in Excel.
+      const safeValue = /^[\\s]*[=+\\-@]/.test(value) ? `'${value}` : value;
+      return `"${safeValue.replace(/"/g, '""')}"`;
+    };
+    const csv = "\\uFEFF" + rows.map((row) => row.map(escapeCsvCell).join(",")).join("\\n");
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
     const link = document.createElement("a");
     link.href = url;
