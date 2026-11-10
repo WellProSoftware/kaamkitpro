@@ -10,9 +10,23 @@ export default function PercentageCalculatorPage() {
   const [oldValue, setOldValue] = useState("100");
   const [newValue, setNewValue] = useState("125");
   const format = (value: number) => new Intl.NumberFormat("en-IN", { maximumFractionDigits: 6 }).format(value);
-  const amount = Number(percent) / 100 * Number(number);
-  const ratio = Number(whole) !== 0 ? Number(part) / Number(whole) * 100 : null;
-  const change = Number(oldValue) !== 0 ? (Number(newValue) - Number(oldValue)) / Math.abs(Number(oldValue)) * 100 : null;
+  const amountValue = Number(number);
+  const percentValue = Number(percent);
+  const partValue = Number(part);
+  const wholeValue = Number(whole);
+  const oldValueNumber = Number(oldValue);
+  const newValueNumber = Number(newValue);
+  const amount = Number.isFinite(percentValue) && Number.isFinite(amountValue)
+    ? (percentValue / 100) * amountValue
+    : Number.NaN;
+  const ratio = part.trim() !== "" && whole.trim() !== "" &&
+    Number.isFinite(partValue) && Number.isFinite(wholeValue) && wholeValue !== 0
+    ? (partValue / wholeValue) * 100
+    : null;
+  const change = oldValue.trim() !== "" && newValue.trim() !== "" &&
+    Number.isFinite(oldValueNumber) && Number.isFinite(newValueNumber) && oldValueNumber !== 0
+    ? ((newValueNumber - oldValueNumber) / Math.abs(oldValueNumber)) * 100
+    : null;
   const field = (label: string, value: string, setValue: (value: string) => void, placeholder: string) => (
     <label className="block text-sm font-medium text-slate-700">{label}
       <input type="number" inputMode="decimal" value={value} onChange={(event) => setValue(event.target.value)} placeholder={placeholder}
@@ -36,12 +50,12 @@ export default function PercentageCalculatorPage() {
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-xl font-bold">X is what % of Y?</h2>
             <div className="mt-5 grid gap-4">{field("Part (X)", part, setPart, "e.g. 30")}{field("Whole (Y)", whole, setWhole, "e.g. 200")}</div>
-            <div className="mt-5 rounded-xl bg-blue-50 p-5"><p className="text-sm font-medium text-blue-800">Result</p><p className="mt-1 break-words text-3xl font-bold text-blue-900">{ratio === null || !Number.isFinite(ratio) ? "—" : format(ratio) + "%"}</p><p className="mt-2 text-sm text-blue-800">{whole.trim() === "" || Number(whole) === 0 ? "Whole must not be zero." : "Part ÷ whole × 100"}</p></div>
+            <div className="mt-5 rounded-xl bg-blue-50 p-5"><p className="text-sm font-medium text-blue-800">Result</p><p className="mt-1 break-words text-3xl font-bold text-blue-900">{ratio === null || !Number.isFinite(ratio) ? "—" : format(ratio) + "%"}</p><p className="mt-2 text-sm text-blue-800">{whole.trim() === "" || !Number.isFinite(wholeValue) || wholeValue === 0 ? "Enter a valid non-zero whole." : part.trim() === "" || !Number.isFinite(partValue) ? "Enter a valid part." : "Part ÷ whole × 100"}</p></div>
           </section>
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:col-span-2">
             <h2 className="text-xl font-bold">Percentage increase or decrease</h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">{field("Original value", oldValue, setOldValue, "e.g. 100")}{field("New value", newValue, setNewValue, "e.g. 125")}</div>
-            <div className="mt-5 rounded-xl bg-blue-50 p-5"><p className="text-sm font-medium text-blue-800">Percentage change</p><p className="mt-1 break-words text-3xl font-bold text-blue-900">{change === null || !Number.isFinite(change) ? "—" : (change > 0 ? "+" : "") + format(change) + "%"}</p><p className="mt-2 text-sm text-blue-800">{change === null ? "Original value must not be zero." : change > 0 ? "Increase" : change < 0 ? "Decrease" : "No change"}</p></div>
+            <div className="mt-5 rounded-xl bg-blue-50 p-5"><p className="text-sm font-medium text-blue-800">Percentage change</p><p className="mt-1 break-words text-3xl font-bold text-blue-900">{change === null || !Number.isFinite(change) ? "—" : (change > 0 ? "+" : "") + format(change) + "%"}</p><p className="mt-2 text-sm text-blue-800">{oldValue.trim() === "" || newValue.trim() === "" || !Number.isFinite(oldValueNumber) || !Number.isFinite(newValueNumber) ? "Enter valid original and new values." : oldValueNumber === 0 ? "Original value must not be zero." : change > 0 ? "Increase" : change < 0 ? "Decrease" : "No change"}</p></div>
           </section>
         </div>
         <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"><h2 className="text-xl font-bold">Percentage formulas</h2><ul className="mt-4 list-disc space-y-2 pl-5 leading-7 text-slate-600"><li>Percentage of a number = (percentage ÷ 100) × number</li><li>What percentage = (part ÷ whole) × 100</li><li>Percentage change = ((new value − original value) ÷ |original value|) × 100</li></ul><p className="mt-4 text-sm leading-6 text-slate-500">Check the inputs and independently verify values used for important financial or business decisions.</p></section>
