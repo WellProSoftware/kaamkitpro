@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Free Online Tools",
   description:
-    "Browse KaamKitPro free online tools for PDF, image, calculator, text, SEO, social media and developer tasks.",
+    "Browse KaamKitPro free online PDF tools, image tools, calculators and hospital procurement utilities.",
   keywords: [
     "free online tools",
     "online tools",
@@ -11,10 +11,8 @@ export const metadata: Metadata = {
     "PDF tools",
     "image tools",
     "calculator tools",
-    "text tools",
-    "SEO tools",
-    "social media tools",
-    "developer tools",
+    "hospital procurement tools",
+    "vendor quotation comparison",
   ],
   alternates: {
     canonical: "https://kaamkitpro.com/tools",
