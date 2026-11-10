@@ -107,21 +107,7 @@ export default function CalculatorsPage() {
 
           <div className="mt-6 space-y-5 text-slate-600">
             <p className="leading-7">
-              For business pricing and tax calculations, use the{" "}
-              <Link
-                href="/tools/gst-calculator"
-                className="font-medium text-slate-900 underline underline-offset-4"
-              >
-                GST Calculator
-              </Link>{" "}
-              or{" "}
-              <Link
-                href="/tools/percentage-calculator"
-                className="font-medium text-slate-900 underline underline-offset-4"
-              >
-                Percentage Calculator
-              </Link>
-              .
+              Use the GST Calculator for business pricing and tax calculations.
             </p>
 
             <p className="leading-7">
