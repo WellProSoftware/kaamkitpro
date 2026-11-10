@@ -44,6 +44,11 @@ const categories = [
     href: "/tools/developer",
     description: "Format code, encode URLs, generate hashes and convert colors.",
   },
+  {
+    title: "Hospital Procurement",
+    href: "/tools/vendor-quotation-comparison",
+    description: "Compare supplier quotations, GST, discounts and landed costs.",
+  },
 ];
 
 const popularTools = [
@@ -76,6 +81,11 @@ const popularTools = [
     href: "/tools/emi-calculator",
     title: "EMI Calculator",
     description: "Calculate loan EMI and repayment details.",
+  },
+  {
+    href: "/tools/vendor-quotation-comparison",
+    title: "Vendor Quotation Comparison",
+    description: "Compare supplier rates and estimated landed costs.",
   },
 ];
 
