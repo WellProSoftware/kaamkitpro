@@ -153,7 +153,7 @@ export default function SIPCalculatorPage() {
           <div className="mt-6 rounded-2xl border border-amber-100 bg-amber-50 p-5">
             <p className="text-sm leading-6 text-slate-600">
               This calculator provides an estimate based on the return rate
-              entered. Actual investment returns can vary.
+              entered. Actual investment returns can vary. The estimate assumes each monthly instalment is invested at the beginning of the month.
             </p>
           </div>
         </div>
@@ -164,10 +164,10 @@ export default function SIPCalculatorPage() {
           </h2>
 
           <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-600">
-            <li>Monthly investment amount enter karo.</li>
-            <li>Expected annual return enter karo.</li>
-            <li>Investment period years mein enter karo.</li>
-            <li>Estimated returns aur future value dekho.</li>
+            <li>Enter your monthly investment amount.</li>
+            <li>Enter the expected annual return.</li>
+            <li>Enter the investment period in years.</li>
+            <li>View the estimated returns and future value.</li>
           </ol>
         </section>
 
