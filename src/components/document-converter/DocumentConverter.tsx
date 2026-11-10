@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/set-state-in-effect */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -68,7 +68,7 @@ export default function DocumentConverter({mode}:{mode:Mode}){
         const pageRows:string[][]=[];
         for(let p=1;p<=pdf.numPages;p++){
           const page=await pdf.getPage(p),content=await page.getTextContent();
-          const items=content.items.filter((item:any)=>"str" in item && item.str.trim()).map((item:any)=>({text:item.str,x:item.transform[4],y:item.transform[5]}));
+          const items=content.items.filter((item:any)=>"str" in item && typeof item.str==="string" && item.str.trim()).map((item:any)=>({text:item.str,x:item.transform?.[4]??0,y:item.transform?.[5]??0}));
           const lines:{y:number;items:{text:string;x:number}[]}[]=[];
           for(const item of items){
             let line=lines.find(x=>Math.abs(x.y-item.y)<3);
@@ -105,9 +105,10 @@ export default function DocumentConverter({mode}:{mode:Mode}){
         if(!text.trim())setMessage("No selectable text was found. This may be a scanned PDF; OCR is not included in this PDF converter.");
       }else{
         await loadScript("https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js",()=>Boolean(getTesseract()));
-        if(!getTesseract())throw new Error("OCR engine is unavailable.");
+        const tesseract=getTesseract();
+        if(!tesseract)throw new Error("OCR engine is unavailable.");
         setMessage("Reading image text with OCR. This may take a little time…");
-        const result=await getTesseract().recognize(file,"eng",{logger:(event:any)=>{if(event.status==="recognizing text")setMessage("Recognizing text: "+Math.round((event.progress||0)*100)+"%");}});
+        const result=await tesseract.recognize(file,"eng",{logger:(event:any)=>{if(event.status==="recognizing text")setMessage("Recognizing text: "+Math.round((event.progress||0)*100)+"%");}});
         text=String(result.data.text||"").trim();
         if(!text)throw new Error("No readable text was detected. Try a clearer, higher-resolution image.");
         if(isExcel){
