@@ -29,7 +29,12 @@ for (const tool of uncoveredDocumentTools) {
 test("JPG to PDF converts an uploaded image into a valid one-page PDF", async ({ page }) => {
   await page.goto("/tools/jpg-to-pdf");
   await expect(page.locator("#image-files")).toBeAttached();
-  await page.waitForTimeout(1500); // This route hydrates later than the initial server-rendered input.
+  await page.waitForFunction(() => {
+    const input = document.querySelector("#image-files");
+    return input && Object.keys(input).some((key) =>
+      key.startsWith("__reactProps$") && typeof input[key]?.onChange === "function"
+    );
+  }, { timeout: 10000 }); // Wait for React to attach the upload handler before selecting a file.
   await page.locator("#image-files").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
