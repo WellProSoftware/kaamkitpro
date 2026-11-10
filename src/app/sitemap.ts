@@ -16,7 +16,7 @@ const toolRoutes = [
   "/tools/pdf-rotate", "/tools/pdf-split", "/tools/pdf-to-jpg", "/tools/pdf-watermark",
   "/tools/percentage-calculator", "/tools/qr-code-generator", "/tools/seo", "/tools/sip-calculator",
   "/tools/slug-generator", "/tools/sitemap-generator", "/tools/social", "/tools/text",
-  "/tools/timestamp-converter", "/tools/url-encoder-decoder", "/tools/uuid-generator",
+  "/tools/timestamp-converter", "/tools/url-encoder-decoder", "/tools/uuid-generator", "/tools/vendor-quotation-comparison",
   "/tools/word-counter", "/tools/youtube-description-generator", "/tools/youtube-title-generator",
   "/tools/remove-extra-spaces", "/tools/line-sorter", "/tools/remove-duplicate-lines", "/tools/csv-to-json", "/tools/json-to-csv", "/tools/text-diff-checker",
 ];
