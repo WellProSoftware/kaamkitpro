@@ -120,7 +120,7 @@ export default function GSTCalculatorPage() {
                 Base Amount
               </p>
               <p className="mt-2 text-2xl font-bold">
-                ₹{valid ? baseAmount.toFixed(2) : "0.00"}
+                ₹{valid ? baseAmount.toFixed(2) : "—"}
               </p>
             </div>
 
@@ -129,7 +129,7 @@ export default function GSTCalculatorPage() {
                 GST Amount
               </p>
               <p className="mt-2 text-2xl font-bold text-emerald-600">
-                ₹{valid ? gst.toFixed(2) : "0.00"}
+                ₹{valid ? gst.toFixed(2) : "—"}
               </p>
             </div>
 
@@ -138,7 +138,7 @@ export default function GSTCalculatorPage() {
                 Total Amount
               </p>
               <p className="mt-2 text-2xl font-bold text-orange-600">
-                ₹{valid ? total.toFixed(2) : "0.00"}
+                ₹{valid ? total.toFixed(2) : "—"}
               </p>
             </div>
           </div>
