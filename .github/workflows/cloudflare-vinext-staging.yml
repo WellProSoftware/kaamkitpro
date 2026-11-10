@@ -6,9 +6,6 @@ on:
   push:
     branches:
       - cloudflare/vinext-staging
-  schedule:
-    # Weekly read-only validation; no scheduled deployment.
-    - cron: "30 3 * * 1"
   workflow_dispatch:
     inputs:
       deploy_to_workers_dev:
@@ -174,7 +171,7 @@ jobs:
         run: set -o pipefail; npx playwright test -c playwright.cloudflare.config.mjs 2>&1 | tee cloudflare-playwright.log
 
       - name: Commit generated Cloudflare source configuration to staging branch
-        if: github.event_name != 'schedule' && always() && steps.init.outcome == 'success' && !(github.event_name == 'workflow_dispatch' && inputs.deploy_feature_pr32 == true)
+        if: always() && steps.init.outcome == 'success' && !(github.event_name == 'workflow_dispatch' && inputs.deploy_feature_pr32 == true)
         shell: bash
         run: |
           set -euo pipefail
