@@ -655,12 +655,12 @@ test("Excel Merge combines CSV files by header and downloads an Excel workbook",
     {
       name: "vendor-a.csv",
       mimeType: "text/csv",
-      buffer: Buffer.from("Item Name,Quantity\\nParacetamol,10\\nGrand Total,10"),
+      buffer: Buffer.from("Item Name,Quantity\nParacetamol,10\nGrand Total,10"),
     },
     {
       name: "vendor-b.csv",
       mimeType: "text/csv",
-      buffer: Buffer.from("Quantity,Item Name\\n20,Amoxicillin"),
+      buffer: Buffer.from("Quantity,Item Name\n20,Amoxicillin"),
     },
   ]);
 
