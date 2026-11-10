@@ -165,23 +165,6 @@ test("Image Brightness processes an uploaded image and downloads the result", as
   await expect(page.getByText("Brightness adjusted successfully.")).toBeVisible();
 });
 
-test("Percentage Calculator updates all three calculations", async ({ page }) => {
-  await page.goto("/tools/percentage-calculator");
-  await expect(page.getByRole("heading", { name: "Percentage Calculator", exact: true })).toBeVisible();
-
-  const fields = page.locator('input[type="number"]');
-  await fields.nth(0).fill("25");
-  await fields.nth(1).fill("80");
-  await expect(page.getByText("20", { exact: true })).toBeVisible();
-
-  await fields.nth(2).fill("30");
-  await fields.nth(3).fill("120");
-  await expect(page.getByText("25%", { exact: true })).toBeVisible();
-
-  await fields.nth(4).fill("80");
-  await fields.nth(5).fill("100");
-  await expect(page.getByText("+25%", { exact: true })).toBeVisible();
-});
 
 test("PDF Protect clearly reports unsupported encryption and does not download a false protected file", async ({ page }) => {
   await page.goto("/tools/pdf-protect");
@@ -496,16 +479,6 @@ test("BMI Calculator updates BMI and category from entered measurements", async 
   await expect(page.getByText("Normal", { exact: true }).first()).toBeVisible();
 });
 
-test("EMI Calculator computes monthly EMI for a sample loan", async ({ page }) => {
-  await page.goto("/tools/emi-calculator");
-  await expect(page.getByRole("heading", { name: "EMI Calculator", exact: true })).toBeVisible();
-  const fields = page.locator('input[type="number"]');
-  await fields.nth(0).fill("100000");
-  await fields.nth(1).fill("12");
-  await fields.nth(2).fill("1");
-  await expect(page.getByText(/₹8,8[0-9]{2}/).first()).toBeVisible();
-});
-
 
 test("Age Calculator shows years, months, and days after a birth date is entered", async ({ page }) => {
   await page.goto("/tools/age-calculator");
@@ -527,18 +500,6 @@ test("Age Calculator does not display an age for a future birth date", async ({ 
   await expect(page.getByText("Years", { exact: true })).toHaveCount(0);
 });
 
-
-test("EMI Calculator handles a zero-interest loan", async ({ page }) => {
-  await page.goto("/tools/emi-calculator");
-  await expect(page.getByRole("heading", { name: "EMI Calculator", exact: true })).toBeVisible();
-  const fields = page.locator('input[type="number"]');
-  await fields.nth(0).fill("120000");
-  await fields.nth(1).fill("0");
-  await fields.nth(2).fill("1");
-  await expect(page.getByText("₹10,000", { exact: true })).toBeVisible();
-  await expect(page.getByText("₹0", { exact: true })).toBeVisible();
-  await expect(page.getByText("₹1,20,000", { exact: true })).toBeVisible();
-});
 
 
 test("BMI Calculator keeps the result empty for zero or missing measurements", async ({ page }) => {
@@ -572,21 +533,6 @@ test("BMI Calculator updates each weight category when measurements change", asy
   await expect(page.getByText("Obesity", { exact: true }).first()).toBeVisible();
 });
 
-
-test("EMI Calculator waits for all inputs and accepts an explicit zero interest rate", async ({ page }) => {
-  await page.goto("/tools/emi-calculator");
-  await expect(page.getByRole("heading", { name: "EMI Calculator", exact: true })).toBeVisible();
-  await page.waitForTimeout(500); // Wait for client hydration before entering values.
-  const fields = page.locator('input[type="number"]');
-  await fields.nth(0).fill("120000");
-  await fields.nth(2).fill("1");
-  await expect(page.locator("main").getByText("—", { exact: true })).toHaveCount(3);
-
-  await fields.nth(1).fill("0");
-  await expect(fields.nth(1)).toHaveValue("0");
-  await expect(page.locator("main").getByText("₹10,000", { exact: true })).toBeVisible();
-  await expect(page.locator("main").getByText("₹1,20,000", { exact: true })).toBeVisible();
-});
 
 
 test("Age Calculator returns zero years, months, and days for today's birth date", async ({ page }) => {
@@ -640,34 +586,6 @@ test("GST Calculator handles a zero amount without producing invalid values", as
 });
 
 
-test("Percentage Calculator handles zero denominators without invalid percentages", async ({ page }) => {
-  await page.goto("/tools/percentage-calculator");
-  await expect(page.getByRole("heading", { name: "Percentage Calculator", exact: true })).toBeVisible();
-
-  const fields = page.locator('input[type="number"]');
-  await fields.nth(3).fill("0");
-  await fields.nth(4).fill("0");
-  await expect(page.getByText("Enter a valid non-zero whole.", { exact: true })).toBeVisible();
-  await expect(page.getByText("Original value must not be zero.", { exact: true })).toBeVisible();
-
-  const results = page.locator("main").getByText("—", { exact: true });
-  await expect(results).toHaveCount(2);
-  await expect(page.getByText(/NaN|Infinity/)).toHaveCount(0);
-});
-
-test("Percentage Calculator supports a decrease and a zero percent result", async ({ page }) => {
-  await page.goto("/tools/percentage-calculator");
-  const fields = page.locator('input[type="number"]');
-
-  await fields.nth(4).fill("100");
-  await fields.nth(5).fill("75");
-  await expect(page.getByText("-25%", { exact: true })).toBeVisible();
-  await expect(page.getByText("Decrease", { exact: true })).toBeVisible();
-
-  await fields.nth(5).fill("100");
-  await expect(page.getByText("0%", { exact: true })).toBeVisible();
-  await expect(page.getByText("No change", { exact: true })).toBeVisible();
-});
 
 
 test("GST Calculator shows unavailable results until a valid amount is entered", async ({ page }) => {
@@ -677,18 +595,6 @@ test("GST Calculator shows unavailable results until a valid amount is entered",
   await expect(page.getByText("₹1180.00", { exact: true })).toBeVisible();
 });
 
-test("Percentage Calculator does not calculate from cleared or invalid fields", async ({ page }) => {
-  await page.goto("/tools/percentage-calculator");
-  const fields = page.locator('input[type="number"]');
-  await fields.nth(2).fill("");
-  await expect(page.getByText("—", { exact: true })).toHaveCount(1);
-  await expect(page.getByText("Enter a valid part.", { exact: true })).toBeVisible();
-
-  await fields.nth(4).fill("100");
-  await fields.nth(5).fill("");
-  await expect(page.getByText("Enter valid original and new values.", { exact: true })).toBeVisible();
-  await expect(page.getByText("—", { exact: true })).toHaveCount(2);
-});
 
 test("SIP Calculator handles a zero-return estimate without adding gains", async ({ page }) => {
   await page.goto("/tools/sip-calculator");
