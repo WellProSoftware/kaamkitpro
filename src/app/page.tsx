@@ -1,6 +1,7 @@
 "use client";
 
 import SiteHeader from "@/components/SiteHeader";
+import BrandLogo from "@/components/BrandLogo";
 import { useMemo, useState } from "react";
 
 type Tool = {
