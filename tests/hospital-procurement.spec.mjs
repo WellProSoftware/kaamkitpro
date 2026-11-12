@@ -56,7 +56,7 @@ test.describe("HospitalProcure staging MVP", () => {
     const download = await downloadPromise;
     const path = await download.path();
     expect(path).toBeTruthy();
-    const csv = await readFile(path!, "utf8");
+    const csv = await readFile(path, "utf8");
     expect(csv).toContain('"\'=HYPERLINK(""https://attacker.invalid""');
   });
 });
