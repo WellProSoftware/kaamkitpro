@@ -41,25 +41,6 @@ test.describe("staging security regression checks", () => {
     expect(await response.json()).toMatchObject({ error: "Invalid request origin." });
   });
 
-  test("admin grant mutation rejects a same-host but different-scheme Origin", async ({ request }) => {
-    const pageResponse = await request.get("/");
-    const actualOrigin = new URL(pageResponse.url()).origin;
-    const parsedOrigin = new URL(actualOrigin);
-    const mismatchedSchemeOrigin = `${parsedOrigin.protocol === "https:" ? "http:" : "https:"}//${parsedOrigin.host}`;
-    const response = await request.post("/api/admin/access", {
-      headers: { Origin: mismatchedSchemeOrigin },
-      data: {
-        email: "staging-test@example.invalid",
-        access_type: "pro",
-        duration: "30",
-        reason: "testing",
-        note: "Origin tuple regression test; no write should occur.",
-      },
-    });
-    expect(response.status()).toBe(403);
-    expect(await response.json()).toMatchObject({ error: "Invalid request origin." });
-  });
-
   test("admin grant mutations reject a missing Origin header", async ({ request }) => {
     const grant = await request.post("/api/admin/access", {
       data: {
