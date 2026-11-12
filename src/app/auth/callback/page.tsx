@@ -20,7 +20,8 @@ export default function AuthCallbackPage() {
 
       const flow = query.get("flow");
       const tokenHash = query.get("token_hash");
-      const otpType = query.get("type") || params.get("type") || "email";
+      const linkType = query.get("type") || params.get("type");
+      const otpType = linkType || "email";
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
       const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
@@ -39,7 +40,7 @@ export default function AuthCallbackPage() {
         // Do not let a signup confirmation link be presented as a password-reset link,
         // or a recovery link be presented as initial account verification.
         const expectedType = flow === "signup" ? "signup" : flow === "reset" ? "recovery" : null;
-        if (expectedType && otpType !== "email" && otpType !== expectedType) {
+        if (expectedType && linkType && linkType !== expectedType) {
           throw new Error("This email link is for a different account action. Request the correct link and try again.");
         }
 
