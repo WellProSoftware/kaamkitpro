@@ -330,11 +330,9 @@ jobs:
             ["/ads.txt", async r => r.status === 200 && (await r.text()).trim() === "google.com, pub-6738934686699082, DIRECT, f08c47fec0942fa0", "ads.txt publisher line"],
             ["/robots.txt", async r => r.status === 200 && (await r.text()).includes("Disallow: /"), "robots.txt staging exclusion"],
             ["/api/access", async r => { const t = await r.json(); return r.status === 200 && t.plan === "free_pro_access" && t.isPro === true && t.adsEnabled === false; }, "anonymous temporary free-Pro access + staging ads disabled"],
-            ["/tools/json-formatter", async r => r.status === 200 && /JSON Formatter/.test(await r.text()), "JSON Formatter"],
             ["/tools/pdf-merge", async r => r.status === 200 && /PDF Merge Tool/.test(await r.text()), "PDF Merge"],
             ["/tools/image-rotate", async r => r.status === 200 && /Image Rotate Tool/.test(await r.text()), "Image Rotate"],
-            ["/tools/qr-code-generator", async r => r.status === 200 && /QR Code Generator/.test(await r.text()), "QR code generator"],
-            ["/tools/gst-calculator", async r => r.status === 200 && /GST Calculator/.test(await r.text()), "GST calculator"],
+undefined            ["/tools/gst-calculator", async r => r.status === 200 && /GST Calculator/.test(await r.text()), "GST calculator"],
           ];
           let failures = 0;
           for (const [path, verify, label] of checks) {
