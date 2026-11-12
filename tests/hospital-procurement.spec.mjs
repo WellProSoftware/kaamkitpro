@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { readFile } from "node:fs/promises";
 
 test.describe("HospitalProcure staging MVP", () => {
   test("renders isolated procurement workspace and navigation", async ({ page }) => {
@@ -44,5 +45,18 @@ test.describe("HospitalProcure staging MVP", () => {
     await page.getByLabel("GST 1").fill("150");
     await expect(page.getByLabel("GST 1")).toHaveValue("100");
     await expect(page.getByText(/-₹/)).toHaveCount(0);
+  });
+
+  test("CSV export neutralizes spreadsheet formulas in vendor names", async ({ page }) => {
+    await page.goto("/hospital-procurement");
+    await page.getByRole("button", { name: /Quotation comparison/i }).click();
+    await page.getByLabel("Vendor name 1").fill('=HYPERLINK("https://attacker.invalid","open")');
+    const downloadPromise = page.waitForEvent("download");
+    await page.getByRole("button", { name: /Export CSV/i }).click();
+    const download = await downloadPromise;
+    const path = await download.path();
+    expect(path).toBeTruthy();
+    const csv = await readFile(path!, "utf8");
+    expect(csv).toContain('"\'=HYPERLINK(""https://attacker.invalid""');
   });
 });
