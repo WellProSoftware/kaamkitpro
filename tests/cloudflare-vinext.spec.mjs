@@ -59,8 +59,8 @@ test("login and invalid callback pages render without a Supabase session", async
   await page.waitForTimeout(250);
   await expect(page.locator("#google-adsense")).toHaveCount(0);
   await page.goto("/auth/callback");
-  await expect(page.getByRole("heading", { name: "Verification link not accepted" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Return to sign in" })).toHaveAttribute("href", "/login");
+  await expect(page.getByRole("heading", { name: "Sign-in link not accepted" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Request a new link" })).toHaveAttribute("href", "/login");
   await page.waitForTimeout(250);
   await expect(page.locator("#google-adsense")).toHaveCount(0);
 });

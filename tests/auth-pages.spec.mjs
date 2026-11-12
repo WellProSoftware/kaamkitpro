@@ -7,9 +7,9 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
     await expect(page.getByLabel("Full name")).toBeVisible();
     await expect(page.getByLabel("Email address")).toHaveAttribute("type", "email");
-    await expect(page.getByRole("button", { name: "Send verification link" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Send verification email" })).toBeVisible();
     await expect(page.getByRole("button", { name: /Google|OTP|one-time code|mobile number/i })).toHaveCount(0);
-    await expect(page.getByText(/Google sign-in, mobile OTP and email OTP codes are not offered/i)).toBeVisible();
+    await expect(page.getByText(/Your account can show your profile/i)).toBeVisible();
     await expect(page.getByLabel("Password")).toHaveCount(0);
   });
 
@@ -17,7 +17,7 @@ test.describe("KaamKitPro authentication pages", () => {
     await page.goto("/login");
     await page.getByLabel("Full name").fill("Test User");
     await page.getByLabel("Email address").fill("test@example.com");
-    await page.getByRole("button", { name: "Send verification link" }).click();
+    await page.getByRole("button", { name: "Send verification email" }).click();
     await expect(page.getByText("Account access is temporarily unavailable", { exact: false })).toBeVisible();
   });
 
@@ -32,9 +32,9 @@ test.describe("KaamKitPro authentication pages", () => {
 
   test("callback page rejects a URL without verification tokens", async ({ page }) => {
     await page.goto("/auth/callback");
-    await expect(page.getByRole("heading", { name: "Verification link not accepted" })).toBeVisible();
-    await expect(page.getByText("This verification link is invalid or expired", { exact: false })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Return to sign in" })).toHaveAttribute("href", "/login");
+    await expect(page.getByRole("heading", { name: "Sign-in link not accepted" })).toBeVisible();
+    await expect(page.getByText("This sign-in link is invalid, expired", { exact: false })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Request a new link" })).toHaveAttribute("href", "/login");
   });
 
   test("set-password page asks for password confirmation", async ({ page }) => {
@@ -120,6 +120,13 @@ test.describe("KaamKitPro authentication pages", () => {
 
 test("email-link-only callback and password setup copy stays aligned", async () => {
   const callback = await readFile(new URL("../src/app/auth/callback/page.tsx", import.meta.url), "utf8");
-  expect(callback).toContain("Verification link not accepted");
-  expect(callback).toContain("Return to sign in");
+  expect(callback).toContain("Sign-in link not accepted");
+  expect(callback).toContain("Request a new link");
+});
+
+test("password reset route is available and asks for a verified reset session", async ({ page }) => {
+  await page.goto("/reset-password");
+  await expect(page.getByRole("heading", { name: "Create a new password" })).toBeVisible();
+  await expect(page.getByLabel("New password")).toHaveAttribute("minlength", "10");
+  await expect(page.getByLabel("Confirm password")).toHaveAttribute("minlength", "10");
 });
