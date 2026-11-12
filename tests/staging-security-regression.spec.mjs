@@ -42,8 +42,12 @@ test.describe("staging security regression checks", () => {
   });
 
   test("admin grant mutation rejects a same-host but different-scheme Origin", async ({ request }) => {
+    const pageResponse = await request.get("/");
+    const actualOrigin = new URL(pageResponse.url()).origin;
+    const parsedOrigin = new URL(actualOrigin);
+    const mismatchedSchemeOrigin = `${parsedOrigin.protocol === "https:" ? "http:" : "https:"}//${parsedOrigin.host}`;
     const response = await request.post("/api/admin/access", {
-      headers: { Origin: "http://127.0.0.1:4173" },
+      headers: { Origin: mismatchedSchemeOrigin },
       data: {
         email: "staging-test@example.invalid",
         access_type: "pro",
