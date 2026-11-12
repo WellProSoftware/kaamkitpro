@@ -94,7 +94,13 @@ export default function HospitalProcurementPage() {
       ["Vendor", "Base unit price", "Discount %", "GST %", "Landed unit cost", "Delivery days", "Availability"],
       ...rankedQuotes.map((quote) => [quote.vendor, quote.unitPrice, quote.discount, quote.gst, landedUnitCost(quote).toFixed(2), quote.deliveryDays, quote.availability]),
     ];
-    const csv = rows.map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(",")).join("\n");
+    // Neutralise spreadsheet formula prefixes in user-controlled vendor names before CSV export.
+    const csvCell = (cell: unknown) => {
+      const value = String(cell);
+      const safeValue = /^[\t\r\n ]*[=+\-@]/.test(value) ? "'" + value : value;
+      return '"' + safeValue.replaceAll('"', '""') + '"';
+    };
+    const csv = rows.map((row) => row.map(csvCell).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
