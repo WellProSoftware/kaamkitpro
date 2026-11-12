@@ -89,7 +89,7 @@ test("admin grant and revoke mutations reject unauthenticated callers", async ({
   const sameOrigin = { Origin: "https://127.0.0.1:4173" };
   const create = await request.post("/api/admin/access", { headers: sameOrigin, data: { email: "staging-test@example.invalid", access_type: "pro", duration: "30", reason: "testing", note: "Unauthenticated safety test; no database write should occur." } });
   expect(create.status()).toBe(401);
-  const revoke = await request.patch("/api/admin/access", { data: { id: "a80a66cc-5f2f-4cfd-a1bf-7c71ec3d73d8" } });
+  const revoke = await request.patch("/api/admin/access", { headers: sameOrigin, data: { id: "a80a66cc-5f2f-4cfd-a1bf-7c71ec3d73d8" } });
   expect(revoke.status()).toBe(401);
 });
 
