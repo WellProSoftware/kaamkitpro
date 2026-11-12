@@ -194,7 +194,9 @@ test.describe("staging security regression checks", () => {
     await page.reload();
     await expect(page.getByText(/PRIVATE ACCOUNT A ITEM/)).toBeVisible();
 
-    await page.getByLabel("Single item name").fill("ACCOUNT A SEARCH");
+    await page.getByLabel("Single item name").fill("PRIVATE ACCOUNT A ITEM");
+    await page.getByRole("button", { name: "Check item" }).click();
+    await expect(page.getByText("PRIVATE ACCOUNT A ITEM")).toBeVisible();
     await page.getByLabel("Bulk item names").fill("ACCOUNT A BULK DATA");
     activeUserId = "account-b";
     await page.evaluate(() => window.dispatchEvent(new Event("focus")));
