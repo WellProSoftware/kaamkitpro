@@ -175,7 +175,7 @@ test.describe("staging security regression checks", () => {
   });
 
   test("Item Mapping hides account A master after switching to account B and then guest", async ({ page }) => {
-    let activeUserId: string | null = "account-a";
+    let activeUserId = "account-a";
     await page.route("**/api/auth/session", async route => {
       if (activeUserId) {
         await route.fulfill({
