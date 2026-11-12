@@ -1,6 +1,6 @@
 "use client";
 
-import BrandLogo from "@/components/BrandLogo";
+import SiteHeader from "@/components/SiteHeader";
 import { useMemo, useState } from "react";
 
 type Tool = {
@@ -234,40 +234,8 @@ export default function Home() {
           __html: JSON.stringify(faqSchema),
         }}
       />
-      <header className="border-b bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <BrandLogo />
+      <SiteHeader />
 
-          <div className="flex items-center gap-2 md:hidden"><a href="/login" className="inline-flex min-h-10 items-center rounded-xl border border-blue-200 px-3 py-2 text-xs font-bold text-blue-700">Create account</a><a href="/login?mode=login" className="inline-flex min-h-10 items-center rounded-xl bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-700">Sign in</a></div>
-
-          <nav className="hidden gap-6 text-sm font-medium md:flex">
-            <a href="/tools" className="text-slate-600 hover:text-slate-900">
-              Tools
-            </a>
-            <a href="#categories" className="text-slate-600 hover:text-slate-900">
-              Categories
-            </a>
-            <a href="#why" className="text-slate-600 hover:text-slate-900">
-              Why KaamKitPro
-            </a>
-            <a href="/pricing" className="text-slate-600 hover:text-slate-900">
-              Pricing
-            </a>
-            <a href="/about" className="text-slate-600 hover:text-slate-900">
-              About
-            </a>
-            <a href="/contact" className="text-slate-600 hover:text-slate-900">
-              Contact
-            </a>
-            <a href="/login" className="rounded-lg border border-blue-200 px-3 py-2 font-bold text-blue-700 hover:bg-blue-50">
-              Create account
-            </a>
-            <a href="/login?mode=login" className="rounded-lg bg-blue-600 px-3 py-2 font-bold text-white hover:bg-blue-700">
-              Sign in
-            </a>
-          </nav>
-        </div>
-      </header>
 
       <section className="border-b bg-gradient-to-b from-white to-slate-50">
         <div className="mx-auto max-w-5xl px-4 py-16 text-center sm:px-6 lg:py-20">
