@@ -190,7 +190,7 @@ test.describe("staging security regression checks", () => {
 
     await page.goto("/tools/item-master-matcher");
     await page.evaluate(async () => {
-      await new Promise<void>((resolve, reject) => {
+      await new Promise((resolve, reject) => {
         const request = indexedDB.open("kaamkitpro-item-master", 1);
         request.onupgradeneeded = () => request.result.createObjectStore("data");
         request.onerror = () => reject(request.error);
