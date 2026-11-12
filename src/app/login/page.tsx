@@ -33,7 +33,13 @@ function LoginForm() {
       cache: "no-store",
     });
     const result = (await response.json().catch(() => ({}))) as AuthResponse;
-    if (!response.ok) throw new Error(result.message || result.msg || result.error_description || "We could not complete that request. Check your details and try again.");
+    if (!response.ok) {
+      const providerMessage = result.message || result.msg || result.error_description || "";
+      if (/associated domain.*not verified|domain.*not verified/i.test(providerMessage)) {
+        throw new Error("Email delivery is temporarily unavailable because the sending domain is not verified. Please contact support@kaamkitpro.com while we restore email delivery.");
+      }
+      throw new Error(providerMessage || "We could not complete that request. Check your details and try again.");
+    }
     return result;
   }
 
@@ -85,11 +91,8 @@ function LoginForm() {
           // Request a fresh link; verified users can ignore it and use the sign-in form.
           // A confirmed account may make Supabase return "already confirmed" here.
           // Keep the response generic and let the user choose Sign in either way.
-          try {
-            await requestJson("resend", { type: "signup", email: normalizedEmail, options: { emailRedirectTo: redirectTo } });
-          } catch {
-            // Do not turn the expected existing-account path into a raw provider error.
-          }
+          // Do not claim a verification email was requested unless the provider accepted it.
+          await requestJson("resend", { type: "signup", email: normalizedEmail, options: { emailRedirectTo: redirectTo } });
         }
         if (!existingAccount && result.access_token && result.refresh_token) {
           // Supabase returns a session when email confirmation is disabled. In that
