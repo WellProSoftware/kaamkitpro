@@ -123,3 +123,11 @@ test("email-link-only callback and password setup copy stays aligned", async () 
   expect(callback).toContain("Verification link not accepted");
   expect(callback).toContain("Return to sign in");
 });
+
+
+test("password reset route is available and asks for a verified reset session", async ({ page }) => {
+  await page.goto("/reset-password");
+  await expect(page.getByRole("heading", { name: "Create a new password" })).toBeVisible();
+  await expect(page.getByLabel("New password")).toHaveAttribute("minlength", "10");
+  await expect(page.getByLabel("Confirm password")).toHaveAttribute("minlength", "10");
+});
