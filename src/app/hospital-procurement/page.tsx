@@ -157,7 +157,7 @@ export default function HospitalProcurementPage() {
             {activeTab === "overview" && (
               <>
                 <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-                  <div><p className="text-sm font-semibold text-emerald-700">Monday, 9 November 2026</p><h2 className="mt-1 text-2xl font-black tracking-tight">Procurement overview</h2><p className="mt-1 text-sm text-slate-500">A quick view of purchasing activity across your hospital.</p></div>
+                  <div><p className="text-sm font-semibold text-emerald-700">Illustrative sample snapshot · 9 November 2026</p><h2 className="mt-1 text-2xl font-black tracking-tight">Procurement overview</h2><p className="mt-1 text-sm text-slate-500">A quick view of purchasing activity across your hospital.</p></div>
                   <button type="button" onClick={() => setActiveTab("quotations")} className="inline-flex min-h-10 items-center justify-center rounded-xl bg-emerald-800 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-900">Compare quotations →</button>
                 </div>
                 <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
