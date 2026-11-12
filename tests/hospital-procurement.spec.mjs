@@ -14,6 +14,9 @@ test.describe("HospitalProcure staging MVP", () => {
     await page.goto("/hospital-procurement");
     await page.getByRole("button", { name: /Quotation comparison/i }).click();
     await expect(page.getByText("Lowest landed rate")).toBeVisible();
+    await expect(page.getByText("₹1,347.41")).toBeVisible();
+    await expect(page.getByText("₹1,34,740.80")).toBeVisible();
+    await expect(page.getByText("₹2,923.20")).toBeVisible();
     await page.getByLabel("Required quantity").fill("200");
     await expect(page.getByText(/200 ×/)).toBeVisible();
     await page.getByLabel("Base rate 2").fill("1000");
@@ -45,6 +48,17 @@ test.describe("HospitalProcure staging MVP", () => {
     await page.getByLabel("GST 1").fill("150");
     await expect(page.getByLabel("GST 1")).toHaveValue("100");
     await expect(page.getByText(/-₹/)).toHaveCount(0);
+  });
+
+  test("equal quotations produce zero potential savings", async ({ page }) => {
+    await page.goto("/hospital-procurement");
+    await page.getByRole("button", { name: /Quotation comparison/i }).click();
+    for (const id of [1, 2, 3]) {
+      await page.getByLabel(`Base rate ${id}`).fill("1000");
+      await page.getByLabel(`Discount ${id}`).fill("0");
+      await page.getByLabel(`GST ${id}`).fill("0");
+    }
+    await expect(page.getByText("₹0.00")).toBeVisible();
   });
 
   test("CSV export neutralizes spreadsheet formulas in vendor names", async ({ page }) => {
