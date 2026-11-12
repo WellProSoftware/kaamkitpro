@@ -80,15 +80,17 @@ function LoginForm() {
           data: { full_name: fullName.trim(), display_name: fullName.trim(), account_setup_required: true },
         });
         const existingAccount = result.user?.identities?.length === 0;
+        let resendFailure = "";
         if (existingAccount) {
           // Supabase deliberately avoids revealing account state in the signup response.
-          // Request a fresh link; verified users can ignore it and use the sign-in form.
-          // A confirmed account may make Supabase return "already confirmed" here.
-          // Keep the response generic and let the user choose Sign in either way.
+          // Request a fresh confirmation link using the Auth REST redirect parameter.
           try {
-            await requestJson("resend", { type: "signup", email: normalizedEmail, options: { emailRedirectTo: redirectTo } });
-          } catch {
-            // Do not turn the expected existing-account path into a raw provider error.
+            await requestJson(`resend?redirect_to=${encodeURIComponent(redirectTo)}`, {
+              type: "signup",
+              email: normalizedEmail,
+            });
+          } catch (cause) {
+            resendFailure = cause instanceof Error ? cause.message : "Email delivery is temporarily unavailable.";
           }
         }
         if (!existingAccount && result.access_token && result.refresh_token) {
@@ -102,7 +104,9 @@ function LoginForm() {
           throw new Error("We could not safely start account setup. Please contact support before trying again.");
         }
         setNotice(existingAccount
-          ? "An account already exists with this email address. If you have not verified it yet, a fresh verification link has been requested. If your email is already verified, switch to Sign in and use your email and password."
+          ? resendFailure
+            ? `An account already exists with this email address, but the verification email could not be sent: ${resendFailure} If your email is already verified, switch to Sign in and use your email and password.`
+            : "An account already exists with this email address. A fresh verification link has been requested. If your email is already verified, switch to Sign in and use your email and password."
           : "Verification email sent. Please check your inbox (and spam folder), open the verification link within 2 minutes, and create your password to finish setting up your account.");
         setSignupSent(true);
         return;
