@@ -15,7 +15,6 @@ type AccountSubscription = {
 
 export default function AccountPage() {
   const [user, setUser] = useState<AccountUser | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [isPro, setIsPro] = useState(false);
   const [subscription, setSubscription] = useState<AccountSubscription | null>(null);
   const [isStaging, setIsStaging] = useState(false);
@@ -37,11 +36,8 @@ export default function AccountPage() {
         if (!cancelled) setUser(result.user);
         const accessResponse = await fetch("/api/access", { cache: "no-store" }).catch(() => null);
         if (accessResponse?.ok) {
-          const access = (await accessResponse.json().catch(() => ({}))) as { isAdmin?: boolean; isPro?: boolean };
-          if (!cancelled) {
-            setIsAdmin(access.isAdmin === true);
-            setIsPro(access.isPro === true);
-          }
+          const access = (await accessResponse.json().catch(() => ({}))) as { isPro?: boolean };
+          if (!cancelled) setIsPro(access.isPro === true);
         }
         const billingResponse = await fetch("/api/billing/subscription", { cache: "no-store" }).catch(() => null);
         if (billingResponse?.ok) {
@@ -98,18 +94,12 @@ export default function AccountPage() {
     }
   }
 
-  async function signOut() {
-    await fetch("/api/auth/session", { method: "DELETE" }).catch(() => undefined);
-    window.location.replace("/login");
-  }
-
   return (
     <>
       <SiteHeader />
       <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-900">
       <div className="mx-auto max-w-3xl">
         <div className="mb-5"><Link href="/" className="text-sm font-semibold text-blue-700 hover:underline">← Back to all tools</Link></div>
-/header>
 
         <section className="mt-7 rounded-3xl border border-slate-200 bg-white p-7 shadow-sm sm:p-9">
           <p className="text-sm font-bold uppercase tracking-widest text-blue-600">Your account</p>
