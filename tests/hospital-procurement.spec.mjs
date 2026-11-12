@@ -15,9 +15,11 @@ test.describe("HospitalProcure staging MVP", () => {
     await page.getByRole("button", { name: /Quotation comparison/i }).click();
     await expect(page.getByRole("heading", { name: "Vendor quotation comparison" })).toBeVisible();
     await expect(page.getByText("Lowest landed rate", { exact: true })).toBeVisible();
-    await expect(page.getByText("₹1,347.41", { exact: true })).toBeVisible();
-    await expect(page.getByText("₹1,34,740.80", { exact: true })).toBeVisible();
-    await expect(page.getByText("₹2,923.20", { exact: true })).toBeVisible();
+    // Match the numeric amount independently of locale-specific currency spacing.
+    await expect(page.getByText(/1,347\.41/)).toBeVisible();
+    await expect(page.getByText(/1,34,740\.80/)).toBeVisible();
+    // Highest landed rate is Apex at ₹1,376.256; savings are ₹28.848 × 100.
+    await expect(page.getByText(/2,884\.80/)).toBeVisible();
     await page.getByLabel("Required quantity").fill("200");
     await expect(page.getByText(/200 ×/)).toBeVisible();
     await page.getByLabel("Base rate 2").fill("1000");
@@ -50,6 +52,7 @@ test.describe("HospitalProcure staging MVP", () => {
     await expect(page.getByLabel("GST 1")).toHaveValue("100");
     await expect(page.getByText(/-₹/)).toHaveCount(0);
   });
+
   test("CSV export neutralizes spreadsheet formulas in vendor names", async ({ page }) => {
     await page.goto("/hospital-procurement");
     await page.getByRole("button", { name: /Quotation comparison/i }).click();
