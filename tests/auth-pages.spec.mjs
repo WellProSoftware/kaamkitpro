@@ -120,10 +120,9 @@ test.describe("KaamKitPro authentication pages", () => {
 
 test("email-link-only callback and password setup copy stays aligned", async () => {
   const callback = await readFile(new URL("../src/app/auth/callback/page.tsx", import.meta.url), "utf8");
-  expect(callback).toContain("Verification link not accepted");
-  expect(callback).toContain("Return to sign in");
+  expect(callback).toContain("Sign-in link not accepted");
+  expect(callback).toContain("Request a new link");
 });
-
 
 test("password reset route is available and asks for a verified reset session", async ({ page }) => {
   await page.goto("/reset-password");
