@@ -1,4 +1,4 @@
-Staging-only deployment trigger for the latest validated feature head.
-Deploy target: kaamkitpro-staging workers.dev only.
+No feature-branch deployment is enabled.
+Auth feature branches are validation-only until a separate staging deployment is explicitly approved.
+The Cloudflare staging workflow is manually dispatched for the staging Worker only.
 Production domains, DNS, production data, and live checkout remain excluded.
-Validated feature head a5c954d2 passed CI; deploy this revision to isolated staging Worker only.
