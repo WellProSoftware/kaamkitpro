@@ -141,7 +141,7 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page.getByRole("heading", { name: "Paid plans are on hold" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Sign in" })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /choose monthly|choose yearly|checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
-  });;
+  });
 });
 
 test("email-link-only callback and password setup copy stays aligned", async () => {
