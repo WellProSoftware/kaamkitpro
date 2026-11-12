@@ -106,22 +106,26 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page.locator('script[src*="checkout.razorpay.com"]')).toHaveCount(0);
   });
 
-  test("pricing page explains that free tools do not need signup", async ({ page }) => {
+  test("homepage exposes account actions directly and pricing does not gate sign-in", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByRole("link", { name: "Create account" }).first()).toHaveAttribute("href", "/login");
+    await expect(page.getByRole("link", { name: "Sign in" }).first()).toHaveAttribute("href", "/login?mode=login");
     await page.goto("/pricing");
     await expect(page.getByRole("heading", { name: "Useful tools. No signup needed." })).toBeVisible();
-    await expect(page.getByText("Use the available free tools right away.", { exact: false })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Paid plans are on hold" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Sign in" })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /choose monthly|choose yearly|checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
-    await page.getByRole("link", { name: "Sign in" }).click();
-    await expect(page).toHaveURL(/\/login$/);
-    await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
   });
 });
 
 test("email-link-only callback and password setup copy stays aligned", async () => {
   const callback = await readFile(new URL("../src/app/auth/callback/page.tsx", import.meta.url), "utf8");
+  const login = await readFile(new URL("../src/app/login/page.tsx", import.meta.url), "utf8");
   expect(callback).toContain("Sign-in link not accepted");
   expect(callback).toContain("Request a new link");
+  expect(login).toMatch(/associated domain.*not verified|domain.*not verified/);
+  expect(login).toContain("Email delivery is temporarily unavailable");
+  expect(login).toContain('await requestJson("resend"');
 });
 
 test("password reset route is available and asks for a verified reset session", async ({ page }) => {
