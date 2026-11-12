@@ -32,6 +32,47 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page.getByLabel("Email address")).toHaveCount(0);
   });
 
+  test("signup with confirmation disabled establishes a session and lets the user choose a permanent password", async ({ page }) => {
+    await page.route("**/auth/v1/signup**", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          access_token: "test-access-token",
+          refresh_token: "test-refresh-token",
+          expires_in: 3600,
+          user: {
+            id: "auto-confirmed-test-user",
+            email: "auto-confirmed@example.com",
+            email_confirmed_at: "2026-11-12T00:00:00Z",
+            identities: [{ id: "auto-confirmed-test-identity" }],
+          },
+        }),
+      });
+    });
+    await page.route("**/api/auth/session", async (route) => {
+      if (route.request().method() === "POST") {
+        const body = route.request().postDataJSON();
+        expect(body.access_token).toBe("test-access-token");
+        expect(body.refresh_token).toBe("test-refresh-token");
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ user: { id: "auto-confirmed-test-user", email: "auto-confirmed@example.com" } }),
+      });
+    });
+
+    await page.goto("/login");
+    await page.waitForTimeout(500);
+    await page.getByLabel("Full name").fill("Test User");
+    await page.getByLabel("Email address").fill("auto-confirmed@example.com");
+    await page.getByRole("button", { name: "Send verification email" }).click();
+
+    await expect(page).toHaveURL(/\\/set-password$/);
+    await expect(page.getByRole("heading", { name: "Create your password" })).toBeVisible();
+  });
+
   test("repeat signup explains that the email already has an account and requests a fresh link", async ({ page }) => {
     await page.route("**/auth/v1/signup**", async (route) => {
       await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ user: { id: "existing-user", email: "test@example.com", identities: [] } }) });
