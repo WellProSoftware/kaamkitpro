@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import FileImportDropzone from "@/components/FileImportDropzone";
 
@@ -39,8 +39,60 @@ const pct = (n:number) => (n*100).toFixed(1)+"%";
 export default function ItemMasterMatcherPage() {
  const [master,setMaster]=useState<MasterItem[]>([]),[masterStatus,setMasterStatus]=useState("No item master loaded"),[single,setSingle]=useState(""),[singleMatches,setSingleMatches]=useState<Match[]>([]),[bulk,setBulk]=useState(""),[results,setResults]=useState<Result[]>([]),[matchLimit,setMatchLimit]=useState("85"),[checkLimit,setCheckLimit]=useState("55"),[busy,setBusy]=useState(false),[error,setError]=useState(""),[xlsxReady,setXlsxReady]=useState(false),[storageKey,setStorageKey]=useState<string | null>(null);
  useEffect(()=>{void ensureXlsx().then(()=>setXlsxReady(true)).catch(e=>setError(e instanceof Error?e.message:"Excel support could not load."));},[]);
- useEffect(()=>{let cancelled=false;void fetch("/api/auth/session",{cache:"no-store"}).then(async response=>response.ok?response.json():null).catch(()=>null).then((session:{user?:{id?:string}}|null)=>{if(cancelled)return;if(session?.user?.id){setStorageKey("account:"+session.user.id);}else{setStorageKey("guest:"+crypto.randomUUID());setMasterStatus("Temporary guest workspace — data stays in this page only. Sign in to save a private master in this browser.");}}).catch(()=>{if(!cancelled)setError("Private browser workspace could not be initialised. Please reload.");});return()=>{cancelled=true;};},[]);
- useEffect(()=>{if(!storageKey||storageKey.startsWith("guest:"))return;const req=indexedDB.open("kaamkitpro-item-master",1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains("data"))req.result.createObjectStore("data");};req.onerror=()=>setError("Browser storage is unavailable. Your imported data has not been loaded.");req.onsuccess=()=>{const db=req.result,read=db.transaction("data").objectStore("data").get(storageKey);read.onsuccess=()=>{const saved=read.result as MasterItem[]|undefined;if(saved?.length){setMaster(saved);setMasterStatus(saved.length.toLocaleString()+" private items loaded for this account in this browser");}else{setMaster([]);setMasterStatus("No private item master saved for this account");}db.close();};read.onerror=()=>{setError("Could not read this account's private item master.");db.close();};};},[storageKey]);
+ const activeStorageKey = useRef<string | null>(null);
+ const guestStorageKey = useRef<string | null>(null);
+ useEffect(()=>{
+  let disposed=false,checking=false;
+  const refreshIdentity=async()=>{
+   if(checking||disposed)return;
+   checking=true;
+   try{
+    const response=await fetch("/api/auth/session",{cache:"no-store",credentials:"same-origin"});
+    const session=response.ok?await response.json() as {user?:{id?:string}}:null;
+    if(disposed)return;
+    const nextKey=session?.user?.id?("account:"+session.user.id):(guestStorageKey.current??(guestStorageKey.current="guest:"+crypto.randomUUID()));
+    if(activeStorageKey.current!==nextKey){
+     activeStorageKey.current=nextKey;
+     setMaster([]);setMasterStatus(nextKey.startsWith("account:")?"Loading this account's private item master…":"Temporary guest workspace — data stays in this page only. Sign in to save a private master in this browser.");
+     setSingle("");setSingleMatches([]);setBulk("");setResults([]);setError("");setStorageKey(nextKey);
+    }
+   }catch{
+    if(!disposed){activeStorageKey.current=null;setMaster([]);setSingleMatches([]);setResults([]);setBulk("");setStorageKey(null);setMasterStatus("Session could not be verified. Private item data is hidden until the session can be checked.");setError("Could not verify your private browser workspace. Please retry.");}
+   }finally{checking=false;}
+  };
+  const onVisibility=()=>{if(document.visibilityState==="visible")void refreshIdentity();};
+  void refreshIdentity();
+  const interval=window.setInterval(()=>void refreshIdentity(),15000);
+  window.addEventListener("focus",refreshIdentity);
+  window.addEventListener("storage",refreshIdentity);
+  window.addEventListener("kaamkitpro:auth-changed",refreshIdentity);
+  document.addEventListener("visibilitychange",onVisibility);
+  return()=>{disposed=true;window.clearInterval(interval);window.removeEventListener("focus",refreshIdentity);window.removeEventListener("storage",refreshIdentity);window.removeEventListener("kaamkitpro:auth-changed",refreshIdentity);document.removeEventListener("visibilitychange",onVisibility);};
+ },[]);
+ useEffect(()=>{
+  if(!storageKey||storageKey.startsWith("guest:"))return;
+  let cancelled=false;
+  const req=indexedDB.open("kaamkitpro-item-master",1);
+  req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains("data"))req.result.createObjectStore("data");};
+  req.onerror=()=>{if(!cancelled)setError("Browser storage is unavailable. Your imported data has not been loaded.");};
+  req.onblocked=()=>{if(!cancelled)setError("Browser storage is busy in another tab. Close older KaamKitPro tabs and retry.");};
+  req.onsuccess=()=>{
+   const db=req.result;
+   db.onversionchange=()=>db.close();
+   if(cancelled||activeStorageKey.current!==storageKey){db.close();return;}
+   const read=db.transaction("data","readonly").objectStore("data").get(storageKey);
+   read.onsuccess=()=>{
+    if(!cancelled&&activeStorageKey.current===storageKey){
+     const saved=read.result as MasterItem[]|undefined;
+     if(saved?.length){setMaster(saved);setMasterStatus(saved.length.toLocaleString()+" private items loaded for this account in this browser");}
+     else{setMaster([]);setMasterStatus("No private item master saved for this account");}
+    }
+    db.close();
+   };
+   read.onerror=()=>{if(!cancelled&&activeStorageKey.current===storageKey)setError("Could not read this account's private item master.");db.close();};
+  };
+  return()=>{cancelled=true;};
+ },[storageKey]);
  const ranked=useMemo(()=> (query:string,count=10):Match[]=>master.map(item=>({item,score:score(query,item.name)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,count),[master]);
  const status=(n:number):Result["status"]=>n>=Number(matchLimit)/100?"MATCH":n>=Number(checkLimit)/100?"CHECK":"NEW ITEM";
  async function readFile(file:File):Promise<unknown[][]>{const data=await file.arrayBuffer();if(/\.csv$/i.test(file.name)){const text=new TextDecoder().decode(data).replace(/^\uFEFF/,"");return text.split(/\r?\n/).filter(x=>x.trim()).map(line=>{const out:string[]=[];let cell="",quoted=false;for(let i=0;i<line.length;i++){const c=line[i]??"";if(c==='"'&&(line[i+1]??"")==='"'&&quoted){cell+='"';i++;}else if(c==='"')quoted=!quoted;else if(c===","&&!quoted){out.push(cell);cell="";}else cell+=c;}out.push(cell);return out;});}const xlsx=await ensureXlsx();const wb=xlsx.read(data,{type:"array"});const sheetName=wb.SheetNames.includes("Item Master")?"Item Master":wb.SheetNames[0];const sheet=sheetName?wb.Sheets[sheetName]:undefined;if(!sheet)throw new Error("The workbook does not contain a readable worksheet.");return xlsx.utils.sheet_to_json(sheet,{header:1,defval:""});}
