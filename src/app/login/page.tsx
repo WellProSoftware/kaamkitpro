@@ -85,8 +85,15 @@ function LoginForm() {
           // Request a fresh link; verified users can ignore it and use the sign-in form.
           await requestJson("resend", { type: "signup", email: normalizedEmail, options: { emailRedirectTo: redirectTo } });
         }
+        if (result.access_token && result.refresh_token) {
+          // Supabase returns a session when email confirmation is disabled. In that
+          // configuration the email is auto-confirmed, so let the user choose their
+          // permanent password immediately instead of leaving a random-password account.
+          await establishSession(result, "/set-password");
+          return;
+        }
         if (result.access_token || result.refresh_token) {
-          throw new Error("Email confirmation must be enabled in Supabase Auth before signup can continue. Please contact support; do not sign in until your email is verified.");
+          throw new Error("We could not safely start account setup. Please contact support before trying again.");
         }
         setNotice(existingAccount
           ? "An account already exists with this email address. If you have not verified it yet, a fresh verification link has been requested. If your email is already verified, switch to Sign in and use your email and password."
