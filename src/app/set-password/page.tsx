@@ -41,7 +41,7 @@ export default function SetPasswordPage() {
       });
       const result = await response.json().catch(() => ({})) as { error?: string };
       if (!response.ok) throw new Error(result.error || "Password could not be saved. Please try again.");
-      window.location.replace("/account?welcome=1");
+      window.location.replace("/?welcome=1");
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Password could not be saved. Please try again.");
     } finally {
