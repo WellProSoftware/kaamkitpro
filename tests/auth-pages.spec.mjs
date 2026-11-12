@@ -13,6 +13,32 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page.getByLabel("Password")).toHaveCount(0);
   });
 
+  test("signup reports email delivery failures instead of claiming a link was sent", async ({ page }) => {
+    await page.route("**/auth/v1/signup?**", async route => {
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ user: { id: "existing-user", identities: [] } }) });
+    });
+    await page.route("**/auth/v1/resend", async route => {
+      await route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ message: "The associated domain with your API key is not verified." }) });
+    });
+    await page.goto("/login");
+    await page.getByLabel("Full name").fill("Test User");
+    await page.getByLabel("Email address").fill("existing@example.com");
+    await page.getByRole("button", { name: "Send verification email" }).click();
+    await expect(page.getByRole("alert")).toContainText("Email delivery is temporarily unavailable");
+    await expect(page.getByRole("heading", { name: "Check your email" })).toHaveCount(0);
+  });
+
+  test("password recovery reports an unverified sender domain clearly", async ({ page }) => {
+    await page.route("**/auth/v1/recover?**", async route => {
+      await route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ message: "The associated domain with your API key is not verified." }) });
+    });
+    await page.goto("/login?mode=login");
+    await page.getByRole("button", { name: "Forgot / Reset password?" }).click();
+    await page.getByLabel("Email address").fill("existing@example.com");
+    await page.getByRole("button", { name: "Send password reset link" }).click();
+    await expect(page.getByRole("alert")).toContainText("Email delivery is temporarily unavailable");
+  });
+
   test("signup handles missing public Supabase configuration gracefully", async ({ page }) => {
     await page.goto("/login");
     await page.getByLabel("Full name").fill("Test User");
@@ -106,16 +132,16 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page.locator('script[src*="checkout.razorpay.com"]')).toHaveCount(0);
   });
 
-  test("pricing page explains that free tools do not need signup", async ({ page }) => {
+  test("homepage exposes account actions directly and pricing does not gate sign-in", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByRole("link", { name: "Create account" }).first()).toHaveAttribute("href", "/login");
+    await expect(page.getByRole("link", { name: "Sign in" }).first()).toHaveAttribute("href", "/login?mode=login");
     await page.goto("/pricing");
     await expect(page.getByRole("heading", { name: "Useful tools. No signup needed." })).toBeVisible();
-    await expect(page.getByText("Use the available free tools right away.", { exact: false })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Paid plans are on hold" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Sign in" })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /choose monthly|choose yearly|checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
-    await page.getByRole("link", { name: "Sign in" }).click();
-    await expect(page).toHaveURL(/\/login$/);
-    await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
-  });
+  });;
 });
 
 test("email-link-only callback and password setup copy stays aligned", async () => {
