@@ -231,7 +231,7 @@ test("Pricing page explains Free access and presents Pro checkout only when avai
   await expect(page.getByRole("heading", { name: /Useful tools\./ })).toBeVisible();
   await expect(page.getByText(/Use the available free tools right away/i)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Paid plans are on hold" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Sign in", exact: true })).toHaveAttribute("href", "/login");
+  await expect(page.getByRole("link", { name: "Sign in", exact: true })).toHaveCount(0);
 
   const monthlyButton = page.getByRole("button", { name: "Choose monthly" });
   if (await monthlyButton.count()) {
