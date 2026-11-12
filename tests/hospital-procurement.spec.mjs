@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import { test, expect } from "@playwright/test";
 
 test.describe("HospitalProcure staging MVP", () => {
@@ -14,6 +15,9 @@ test.describe("HospitalProcure staging MVP", () => {
     await page.getByRole("button", { name: /Quotation comparison/i }).click();
     await expect(page.getByRole("heading", { name: "Vendor quotation comparison" })).toBeVisible();
     await expect(page.getByText("Lowest landed rate", { exact: true })).toBeVisible();
+    await expect(page.getByText("₹1,347.41", { exact: true })).toBeVisible();
+    await expect(page.getByText("₹1,34,740.80", { exact: true })).toBeVisible();
+    await expect(page.getByText("₹2,923.20", { exact: true })).toBeVisible();
     await page.getByLabel("Required quantity").fill("200");
     await expect(page.getByText(/200 ×/)).toBeVisible();
     await page.getByLabel("Base rate 2").fill("1000");
@@ -45,5 +49,17 @@ test.describe("HospitalProcure staging MVP", () => {
     await page.getByLabel("GST 1").fill("150");
     await expect(page.getByLabel("GST 1")).toHaveValue("100");
     await expect(page.getByText(/-₹/)).toHaveCount(0);
+  });
+  test("CSV export neutralizes spreadsheet formulas in vendor names", async ({ page }) => {
+    await page.goto("/hospital-procurement");
+    await page.getByRole("button", { name: /Quotation comparison/i }).click();
+    await page.getByLabel("Vendor name 1").fill('=HYPERLINK("https://attacker.invalid","open")');
+    const downloadPromise = page.waitForEvent("download");
+    await page.getByRole("button", { name: /Export CSV/i }).click();
+    const download = await downloadPromise;
+    const path = await download.path();
+    expect(path).toBeTruthy();
+    const csv = await readFile(path, "utf8");
+    expect(csv).toContain('"\'=HYPERLINK(""https://attacker.invalid""');
   });
 });
