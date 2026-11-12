@@ -192,7 +192,7 @@ test.describe("staging security regression checks", () => {
       });
     });
     await page.reload();
-    await expect(page.getByText(/PRIVATE ACCOUNT A ITEM/)).toBeVisible();
+    await expect(page.getByText(/private items loaded for this account/)).toBeVisible();
 
     await page.getByLabel("Single item name").fill("PRIVATE ACCOUNT A ITEM");
     await page.getByRole("button", { name: "Check item" }).click();
