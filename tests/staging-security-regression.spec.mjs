@@ -43,7 +43,7 @@ test.describe("staging security regression checks", () => {
 
   test("admin grant mutation rejects a same-host but different-scheme Origin", async ({ request }) => {
     const response = await request.post("/api/admin/access", {
-      headers: { Origin: "https://127.0.0.1:4173" },
+      headers: { Origin: "http://127.0.0.1:4173" },
       data: {
         email: "staging-test@example.invalid",
         access_type: "pro",
