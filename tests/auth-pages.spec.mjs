@@ -69,7 +69,7 @@ test.describe("KaamKitPro authentication pages", () => {
     await page.getByLabel("Email address").fill("auto-confirmed@example.com");
     await page.getByRole("button", { name: "Send verification email" }).click();
 
-    await expect(page).toHaveURL(/\\/set-password$/);
+    await expect(page).toHaveURL(/\/set-password$/);
     await expect(page.getByRole("heading", { name: "Create your password" })).toBeVisible();
   });
 
