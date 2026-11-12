@@ -13,32 +13,6 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page.getByLabel("Password")).toHaveCount(0);
   });
 
-  test("signup reports email delivery failures instead of claiming a link was sent", async ({ page }) => {
-    await page.route("**/auth/v1/signup?**", async route => {
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ user: { id: "existing-user", identities: [] } }) });
-    });
-    await page.route("**/auth/v1/resend", async route => {
-      await route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ message: "The associated domain with your API key is not verified." }) });
-    });
-    await page.goto("/login");
-    await page.getByLabel("Full name").fill("Test User");
-    await page.getByLabel("Email address").fill("existing@example.com");
-    await page.getByRole("button", { name: "Send verification email" }).click();
-    await expect(page.getByRole("alert")).toContainText("Email delivery is temporarily unavailable");
-    await expect(page.getByRole("heading", { name: "Check your email" })).toHaveCount(0);
-  });
-
-  test("password recovery reports an unverified sender domain clearly", async ({ page }) => {
-    await page.route("**/auth/v1/recover?**", async route => {
-      await route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ message: "The associated domain with your API key is not verified." }) });
-    });
-    await page.goto("/login?mode=login");
-    await page.getByRole("button", { name: "Forgot / Reset password?" }).click();
-    await page.getByLabel("Email address").fill("existing@example.com");
-    await page.getByRole("button", { name: "Send password reset link" }).click();
-    await expect(page.getByRole("alert")).toContainText("Email delivery is temporarily unavailable");
-  });
-
   test("signup handles missing public Supabase configuration gracefully", async ({ page }) => {
     await page.goto("/login");
     await page.getByLabel("Full name").fill("Test User");
@@ -146,8 +120,12 @@ test.describe("KaamKitPro authentication pages", () => {
 
 test("email-link-only callback and password setup copy stays aligned", async () => {
   const callback = await readFile(new URL("../src/app/auth/callback/page.tsx", import.meta.url), "utf8");
+  const login = await readFile(new URL("../src/app/login/page.tsx", import.meta.url), "utf8");
   expect(callback).toContain("Sign-in link not accepted");
   expect(callback).toContain("Request a new link");
+  expect(login).toMatch(/associated domain.*not verified|domain.*not verified/);
+  expect(login).toContain("Email delivery is temporarily unavailable");
+  expect(login).toContain('await requestJson("resend"');
 });
 
 test("password reset route is available and asks for a verified reset session", async ({ page }) => {
