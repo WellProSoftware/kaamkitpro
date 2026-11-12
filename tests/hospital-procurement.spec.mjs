@@ -15,11 +15,11 @@ test.describe("HospitalProcure staging MVP", () => {
     await page.getByRole("button", { name: /Quotation comparison/i }).click();
     await expect(page.getByRole("heading", { name: "Vendor quotation comparison" })).toBeVisible();
     await expect(page.getByText("Lowest landed rate", { exact: true })).toBeVisible();
-    // Match the numeric amount independently of locale-specific currency spacing.
-    await expect(page.getByText(/1,347\.41/)).toBeVisible();
-    await expect(page.getByText(/1,34,740\.80/)).toBeVisible();
-    // Highest landed rate is Apex at ₹1,376.256; savings are ₹28.848 × 100.
-    await expect(page.getByText(/2,884\.80/)).toBeVisible();
+    // Expected values use the actual discount-then-GST calculation, independent of currency spacing.
+    await expect(page.getByText(/1,347\.19/)).toBeVisible();
+    await expect(page.getByText(/1,34,719\.20/)).toBeVisible();
+    // Highest landed rate is Apex at ₹1,376.256; savings are ₹29.064 × 100.
+    await expect(page.getByText(/2,906\.40/)).toBeVisible();
     await page.getByLabel("Required quantity").fill("200");
     await expect(page.getByText(/200 ×/)).toBeVisible();
     await page.getByLabel("Base rate 2").fill("1000");
