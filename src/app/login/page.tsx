@@ -83,7 +83,13 @@ function LoginForm() {
         if (existingAccount) {
           // Supabase deliberately avoids revealing account state in the signup response.
           // Request a fresh link; verified users can ignore it and use the sign-in form.
-          await requestJson("resend", { type: "signup", email: normalizedEmail, options: { emailRedirectTo: redirectTo } });
+          // A confirmed account may make Supabase return "already confirmed" here.
+          // Keep the response generic and let the user choose Sign in either way.
+          try {
+            await requestJson("resend", { type: "signup", email: normalizedEmail, options: { emailRedirectTo: redirectTo } });
+          } catch {
+            // Do not turn the expected existing-account path into a raw provider error.
+          }
         }
         if (!existingAccount && result.access_token && result.refresh_token) {
           // Supabase returns a session when email confirmation is disabled. In that
