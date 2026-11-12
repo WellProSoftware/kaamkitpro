@@ -332,7 +332,7 @@ jobs:
             ["/api/access", async r => { const t = await r.json(); return r.status === 200 && t.plan === "free_pro_access" && t.isPro === true && t.adsEnabled === false; }, "anonymous temporary free-Pro access + staging ads disabled"],
             ["/tools/pdf-merge", async r => r.status === 200 && /PDF Merge Tool/.test(await r.text()), "PDF Merge"],
             ["/tools/image-rotate", async r => r.status === 200 && /Image Rotate Tool/.test(await r.text()), "Image Rotate"],
-undefined            ["/tools/gst-calculator", async r => r.status === 200 && /GST Calculator/.test(await r.text()), "GST calculator"],
+            ["/tools/gst-calculator", async r => r.status === 200 && /GST Calculator/.test(await r.text()), "GST calculator"],
           ];
           let failures = 0;
           for (const [path, verify, label] of checks) {
