@@ -238,8 +238,6 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <BrandLogo />
 
-          <a href="/login" className="inline-flex min-h-10 items-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 md:hidden">Sign in</a>
-
           <nav className="hidden gap-6 text-sm font-medium md:flex">
             <a href="/tools" className="text-slate-600 hover:text-slate-900">
               Tools
@@ -260,6 +258,15 @@ export default function Home() {
               Contact
             </a>
           </nav>
+
+          <div className="flex shrink-0 items-center gap-2">
+            <a href="/login?mode=login" className="inline-flex min-h-10 items-center rounded-xl border border-slate-300 px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-blue-300 hover:text-blue-700 sm:px-4 sm:text-sm">
+              Sign in
+            </a>
+            <a href="/login" className="inline-flex min-h-10 items-center rounded-xl bg-blue-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-blue-700 sm:px-4 sm:text-sm">
+              Create account
+            </a>
+          </div>
         </div>
       </header>
 
