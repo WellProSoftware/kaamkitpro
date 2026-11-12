@@ -624,6 +624,8 @@ test("Vendor Quotation Comparison excludes incomplete quotes from lowest-total r
 test("Item Mapping loads a CSV master, matches items and exports results", async ({ page }) => {
   await page.goto("/tools/item-master-matcher");
   await expect(page.getByRole("heading", { name: "Item Mapping" })).toBeVisible();
+  // The import control stays disabled until the signed-in or guest workspace is initialized.
+  await expect(page.getByLabel("Item master file")).toBeEnabled();
   await page.getByLabel("Item master file").setInputFiles({
     name: "item-master.csv",
     mimeType: "text/csv",
