@@ -2,6 +2,12 @@ import { expect, test } from "@playwright/test";
 
 const ADS_TXT_LINE = "google.com, pub-6738934686699082, DIRECT, f08c47fec0942fa0";
 
+test("homepage exposes direct sign-in and account creation links in its header", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("banner").getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/login?mode=login");
+  await expect(page.getByRole("banner").getByRole("link", { name: "Create account" })).toHaveAttribute("href", "/login");
+});
+
 test("staging pages explicitly opt out of search indexing", async ({ page, request }) => {
   await page.goto("/");
   const robotsMeta = page.locator('meta[name="robots"]');
