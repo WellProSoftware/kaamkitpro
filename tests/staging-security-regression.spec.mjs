@@ -55,6 +55,7 @@ test.describe("staging security regression checks", () => {
     expect(await grant.json()).toMatchObject({ error: "Invalid request origin." });
 
     const revoke = await request.patch("/api/admin/access", {
+      headers: sameOrigin,
       data: { id: "a80a66cc-5f2f-4cfd-a1bf-7c71ec3d73d8" },
     });
     expect(revoke.status()).toBe(403);
@@ -65,7 +66,9 @@ test.describe("staging security regression checks", () => {
     const list = await request.get("/api/admin/access");
     expect(list.status()).toBe(401);
 
+    const sameOrigin = { Origin: "http://127.0.0.1:4173" };
     const grant = await request.post("/api/admin/access", {
+      headers: sameOrigin,
       data: {
         email: "staging-test@example.invalid",
         access_type: "pro",
