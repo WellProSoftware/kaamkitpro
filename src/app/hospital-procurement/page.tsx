@@ -97,10 +97,10 @@ export default function HospitalProcurementPage() {
     // Neutralise spreadsheet formula prefixes in user-controlled text before CSV export.
     const csvCell = (cell: unknown) => {
       const value = String(cell);
-      const safeValue = /^[\\t\\r\\n ]*[=+\\-@]/.test(value) ? "'" + value : value;
+      const safeValue = /^[\t\r\n ]*[-=+@]/.test(value) ? "'" + value : value;
       return '"' + safeValue.replaceAll('"', '""') + '"';
     };
-    const csv = rows.map((row) => row.map(csvCell).join(",")).join("\\n");
+    const csv = rows.map((row) => row.map(csvCell).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
