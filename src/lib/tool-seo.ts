@@ -115,12 +115,6 @@ const toolSeo: Record<string, ToolSeo> = {
       "Format and organize JavaScript code for improved readability and easier editing.",
     keywords: ["JavaScript formatter", "JS formatter", "JavaScript beautifier"],
   },
-  "json-formatter": {
-    title: "JSON Formatter & Validator Online",
-    description:
-      "Format, validate and clean JSON data with this free online JSON formatter.",
-    keywords: ["JSON formatter", "JSON validator", "format JSON online"],
-  },
   "keyword-density-checker": {
     title: "Keyword Density Checker Online",
     description:
@@ -175,12 +169,6 @@ const toolSeo: Record<string, ToolSeo> = {
       "Convert PDF pages into JPG images online with this free browser-based converter.",
     keywords: ["PDF to JPG", "PDF converter", "convert PDF to image"],
   },
-  "qr-code-generator": {
-    title: "QR Code Generator Online",
-    description:
-      "Create custom QR codes from text or links with this free online QR code generator.",
-    keywords: ["QR code generator", "create QR code", "QR code maker"],
-  },
   "remove-extra-spaces": {
     title: "Remove Extra Spaces from Text",
     description:
@@ -222,12 +210,6 @@ const toolSeo: Record<string, ToolSeo> = {
     description:
       "Generate random UUIDs instantly with this free online UUID generator.",
     keywords: ["UUID generator", "random UUID", "UUID v4 generator"],
-  },
-  "word-counter": {
-    title: "Word Counter Online",
-    description:
-      "Count words, characters and paragraphs instantly with this free online word counter.",
-    keywords: ["word counter", "word count", "character counter"],
   },
   "youtube-description-generator": {
     title: "YouTube Description Generator",
