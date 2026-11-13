@@ -108,14 +108,19 @@ export default function DisclaimerPage() {
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
-              KaamKitPro may eventually contain links to third-party
-              websites or use third-party services.
+              KaamKitPro uses third-party providers for certain website
+              functions, which may include hosting, analytics, advertising,
+              email delivery and security. The providers and services used
+              may change as the website develops. Where applicable, these
+              services are subject to their own terms and privacy policies.
             </p>
 
             <p className="mt-4 leading-7 text-slate-600">
-              We are not responsible for the content, availability,
-              security, privacy practices or policies of third-party
-              websites and services.
+              Links to external websites are provided for convenience.
+              We do not control and are not responsible for the content,
+              availability, security or privacy practices of external
+              websites. Please review the relevant provider policies before
+              using their services.
             </p>
           </section>
 
