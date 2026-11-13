@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const CONSENT_KEY = "kk_privacy_consent_v1";
 const SCRIPT_ID = "google-analytics-script";
-const MEASUREMENT_ID = "G-8B6JX70RH8";
+const MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || "G-M9190XP42G";
 
 type AnalyticsWindow = Window & {
   dataLayer?: unknown[][];
