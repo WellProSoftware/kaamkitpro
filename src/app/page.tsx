@@ -161,7 +161,7 @@ const faqSchema = {
       name: "What is KaamKitPro?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "KaamKitPro is a free online tools platform for PDF, image, calculator and hospital procurement workflows.",
+        text: "KaamKitPro is a free online tools platform for PDF, image, calculator and everyday digital workflows.",
       },
     },
     {
@@ -248,7 +248,7 @@ export default function Home() {
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-            Use PDF, image and calculator tools, plus practical hospital procurement utilities — all in one place.
+            Use practical PDF, image and calculator tools — all in one place.
           </p>
 
           <div className="mx-auto mt-8 flex max-w-2xl flex-col gap-3 sm:flex-row">
