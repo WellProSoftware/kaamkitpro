@@ -4,7 +4,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Free Online Tools Directory",
-  description: "Browse KaamKitPro tools for PDFs, images and calculators.",
+  description: "Explore free PDF, image, calculator and business productivity tools from KaamKitPro.",
   alternates: { canonical: "https://kaamkitpro.com/tools" },
 };
 
@@ -40,7 +40,22 @@ const popularTools = [
   {
     href: "/tools/item-master-matcher",
     title: "Item Mapping",
-    description: "Map purchase descriptions to your hospital item master.",
+    description: "Match supplier purchase descriptions with your hospital item master.",
+  },
+  {
+    href: "/tools/gst-calculator",
+    title: "GST Calculator",
+    description: "Calculate GST-inclusive and GST-exclusive prices for business transactions.",
+  },
+  {
+    href: "/tools/pdf-split",
+    title: "PDF Split",
+    description: "Split a PDF into separate pages or smaller documents.",
+  },
+  {
+    href: "/tools/age-calculator",
+    title: "Age Calculator",
+    description: "Calculate age in years, months and days from a date of birth.",
   },
 ];
 
@@ -64,7 +79,7 @@ export default function ToolsPage() {
           </h1>
 
           <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
-            Explore free online tools for PDF files, images and calculations. Choose a category below or jump directly to a popular utility.
+            Explore browser-based tools for PDF files, images, calculations and business workflows. Choose a category or open a frequently used utility.
           </p>
         </div>
       </section>
