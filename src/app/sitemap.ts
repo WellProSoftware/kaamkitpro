@@ -35,7 +35,6 @@ const toolRoutes = [
   "/tools/pdf-to-word",
   "/tools/pdf-watermark",
   "/tools/sip-calculator",
-  "/tools/vendor-quotation-comparison",
 ];
 
 const staticRoutes = [
