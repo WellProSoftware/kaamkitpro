@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    "KaamKitPro provides free online PDF tools, image tools, calculators and hospital procurement utilities for everyday work.",
+    "KaamKitPro provides free online PDF tools, image tools, calculators and practical browser-based utilities for everyday digital work.",
 
   keywords: [
     "free online tools",
@@ -32,8 +32,6 @@ export const metadata: Metadata = {
     "PDF tools",
     "image tools",
     "calculator tools",
-    "hospital procurement tools",
-    "vendor quotation comparison",
     "GST calculator",
     "SIP calculator",
   ],
@@ -53,7 +51,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "KaamKitPro - Free Online Tools",
     description:
-      "Free online PDF tools, image tools, calculators and hospital procurement utilities for everyday work.",
+      "Free online PDF tools, image tools, calculators and practical browser-based utilities for everyday digital work.",
     url: siteUrl,
     type: "website",
     siteName: "KaamKitPro",
