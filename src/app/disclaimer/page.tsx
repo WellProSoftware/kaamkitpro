@@ -1,19 +1,14 @@
-import BrandLogo from "@/components/BrandLogo";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Disclaimer",
+  description: "Read the KaamKitPro disclaimer covering tool results, financial and health information, third-party services and user responsibility.",
+  alternates: { canonical: "https://kaamkitpro.com/disclaimer" },
+};
+
 export default function DisclaimerPage() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
-          <BrandLogo />
-
-          <a
-            href="/"
-            className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-          >
-            Home
-          </a>
-        </div>
-      </header>
 
       <section className="bg-white">
         <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
@@ -169,15 +164,6 @@ export default function DisclaimerPage() {
         </div>
       </div>
 
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-8 text-center text-sm text-slate-500">
-          <p>© 2026 KaamKitPro. All rights reserved.</p>
-
-          <p className="mt-2">
-            Har Digital Kaam, Ek Jagah.
-          </p>
-        </div>
-      </footer>
     </main>
   );
 }
