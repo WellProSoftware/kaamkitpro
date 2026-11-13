@@ -4,7 +4,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Free Online Tools Directory",
-  description: "Browse KaamKitPro tools for PDFs, images, calculators and hospital procurement workflows.",
+  description: "Browse KaamKitPro tools for PDFs, images and calculators.",
   alternates: { canonical: "https://kaamkitpro.com/tools" },
 };
 
@@ -24,11 +24,6 @@ const categories = [
     href: "/tools/calculators",
     description: "GST, SIP, BMI and age calculators.",
   },
-  {
-    title: "Hospital Procurement",
-    href: "/tools/vendor-quotation-comparison",
-    description: "Compare supplier quotations, GST, discounts and landed costs.",
-  },
 ];
 
 const popularTools = [
@@ -41,11 +36,6 @@ const popularTools = [
     href: "/tools/image-compressor",
     title: "Image Compressor",
     description: "Reduce image file size in your browser.",
-  },
-  {
-    href: "/tools/vendor-quotation-comparison",
-    title: "Vendor Quotation Comparison",
-    description: "Compare supplier rates and estimated landed costs.",
   },
   {
     href: "/tools/item-master-matcher",
@@ -74,7 +64,7 @@ export default function ToolsPage() {
           </h1>
 
           <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
-            Explore free online tools for PDF files, images, calculations and hospital procurement. Choose a category below or jump directly to a popular utility.
+            Explore free online tools for PDF files, images and calculations. Choose a category below or jump directly to a popular utility.
           </p>
         </div>
       </section>
@@ -188,7 +178,7 @@ export default function ToolsPage() {
           </h2>
 
           <p className="mt-4 leading-7 text-slate-600">
-            KaamKitPro brings useful browser-based utilities together under one platform. Work with PDF files, compress images, calculate GST or compare hospital supplier quotations through the category pages above.
+            KaamKitPro brings useful browser-based utilities together under one platform. Work with PDF files, compress images and calculate GST through the category pages above.
           </p>
         </div>
       </section>
