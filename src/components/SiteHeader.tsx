@@ -64,7 +64,7 @@ export default function SiteHeader() {
       <div className="mx-auto flex min-h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <BrandLogo />
         <nav aria-label="Main navigation" className="hidden items-center gap-1 rounded-full bg-slate-50 p-1 text-sm font-semibold text-slate-600 lg:flex">
-          <Link href="/" className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">Home</Link>
+          <Link href="/" className="hover:text-blue-700">Home</Link>
           <Link href="/tools" className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">All tools</Link>
           <Link href="/#categories" className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">Categories</Link>
           <Link href="/pricing" className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">Pricing</Link>
@@ -103,7 +103,7 @@ export default function SiteHeader() {
         </div>
       </div>
       <nav aria-label="Mobile navigation" className="flex gap-2 overflow-x-auto border-t border-slate-100 px-4 py-2 text-xs font-semibold text-slate-600 lg:hidden">
-        <Link href="/" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">Home</Link>
+        <Link href="/" className="whitespace-nowrap">Home</Link>
         <Link href="/tools" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">All tools</Link>
         <Link href="/#categories" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">Categories</Link>
         <Link href="/pricing" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">Pricing</Link>
