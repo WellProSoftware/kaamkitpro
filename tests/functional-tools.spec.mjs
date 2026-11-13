@@ -387,6 +387,7 @@ test("Admin access API rejects anonymous grant listing and mutations", async ({ 
   await expect(listResponse.json()).resolves.toMatchObject({ error: "Please sign in first." });
 
   const grantResponse = await request.post("/api/admin/access", {
+    headers: { Origin: "https://127.0.0.1:4173" },
     data: {
       email: "staging-test@example.com",
       access_type: "selected_tools",
@@ -399,6 +400,7 @@ test("Admin access API rejects anonymous grant listing and mutations", async ({ 
   await expect(grantResponse.json()).resolves.toMatchObject({ error: "Please sign in first." });
 
   const revokeResponse = await request.patch("/api/admin/access", {
+    headers: { Origin: "https://127.0.0.1:4173" },
     data: { id: "00000000-0000-4000-8000-000000000000" },
   });
   expect(revokeResponse.status()).toBe(401);
@@ -613,7 +615,7 @@ test("Item Mapping loads a CSV master, matches items and exports results", async
     mimeType: "text/csv",
     buffer: Buffer.from("Item No,Item Id,Item Name,Category,Unit Name\n1001,MED001,PARACETAMOL 500 MG TABLET,Medicine,TABLET\n1002,MED002,AMOXICILLIN 250 MG CAPSULE,Medicine,CAPSULE"),
   });
-  await expect(page.getByText(/2 items loaded in this temporary guest session — not saved/)).toBeVisible();
+  await expect(page.getByText(/2 items loaded in this temporary guest session — not saved after leaving this page/)).toBeVisible();
 
   await page.getByLabel("Single item name").fill("PARACETAMOL 500MG TABLET");
   await page.getByRole("button", { name: "Check item" }).click();

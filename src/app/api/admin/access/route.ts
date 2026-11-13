@@ -5,9 +5,9 @@ const GRANT_COLUMNS = "id,target_email,access_type,tool_keys,starts_at,expires_a
 
 function originIsValid(request: NextRequest) {
   const origin = request.headers.get("origin");
-  if (!origin) return true;
+  if (!origin) return false;
   try {
-    return new URL(origin).host === request.nextUrl.host;
+    return new URL(origin).origin === request.nextUrl.origin;
   } catch {
     return false;
   }

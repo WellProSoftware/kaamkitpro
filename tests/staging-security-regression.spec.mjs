@@ -41,11 +41,33 @@ test.describe("staging security regression checks", () => {
     expect(await response.json()).toMatchObject({ error: "Invalid request origin." });
   });
 
+  test("admin grant mutations reject a missing Origin header", async ({ request }) => {
+    const grant = await request.post("/api/admin/access", {
+      data: {
+        email: "staging-test@example.invalid",
+        access_type: "pro",
+        duration: "30",
+        reason: "testing",
+        note: "Missing-Origin CSRF regression test; no write should occur.",
+      },
+    });
+    expect(grant.status()).toBe(403);
+    expect(await grant.json()).toMatchObject({ error: "Invalid request origin." });
+
+    const revoke = await request.patch("/api/admin/access", {
+      data: { id: "a80a66cc-5f2f-4cfd-a1bf-7c71ec3d73d8" },
+    });
+    expect(revoke.status()).toBe(403);
+    expect(await revoke.json()).toMatchObject({ error: "Invalid request origin." });
+  });
+
   test("admin grant and revoke endpoints remain protected for signed-out requests", async ({ request }) => {
     const list = await request.get("/api/admin/access");
     expect(list.status()).toBe(401);
 
+    const sameOrigin = { Origin: "http://127.0.0.1:4173" };
     const grant = await request.post("/api/admin/access", {
+      headers: sameOrigin,
       data: {
         email: "staging-test@example.invalid",
         access_type: "pro",
@@ -57,6 +79,7 @@ test.describe("staging security regression checks", () => {
     expect(grant.status()).toBe(401);
 
     const revoke = await request.patch("/api/admin/access", {
+      headers: sameOrigin,
       data: { id: "a80a66cc-5f2f-4cfd-a1bf-7c71ec3d73d8" },
     });
     expect(revoke.status()).toBe(401);
@@ -121,6 +144,71 @@ test.describe("staging security regression checks", () => {
     expect((await adsResponse.text()).trim()).toBe(
       "google.com, pub-6738934686699082, DIRECT, f08c47fec0942fa0",
     );
+  });
+
+  test("Item Mapping revalidates identity and clears prior account data on identity changes", async () => {
+    const source = await readFile(new URL("../src/app/tools/item-master-matcher/page.tsx", import.meta.url), "utf8");
+    expect(source).toContain('window.setInterval(()=>void refreshIdentity(),15000)');
+    expect(source).toContain('window.addEventListener("focus",refreshIdentity)');
+    expect(source).toContain('window.addEventListener("storage",refreshIdentity)');
+    expect(source).toContain('window.addEventListener("kaamkitpro:auth-changed",refreshIdentity)');
+    expect(source).toContain('setMaster([]);setMasterStatus');
+    expect(source).toContain('setSingle("");setSingleMatches([]);setBulk("");setResults([])');
+    expect(source).toContain('activeStorageKey.current!==storageKey');
+    expect(source).toContain('db.onversionchange=()=>db.close()');
+    expect(source).toContain('guestStorageKey.current??(guestStorageKey.current="guest:"+crypto.randomUUID())');
+  });
+
+  test("Item Mapping hides account A master after switching to account B and then guest", async ({ page }) => {
+    let activeUserId = "account-a";
+    await page.route("**/api/auth/session", async route => {
+      if (activeUserId) {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ user: { id: activeUserId, email: activeUserId + "@example.invalid" } }),
+        });
+      } else {
+        await route.fulfill({ status: 401, contentType: "application/json", body: JSON.stringify({ error: "Not signed in." }) });
+      }
+    });
+
+    await page.goto("/tools/item-master-matcher");
+    await page.evaluate(async () => {
+      await new Promise((resolve, reject) => {
+        const request = indexedDB.open("kaamkitpro-item-master", 1);
+        request.onupgradeneeded = () => request.result.createObjectStore("data");
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => {
+          const db = request.result;
+          const transaction = db.transaction("data", "readwrite");
+          transaction.objectStore("data").put([{
+            no: "1", id: "PRIVATE-A-001", name: "PRIVATE ACCOUNT A ITEM",
+            category: "", subCategory: "", unit: "", manufacturer: "", generic: "",
+          }], "account:account-a");
+          transaction.oncomplete = () => { db.close(); resolve(); };
+          transaction.onerror = () => { db.close(); reject(transaction.error); };
+        };
+      });
+    });
+    await page.reload();
+    await expect(page.getByText(/private items loaded for this account/)).toBeVisible();
+
+    await page.getByLabel("Single item name").fill("PRIVATE ACCOUNT A ITEM");
+    await page.getByRole("button", { name: "Check item" }).click();
+    await expect(page.getByText("PRIVATE ACCOUNT A ITEM")).toBeVisible();
+    await page.getByLabel("Bulk item names").fill("ACCOUNT A BULK DATA");
+    activeUserId = "account-b";
+    await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+    await expect(page.getByText("No private item master saved for this account")).toBeVisible();
+    await expect(page.getByLabel("Single item name")).toHaveValue("");
+    await expect(page.getByLabel("Bulk item names")).toHaveValue("");
+    await expect(page.getByText(/PRIVATE ACCOUNT A ITEM/)).toHaveCount(0);
+
+    activeUserId = null;
+    await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+    await expect(page.getByText(/Temporary guest workspace/)).toBeVisible();
+    await expect(page.getByText(/PRIVATE ACCOUNT A ITEM/)).toHaveCount(0);
   });
 
   test("temporary free-Pro access bypasses subscription lookup while checkout remains paused", async () => {
