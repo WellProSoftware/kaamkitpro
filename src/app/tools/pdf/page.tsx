@@ -49,11 +49,6 @@ const pdfTools = [
     description: "Extract selectable text from PDF files in your browser.",
   },
   {
-    href: "/tools/pdf-protect",
-    title: "PDF Protect Tool",
-    description: "Review PDF password-protection options honestly and securely.",
-  },
-  {
     href: "/tools/pdf-metadata",
     title: "PDF Metadata Editor",
     description: "Edit PDF title, author, subject and keywords online.",
