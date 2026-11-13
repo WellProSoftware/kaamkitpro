@@ -11,36 +11,6 @@ type Guide = {
 };
 
 const guides: Record<string, Guide> = {
-  "json-formatter": {
-    title: "JSON Formatter and Validator",
-    intro: "JSON (JavaScript Object Notation) is a text format used to exchange structured data between applications. A formatter adds indentation and line breaks so nested objects and arrays are easier to inspect; validation checks whether the text follows JSON syntax.",
-    sections: [
-      { heading: "What to check before using the result", body: "JSON property names and string values must use double quotes. Commas separate items, but a trailing comma is not valid JSON. Values can be strings, numbers, booleans, null, arrays or objects. If validation fails, use the reported location as a clue and inspect nearby brackets, quotes and commas." },
-      { heading: "Common reasons JSON is invalid", body: "Frequent issues include single quotes around strings, missing commas between properties, unmatched braces, comments, and undefined or NaN values. JavaScript object literals can look similar to JSON but are not identical. Formatting makes valid data easier to read; it does not guarantee that the data is correct for your application." },
-      { heading: "Privacy and data handling", body: "Avoid pasting passwords, access tokens, personal records or confidential business data into any online tool unless you have checked its data-handling practices. For important configuration files, keep an untouched copy and test the formatted output in the application that will consume it." }
-    ],
-    steps: ["Paste the JSON text into the formatter input.", "Run formatting or validation and read any error message.", "Check that nested arrays and objects still contain the expected values.", "Copy the result and test it in the destination application."],
-    faqs: [
-      { q: "Does formatting change the data?", a: "A formatter should change whitespace and indentation, not the represented values. Always compare or test important output." },
-      { q: "Why is a JavaScript object rejected as JSON?", a: "JSON requires double-quoted property names and strings and does not allow comments, functions or undefined values." },
-      { q: "Can valid JSON still be wrong?", a: "Yes. Syntax validation cannot confirm that property names, values or business rules are correct." }
-    ]
-  },
-  "word-counter": {
-    title: "Word and Character Counter",
-    intro: "A word counter estimates how many words, characters and sometimes paragraphs appear in a piece of text. It can help prepare articles, application responses, captions, assignments and website copy where length limits matter.",
-    sections: [
-      { heading: "How counts can differ", body: "Different apps may treat hyphenated words, contractions, emoji, punctuation and languages without spaces differently. Character counts may include or exclude spaces and line breaks. When submitting text to a platform with a strict limit, use that platform's own counter as the final check." },
-      { heading: "Use counts as a guide", body: "A target word count is only one measure of readability. Short paragraphs, clear headings and relevant examples can make text easier to follow. Repeated keywords or unnecessary filler may increase length without improving usefulness." },
-      { heading: "Check the final version", body: "Paste the complete version you intend to use, including headings if the destination counts them. Recheck after editing because small changes can affect word and character totals." }
-    ],
-    steps: ["Paste or type the text in the input area.", "Review the displayed word and character totals.", "Check whether your destination includes spaces, headings or line breaks in its limit.", "Recount the final edited text before submitting."],
-    faqs: [
-      { q: "Why does another app show a different word count?", a: "Apps may use different rules for punctuation, hyphens, contractions, emoji and non-Latin writing systems." },
-      { q: "Do spaces count as characters?", a: "That depends on whether the counter displays characters with spaces, without spaces, or both." },
-      { q: "Does a word count measure writing quality?", a: "No. It measures length, not accuracy, clarity, originality or usefulness." }
-    ]
-  },
   "pdf-merge": {
     title: "Merge PDF Files",
     intro: "Merging PDFs combines multiple documents into one file. It is useful for assembling reports, invoices, study notes, application documents or scanned pages into a single document that is easier to share and archive.",
@@ -71,21 +41,6 @@ const guides: Record<string, Guide> = {
       { q: "Which format should I use?", a: "Choose based on the image and destination: photos, transparency, sharp graphics and compatibility have different needs." }
     ]
   },
-  "qr-code-generator": {
-    title: "QR Code Generator",
-    intro: "A QR code encodes information that a compatible camera or scanner can read. It can open a website, store short text or provide other supported data, making it useful for posters, menus, product instructions and printed materials.",
-    sections: [
-      { heading: "Check the encoded destination", body: "Before sharing a QR code, scan it with a phone and confirm that it opens the intended address or displays the correct text. Check URLs carefully for spelling and use HTTPS for websites that support it. A QR code does not make a destination trustworthy; it simply encodes information." },
-      { heading: "Make the code easy to scan", body: "Use strong contrast between the code and its background, leave a clear margin around it, and avoid stretching or cropping the image. Test the printed code at the size and distance people will use. Very small codes, low contrast and decorative overlays can make scanning unreliable." },
-      { heading: "Plan for long-term use", body: "If a code points to a URL, the destination must remain available for the code to stay useful. Test it on more than one device before printing large quantities. Do not encode sensitive information in a code intended for public display." }
-    ],
-    steps: ["Enter the URL or text you want the code to represent.", "Generate the QR code and download the image.", "Scan it with a phone to verify the exact content and destination.", "Test the code at the final printed or displayed size before distribution."],
-    faqs: [
-      { q: "Does a QR code expire?", a: "A static code does not usually expire by itself, but a URL or service it points to can stop working." },
-      { q: "Can a QR code be unsafe?", a: "Yes. It can point to a deceptive or harmful destination, so scan and verify the URL before opening it." },
-      { q: "Why will a printed code not scan?", a: "Common causes include low contrast, insufficient margin, small print size, blur or a damaged image." }
-    ]
-  }
 };
 
 export default function ToolEditorialContentBatchTwo() {
