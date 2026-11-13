@@ -41,9 +41,7 @@ export default function LineSorterGuidePage() {
             <li>Choose the ordering you need, such as ascending or descending, and enable natural sorting for numbered labels when available.</li>
             <li>Review the result, then copy it back into your document, spreadsheet, or workflow.</li>
           </ol>
-          <Link href="/tools/line-sorter" className="mt-6 inline-block rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">
-            Open Free Line Sorter
-          </Link>
+          <Link href="/tools" className="mt-6 inline-block rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">Browse available tools</Link>
         </div>
 
         <section className="mt-10 space-y-4">
@@ -67,9 +65,9 @@ export default function LineSorterGuidePage() {
           <h2 className="text-2xl font-bold">Keep cleaning your list</h2>
           <p className="leading-7 text-slate-700">
             After sorting, you can remove repeated entries with the{" "}
-            <Link href="/tools/remove-duplicate-lines" className="font-semibold text-blue-700 underline">Duplicate Line Remover</Link>
+            <Link href="/tools" className="font-semibold text-blue-700 underline">Browse available tools</Link>
             {" "}or compare two versions with the{" "}
-            <Link href="/tools/text-diff-checker" className="font-semibold text-blue-700 underline">Text Diff Checker</Link>.
+            <Link href="/tools" className="font-semibold text-blue-700 underline">Browse available tools</Link>.
             {" "}These browser-based utilities are free to use.
           </p>
         </section>
