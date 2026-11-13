@@ -29,6 +29,7 @@ jobs:
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.PRODUCTION_SUPABASE_PUBLISHABLE_KEY }}
       KAAMKITPRO_ADMIN_EMAILS: ${{ secrets.PRODUCTION_KAAMKITPRO_ADMIN_EMAILS }}
       KAAMKITPRO_STAGING: "false"
+      NEXT_PUBLIC_GA4_MEASUREMENT_ID: "G-M9190XP42G"
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
       - name: Checkout the validated Cloudflare application branch
