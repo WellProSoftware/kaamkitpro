@@ -70,14 +70,6 @@ Ravi,Sales,false`}</code></pre>
               <h2 className="text-2xl font-bold">Keep sensitive data safe</h2>
               <p className="mt-3 leading-8 text-slate-600">Before using any online converter, check how it processes input. Avoid uploading confidential customer records, credentials, or personal data unless you are authorized and the tool&apos;s privacy practices meet your requirements. Use sample or redacted data when troubleshooting.</p>
             </section>
-            <section>
-              <h2 className="text-2xl font-bold">Related free tools</h2>
-              <div className="mt-4 flex flex-wrap gap-4">
-                <Link href="/tools" className="font-semibold text-blue-600 hover:text-blue-800">Browse available tools</Link>
-                <Link href="/tools" className="font-semibold text-blue-600 hover:text-blue-800">Browse available tools</Link>
-                <Link href="/tools" className="font-semibold text-blue-600 hover:text-blue-800">Browse available tools</Link>
-              </div>
-            </section>
           </div>
         </div>
       </article>
