@@ -51,7 +51,7 @@ test("sitemap excludes retired tool categories and guides", async ({ request }) 
   const response = await request.get("/sitemap.xml");
   expect(response.ok()).toBeTruthy();
   const xml = await response.text();
-  for (const route of ["/tools/text", "/tools/seo", "/tools/social", "/tools/developer", "/guides/qr-code", "/guides/json-formatting", "/guides/csv-to-json", "/guides/json-to-csv", "/guides/line-sorter", "/guides/text-diff-checker", "/guides/word-counter", "/guides/slug-generator", "/guides/remove-duplicate-lines"]) {
+  for (const route of ["/tools/text", "/tools/seo", "/tools/social", "/tools/developer", "/tools/pdf-protect", "/tools/vendor-quotation-comparison", "/guides/qr-code", "/guides/json-formatting", "/guides/csv-to-json", "/guides/json-to-csv", "/guides/line-sorter", "/guides/text-diff-checker", "/guides/word-counter", "/guides/slug-generator", "/guides/remove-duplicate-lines"]) {
     expect(xml).not.toContain(route);
   }
 });
