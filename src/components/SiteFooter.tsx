@@ -13,8 +13,10 @@ export default function SiteFooter() {
         <nav aria-label="Footer navigation" className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-slate-500">
           <Link href="/about" className="hover:text-blue-700">About</Link>
           <Link href="/contact" className="hover:text-blue-700">Contact</Link>
+          <Link href="/guides" className="hover:text-blue-700">Guides</Link>
           <Link href="/privacy-policy" className="hover:text-blue-700">Privacy</Link>
           <Link href="/terms" className="hover:text-blue-700">Terms</Link>
+          <Link href="/disclaimer" className="hover:text-blue-700">Disclaimer</Link>
         </nav>
       </div>
     </footer>
