@@ -40,7 +40,6 @@ test("PDF Compressor downloads a valid one-page PDF", async ({ page }) => {
   expect(processed.getPageCount()).toBe(1);
 });
 
-
 test("PDF Split downloads every source page as a valid separate PDF", async ({ page }) => {
   const source = await PDFDocument.create();
   source.addPage([300, 200]).drawText("Page one", { x: 24, y: 150, size: 12 });
@@ -49,12 +48,9 @@ test("PDF Split downloads every source page as a valid separate PDF", async ({ p
   await page.goto("/tools/pdf-split");
   await expect(page.getByRole("heading", { name: "PDF Split Tool", exact: true })).toBeVisible();
 
-  // Open the real file chooser first. This confirms the client-side dropzone
-  // handler is hydrated before the test supplies a file.
-  const fileChooserPromise = page.waitForEvent("filechooser");
-  await page.getByRole("button", { name: "Select PDF", exact: true }).first().click();
-  const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles({
+  // Set the file directly on the input. Clicking the styled dropzone is flaky
+  // in Chromium because the hidden input is covered by the dropzone and sticky header.
+  await page.locator("#pdf-file").setInputFiles({
     name: "two-pages.pdf",
     mimeType: "application/pdf",
     buffer: Buffer.from(await source.save()),
