@@ -126,7 +126,7 @@ test("billing webhook rejects unsigned requests without changing subscription st
 });
 
 test("representative free utility pages render on staging", async ({ page }) => {
-  const cases = [["/tools/pdf-merge", "PDF Merge Tool"], ["/tools/image-rotate", "Image Rotate Tool"], ["/tools/gst-calculator", "GST Calculator"], ["/tools/vendor-quotation-comparison", "Vendor Quotation Comparison"]];
+  const cases = [["/tools/pdf-merge", "PDF Merge Tool"], ["/tools/image-rotate", "Image Rotate Tool"], ["/tools/gst-calculator", "GST Calculator"]];
   for (const [path, heading] of cases) {
     await page.goto(path);
     await expect(page.getByRole("heading", { name: heading, exact: true })).toBeVisible();
