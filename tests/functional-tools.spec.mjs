@@ -551,6 +551,7 @@ test("GST Calculator calculates each supported GST rate", async ({ page }) => {
   await page.goto("/tools/gst-calculator");
   await page.waitForTimeout(500); // Ensure React hydration before changing controlled inputs.
   await expect(page.getByRole("heading", { name: "GST Calculator", exact: true })).toBeVisible();
+  await page.waitForTimeout(500); // Ensure React hydration before changing controlled inputs.
 
   const amount = page.locator('input[type="number"]');
   const rate = page.locator("select");
