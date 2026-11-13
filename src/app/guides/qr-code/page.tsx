@@ -45,11 +45,9 @@ export default function QrCodeGuide() {
 
           <div className="mt-8">
             <Link
-              href="/tools/qr-code-generator"
+              href="/tools"
               className="inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700"
-            >
-              Create a QR Code
-            </Link>
+            >Browse available tools</Link>
           </div>
 
           <div className="mt-12 space-y-10">

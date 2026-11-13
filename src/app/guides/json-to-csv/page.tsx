@@ -26,7 +26,7 @@ export default function JsonToCsvGuide() {
             JSON is widely used by APIs and applications to exchange structured records. CSV is often easier to review in spreadsheet software. Converting JSON to CSV usually means turning an array of similarly shaped objects into rows, with each object key becoming a column header.
           </p>
           <div className="mt-8">
-            <Link href="/tools/json-to-csv" className="inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">Open Free JSON to CSV Converter</Link>
+            <Link href="/tools" className="inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">Browse available tools</Link>
           </div>
           <div className="mt-12 space-y-9">
             <section>
@@ -64,14 +64,6 @@ export default function JsonToCsvGuide() {
             <section className="rounded-2xl bg-slate-50 p-6">
               <h2 className="text-2xl font-bold">Protect private information</h2>
               <p className="mt-3 leading-8 text-slate-600">Before using an online converter, review how the service handles input and whether it meets your data policies. Do not paste passwords, access tokens, confidential customer records, or personal information unless you are authorized to do so. Use redacted sample data when testing.</p>
-            </section>
-            <section>
-              <h2 className="text-2xl font-bold">Related free tools</h2>
-              <div className="mt-4 flex flex-wrap gap-4">
-                <Link href="/tools/csv-to-json" className="font-semibold text-blue-600 hover:text-blue-800">CSV to JSON Converter →</Link>
-                <Link href="/tools/json-formatter" className="font-semibold text-blue-600 hover:text-blue-800">JSON Formatter →</Link>
-                <Link href="/tools/text-diff-checker" className="font-semibold text-blue-600 hover:text-blue-800">Text Diff Checker →</Link>
-              </div>
             </section>
           </div>
         </div>

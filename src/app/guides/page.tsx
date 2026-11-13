@@ -33,7 +33,7 @@ const guides = [
     description:
       "Learn how to create a QR code for a website, text, contact information or other useful content.",
     href: "/guides/qr-code",
-    tool: "/tools/qr-code-generator",
+    tool: null,
     category: "Everyday Tools",
   },
   {
@@ -54,7 +54,7 @@ const guides = [
     title: "How to Format and Validate JSON",
     description: "Learn JSON syntax, fix common parsing errors, and understand formatting versus schema validation.",
     href: "/guides/json-formatting",
-    tool: "/tools/json-formatter",
+    tool: null,
     category: "Developer Tools",
   },
   {
@@ -62,7 +62,7 @@ const guides = [
     description:
       "Find added, removed, and unchanged lines between two drafts, lists, or plain-text versions.",
     href: "/guides/text-diff-checker",
-    tool: "/tools/text-diff-checker",
+    tool: null,
     category: "Text Tools",
   },
   {
@@ -70,42 +70,42 @@ const guides = [
     description:
       "Organize lists, filenames, product codes and keywords with alphabetical or natural sorting, then keep cleaning the list.",
     href: "/guides/line-sorter",
-    tool: "/tools/line-sorter",
+    tool: null,
     category: "Text Tools",
   },
   {
     title: "How to Convert JSON to CSV Online",
     description: "Turn JSON arrays into spreadsheet-ready rows and handle quoting, nested data, and common conversion issues.",
     href: "/guides/json-to-csv",
-    tool: "/tools/json-to-csv",
+    tool: null,
     category: "Developer Tools",
   },
   {
     title: "How to Convert CSV to JSON Online",
     description: "Turn CSV rows into JSON objects, handle quoted fields, and fix common conversion issues.",
     href: "/guides/csv-to-json",
-    tool: "/tools/csv-to-json",
+    tool: null,
     category: "Developer Tools",
   },
   {
     title: "How to Count Words and Characters Online",
     description: "Count words, characters, sentences and spaces in drafts, captions and documents with a free browser-based tool.",
     href: "/guides/word-counter",
-    tool: "/tools/word-counter",
+    tool: null,
     category: "Text Tools",
   },
   {
     title: "How to Create an SEO-Friendly URL Slug",
     description: "Learn how to turn a page title into a readable URL slug and avoid common URL formatting mistakes.",
     href: "/guides/slug-generator",
-    tool: "/tools/slug-generator",
+    tool: null,
     category: "SEO Tools",
   },
   {
     title: "How to Remove Duplicate Lines from a List",
     description: "Clean repeated names, keywords, IDs and copied spreadsheet lines while choosing how whitespace and letter case should be treated.",
     href: "/guides/remove-duplicate-lines",
-    tool: "/tools/remove-duplicate-lines",
+    tool: null,
     category: "Text Tools",
   },
 ];
@@ -176,12 +176,21 @@ export default function GuidesPage() {
                   Read Guide
                 </Link>
 
-                <Link
-                  href={guide.tool}
-                  className="rounded-lg border px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                >
-                  Use Tool
-                </Link>
+                {guide.tool ? (
+                  <Link
+                    href={guide.tool}
+                    className="rounded-lg border px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                  >
+                    Use Tool
+                  </Link>
+                ) : (
+                  <Link
+                    href="/tools"
+                    className="rounded-lg border px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                  >
+                    Browse Tools
+                  </Link>
+                )}
               </div>
             </article>
           ))}
