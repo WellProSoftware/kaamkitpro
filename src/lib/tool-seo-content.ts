@@ -74,7 +74,6 @@ const content: Record<string, ToolSeoContent> = {
     relatedTools: [
       { href: "/tools/url-encoder-decoder", label: "URL Encoder & Decoder" },
       { href: "/tools/hash-generator", label: "Hash Generator" },
-      { href: "/tools/json-formatter", label: "JSON Formatter" },
     ],
   },
 
@@ -128,7 +127,6 @@ const content: Record<string, ToolSeoContent> = {
       },
     ],
     relatedTools: [
-      { href: "/tools/word-counter", label: "Word Counter" },
       { href: "/tools/character-counter", label: "Character Counter" },
       { href: "/tools/remove-extra-spaces", label: "Remove Extra Spaces" },
     ],
@@ -157,7 +155,6 @@ const content: Record<string, ToolSeoContent> = {
       },
     ],
     relatedTools: [
-      { href: "/tools/word-counter", label: "Word Counter" },
       { href: "/tools/case-converter", label: "Case Converter" },
       { href: "/tools/remove-extra-spaces", label: "Remove Extra Spaces" },
     ],
@@ -274,7 +271,6 @@ const content: Record<string, ToolSeoContent> = {
     ],
     relatedTools: [
       { href: "/tools/base64", label: "Base64 Encoder & Decoder" },
-      { href: "/tools/json-formatter", label: "JSON Formatter" },
       { href: "/tools/url-encoder-decoder", label: "URL Encoder & Decoder" },
     ],
   },
@@ -333,7 +329,6 @@ const content: Record<string, ToolSeoContent> = {
     relatedTools: [
       { href: "/tools/css-formatter", label: "CSS Formatter" },
       { href: "/tools/js-formatter", label: "JavaScript Formatter" },
-      { href: "/tools/json-formatter", label: "JSON Formatter" },
     ],
   },
 
@@ -540,37 +535,6 @@ const content: Record<string, ToolSeoContent> = {
     relatedTools: [
       { href: "/tools/html-formatter", label: "HTML Formatter" },
       { href: "/tools/css-formatter", label: "CSS Formatter" },
-      { href: "/tools/json-formatter", label: "JSON Formatter" },
-    ],
-  },
-
-  "json-formatter": {
-    title: "JSON Formatter and Validator",
-    description:
-      "Format and validate JSON data online. KaamKitPro helps developers quickly inspect structured JSON and copy a cleaner version.",
-    howToUse: [
-      "Paste your JSON into the editor.",
-      "Run the formatter or validation.",
-      "Review the formatted result or validation message.",
-      "Copy the result when needed.",
-    ],
-    benefits: commonBenefits,
-    faq: [
-      {
-        question: "What is JSON?",
-        answer:
-          "JSON, or JavaScript Object Notation, is a text format commonly used to represent structured data.",
-      },
-      {
-        question: "What does JSON validation check?",
-        answer:
-          "Validation checks whether the entered data follows valid JSON syntax.",
-      },
-    ],
-    relatedTools: [
-      { href: "/tools/base64", label: "Base64 Encoder & Decoder" },
-      { href: "/tools/html-formatter", label: "HTML Formatter" },
-      { href: "/tools/js-formatter", label: "JavaScript Formatter" },
     ],
   },
 
@@ -843,35 +807,6 @@ const content: Record<string, ToolSeoContent> = {
     ],
   },
 
-  "qr-code-generator": {
-    title: "QR Code Generator Online",
-    description:
-      "Create QR codes from text or links using the KaamKitPro QR code generator. Generate a code, preview it and download the result for digital or print use.",
-    howToUse: [
-      "Enter the text, URL or information you want to encode.",
-      "Generate the QR code.",
-      "Review the preview.",
-      "Download the QR code image.",
-    ],
-    benefits: commonBenefits,
-    faq: [
-      {
-        question: "What can I put into a QR code?",
-        answer:
-          "You can encode text, URLs and other supported information provided by the tool.",
-      },
-      {
-        question: "Can I download the generated QR code?",
-        answer:
-          "Yes. The QR code can be downloaded using the available download control.",
-      },
-    ],
-    relatedTools: [
-      { href: "/tools/url-encoder-decoder", label: "URL Encoder & Decoder" },
-      { href: "/tools/image-converter", label: "Image Converter" },
-    ],
-  },
-
   "remove-extra-spaces": {
     title: "Remove Extra Spaces from Text",
     description:
@@ -896,7 +831,6 @@ const content: Record<string, ToolSeoContent> = {
       },
     ],
     relatedTools: [
-      { href: "/tools/word-counter", label: "Word Counter" },
       { href: "/tools/character-counter", label: "Character Counter" },
       { href: "/tools/case-converter", label: "Case Converter" },
     ],
@@ -1014,7 +948,6 @@ const content: Record<string, ToolSeoContent> = {
       },
     ],
     relatedTools: [
-      { href: "/tools/json-formatter", label: "JSON Formatter" },
       { href: "/tools/uuid-generator", label: "UUID Generator" },
     ],
   },
@@ -1044,7 +977,6 @@ const content: Record<string, ToolSeoContent> = {
     ],
     relatedTools: [
       { href: "/tools/base64", label: "Base64 Encoder & Decoder" },
-      { href: "/tools/qr-code-generator", label: "QR Code Generator" },
       { href: "/tools/hash-generator", label: "Hash Generator" },
     ],
   },
@@ -1075,35 +1007,6 @@ const content: Record<string, ToolSeoContent> = {
       { href: "/tools/hash-generator", label: "Hash Generator" },
       { href: "/tools/timestamp-converter", label: "Timestamp Converter" },
       { href: "/tools/password", label: "Password Generator" },
-    ],
-  },
-
-  "word-counter": {
-    title: "Online Word Counter",
-    description:
-      "Count words, characters and paragraphs in your text with the KaamKitPro word counter. Useful for articles, assignments, captions and other writing tasks.",
-    howToUse: [
-      "Paste or type your text.",
-      "Review the word and character counts.",
-      "Edit your content if you need to meet a target length.",
-    ],
-    benefits: commonBenefits,
-    faq: [
-      {
-        question: "What can a word counter measure?",
-        answer:
-          "A word counter can help measure the number of words and other text statistics supported by the tool.",
-      },
-      {
-        question: "Can I use it for articles and assignments?",
-        answer:
-          "Yes. It can be useful whenever you need to check the length of written content.",
-      },
-    ],
-    relatedTools: [
-      { href: "/tools/character-counter", label: "Character Counter" },
-      { href: "/tools/case-converter", label: "Case Converter" },
-      { href: "/tools/remove-extra-spaces", label: "Remove Extra Spaces" },
     ],
   },
 
