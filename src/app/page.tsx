@@ -111,12 +111,6 @@ const tools: Tool[] = [
     category: "PDF Tools",
   },
   {
-    name: "PDF Protect",
-    description: "Review PDF password protection options transparently.",
-    href: "/tools/pdf-protect",
-    category: "PDF Tools",
-  },
-  {
     name: "PDF Compressor",
     description: "Reduce PDF size with browser-side optimization.",
     href: "/tools/pdf-compressor",
