@@ -7,13 +7,33 @@ const CONSENT_KEY = "kk_privacy_consent_v1";
 const SCRIPT_ID = "google-analytics-script";
 const MEASUREMENT_ID = "G-8B6JX70RH8";
 
+type AnalyticsWindow = Window & {
+  dataLayer?: unknown[][];
+  gtag?: (...args: unknown[]) => void;
+};
+
 export default function AnalyticsLoader({ disabled = false }: { disabled?: boolean }) {
   const pathname = usePathname();
   const lastTrackedToolPath = useRef("");
 
   useEffect(() => {
+    const analyticsWindow = window as AnalyticsWindow;
+
     function removeAnalytics() {
+      // Tell an already-loaded Google tag to stop optional storage before
+      // removing its script. Keep this consent command in the dataLayer so
+      // an in-flight script also receives it.
+      if (typeof analyticsWindow.gtag === "function") {
+        analyticsWindow.gtag("consent", "update", {
+          analytics_storage: "denied",
+          ad_storage: "denied",
+          ad_user_data: "denied",
+          ad_personalization: "denied",
+        });
+        analyticsWindow.gtag = () => undefined;
+      }
       document.getElementById(SCRIPT_ID)?.remove();
+      lastTrackedToolPath.current = "";
     }
 
     function loadAnalyticsIfConsented() {
@@ -35,14 +55,9 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
       }
       if (document.getElementById(SCRIPT_ID)) return;
 
-      const analyticsWindow = window as Window & {
-        dataLayer?: unknown[][];
-        gtag?: (...args: unknown[]) => void;
-      };
-
-      // Queue gtag commands before loading Google's script so config/page_view
-      // are not lost if the external script finishes loading before onload setup.
-      analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
+      // Start a fresh queue after a prior opt-out so stale queued events
+      // cannot be replayed when the visitor later opts in again.
+      analyticsWindow.dataLayer = [];
       analyticsWindow.gtag = function gtag(...args: unknown[]) {
         analyticsWindow.dataLayer?.push(args);
       };
