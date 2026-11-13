@@ -48,11 +48,18 @@ test("PDF Split downloads every source page as a valid separate PDF", async ({ p
 
   await page.goto("/tools/pdf-split");
   await expect(page.getByRole("heading", { name: "PDF Split Tool", exact: true })).toBeVisible();
-  await page.locator("#pdf-file").setInputFiles({
+
+  // Open the real file chooser first. This confirms the client-side dropzone
+  // handler is hydrated before the test supplies a file.
+  const fileChooserPromise = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Select PDF", exact: true }).first().click();
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles({
     name: "two-pages.pdf",
     mimeType: "application/pdf",
     buffer: Buffer.from(await source.save()),
   });
+  await expect(page.getByText("two-pages.pdf", { exact: true })).toBeVisible();
 
   const downloads = [];
   page.on("download", (download) => downloads.push(download));
