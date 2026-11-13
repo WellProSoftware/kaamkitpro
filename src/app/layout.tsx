@@ -19,12 +19,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
 
   title: {
-    default: "KaamKitPro - Free Online Tools",
+    default: "Free Online PDF, Image & Calculator Tools | KaamKitPro",
     template: "%s | KaamKitPro",
   },
 
   description:
-    "KaamKitPro provides free online PDF tools, image tools, calculators and practical browser-based utilities for everyday digital work.",
+    "Explore practical free online PDF tools, image tools, calculators and business utilities. Merge documents, edit images and complete everyday tasks with KaamKitPro.",
 
   keywords: [
     "free online tools",
@@ -49,9 +49,9 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "KaamKitPro - Free Online Tools",
+    title: "Free Online PDF, Image & Calculator Tools | KaamKitPro",
     description:
-      "Free online PDF tools, image tools, calculators and practical browser-based utilities for everyday digital work.",
+      "Explore free online PDF tools, image tools, calculators and practical business utilities with KaamKitPro.",
     url: siteUrl,
     type: "website",
     siteName: "KaamKitPro",
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "KaamKitPro - Free Online Tools",
     description:
-      "Useful free online tools for everyday digital and business tasks.",
+      "Free online PDF, image, calculator and business tools for everyday tasks.",
   },
 
   robots: {
