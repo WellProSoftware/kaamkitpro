@@ -39,3 +39,37 @@ test("PDF Compressor downloads a valid one-page PDF", async ({ page }) => {
   const processed = await PDFDocument.load(output);
   expect(processed.getPageCount()).toBe(1);
 });
+
+
+test("PDF Split downloads every source page as a valid separate PDF", async ({ page }) => {
+  const source = await PDFDocument.create();
+  source.addPage([300, 200]).drawText("Page one", { x: 24, y: 150, size: 12 });
+  source.addPage([300, 200]).drawText("Page two", { x: 24, y: 150, size: 12 });
+
+  await page.goto("/tools/pdf-split");
+  await expect(page.getByRole("heading", { name: "PDF Split Tool", exact: true })).toBeVisible();
+  await page.locator("#pdf-file").setInputFiles({
+    name: "two-pages.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from(await source.save()),
+  });
+
+  const downloads = [];
+  page.on("download", (download) => downloads.push(download));
+  await page.getByRole("button", { name: "Split PDF", exact: true }).click();
+  await expect(page.getByText("2 pages split successfully.", { exact: true })).toBeVisible();
+
+  expect(downloads).toHaveLength(2);
+  expect(downloads.map((download) => download.suggestedFilename())).toEqual([
+    "page-1.pdf",
+    "page-2.pdf",
+  ]);
+
+  for (const download of downloads) {
+    const downloadPath = await download.path();
+    expect(downloadPath).toBeTruthy();
+    const output = await readFile(downloadPath);
+    const splitPage = await PDFDocument.load(output);
+    expect(splitPage.getPageCount()).toBe(1);
+  }
+});
