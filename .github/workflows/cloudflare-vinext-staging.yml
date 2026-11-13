@@ -489,6 +489,7 @@ jobs:
               ...options,
               headers: {
                 "content-type": "application/json",
+                origin: base,
                 cookie: `kk_access_token=${accessToken}`,
                 ...(options.headers || {}),
               },
