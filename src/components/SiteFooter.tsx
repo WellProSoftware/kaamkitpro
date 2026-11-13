@@ -8,7 +8,7 @@ export default function SiteFooter() {
           © {new Date().getFullYear()} KaamKitPro. All rights reserved.
         </p>
         <p className="text-xs font-medium text-slate-600">
-          Developed with care by <span className="font-bold text-slate-800">A.K. Dheer</span>
+          Built by <span className="font-bold text-slate-800">A.K. Dheer</span>
         </p>
         <nav aria-label="Footer navigation" className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-slate-500">
           <Link href="/about" className="hover:text-blue-700">About</Link>
