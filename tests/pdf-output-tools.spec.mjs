@@ -18,7 +18,7 @@ test("PDF Compressor downloads a valid one-page PDF", async ({ page }) => {
     mimeType: "application/pdf",
     buffer: await createOnePagePdf(),
   });
-  await expect(page.getByText("source.pdf", { exact: true })).toBeVisible();
+  await expect(page.getByText("source.pdf", { exact: true })).toHaveCount(2);
 
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Compress PDF", exact: true }).click();
