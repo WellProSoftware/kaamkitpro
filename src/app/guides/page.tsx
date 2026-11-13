@@ -5,7 +5,7 @@ import BrandLogo from "@/components/BrandLogo";
 export const metadata: Metadata = {
   title: "Online Tools Guides",
   description:
-    "Original, practical guides for text sorting, CSV and JSON conversion, PDF tools, GST calculations, image optimization and QR codes.",
+    "Practical guides for PDF tasks, image optimization, GST calculations and everyday digital workflows.",
   alternates: {
     canonical: "https://kaamkitpro.com/guides",
   },
@@ -29,13 +29,7 @@ const guides = [
     category: "Image Tools",
   },
   {
-    title: "How to Create a QR Code Online",
-    description:
-      "Learn how to create a QR code for a website, text, contact information or other useful content.",
-    href: "/guides/qr-code",
-    tool: null,
-    category: "Everyday Tools",
-  },
+
   {
     title: "How to Compress a PDF Online",
     description: "Compare file sizes, check document quality, and learn practical ways to reduce PDF size.",
@@ -51,12 +45,7 @@ const guides = [
     category: "Calculators",
   },
   {
-    title: "How to Format and Validate JSON",
-    description: "Learn JSON syntax, fix common parsing errors, and understand formatting versus schema validation.",
-    href: "/guides/json-formatting",
-    tool: null,
-    category: "Developer Tools",
-  },
+
   {
     title: "How to Compare Two Texts Online",
     description:
@@ -88,12 +77,7 @@ const guides = [
     category: "Developer Tools",
   },
   {
-    title: "How to Count Words and Characters Online",
-    description: "Count words, characters, sentences and spaces in drafts, captions and documents with a free browser-based tool.",
-    href: "/guides/word-counter",
-    tool: null,
-    category: "Text Tools",
-  },
+
   {
     title: "How to Create an SEO-Friendly URL Slug",
     description: "Learn how to turn a page title into a readable URL slug and avoid common URL formatting mistakes.",
