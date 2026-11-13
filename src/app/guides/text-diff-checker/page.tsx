@@ -39,9 +39,7 @@ export default function TextDiffGuidePage() {
             <li>Paste the newer version into the Updated text box.</li>
             <li>Review the highlighted lines and the added/removed counts, then make any needed edits in your source document.</li>
           </ol>
-          <Link href="/tools/text-diff-checker" className="mt-6 inline-block rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">
-            Open Free Text Diff Checker
-          </Link>
+          <Link href="/tools" className="mt-6 inline-block rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">Browse available tools</Link>
         </div>
         <section className="mt-10 space-y-4">
           <h2 className="text-2xl font-bold">When is text comparison useful?</h2>
@@ -59,9 +57,9 @@ export default function TextDiffGuidePage() {
           <h2 className="text-2xl font-bold">Keep lists tidy before comparing</h2>
           <p className="leading-7 text-slate-700">
             If the text is a list, sort it first with the{" "}
-            <Link href="/tools/line-sorter" className="font-semibold text-blue-700 underline">Free Line Sorter</Link>
+            <Link href="/tools" className="font-semibold text-blue-700 underline">Browse available tools</Link>
             {" "}or remove repeated entries with the{" "}
-            <Link href="/tools/remove-duplicate-lines" className="font-semibold text-blue-700 underline">Duplicate Line Remover</Link>.
+            <Link href="/tools" className="font-semibold text-blue-700 underline">Browse available tools</Link>.
             {" "}These browser-based tools can help make changes easier to inspect.
           </p>
         </section>
