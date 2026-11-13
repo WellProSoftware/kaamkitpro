@@ -146,6 +146,8 @@ test("signed-in navigation and return paths lead users back to tools", async () 
   expect(layout).toContain('<SiteHeader />');
   expect(header).toContain('aria-label="Open account menu"');
   expect(header).toContain('href="/account"');
+  expect(header).toContain('href="/" className="hover:text-blue-700">Home</Link>');
+  expect(header).toContain('href="/" className="whitespace-nowrap">Home</Link>');
   expect(header).toContain('href="/tools"');
   expect(header).toContain('role="menuitem"');
   expect(login).toContain('destination = "/"');
