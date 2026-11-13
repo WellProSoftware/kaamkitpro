@@ -316,7 +316,7 @@ export default function Home() {
               <label htmlFor="home-tool-search" className="sr-only">Search online tools</label>
               <div className="mt-5 flex items-center gap-3 rounded-2xl bg-white p-2 pl-4 shadow-xl shadow-slate-950/10">
                 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-5 w-5 shrink-0 text-slate-400"><circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8"/><path d="m16 16 4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
-                <input id="home-tool-search" type="search" value={search} onChange={(event) => { setSearch(event.target.value); setCategory("All"); }} placeholder="Try “compress PDF” or “GST”" className="min-w-0 flex-1 border-0 bg-transparent py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:ring-0" />
+                <input id="home-tool-search" type="search" value={search} onChange={(event) => { setSearch(event.target.value); setCategory("All"); }} placeholder="Search a tool..." className="min-w-0 flex-1 border-0 bg-transparent py-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:ring-0" />
                 <a href="#tools" className="rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-blue-700">Search</a>
               </div>
               <div className="mt-5">
@@ -361,7 +361,7 @@ export default function Home() {
                 <span className={`flex h-12 w-12 items-center justify-center rounded-2xl text-2xl font-bold ${item.tone}`}>{item.icon}</span>
                 <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500">{item.count} tools</span>
               </div>
-              <h3 className="mt-5 text-lg font-extrabold text-slate-900 group-hover:text-blue-700">{item.title}</h3>
+              <p className="mt-5 text-lg font-extrabold text-slate-900 group-hover:text-blue-700">{item.title}</p>
               <p className="mt-2 text-sm leading-6 text-slate-600">{item.description}</p>
               <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-blue-700">Explore category <span className="transition group-hover:translate-x-1">→</span></span>
             </a>
@@ -374,8 +374,8 @@ export default function Home() {
           <div className="mb-8 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
             <div>
               <p className="text-xs font-bold uppercase tracking-[.18em] text-blue-600">The tool library</p>
-              <h2 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">{category === "All" ? "Find your next tool" : category}</h2>
-              <p className="mt-2 text-sm text-slate-600">{filteredTools.length} useful tools available in this view.</p>
+              <h2 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">{category === "All" ? "All Tools" : category}</h2>
+              <p className="mt-2 text-sm text-slate-600">{filteredTools.length} tools available</p>
             </div>
             <div className="flex flex-wrap gap-2">
               {categories.map((item) => (
@@ -406,7 +406,7 @@ export default function Home() {
               <div className="text-3xl">⌕</div>
               <h3 className="mt-3 text-lg font-extrabold">No matching tool found</h3>
               <p className="mt-2 text-sm text-slate-600">Try another search term or browse all categories.</p>
-              <button onClick={() => { setSearch(""); setCategory("All"); }} className="mt-5 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700">Show all tools</button>
+              <button onClick={() => { setSearch(""); setCategory("All"); }} className="mt-5 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700">Show All Tools</button>
             </div>
           )}
         </div>
