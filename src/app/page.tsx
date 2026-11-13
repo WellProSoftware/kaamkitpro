@@ -404,7 +404,7 @@ export default function Home() {
           ) : (
             <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-14 text-center">
               <div className="text-3xl">⌕</div>
-              <h3 className="mt-3 text-lg font-extrabold">No matching tool found</h3>
+              <h3 className="mt-3 text-lg font-extrabold">No tool found</h3>
               <p className="mt-2 text-sm text-slate-600">Try another search term or browse all categories.</p>
               <button onClick={() => { setSearch(""); setCategory("All"); }} className="mt-5 rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700">Show All Tools</button>
             </div>
