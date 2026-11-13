@@ -69,7 +69,7 @@ export const metadata = {
 
 export default function ImageToolsPage() {
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-[#f5f7fb]">
       <Breadcrumbs
         items={[
         { label: "Tools", href: "/tools" },
@@ -77,39 +77,39 @@ export default function ImageToolsPage() {
         ]}
       />
 
-      <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden border-b border-slate-800 bg-[#101d3a] text-white">
+        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <Link
             href="/"
-            className="text-sm font-medium text-slate-500 hover:text-slate-900"
+            className="text-sm font-semibold text-blue-100/70 transition hover:text-white"
           >
             ← Back to KaamKitPro
           </Link>
 
-          <p className="mt-8 text-sm font-semibold uppercase tracking-wider text-slate-500">
+          <p className="mt-8 text-xs font-bold uppercase tracking-[.18em] text-sky-300">
             Image Tools
           </p>
 
-          <h1 className="mt-3 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+          <h1 className="mt-3 text-4xl font-black tracking-tight text-white sm:text-5xl">
             Free Image Tools Online
           </h1>
 
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
+          <p className="mt-5 max-w-3xl text-base leading-8 text-blue-100/80 sm:text-lg">
             Compress, resize, convert and crop images online with practical
             browser-based tools for everyday digital work.
           </p>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {tools.map((tool) => (
             <Link
               key={tool.href}
               href={tool.href}
-              className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+              className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-900/[0.07]"
             >
-              <h2 className="text-xl font-semibold text-slate-900 group-hover:underline">
+              <h2 className="text-lg font-extrabold text-slate-900 transition group-hover:text-blue-700">
                 {tool.title}
               </h2>
 
@@ -117,7 +117,7 @@ export default function ImageToolsPage() {
                 {tool.description}
               </p>
 
-              <span className="mt-5 inline-block text-sm font-semibold text-slate-900">
+              <span className="mt-5 inline-flex text-sm font-bold text-blue-700">
                 Open tool →
               </span>
             </Link>
