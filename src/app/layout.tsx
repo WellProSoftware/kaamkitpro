@@ -10,6 +10,7 @@ import ToolEditorialContentBatchTwo from "@/components/ToolEditorialContentBatch
 import ToolEditorialContentBatchThree from "@/components/ToolEditorialContentBatchThree";
 import SupportChat from "@/components/SupportChat";
 import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 const siteUrl = "https://kaamkitpro.com";
 const isStagingBuild = process.env.KAAMKITPRO_STAGING === "true" || process.env.VERCEL_ENV === "preview";
@@ -135,6 +136,7 @@ export default function RootLayout({
 
         <SiteHeader />
         {children}
+        <SiteFooter />
 
         <ToolEditorialContent />
 
