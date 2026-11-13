@@ -9,6 +9,7 @@ import ToolEditorialContent from "@/components/ToolEditorialContent";
 import ToolEditorialContentBatchTwo from "@/components/ToolEditorialContentBatchTwo";
 import ToolEditorialContentBatchThree from "@/components/ToolEditorialContentBatchThree";
 import SupportChat from "@/components/SupportChat";
+import SiteHeader from "@/components/SiteHeader";
 
 const siteUrl = "https://kaamkitpro.com";
 const isStagingBuild = process.env.KAAMKITPRO_STAGING === "true" || process.env.VERCEL_ENV === "preview";
@@ -132,6 +133,7 @@ export default function RootLayout({
 
         <AdSenseLoader disabled={isStagingBuild} />
 
+        <SiteHeader />
         {children}
 
         <ToolEditorialContent />

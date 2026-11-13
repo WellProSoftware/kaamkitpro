@@ -1,6 +1,5 @@
 "use client";
 
-import SiteHeader from "@/components/SiteHeader";
 import BrandLogo from "@/components/BrandLogo";
 import { useMemo, useState } from "react";
 
@@ -235,7 +234,6 @@ export default function Home() {
           __html: JSON.stringify(faqSchema),
         }}
       />
-      <SiteHeader />
 
 
       <section className="border-b bg-gradient-to-b from-white to-slate-50">

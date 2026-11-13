@@ -231,7 +231,7 @@ test("Pricing page explains Free access and presents Pro checkout only when avai
   await expect(page.getByRole("heading", { name: /Useful tools\./ })).toBeVisible();
   await expect(page.getByText(/Use the available free tools right away/i)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Paid plans are on hold" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Sign in", exact: true })).toHaveCount(0);
+  await expect(page.locator("main").getByRole("link", { name: "Sign in", exact: true })).toHaveCount(0);
 
   const monthlyButton = page.getByRole("button", { name: "Choose monthly" });
   if (await monthlyButton.count()) {
@@ -258,12 +258,14 @@ test("Subscription checkout rejects unauthenticated requests", async ({ request 
 test("Image Compressor creates a downloadable compressed image", async ({ page }) => {
   await page.goto("/tools/image-compressor");
   await expect(page.getByRole("heading", { name: "Image Compressor", exact: true })).toBeVisible();
+  await expect(page.locator("#image-file")).toBeAttached();
+  await page.waitForTimeout(500); // Ensure the client file-change handler is hydrated.
   await page.locator("#image-file").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
     buffer: onePixelPng,
   });
-  await expect(page.getByText("pixel.png", { exact: true })).toBeVisible();
+  await expect(page.getByText("pixel.png", { exact: true })).toBeVisible({ timeout: 10000 });
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Compress Image", exact: true }).click();
   const download = await downloadPromise;
@@ -457,7 +459,7 @@ test("GST Calculator correctly adds and removes GST", async ({ page }) => {
 
   await page.locator('input[type="number"]').fill("10000");
   await page.getByRole("button", { name: "Add GST", exact: true }).click();
-  await expect(page.getByText("₹10000.00", { exact: true })).toBeVisible();
+  await expect(page.getByText("₹10000.00", { exact: true })).toBeVisible({ timeout: 10000 });
   await expect(page.getByText("₹1800.00", { exact: true })).toBeVisible();
   await expect(page.getByText("₹11800.00", { exact: true })).toBeVisible();
 

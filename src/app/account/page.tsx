@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import SiteHeader from "@/components/SiteHeader";
 
 type AccountUser = { id: string; email: string | null };
 type AccountSubscription = {
@@ -96,7 +95,6 @@ export default function AccountPage() {
 
   return (
     <>
-      <SiteHeader />
       <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-900">
       <div className="mx-auto max-w-3xl">
         <div className="mb-5"><Link href="/" className="text-sm font-semibold text-blue-700 hover:underline">← Back to all tools</Link></div>
