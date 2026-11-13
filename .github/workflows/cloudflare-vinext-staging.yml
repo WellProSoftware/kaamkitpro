@@ -136,7 +136,9 @@ jobs:
             }
           }
           walk(root);
-          // Vendor Quotation is intentionally paused and its route returns 404 until the feature is revisited.\n          const intentionallyDisabled = new Set(["/tools/vendor-quotation-comparison"]);\n          const missing = pages.filter(route => !intentionallyDisabled.has(route) && !listed.has(route));
+          // Vendor Quotation is intentionally paused and its route returns 404 until the feature is revisited.
+          const intentionallyDisabled = new Set(["/tools/vendor-quotation-comparison"]);
+          const missing = pages.filter(route => !intentionallyDisabled.has(route) && !listed.has(route));
           if (missing.length) {
             console.error("Tool pages missing from production sitemap:", missing.join(", "));
             process.exit(1);
