@@ -2,7 +2,6 @@
 
 import { FormEvent, useEffect, useState } from "react";
 
-type Language = "en" | "hi";
 type Message = { id: string; sender_role: "user" | "admin" | "assistant"; body: string; created_at: string };
 type Conversation = { id: string; subject: string; status: string; messages: Message[] };
 type ApiConversation = Omit<Conversation, "messages"> & { messages?: Message[]; support_messages?: Message[] };
@@ -78,22 +77,10 @@ export default function SupportChat() {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
-  const [language, setLanguage] = useState<Language>("en");
-  const t = copy[language];
-
-  function changeLanguage(next: Language) {
-    setLanguage(next);
-    try { localStorage.setItem("kk-support-language", next); } catch { /* Preference remains active for this session. */ }
-    setNotice("");
-  }
+  const language = "en" as const;
+  const t = copy.en;
 
   function toggleChat() {
-    if (!open) {
-      try {
-        const saved = localStorage.getItem("kk-support-language");
-        if (saved === "en" || saved === "hi") setLanguage(saved);
-      } catch { /* English remains the default when storage is unavailable. */ }
-    }
     setOpen(value => !value);
   }
 
@@ -145,10 +132,6 @@ export default function SupportChat() {
           <header className="flex items-center justify-between bg-slate-900 px-4 py-3 text-white">
             <div><p className="font-bold">KaamKitPro Support</p><p className="text-xs text-slate-300">{t.subtitle}</p></div>
             <div className="flex items-center gap-1">
-              <div aria-label="Chat language" className="flex rounded-lg bg-white/10 p-0.5">
-                <button type="button" onClick={() => changeLanguage("en")} aria-pressed={language === "en"} className={`rounded-md px-2 py-1.5 text-xs font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-white ${language === "en" ? "bg-white text-slate-900" : "text-white hover:bg-white/10"}`}>English</button>
-                <button type="button" onClick={() => changeLanguage("hi")} aria-pressed={language === "hi"} className={`rounded-md px-2 py-1.5 text-xs font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-white ${language === "hi" ? "bg-white text-slate-900" : "text-white hover:bg-white/10"}`}>हिंदी</button>
-              </div>
               <button type="button" onClick={() => { setNotice(""); fetch("/api/support", { cache: "no-store" }).then(async response => { const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.error || t.refreshError); setConversation(normalizeConversation(data.conversation)); }).catch(error => setNotice(error instanceof Error ? error.message : t.refreshError)); }} aria-label={t.refresh} className="rounded-lg px-2 py-2 text-xs hover:bg-white/10">{t.refresh}</button>
               <button type="button" onClick={() => setOpen(false)} aria-label={t.close} className="rounded-lg px-2 py-2 hover:bg-white/10">✕</button>
             </div>
