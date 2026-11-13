@@ -15,7 +15,7 @@ const toolRoutes = [
 
 const staticRoutes = [
   "", "/about", "/contact", "/advertise", "/pricing", "/disclaimer", "/guides", "/guides/image-compression",
-  "/guides/pdf-merge", "/guides/pdf-compression", "/guides/gst-calculator",
+  "/guides/pdf-merge", "/guides/choosing-online-tools", "/guides/pdf-compression", "/guides/gst-calculator",
   "/guides/csv-to-json", "/guides/json-formatting", "/guides/json-to-csv", "/guides/line-sorter",
   "/guides/qr-code", "/guides/remove-duplicate-lines", "/guides/slug-generator", "/guides/text-diff-checker",
   "/guides/word-counter", "/privacy-policy", "/terms", "/tools",

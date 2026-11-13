@@ -102,6 +102,13 @@ const guides = [
     category: "SEO Tools",
   },
   {
+    title: "How to Choose and Use Online Tools",
+    description: "Choose a utility, test with a small sample, verify outputs, and protect sensitive information.",
+    href: "/guides/choosing-online-tools",
+    tool: "/tools",
+    category: "Everyday Tools",
+  },
+  {
     title: "How to Remove Duplicate Lines from a List",
     description: "Clean repeated names, keywords, IDs and copied spreadsheet lines while choosing how whitespace and letter case should be treated.",
     href: "/guides/remove-duplicate-lines",
