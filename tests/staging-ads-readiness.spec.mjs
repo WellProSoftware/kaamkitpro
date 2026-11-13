@@ -91,16 +91,15 @@ test("revoking analytics consent disables future gtag events and sends denied st
 
   await expect(page.locator("#google-analytics-script")).toHaveCount(0);
   const state = await page.evaluate(() => {
-    const analyticsWindow = window as Window & {
-      dataLayer?: unknown[][];
-      gtag?: (...args: unknown[]) => void;
-    };
+    const analyticsWindow = window;
     const layer = analyticsWindow.dataLayer || [];
     const revokeCommand = [...layer].reverse().find((entry) =>
       entry[0] === "consent" && entry[1] === "update"
     );
     const before = layer.length;
-    analyticsWindow.gtag?.("event", "must_not_be_sent");
+    if (typeof analyticsWindow.gtag === "function") {
+      analyticsWindow.gtag("event", "must_not_be_sent");
+    }
     return {
       revokeCommand,
       before,
