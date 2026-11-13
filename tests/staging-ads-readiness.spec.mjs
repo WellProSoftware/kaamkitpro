@@ -78,3 +78,47 @@ test("visitors can reopen privacy choices and switch to essential-only", async (
   await expect.poll(() => page.evaluate(() => window.localStorage.getItem("kk_privacy_consent_v1"))).toBe("essential");
   await expect(page.locator("#google-analytics-script, #google-adsense")).toHaveCount(0);
 });
+
+
+test("revoking analytics consent disables future gtag events and sends denied storage consent", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => window.localStorage.setItem("kk_privacy_consent_v1", "accepted"));
+  await page.reload();
+  await expect(page.locator("#google-analytics-script")).toHaveAttribute("src", /G-8B6JX70RH8/);
+
+  await page.getByRole("button", { name: "Reopen privacy choices" }).click();
+  await page.getByRole("button", { name: "Essential only" }).click();
+
+  await expect(page.locator("#google-analytics-script")).toHaveCount(0);
+  const state = await page.evaluate(() => {
+    const analyticsWindow = window as Window & {
+      dataLayer?: unknown[][];
+      gtag?: (...args: unknown[]) => void;
+    };
+    const layer = analyticsWindow.dataLayer || [];
+    const revokeCommand = [...layer].reverse().find((entry) =>
+      entry[0] === "consent" && entry[1] === "update"
+    );
+    const before = layer.length;
+    analyticsWindow.gtag?.("event", "must_not_be_sent");
+    return {
+      revokeCommand,
+      before,
+      after: (analyticsWindow.dataLayer || []).length,
+      storedConsent: window.localStorage.getItem("kk_privacy_consent_v1"),
+    };
+  });
+
+  expect(state.revokeCommand).toEqual([
+    "consent",
+    "update",
+    {
+      analytics_storage: "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+    },
+  ]);
+  expect(state.after).toBe(state.before);
+  expect(state.storedConsent).toBe("essential");
+});
