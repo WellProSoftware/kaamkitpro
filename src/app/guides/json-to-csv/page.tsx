@@ -26,7 +26,7 @@ export default function JsonToCsvGuide() {
             JSON is widely used by APIs and applications to exchange structured records. CSV is often easier to review in spreadsheet software. Converting JSON to CSV usually means turning an array of similarly shaped objects into rows, with each object key becoming a column header.
           </p>
           <div className="mt-8">
-            <Link href="/tools/json-to-csv" className="inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">Open Free JSON to CSV Converter</Link>
+            <Link href="/tools" className="inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">Browse available tools</Link>
           </div>
           <div className="mt-12 space-y-9">
             <section>
@@ -68,9 +68,9 @@ export default function JsonToCsvGuide() {
             <section>
               <h2 className="text-2xl font-bold">Related free tools</h2>
               <div className="mt-4 flex flex-wrap gap-4">
-                <Link href="/tools/csv-to-json" className="font-semibold text-blue-600 hover:text-blue-800">CSV to JSON Converter →</Link>
-                <Link href="/tools/json-formatter" className="font-semibold text-blue-600 hover:text-blue-800">JSON Formatter →</Link>
-                <Link href="/tools/text-diff-checker" className="font-semibold text-blue-600 hover:text-blue-800">Text Diff Checker →</Link>
+                <Link href="/tools" className="font-semibold text-blue-600 hover:text-blue-800">Browse available tools</Link>
+                <Link href="/tools" className="font-semibold text-blue-600 hover:text-blue-800">Browse available tools</Link>
+                <Link href="/tools" className="font-semibold text-blue-600 hover:text-blue-800">Browse available tools</Link>
               </div>
             </section>
           </div>
