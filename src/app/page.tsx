@@ -143,6 +143,60 @@ const tools: Tool[] = [
   },
 
 
+  {
+    name: "Image Flip",
+    description: "Flip images horizontally or vertically in your browser.",
+    href: "/tools/image-flip",
+    category: "Image Tools",
+  },
+  {
+    name: "Image Brightness",
+    description: "Adjust image brightness directly in your browser.",
+    href: "/tools/image-brightness",
+    category: "Image Tools",
+  },
+  {
+    name: "Image Rotate",
+    description: "Rotate images by 90, 180 or 270 degrees.",
+    href: "/tools/image-rotate",
+    category: "Image Tools",
+  },
+  {
+    name: "Image Grayscale",
+    description: "Convert colour images to grayscale online.",
+    href: "/tools/image-grayscale",
+    category: "Image Tools",
+  },
+  {
+    name: "PDF Protect",
+    description: "Add password protection to supported PDF files.",
+    href: "/tools/pdf-protect",
+    category: "PDF Tools",
+  },
+  {
+    name: "PDF to Excel",
+    description: "Convert supported PDF tables into spreadsheet data.",
+    href: "/tools/pdf-to-excel",
+    category: "PDF Tools",
+  },
+  {
+    name: "PDF to Word",
+    description: "Convert PDF documents into editable Word files.",
+    href: "/tools/pdf-to-word",
+    category: "PDF Tools",
+  },
+  {
+    name: "JPG to Excel",
+    description: "Extract table data from images into spreadsheet format.",
+    href: "/tools/jpg-to-excel",
+    category: "PDF Tools",
+  },
+  {
+    name: "JPG to Word",
+    description: "Convert image text into an editable document.",
+    href: "/tools/jpg-to-word",
+    category: "PDF Tools",
+  },
 
 ];
 
