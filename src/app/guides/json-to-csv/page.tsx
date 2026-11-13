@@ -65,14 +65,6 @@ export default function JsonToCsvGuide() {
               <h2 className="text-2xl font-bold">Protect private information</h2>
               <p className="mt-3 leading-8 text-slate-600">Before using an online converter, review how the service handles input and whether it meets your data policies. Do not paste passwords, access tokens, confidential customer records, or personal information unless you are authorized to do so. Use redacted sample data when testing.</p>
             </section>
-            <section>
-              <h2 className="text-2xl font-bold">Related free tools</h2>
-              <div className="mt-4 flex flex-wrap gap-4">
-                <Link href="/tools" className="font-semibold text-blue-600 hover:text-blue-800">Browse available tools</Link>
-                <Link href="/tools" className="font-semibold text-blue-600 hover:text-blue-800">Browse available tools</Link>
-                <Link href="/tools" className="font-semibold text-blue-600 hover:text-blue-800">Browse available tools</Link>
-              </div>
-            </section>
           </div>
         </div>
       </article>
