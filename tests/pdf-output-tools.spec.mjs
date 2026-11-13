@@ -25,9 +25,13 @@ test("PDF Compressor downloads a valid one-page PDF", async ({ page }) => {
   const download = await downloadPromise;
 
   expect(download.suggestedFilename()).toBe("kaamkitpro-compressed.pdf");
-  await expect(
-    page.getByText(/^(PDF compressed successfully\\.|The PDF was already optimized, so the file size could not be reduced further without reducing image quality\\.)$/)
-  ).toBeVisible();
+  const successMessage = page
+    .getByText("PDF compressed successfully.", { exact: true })
+    .or(page.getByText(
+      "The PDF was already optimized, so the file size could not be reduced further without reducing image quality.",
+      { exact: true }
+    ));
+  await expect(successMessage).toBeVisible();
 
   const downloadPath = await download.path();
   expect(downloadPath).toBeTruthy();
