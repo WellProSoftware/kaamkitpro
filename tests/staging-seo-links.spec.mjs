@@ -42,7 +42,7 @@ test("public SEO pages expose canonical URLs and staging noindex", async ({ page
 
 test("public internal links do not expose retired tools or guides", async ({ page }) => {
   await page.goto("/");
-  for (const route of ["/tools/emi-calculator", "/tools/percentage-calculator", "/guides/qr-code"]) {
+  for (const route of ["/tools/emi-calculator", "/tools/percentage-calculator", "/tools/pdf-protect", "/guides/qr-code"]) {
     await expect(page.locator(`a[href="${route}"]`)).toHaveCount(0);
   }
 });
