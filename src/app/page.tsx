@@ -168,12 +168,6 @@ const tools: Tool[] = [
     category: "Image Tools",
   },
   {
-    name: "PDF Protect",
-    description: "Add password protection to supported PDF files.",
-    href: "/tools/pdf-protect",
-    category: "PDF Tools",
-  },
-  {
     name: "PDF to Excel",
     description: "Convert supported PDF tables into spreadsheet data.",
     href: "/tools/pdf-to-excel",
