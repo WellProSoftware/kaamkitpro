@@ -265,6 +265,7 @@ test("Image Compressor creates a downloadable compressed image", async ({ page }
 
 test("Image Brightness adjusts an uploaded image and downloads the result", async ({ page }) => {
   await page.goto("/tools/image-brightness");
+  await page.waitForTimeout(500); // File input events must run after client hydration.
   await page.locator("#brightness-file").setInputFiles({
     name: "pixel.png",
     mimeType: "image/png",
@@ -548,6 +549,7 @@ test("Age Calculator returns zero years, months, and days for today's birth date
 
 test("GST Calculator calculates each supported GST rate", async ({ page }) => {
   await page.goto("/tools/gst-calculator");
+  await page.waitForTimeout(500); // Ensure React hydration before changing controlled inputs.
   await expect(page.getByRole("heading", { name: "GST Calculator", exact: true })).toBeVisible();
 
   const amount = page.locator('input[type="number"]');
