@@ -27,7 +27,6 @@ const toolRoutes = [
   "/tools/pdf-merge",
   "/tools/pdf-metadata",
   "/tools/pdf-page-number",
-  "/tools/pdf-protect",
   "/tools/pdf-rotate",
   "/tools/pdf-split",
   "/tools/pdf-to-excel",
