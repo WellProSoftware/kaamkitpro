@@ -29,8 +29,6 @@ const guides = [
     category: "Image Tools",
   },
   {
-
-  {
     title: "How to Compress a PDF Online",
     description: "Compare file sizes, check document quality, and learn practical ways to reduce PDF size.",
     href: "/guides/pdf-compression",
@@ -44,8 +42,6 @@ const guides = [
     tool: "/tools/gst-calculator",
     category: "Calculators",
   },
-  {
-
   {
     title: "How to Compare Two Texts Online",
     description:
@@ -76,8 +72,6 @@ const guides = [
     tool: null,
     category: "Developer Tools",
   },
-  {
-
   {
     title: "How to Create an SEO-Friendly URL Slug",
     description: "Learn how to turn a page title into a readable URL slug and avoid common URL formatting mistakes.",
