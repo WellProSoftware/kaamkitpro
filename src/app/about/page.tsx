@@ -45,34 +45,30 @@ export default function AboutPage() {
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <div className="rounded-2xl bg-slate-50 p-5">
-              <h3 className="font-bold">Text Tools</h3>
+              <h3 className="font-bold">PDF Tools</h3>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                Word counting, character counting, case conversion and
-                other text utilities.
+                Merge, split, compress, rotate and convert PDF documents.
               </p>
             </div>
 
             <div className="rounded-2xl bg-slate-50 p-5">
-              <h3 className="font-bold">Developer Tools</h3>
+              <h3 className="font-bold">Image Tools</h3>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                JSON, Base64, UUID, timestamp and other development
-                utilities.
+                Compress, resize, crop, rotate and convert common image files.
               </p>
             </div>
 
             <div className="rounded-2xl bg-slate-50 p-5">
               <h3 className="font-bold">Calculators</h3>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                Percentage, GST, EMI, age, BMI, SIP and other useful
-                calculators.
+                Use practical calculators such as GST, BMI, age and SIP tools.
               </p>
             </div>
 
             <div className="rounded-2xl bg-slate-50 p-5">
-              <h3 className="font-bold">Everyday Utilities</h3>
+              <h3 className="font-bold">Healthcare Procurement</h3>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                QR generation, password generation and more practical
-                online tools.
+                Map purchase descriptions with the hospital item master using our item mapping utility.
               </p>
             </div>
           </div>
