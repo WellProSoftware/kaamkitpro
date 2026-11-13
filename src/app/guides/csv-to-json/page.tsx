@@ -26,7 +26,7 @@ export default function CsvToJsonGuide() {
             CSV (comma-separated values) stores tabular data as rows and columns. JSON stores structured data as objects and arrays, which many APIs and JavaScript applications can consume. Converting CSV to JSON usually means turning each data row into an object whose property names come from the header row.
           </p>
           <div className="mt-8">
-            <Link href="/tools/csv-to-json" className="inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">Open Free CSV to JSON Converter</Link>
+            <Link href="/tools" className="inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">Browse available tools</Link>
           </div>
           <div className="mt-12 space-y-9">
             <section>
@@ -73,9 +73,9 @@ Ravi,Sales,false`}</code></pre>
             <section>
               <h2 className="text-2xl font-bold">Related free tools</h2>
               <div className="mt-4 flex flex-wrap gap-4">
-                <Link href="/tools/json-to-csv" className="font-semibold text-blue-600 hover:text-blue-800">JSON to CSV Converter →</Link>
-                <Link href="/tools/json-formatter" className="font-semibold text-blue-600 hover:text-blue-800">JSON Formatter →</Link>
-                <Link href="/tools/text-diff-checker" className="font-semibold text-blue-600 hover:text-blue-800">Text Diff Checker →</Link>
+                <Link href="/tools" className="font-semibold text-blue-600 hover:text-blue-800">Browse available tools</Link>
+                <Link href="/tools" className="font-semibold text-blue-600 hover:text-blue-800">Browse available tools</Link>
+                <Link href="/tools" className="font-semibold text-blue-600 hover:text-blue-800">Browse available tools</Link>
               </div>
             </section>
           </div>
