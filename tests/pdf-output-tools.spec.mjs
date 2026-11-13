@@ -55,9 +55,10 @@ test("PDF Split downloads every source page as a valid separate PDF", async ({ p
     mimeType: "application/pdf",
     buffer: Buffer.from(await source.save()),
   });
-  await expect.poll(async () =>
-    page.locator("#pdf-file").evaluate((input) => input.files?.[0]?.name ?? null)
-  ).toBe("two-pages.pdf");
+  // FileImportDropzone clears the native input after handling onChange, so
+  // assert the component state via its dedicated accessible live region.
+  await expect(page.locator('[aria-live="polite"]')).toHaveText("two-pages.pdf");
+  await expect(page.locator("p.font-medium").filter({ hasText: "two-pages.pdf" })).toBeVisible();
 
   const downloads = [];
   page.on("download", (download) => downloads.push(download));
