@@ -65,10 +65,12 @@ test("privacy consent choices persist; staging uses only its test Analytics ID a
   await expect(page.locator('script[src*="pagead2.googlesyndication.com"]')).toHaveCount(0);
   await expect(page.locator('script[src*="googletagmanager.com/gtag/js"]')).toHaveAttribute("src", /G-8B6JX70RH8/);
 });
+
 test("visitors can reopen privacy choices and switch to essential-only", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem("kk_privacy_consent_v1", "accepted");
+  });
   await page.goto("/");
-  await page.evaluate(() => window.localStorage.setItem("kk_privacy_consent_v1", "accepted"));
-  await page.reload();
   const dialog = page.getByRole("dialog", { name: /Your privacy choices/i });
   await expect(dialog).toHaveCount(0);
   await page.getByRole("button", { name: "Reopen privacy choices" }).click();
