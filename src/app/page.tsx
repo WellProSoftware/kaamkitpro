@@ -411,44 +411,66 @@ export default function Home() {
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
-              KaamKitPro is a collection of practical online utilities
-              designed for everyday digital tasks. Whether you need to
-              manage a PDF, resize an image, calculate a value, clean text,
-              prepare SEO content, or work with developer data, you can find
-              a focused tool here without installing extra software.
+              KaamKitPro brings focused browser-based utilities together for
+              document handling, image preparation, calculations and
+              everyday digital work. Instead of installing a separate
+              application for each small task, visitors can open a relevant
+              tool, provide the required input and review the result in one
+              place. The tool directory is organised by task so that users
+              can compare available options and choose the one that matches
+              their needs.
             </p>
 
             <p className="mt-4 leading-7 text-slate-600">
-              Many KaamKitPro tools are designed to work directly in your
-              browser. This makes common tasks quick and convenient across
-              desktop and mobile devices. The platform is continuously being
-              expanded with more useful utilities while keeping the
-              interface simple.
+              For document work, PDF utilities can help combine files, split
+              selected pages, rotate documents or convert between supported
+              formats. Image utilities help prepare pictures by resizing,
+              cropping, converting or compressing them. Calculators are
+              intended for transparent estimates: enter the relevant values,
+              check the selected units or rates, and review the result before
+              using it in a business or personal decision. Text and developer
+              utilities support common formatting and data tasks.
+            </p>
+
+            <p className="mt-4 leading-7 text-slate-600">
+              A good result still needs a quick review. Check page order after
+              merging a PDF, inspect image dimensions and visual quality after
+              compression, and verify calculator inputs before relying on an
+              estimate. Keep an original copy of important files. Do not
+              upload confidential or personal documents unless you have
+              checked that the tool and its data-handling practices are
+              appropriate for your information.
             </p>
           </div>
 
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             <div className="rounded-2xl border bg-slate-50 p-6">
-              <h3 className="text-lg font-bold">For Everyday Tasks</h3>
+              <h3 className="text-lg font-bold">Documents & PDFs</h3>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                Use calculators, text utilities, PDF tools and image tools
-                for common digital work.
+                Combine related files into one PDF, extract a page range,
+                rotate pages for correct reading, or convert supported
+                documents for sharing. Always open the exported file and
+                check its page count and order.
               </p>
             </div>
 
             <div className="rounded-2xl border bg-slate-50 p-6">
-              <h3 className="text-lg font-bold">For Creators & Marketers</h3>
+              <h3 className="text-lg font-bold">Images & Calculations</h3>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                Create captions, hashtags, titles, meta tags, slugs and other
-                useful content with dedicated utilities.
+                Prepare images for websites and documents by adjusting their
+                size or format. Use calculators for quick estimates such as
+                GST, SIP, BMI or age, and confirm inputs and assumptions
+                before acting on the result.
               </p>
             </div>
 
             <div className="rounded-2xl border bg-slate-50 p-6">
-              <h3 className="text-lg font-bold">For Developers</h3>
+              <h3 className="text-lg font-bold">Text & Digital Workflows</h3>
               <p className="mt-2 text-sm leading-6 text-slate-600">
-                Format code, work with JSON, encode URLs, generate hashes,
-                create UUIDs and handle other development tasks.
+                Use focused utilities for text cleanup, content preparation
+                and developer data. Choose a tool based on the task, follow
+                its on-page instructions and review the output before
+                publishing or sharing it.
               </p>
             </div>
           </div>
