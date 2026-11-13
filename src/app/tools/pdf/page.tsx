@@ -58,6 +58,28 @@ const pdfTools = [
     title: "PDF Watermark Tool",
     description: "Add a simple text watermark to every PDF page.",
   },
+
+  {
+    href: "/tools/pdf-to-excel",
+    title: "PDF to Excel",
+    description: "Convert supported PDF tables into spreadsheet data and review the extracted rows.",
+  },
+  {
+    href: "/tools/pdf-to-word",
+    title: "PDF to Word",
+    description: "Convert PDF documents into editable Word files and review the formatting.",
+  },
+  {
+    href: "/tools/jpg-to-excel",
+    title: "JPG to Excel",
+    description: "Extract table data from an image into a spreadsheet-ready format.",
+  },
+  {
+    href: "/tools/jpg-to-word",
+    title: "JPG to Word",
+    description: "Convert image-based text into an editable document.",
+  },
+
 ];
 
 const faqs = [
