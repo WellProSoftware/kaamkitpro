@@ -8,7 +8,7 @@ type SessionUser = { id: string; email: string | null };
 
 export default function SiteHeader() {
   const [user, setUser] = useState<SessionUser | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [access, setAccess] = useState<{ isAdmin?: boolean; isPro?: boolean; plan?: string } | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -26,8 +26,8 @@ export default function SiteHeader() {
           setUser(result.user);
           const accessResponse = await fetch("/api/access", { cache: "no-store" }).catch(() => null);
           if (accessResponse?.ok) {
-            const access = await accessResponse.json().catch(() => ({})) as { isAdmin?: boolean };
-            if (!cancelled) setIsAdmin(access.isAdmin === true);
+            const accessData = await accessResponse.json().catch(() => ({})) as { isAdmin?: boolean; isPro?: boolean; plan?: string };
+            if (!cancelled) setAccess(accessData);
           }
         }
       })
@@ -84,11 +84,11 @@ export default function SiteHeader() {
                   <div className="border-b border-slate-100 px-3 py-3">
                     <p className="truncate text-sm font-bold text-slate-900">{user.email?.split("@")[0] || "KaamKitPro user"}</p>
                     <p className="mt-1 break-all text-xs text-slate-500">{user.email}</p>
-                    <span className="mt-2 inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">Free access</span>
+                    <div className="mt-2 flex flex-wrap gap-2"><span className="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">{access?.isAdmin ? "Admin access" : "Free access"}</span><span className="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">All tools currently free</span></div>
                   </div>
                   <Link role="menuitem" href="/account" onClick={() => setMenuOpen(false)} className="mt-1 flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">My account</Link>
                   <Link role="menuitem" href="/tools" onClick={() => setMenuOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Browse all tools</Link>
-                  {isAdmin ? <Link role="menuitem" href="/admin/access" onClick={() => setMenuOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Admin access</Link> : null}
+                  {access?.isAdmin ? <><Link role="menuitem" href="/admin/access" onClick={() => setMenuOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Admin access management</Link><Link role="menuitem" href="/admin/support" onClick={() => setMenuOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Support inbox</Link></> : null}
                   <div className="my-1 border-t border-slate-100" />
                   <button role="menuitem" type="button" onClick={() => void signOut()} className="flex min-h-11 w-full items-center rounded-xl px-3 text-left text-sm font-bold text-red-700 hover:bg-red-50">Sign out</button>
                 </div>
