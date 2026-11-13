@@ -55,7 +55,9 @@ test("PDF Split downloads every source page as a valid separate PDF", async ({ p
     mimeType: "application/pdf",
     buffer: Buffer.from(await source.save()),
   });
-  await expect(page.getByText("two-pages.pdf", { exact: true })).toBeVisible();
+  await expect.poll(async () =>
+    page.locator("#pdf-file").evaluate((input) => input.files?.[0]?.name ?? null)
+  ).toBe("two-pages.pdf");
 
   const downloads = [];
   page.on("download", (download) => downloads.push(download));
