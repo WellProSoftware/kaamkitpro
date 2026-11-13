@@ -31,7 +31,9 @@ export async function GET(request: NextRequest) {
   const row = Array.isArray(rows) ? rows[0] as SubscriptionRow | undefined : undefined;
   if (!row) return NextResponse.json({ subscription: null });
 
+  const isStaging = process.env.KAAMKITPRO_STAGING === "true" || process.env.VERCEL_ENV === "preview";
   return NextResponse.json({
+    isStaging,
     subscription: {
       id: row.id,
       status: row.status,

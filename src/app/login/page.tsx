@@ -49,7 +49,7 @@ function LoginForm() {
     return Array.from(bytes, (value) => value.toString(16).padStart(2, "0")).join("") + "aA1!";
   }
 
-  async function establishSession(result: AuthResponse, destination = "/account") {
+  async function establishSession(result: AuthResponse, destination = "/") {
     if (!result.access_token || !result.refresh_token) return false;
     const response = await fetch("/api/auth/session", {
       method: "POST",

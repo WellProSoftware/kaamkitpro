@@ -134,3 +134,23 @@ test("password reset route is available and asks for a verified reset session", 
   await expect(page.getByLabel("New password")).toHaveAttribute("minlength", "10");
   await expect(page.getByLabel("Confirm password")).toHaveAttribute("minlength", "10");
 });
+
+
+test("signed-in navigation and return paths lead users back to tools", async () => {
+  const homepage = await readFile(new URL("../src/app/page.tsx", import.meta.url), "utf8");
+  const header = await readFile(new URL("../src/components/SiteHeader.tsx", import.meta.url), "utf8");
+  const login = await readFile(new URL("../src/app/login/page.tsx", import.meta.url), "utf8");
+  const callback = await readFile(new URL("../src/app/auth/callback/page.tsx", import.meta.url), "utf8");
+  const setPassword = await readFile(new URL("../src/app/set-password/page.tsx", import.meta.url), "utf8");
+  const account = await readFile(new URL("../src/app/account/page.tsx", import.meta.url), "utf8");
+  expect(homepage).toContain('<SiteHeader />');
+  expect(header).toContain('aria-label="Open account menu"');
+  expect(header).toContain('href="/account"');
+  expect(header).toContain('href="/tools"');
+  expect(header).toContain('role="menuitem"');
+  expect(login).toContain('destination = "/"');
+  expect(callback).toContain('flow === "reset" ? "/reset-password" : "/"');
+  expect(setPassword).toContain('window.location.replace("/?welcome=1")');
+  expect(account).toContain("Back to all tools");
+  expect(account).toContain("Historical test subscription (staging)");
+});

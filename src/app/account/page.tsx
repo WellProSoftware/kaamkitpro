@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import BrandLogo from "@/components/BrandLogo";
+import SiteHeader from "@/components/SiteHeader";
 
 type AccountUser = { id: string; email: string | null };
 type AccountSubscription = {
@@ -15,9 +15,9 @@ type AccountSubscription = {
 
 export default function AccountPage() {
   const [user, setUser] = useState<AccountUser | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [isPro, setIsPro] = useState(false);
   const [subscription, setSubscription] = useState<AccountSubscription | null>(null);
+  const [isStaging, setIsStaging] = useState(false);
   const [cancelBusy, setCancelBusy] = useState(false);
   const [billingMessage, setBillingMessage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -36,16 +36,16 @@ export default function AccountPage() {
         if (!cancelled) setUser(result.user);
         const accessResponse = await fetch("/api/access", { cache: "no-store" }).catch(() => null);
         if (accessResponse?.ok) {
-          const access = (await accessResponse.json().catch(() => ({}))) as { isAdmin?: boolean; isPro?: boolean };
-          if (!cancelled) {
-            setIsAdmin(access.isAdmin === true);
-            setIsPro(access.isPro === true);
-          }
+          const access = (await accessResponse.json().catch(() => ({}))) as { isPro?: boolean };
+          if (!cancelled) setIsPro(access.isPro === true);
         }
         const billingResponse = await fetch("/api/billing/subscription", { cache: "no-store" }).catch(() => null);
         if (billingResponse?.ok) {
-          const billing = (await billingResponse.json().catch(() => ({}))) as { subscription?: AccountSubscription | null };
-          if (!cancelled) setSubscription(billing.subscription || null);
+          const billing = (await billingResponse.json().catch(() => ({}))) as { subscription?: AccountSubscription | null; isStaging?: boolean };
+          if (!cancelled) {
+            setSubscription(billing.subscription || null);
+            setIsStaging(billing.isStaging === true);
+          }
         }
       })
       .catch((cause) => {
@@ -94,21 +94,12 @@ export default function AccountPage() {
     }
   }
 
-  async function signOut() {
-    await fetch("/api/auth/session", { method: "DELETE" }).catch(() => undefined);
-    window.location.replace("/login");
-  }
-
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-900">
+    <>
+      <SiteHeader />
+      <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-900">
       <div className="mx-auto max-w-3xl">
-        <header className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4">
-          <BrandLogo />
-          <div className="flex items-center gap-3">
-            {isAdmin ? <Link href="/admin/access" className="text-sm font-bold text-blue-700 hover:underline">Admin access</Link> : null}
-            <button onClick={signOut} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-bold hover:border-blue-400 hover:text-blue-700">Sign out</button>
-          </div>
-        </header>
+        <div className="mb-5"><Link href="/" className="text-sm font-semibold text-blue-700 hover:underline">← Back to all tools</Link></div>
 
         <section className="mt-7 rounded-3xl border border-slate-200 bg-white p-7 shadow-sm sm:p-9">
           <p className="text-sm font-bold uppercase tracking-widest text-blue-600">Your account</p>
@@ -124,7 +115,13 @@ export default function AccountPage() {
           ) : null}
 
           <div className="mt-7 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            {subscription?.status === "active" ? (
+            {subscription?.status === "active" && isStaging ? (
+              <>
+                <h2 className="font-bold text-amber-900">Historical test subscription (staging)</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-700">A Razorpay test-mode subscription record is present in this staging account. It is not a live payment or a live paid plan. Paid checkout is currently on hold; continue using the free tools.</p>
+                <span className="mt-3 inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-900">No live billing</span>
+              </>
+            ) : subscription?.status === "active" ? (
               <>
                 <h2 className="font-bold text-emerald-900">Pro subscription active</h2>
                 <p className="mt-2 text-sm leading-6 text-slate-700">
@@ -161,6 +158,7 @@ export default function AccountPage() {
           </div>
         </section>
       </div>
-    </main>
+      </main>
+    </>
   );
 }

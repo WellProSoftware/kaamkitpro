@@ -87,7 +87,7 @@ export default function AuthCallbackPage() {
         const result = (await response.json().catch(() => ({}))) as { error?: string };
         if (!response.ok) throw new Error(result.error || "Could not complete sign-in.");
 
-        if (!cancelled) window.location.replace(flow === "signup" ? "/set-password" : flow === "reset" ? "/reset-password" : "/account");
+        if (!cancelled) window.location.replace(flow === "signup" ? "/set-password" : flow === "reset" ? "/reset-password" : "/");
       } catch (cause) {
         if (!cancelled) {
           setFailed(true);
