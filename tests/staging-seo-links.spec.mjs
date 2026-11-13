@@ -55,3 +55,11 @@ test("sitemap excludes retired tool categories and guides", async ({ request }) 
     expect(xml).not.toContain(route);
   }
 });
+
+test("legal and information pages render only the shared site header and footer", async ({ page }) => {
+  for (const path of ["/about", "/contact", "/privacy-policy", "/terms", "/disclaimer"]) {
+    await page.goto(path);
+    await expect(page.locator("header")).toHaveCount(1);
+    await expect(page.locator("footer")).toHaveCount(1);
+  }
+});
