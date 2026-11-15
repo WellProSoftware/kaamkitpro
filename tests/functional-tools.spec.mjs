@@ -478,6 +478,7 @@ test("BMI Calculator updates BMI and category from entered measurements", async 
 test("Age Calculator shows years, months, and days after a birth date is entered", async ({ page }) => {
   await page.goto("/tools/age-calculator");
   await expect(page.getByRole("heading", { name: "Age Calculator", exact: true })).toBeVisible();
+  await page.waitForTimeout(500); // Ensure the client date-change and calculate handlers are hydrated.
   await page.getByLabel("Date of Birth").fill("2000-01-01");
   await page.getByRole("button", { name: "Calculate Age", exact: true }).click();
   await expect(page.getByText("Years", { exact: true })).toBeVisible();
