@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-type AccountUser = { id: string; email: string | null };
+type AccountUser = { id: string; email: string | null; full_name?: string | null };
 type AccountSubscription = {
   id: string;
   status: string;
@@ -107,7 +107,8 @@ export default function AccountPage() {
           {user ? (
             <div className="mt-6 rounded-2xl bg-slate-50 p-4">
               <p className="text-sm text-slate-500">Signed in as</p>
-              <p className="mt-1 break-all font-semibold">{user.email || "Email not available"}</p>
+              <p className="mt-1 font-semibold">{user.full_name || "Name not provided"}</p>
+              <p className="mt-1 break-all text-sm text-slate-700">{user.email || "Email not available"}</p>
               <p className="mt-2 text-xs text-slate-500">Account ID: {user.id}</p>
             </div>
           ) : null}
