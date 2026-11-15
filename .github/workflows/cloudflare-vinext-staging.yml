@@ -645,3 +645,5 @@ jobs:
             }
           }
           NODE
+
+# Recovery trigger: restore the isolated staging Worker after release-candidate config testing.
