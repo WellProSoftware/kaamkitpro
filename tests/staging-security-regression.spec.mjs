@@ -315,4 +315,32 @@ test("live subscription cancellation is gated by explicit live-payments authoriz
   const source = await readFile(new URL("../src/app/api/billing/cancel/route.ts", import.meta.url), "utf8");
   expect(source).toContain('getServerEnv("RAZORPAY_LIVE_PAYMENTS_ENABLED")');
   expect(source).toContain('mode === "live" && livePaymentsEnabled !== "true"');
+
+
+  test("email signup and password login stay on the approved account flow", async () => {
+    const login = await readFile(new URL("../src/app/login/page.tsx", import.meta.url), "utf8");
+    const callback = await readFile(new URL("../src/app/auth/callback/page.tsx", import.meta.url), "utf8");
+    const setPassword = await readFile(new URL("../src/app/set-password/page.tsx", import.meta.url), "utf8");
+
+    expect(login).toContain('requestJson(`signup?redirect_to=${encodeURIComponent(redirectTo)}`');
+    expect(login).toContain('requestJson("token?grant_type=password"');
+    expect(login).toContain("Send verification email");
+    expect(login).toContain("Already verified? Sign in");
+    expect(login).toContain("An account already exists with this email address");
+    expect(login).toContain("Forgot / Reset password?");
+    expect(login).toContain('requestJson(`recover?redirect_to=${encodeURIComponent(redirectTo)}`');
+    expect(callback).toContain('flow === "signup" ? "/set-password" : flow === "reset" ? "/reset-password"');
+    expect(setPassword).toContain("/api/auth/password");
+
+    // Keep social sign-in, phone/OTP login, and legacy OTP UI out of the public login page.
+    expect(login).not.toMatch(/signInWithOtp|signInWithOAuth|Continue with Google|Sign in with Google|Phone number|Mobile number|Send OTP/i);
+  });
+
+  test("email callback validates signup versus recovery links and removes one-time tokens", async () => {
+    const callback = await readFile(new URL("../src/app/auth/callback/page.tsx", import.meta.url), "utf8");
+    expect(callback).toContain('flow === "signup" ? "signup" : flow === "reset" ? "recovery"');
+    expect(callback).toContain("linkType !== expectedType");
+    expect(callback).toContain('window.history.replaceState(null, "", "/auth/callback")');
+    expect(callback).toContain('flow === "reset" ? "/reset-password"');
+  });
 });
