@@ -315,9 +315,9 @@ test("live subscription cancellation is gated by explicit live-payments authoriz
   const source = await readFile(new URL("../src/app/api/billing/cancel/route.ts", import.meta.url), "utf8");
   expect(source).toContain('getServerEnv("RAZORPAY_LIVE_PAYMENTS_ENABLED")');
   expect(source).toContain('mode === "live" && livePaymentsEnabled !== "true"');
+});
 
-
-  test("email signup and password login stay on the approved account flow", async () => {
+test("email signup and password login stay on the approved account flow", async () => {
     const login = await readFile(new URL("../src/app/login/page.tsx", import.meta.url), "utf8");
     const callback = await readFile(new URL("../src/app/auth/callback/page.tsx", import.meta.url), "utf8");
     const setPassword = await readFile(new URL("../src/app/set-password/page.tsx", import.meta.url), "utf8");
@@ -343,4 +343,3 @@ test("live subscription cancellation is gated by explicit live-payments authoriz
     expect(callback).toContain('window.history.replaceState(null, "", "/auth/callback")');
     expect(callback).toContain('flow === "reset" ? "/reset-password"');
   });
-});
