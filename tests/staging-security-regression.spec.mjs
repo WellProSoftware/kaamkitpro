@@ -316,7 +316,9 @@ test("live subscription cancellation is gated by explicit live-payments authoriz
   expect(source).toContain('getServerEnv("RAZORPAY_LIVE_PAYMENTS_ENABLED")');
   expect(source).toContain('mode === "live" && livePaymentsEnabled !== "true"');
 
-  test("signed-in support chat sends a ticket and displays an admin reply after refresh", async ({ page }) => {
+});
+
+test("signed-in support chat sends a ticket and displays an admin reply after refresh", async ({ page }) => {
     let storedMessages = [];
     const conversationId = "b1a6a3d2-8f14-4d89-9a0e-3a9e6a9a1001";
     await page.route("**/api/auth/session", route => route.fulfill({
@@ -369,10 +371,6 @@ test("live subscription cancellation is gated by explicit live-payments authoriz
   });
 
   test("account menu shows the signed-in user's name, email, access and sign-out action", async ({ page }) => {
-    await page.route("**/api/auth/session", route => route.fulfill({
-      status: 200, contentType: "application/json",
-      body: JSON.stringify({ user: { id: "staging-user-2", email: "member@example.invalid", full_name: "Test Member" } }),
-    }));
     await page.route("**/api/access", route => route.fulfill({
       status: 200, contentType: "application/json",
       body: JSON.stringify({ isAdmin: false, isPro: false, plan: "free" }),
@@ -389,7 +387,7 @@ test("live subscription cancellation is gated by explicit live-payments authoriz
     });
 
     await page.goto("/");
-    await page.getByRole("button", { name: /Test Member/ }).click();
+    await page.getByRole("button", { name: "Open account menu" }).click();
     const menu = page.getByRole("menu");
     await expect(menu.getByText("Test Member", { exact: true })).toBeVisible();
     await expect(menu.getByText("member@example.invalid", { exact: true })).toBeVisible();
