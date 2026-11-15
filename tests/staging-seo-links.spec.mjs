@@ -63,3 +63,24 @@ test("legal and information pages render only the shared site header and footer"
     await expect(page.locator("footer")).toHaveCount(1);
   }
 });
+
+
+test("every tool listed on the homepage opens a reachable tool page", async ({ page, request }) => {
+  await page.goto("/");
+  const routes = await page.locator('a[href^="/tools/"]').evaluateAll((anchors) =>
+    [...new Set(anchors.map((anchor) => anchor.getAttribute("href")).filter(Boolean))]
+      .filter((href) => !["/tools/pdf", "/tools/image", "/tools/calculators", "/tools/developer", "/tools/text", "/tools/seo", "/tools/social"].includes(href))
+  );
+
+  expect(routes.length, "homepage should expose the current curated tool collection").toBeGreaterThan(0);
+  const failures = [];
+  for (const route of routes) {
+    const response = await request.get(route, { maxRedirects: 5 });
+    if (response.status() !== 200) failures.push(`${route} returned HTTP ${response.status()}`);
+    else {
+      const html = await response.text();
+      if (!html.includes("<h1")) failures.push(`${route} did not render a page heading`);
+    }
+  }
+  expect(failures, failures.join("\\n")).toEqual([]);
+});
