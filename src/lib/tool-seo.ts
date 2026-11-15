@@ -305,6 +305,8 @@ export function getToolSeo(slug: string): ToolSeo | undefined {
   return toolSeo[slug];
 }
 
+const isStagingBuild = process.env.KAAMKITPRO_STAGING === "true" || process.env.VERCEL_ENV === "preview";
+
 export function createToolSeoMetadata(slug: string): Metadata | undefined {
   const seo = getToolSeo(slug);
 
@@ -337,8 +339,15 @@ export function createToolSeoMetadata(slug: string): Metadata | undefined {
       description: seo.description,
     },
     robots: {
-      index: true,
-      follow: true,
+      index: !isStagingBuild,
+      follow: !isStagingBuild,
+      googleBot: {
+        index: !isStagingBuild,
+        follow: !isStagingBuild,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
     },
   };
 }
