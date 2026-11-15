@@ -315,6 +315,89 @@ test("live subscription cancellation is gated by explicit live-payments authoriz
   const source = await readFile(new URL("../src/app/api/billing/cancel/route.ts", import.meta.url), "utf8");
   expect(source).toContain('getServerEnv("RAZORPAY_LIVE_PAYMENTS_ENABLED")');
   expect(source).toContain('mode === "live" && livePaymentsEnabled !== "true"');
+
+  test("signed-in support chat sends a ticket and displays an admin reply after refresh", async ({ page }) => {
+    let storedMessages = [];
+    const conversationId = "b1a6a3d2-8f14-4d89-9a0e-3a9e6a9a1001";
+    await page.route("**/api/auth/session", route => route.fulfill({
+      status: 200, contentType: "application/json",
+      body: JSON.stringify({ user: { id: "staging-user-1", email: "member@example.invalid", full_name: "Test Member" } }),
+    }));
+    await page.route("**/api/access", route => route.fulfill({
+      status: 200, contentType: "application/json",
+      body: JSON.stringify({ isAdmin: false, isPro: false, plan: "free" }),
+    }));
+    await page.route("**/api/support", async route => {
+      if (route.request().method() === "POST") {
+        const payload = route.request().postDataJSON();
+        expect(payload.message).toBe("Please help me with my account.");
+        storedMessages = [{
+          id: "user-message-1", sender_role: "user",
+          body: payload.message, created_at: "2026-11-15T10:00:00.000Z",
+        }];
+        await route.fulfill({
+          status: 201, contentType: "application/json",
+          body: JSON.stringify({ conversation: {
+            id: conversationId, subject: payload.message, status: "open", messages: storedMessages,
+          } }),
+        });
+        return;
+      }
+      await route.fulfill({
+        status: 200, contentType: "application/json",
+        body: JSON.stringify({ conversation: storedMessages.length ? {
+          id: conversationId, subject: "Account help", status: "waiting_user",
+          messages: [...storedMessages, {
+            id: "admin-message-1", sender_role: "admin",
+            body: "We have received your request and will help shortly.",
+            created_at: "2026-11-15T10:01:00.000Z",
+          }],
+        } : null }),
+      });
+    });
+
+    await page.goto("/");
+    await page.getByRole("button", { name: "Help / Support" }).click();
+    const composer = page.getByRole("textbox", { name: "Type your message…" });
+    await expect(composer).toBeEnabled();
+    await composer.fill("Please help me with my account.");
+    await page.getByRole("button", { name: "Send", exact: true }).click();
+    await expect(page.getByText("Please help me with my account.", { exact: true })).toBeVisible();
+    await expect(page.getByText("Thanks for your message.", { exact: false })).toBeVisible();
+    await page.getByRole("button", { name: "Refresh" }).click();
+    await expect(page.getByText("We have received your request and will help shortly.", { exact: true })).toBeVisible();
+  });
+
+  test("account menu shows the signed-in user's name, email, access and sign-out action", async ({ page }) => {
+    await page.route("**/api/auth/session", route => route.fulfill({
+      status: 200, contentType: "application/json",
+      body: JSON.stringify({ user: { id: "staging-user-2", email: "member@example.invalid", full_name: "Test Member" } }),
+    }));
+    await page.route("**/api/access", route => route.fulfill({
+      status: 200, contentType: "application/json",
+      body: JSON.stringify({ isAdmin: false, isPro: false, plan: "free" }),
+    }));
+    await page.route("**/api/auth/session", async route => {
+      if (route.request().method() === "DELETE") {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
+      } else {
+        await route.fulfill({
+          status: 200, contentType: "application/json",
+          body: JSON.stringify({ user: { id: "staging-user-2", email: "member@example.invalid", full_name: "Test Member" } }),
+        });
+      }
+    });
+
+    await page.goto("/");
+    await page.getByRole("button", { name: /Test Member/ }).click();
+    const menu = page.getByRole("menu");
+    await expect(menu.getByText("Test Member", { exact: true })).toBeVisible();
+    await expect(menu.getByText("member@example.invalid", { exact: true })).toBeVisible();
+    await expect(menu.getByText("Free access", { exact: true })).toBeVisible();
+    await expect(menu.getByRole("menuitem", { name: "My account" })).toBeVisible();
+    await expect(menu.getByRole("menuitem", { name: "Sign out" })).toBeVisible();
+  });
+
 });
 
 test("email signup and password login stay on the approved account flow", async () => {
