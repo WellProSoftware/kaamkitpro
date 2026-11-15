@@ -11,6 +11,8 @@ async function createOnePagePdf(label) {
 test("PDF Merge lists selected files and supports removing one", async ({ page }) => {
   await page.goto("/tools/pdf-merge");
   await expect(page.getByRole("heading", { name: "PDF Merge Tool" })).toBeVisible();
+  await expect(page.locator("#pdf-upload")).toBeAttached();
+  await page.waitForTimeout(500); // Ensure the client file-change handler is hydrated before uploading.
 
   await page.locator("#pdf-upload").setInputFiles([
     {
