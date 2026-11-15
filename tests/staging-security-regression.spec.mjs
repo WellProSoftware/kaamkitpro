@@ -396,8 +396,6 @@ test("signed-in support chat sends a ticket and displays an admin reply after re
     await expect(menu.getByRole("menuitem", { name: "Sign out" })).toBeVisible();
   });
 
-});
-
 test("email signup and password login stay on the approved account flow", async () => {
     const login = await readFile(new URL("../src/app/login/page.tsx", import.meta.url), "utf8");
     const callback = await readFile(new URL("../src/app/auth/callback/page.tsx", import.meta.url), "utf8");
