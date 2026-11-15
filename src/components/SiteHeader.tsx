@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import BrandLogo from "@/components/BrandLogo";
 
-type SessionUser = { id: string; email: string | null };
+type SessionUser = { id: string; email: string | null; full_name?: string | null };
 
 export default function SiteHeader() {
   const [user, setUser] = useState<SessionUser | null>(null);
@@ -57,7 +57,8 @@ export default function SiteHeader() {
     window.location.replace("/");
   }
 
-  const initials = (user?.email || "U").split("@")[0].split(/[._-]/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "U";
+  const displayName = user?.full_name?.trim() || user?.email?.split("@")[0] || "My account";
+  const initials = displayName.split(/[\s._-]+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "U";
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 shadow-[0_8px_30px_rgba(15,23,42,0.04)] backdrop-blur-xl">
@@ -76,13 +77,13 @@ export default function SiteHeader() {
             <div className="relative" ref={menuRef}>
               <button type="button" aria-label="Open account menu" aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-slate-200 bg-white p-1.5 pr-3 text-sm font-bold text-slate-800 shadow-sm transition hover:border-blue-300 hover:bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-100">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-extrabold text-white">{initials}</span>
-                <span className="hidden max-w-36 truncate sm:inline">{user.email?.split("@")[0] || "My account"}</span>
+                <span className="hidden max-w-36 truncate sm:inline">{displayName}</span>
                 <span aria-hidden="true" className="text-xs text-slate-500">⌄</span>
               </button>
               {menuOpen ? (
                 <div role="menu" className="absolute right-0 mt-3 w-72 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
                   <div className="border-b border-slate-100 px-3 py-3">
-                    <p className="truncate text-sm font-bold text-slate-900">{user.email?.split("@")[0] || "KaamKitPro user"}</p>
+                    <p className="truncate text-sm font-bold text-slate-900">{displayName}</p>
                     <p className="mt-1 break-all text-xs text-slate-500">{user.email}</p>
                     <div className="mt-2 flex flex-wrap gap-2"><span className="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">{access?.isAdmin ? "Admin access" : "Free access"}</span><span className="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">All tools currently free</span></div>
                   </div>
