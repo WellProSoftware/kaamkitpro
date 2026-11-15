@@ -109,3 +109,28 @@ test("all curated tool pages have unique titles, useful descriptions and correct
 
   expect(failures, failures.join("\n")).toEqual([]);
 });
+
+test("document conversion tools provide accurate visible guides and FAQs", async ({ page }) => {
+  const routes = [
+    "/tools/pdf-to-excel",
+    "/tools/pdf-to-word",
+    "/tools/jpg-to-excel",
+    "/tools/jpg-to-word",
+    "/tools/item-master-matcher",
+    "/tools/excel-combiner",
+  ];
+  const failures = [];
+  for (const route of routes) {
+    await page.goto(route);
+    const headings = (await page.locator("h2").allTextContents()).map(text => text.trim().toLowerCase());
+    if (!headings.some(text => text.includes("how to use"))) failures.push(`${route}: missing visible usage guide`);
+    if (!headings.some(text => text.includes("frequently asked questions"))) failures.push(`${route}: missing visible FAQs`);
+    const faqCount = await page.locator("details summary").count();
+    if (faqCount < 5) failures.push(`${route}: expected at least five practical FAQs, found ${faqCount}`);
+    const canonical = await page.locator('link[rel="canonical"]').getAttribute("href");
+    if (canonical !== `https://kaamkitpro.com${route}`) failures.push(`${route}: incorrect canonical URL (${canonical})`);
+    const robots = await page.locator('meta[name="robots"]').getAttribute("content");
+    if (!robots || !/noindex/i.test(robots)) failures.push(`${route}: staging noindex missing`);
+  }
+  expect(failures, failures.join("\\n")).toEqual([]);
+});
