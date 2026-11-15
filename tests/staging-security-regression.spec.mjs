@@ -85,6 +85,40 @@ test.describe("staging security regression checks", () => {
     expect(revoke.status()).toBe(401);
   });
 
+
+  test("support chat and admin replies remain protected for signed-out users", async ({ request }) => {
+    const userInbox = await request.get("/api/support");
+    expect(userInbox.status()).toBe(401);
+
+    const userMessage = await request.post("/api/support", {
+      headers: { Origin: "http://127.0.0.1:4173" },
+      data: { message: "Unauthenticated support regression test." },
+    });
+    expect(userMessage.status()).toBe(401);
+
+    const adminInbox = await request.get("/api/admin/support");
+    expect(adminInbox.status()).toBe(401);
+
+    const adminReply = await request.post("/api/admin/support", {
+      headers: { Origin: "http://127.0.0.1:4173" },
+      data: {
+        conversation_id: "a80a66cc-5f2f-4cfd-a1bf-7c71ec3d73d8",
+        message: "Unauthenticated admin reply regression test.",
+      },
+    });
+    expect(adminReply.status()).toBe(401);
+  });
+
+  test("support chat enforces conversation ownership and admin-only replies", async () => {
+    const userApi = await readFile(new URL("../src/app/api/support/route.ts", import.meta.url), "utf8");
+    const adminApi = await readFile(new URL("../src/app/api/admin/support/route.ts", import.meta.url), "utf8");
+    expect(userApi).toContain('user_id=eq.${encodeURIComponent(user.id)}');
+    expect(userApi).toContain('user_id=eq.${encodeURIComponent(user.id)}&limit=1');
+    expect(userApi).toContain('sender_role: "user"');
+    expect(adminApi).toContain("isAuthorizedAdmin(user.email)");
+    expect(adminApi).toContain('sender_role: "admin"');
+  });
+
   test("quota API rejects malformed input but allows valid tools during temporary free-Pro mode", async ({ request }) => {
     const malformed = await request.post("/api/tools/usage", {
       data: { action: "check" },
