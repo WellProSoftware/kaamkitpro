@@ -39,7 +39,6 @@ test("public SEO pages expose canonical URLs and staging noindex", async ({ page
   }
 });
 
-
 test("public internal links do not expose retired tools or guides", async ({ page }) => {
   await page.goto("/");
   for (const route of ["/tools/emi-calculator", "/tools/percentage-calculator", "/tools/pdf-protect", "/guides/qr-code"]) {
@@ -64,7 +63,6 @@ test("legal and information pages render only the shared site header and footer"
   }
 });
 
-
 test("every tool listed on the homepage opens a reachable tool page", async ({ page, request }) => {
   await page.goto("/");
   const routes = await page.locator('a[href^="/tools/"]').evaluateAll((anchors) =>
@@ -72,7 +70,7 @@ test("every tool listed on the homepage opens a reachable tool page", async ({ p
       .filter((href) => !["/tools/pdf", "/tools/image", "/tools/calculators", "/tools/developer", "/tools/text", "/tools/seo", "/tools/social"].includes(href))
   );
 
-  expect(routes.length, "homepage should expose the current curated tool collection").toBeGreaterThan(0);
+  expect(routes.length, "homepage should expose the current curated tool collection").toBe(28);
   const failures = [];
   for (const route of routes) {
     const response = await request.get(route, { maxRedirects: 5 });
@@ -82,5 +80,32 @@ test("every tool listed on the homepage opens a reachable tool page", async ({ p
       if (!html.includes("<h1")) failures.push(`${route} did not render a page heading`);
     }
   }
-  expect(failures, failures.join("\\n")).toEqual([]);
+  expect(failures, failures.join("\n")).toEqual([]);
+});
+
+test("all curated tool pages have unique titles, useful descriptions and correct canonical URLs", async ({ page }) => {
+  await page.goto("/");
+  const routes = await page.locator('a[href^="/tools/"]').evaluateAll((anchors) =>
+    [...new Set(anchors.map((anchor) => anchor.getAttribute("href")).filter(Boolean))]
+      .filter((href) => !["/tools/pdf", "/tools/image", "/tools/calculators", "/tools/developer", "/tools/text", "/tools/seo", "/tools/social"].includes(href))
+  );
+
+  const titles = new Set();
+  const failures = [];
+  for (const route of routes) {
+    await page.goto(route);
+    const title = (await page.title()).replace(/\s*\|\s*KaamKitPro\s*$/i, "").trim();
+    const description = await page.locator('meta[name="description"]').getAttribute("content");
+    const canonical = await page.locator('link[rel="canonical"]').getAttribute("href");
+    const robots = await page.locator('meta[name="robots"]').getAttribute("content");
+
+    if (!title || title.length < 12) failures.push(`${route}: missing or weak title`);
+    if (titles.has(title.toLowerCase())) failures.push(`${route}: duplicate title "${title}"`);
+    titles.add(title.toLowerCase());
+    if (!description || description.trim().length < 60) failures.push(`${route}: missing or thin meta description`);
+    if (!canonical || canonical.replace(/\/$/, "") !== `https://kaamkitpro.com${route}`) failures.push(`${route}: incorrect canonical URL (${canonical})`);
+    if (!robots || !/noindex/i.test(robots)) failures.push(`${route}: staging noindex missing`);
+  }
+
+  expect(failures, failures.join("\n")).toEqual([]);
 });
