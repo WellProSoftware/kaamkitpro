@@ -47,6 +47,8 @@ test("PDF Split downloads every source page as a valid separate PDF", async ({ p
 
   await page.goto("/tools/pdf-split");
   await expect(page.getByRole("heading", { name: "PDF Split Tool", exact: true })).toBeVisible();
+  await expect(page.locator("#pdf-file")).toBeAttached();
+  await page.waitForTimeout(500); // Let the client file-change handler hydrate before upload.
 
   // Set the file directly on the input. Clicking the styled dropzone is flaky
   // in Chromium because the hidden input is covered by the dropzone and sticky header.
