@@ -136,3 +136,45 @@ test("Image Rotate downloads a valid JPEG after a 90-degree rotation", async ({ 
   expect(dimensions).toEqual({ width: 1, height: 2 });
   await expect(page.getByText("Image rotated successfully.")).toBeVisible();
 });
+
+
+test("Image Grayscale preserves dimensions and produces grayscale JPEG pixels", async ({ page }) => {
+  await page.goto("/tools/image-grayscale");
+  const pngDataUrl = await page.evaluate(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 2;
+    canvas.height = 1;
+    const context = canvas.getContext("2d");
+    context.fillStyle = "#ff0000";
+    context.fillRect(0, 0, 2, 1);
+    return canvas.toDataURL("image/png");
+  });
+  await page.locator("#grayscale-file").setInputFiles({
+    name: "red-source.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(pngDataUrl.split(",")[1], "base64"),
+  });
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Convert to Grayscale" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-grayscale.jpg");
+  const output = await readFile(await download.path());
+  expect(output[0]).toBe(0xff);
+  expect(output[1]).toBe(0xd8);
+  const pixels = await page.evaluate(async (base64) => {
+    const image = new Image();
+    image.src = `data:image/jpeg;base64,${base64}`;
+    await image.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0);
+    const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
+    return { width: canvas.width, height: canvas.height, red: data[0], green: data[1], blue: data[2] };
+  }, output.toString("base64"));
+  expect(pixels.width).toBe(2);
+  expect(pixels.height).toBe(1);
+  expect(Math.max(pixels.red, pixels.green, pixels.blue) - Math.min(pixels.red, pixels.green, pixels.blue)).toBeLessThanOrEqual(8);
+  await expect(page.getByText("Grayscale image created successfully.")).toBeVisible();
+});
