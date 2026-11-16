@@ -178,3 +178,94 @@ test("Image Grayscale preserves dimensions and produces grayscale JPEG pixels", 
   expect(Math.max(pixels.red, pixels.green, pixels.blue) - Math.min(pixels.red, pixels.green, pixels.blue)).toBeLessThanOrEqual(8);
   await expect(page.getByText("Grayscale image created successfully.")).toBeVisible();
 });
+
+
+test("Image Flip mirrors pixels horizontally and preserves dimensions", async ({ page }) => {
+  await page.goto("/tools/image-flip");
+  const pngDataUrl = await page.evaluate(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 2;
+    canvas.height = 1;
+    const context = canvas.getContext("2d");
+    context.fillStyle = "#ff0000";
+    context.fillRect(0, 0, 1, 1);
+    context.fillStyle = "#0000ff";
+    context.fillRect(1, 0, 1, 1);
+    return canvas.toDataURL("image/png");
+  });
+  await page.locator("#flip-file").setInputFiles({
+    name: "two-colors.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(pngDataUrl.split(",")[1], "base64"),
+  });
+  await page.locator("select").selectOption("horizontal");
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Flip & Download" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-flipped.jpg");
+  const output = await readFile(await download.path());
+  const pixels = await page.evaluate(async (base64) => {
+    const image = new Image();
+    image.src = `data:image/jpeg;base64,${base64}`;
+    await image.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0);
+    const data = context.getImageData(0, 0, 2, 1).data;
+    return {
+      width: canvas.width,
+      height: canvas.height,
+      left: [data[0], data[1], data[2]],
+      right: [data[4], data[5], data[6]],
+    };
+  }, output.toString("base64"));
+  expect(pixels.width).toBe(2);
+  expect(pixels.height).toBe(1);
+  expect(pixels.left[2]).toBeGreaterThan(pixels.left[0]);
+  expect(pixels.right[0]).toBeGreaterThan(pixels.right[2]);
+  await expect(page.getByText("Image flipped successfully.")).toBeVisible();
+});
+
+test("Image Brightness increases pixel intensity and preserves dimensions", async ({ page }) => {
+  await page.goto("/tools/image-brightness");
+  const pngDataUrl = await page.evaluate(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    const context = canvas.getContext("2d");
+    context.fillStyle = "#646464";
+    context.fillRect(0, 0, 1, 1);
+    return canvas.toDataURL("image/png");
+  });
+  await page.locator("#brightness-file").setInputFiles({
+    name: "gray.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(pngDataUrl.split(",")[1], "base64"),
+  });
+  await page.locator('input[type="range"]').fill("160");
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Adjust & Download" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-brightness.jpg");
+  const output = await readFile(await download.path());
+  const pixel = await page.evaluate(async (base64) => {
+    const image = new Image();
+    image.src = `data:image/jpeg;base64,${base64}`;
+    await image.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0);
+    const data = context.getImageData(0, 0, 1, 1).data;
+    return { width: canvas.width, height: canvas.height, red: data[0], green: data[1], blue: data[2] };
+  }, output.toString("base64"));
+  expect(pixel.width).toBe(1);
+  expect(pixel.height).toBe(1);
+  expect(pixel.red).toBeGreaterThan(90);
+  expect(pixel.green).toBeGreaterThan(90);
+  expect(pixel.blue).toBeGreaterThan(90);
+  await expect(page.getByText("Brightness adjusted successfully.")).toBeVisible();
+});
