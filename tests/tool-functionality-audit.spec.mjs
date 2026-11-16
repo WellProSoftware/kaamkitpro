@@ -104,10 +104,16 @@ test("PDF Split downloads a valid one-page PDF", async ({ page }) => {
 
 test("Image Rotate downloads a valid JPEG after a 90-degree rotation", async ({ page }) => {
   await page.goto("/tools/image-rotate");
-  const png = Buffer.from(
-    "iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAIAAACQd1PeAAAADUlEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC",
-    "base64"
-  );
+  const pngDataUrl = await page.evaluate(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 2;
+    canvas.height = 1;
+    const context = canvas.getContext("2d");
+    context.fillStyle = "#ff0000";
+    context.fillRect(0, 0, 2, 1);
+    return canvas.toDataURL("image/png");
+  });
+  const png = Buffer.from(pngDataUrl.split(",")[1], "base64");
   await page.locator("#rotate-file").setInputFiles({
     name: "tiny.png",
     mimeType: "image/png",
