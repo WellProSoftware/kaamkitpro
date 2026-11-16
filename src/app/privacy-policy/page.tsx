@@ -1,4 +1,18 @@
 import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description:
+    "Read how KaamKitPro handles information, cookies, analytics, advertising, privacy choices and user data.",
+  alternates: {
+    canonical: "/privacy-policy",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
 export default function PrivacyPolicyPage() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900"><section className="bg-white">
