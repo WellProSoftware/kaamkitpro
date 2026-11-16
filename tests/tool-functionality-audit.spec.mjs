@@ -173,8 +173,8 @@ test("Image Grayscale preserves dimensions and produces grayscale JPEG pixels", 
     const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
     return { width: canvas.width, height: canvas.height, red: data[0], green: data[1], blue: data[2] };
   }, output.toString("base64"));
-  expect(pixels.width).toBe(2);
-  expect(pixels.height).toBe(1);
+  expect(pixels.width).toBe(20);
+  expect(pixels.height).toBe(10);
   expect(Math.max(pixels.red, pixels.green, pixels.blue) - Math.min(pixels.red, pixels.green, pixels.blue)).toBeLessThanOrEqual(8);
   await expect(page.getByText("Grayscale image created successfully.")).toBeVisible();
 });
@@ -184,13 +184,13 @@ test("Image Flip mirrors pixels horizontally and preserves dimensions", async ({
   await page.goto("/tools/image-flip");
   const pngDataUrl = await page.evaluate(() => {
     const canvas = document.createElement("canvas");
-    canvas.width = 2;
-    canvas.height = 1;
+    canvas.width = 20;
+    canvas.height = 10;
     const context = canvas.getContext("2d");
     context.fillStyle = "#ff0000";
-    context.fillRect(0, 0, 1, 1);
+    context.fillRect(0, 0, 10, 10);
     context.fillStyle = "#0000ff";
-    context.fillRect(1, 0, 1, 1);
+    context.fillRect(10, 0, 10, 10);
     return canvas.toDataURL("image/png");
   });
   await page.locator("#flip-file").setInputFiles({
@@ -213,12 +213,13 @@ test("Image Flip mirrors pixels horizontally and preserves dimensions", async ({
     canvas.height = image.naturalHeight;
     const context = canvas.getContext("2d");
     context.drawImage(image, 0, 0);
-    const data = context.getImageData(0, 0, 2, 1).data;
+    const data = context.getImageData(0, 0, canvas.width, canvas.height).data;
+    const sample = (x) => { const index = (5 * canvas.width + x) * 4; return [data[index], data[index + 1], data[index + 2]]; };
     return {
       width: canvas.width,
       height: canvas.height,
-      left: [data[0], data[1], data[2]],
-      right: [data[4], data[5], data[6]],
+      left: sample(5),
+      right: sample(15),
     };
   }, output.toString("base64"));
   expect(pixels.width).toBe(2);
