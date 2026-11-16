@@ -306,7 +306,7 @@ test("Image Flip mirrors pixels vertically and preserves dimensions", async ({ p
     const context = canvas.getContext("2d");
     context.drawImage(image, 0, 0);
     const data = context.getImageData(0, 0, canvas.width, canvas.height).data;
-    const sample = (y) => { const index = (5 * canvas.width + y) * 4; return [data[index], data[index + 1], data[index + 2]]; };
+    const sample = (y) => { const index = (y * canvas.width + 5) * 4; return [data[index], data[index + 1], data[index + 2]]; };
     return { width: canvas.width, height: canvas.height, top: sample(5), bottom: sample(15) };
   }, output.toString("base64"));
   expect(pixels.width).toBe(10);
