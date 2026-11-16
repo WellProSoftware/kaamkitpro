@@ -387,7 +387,7 @@ test("PDF Compressor downloads a readable PDF and reports its size result", asyn
   expect(download.suggestedFilename()).toBe("kaamkitpro-compressed.pdf");
   const output = await PDFDocument.load(await readFile(await download.path()));
   expect(output.getPageCount()).toBe(2);
-  await expect(page.getByText(/PDF compressed successfully|already optimized/)).toBeVisible();
+  await expect(page.getByText("PDF compressed successfully.", { exact: true })).toBeVisible();
   await expect(page.getByText("New Size", { exact: true })).toBeVisible();
 });
 
@@ -432,7 +432,7 @@ test("JPG to PDF combines two uploaded images into a two-page PDF", async ({ pag
   })));
   await expect(page.getByText("2 images", { exact: true })).toBeVisible();
   const downloadPromise = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Create PDF" }).click();
+  await page.getByRole("button", { name: "Convert to PDF" }).click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe("kaamkitpro-images.pdf");
   const output = await PDFDocument.load(await readFile(await download.path()));
