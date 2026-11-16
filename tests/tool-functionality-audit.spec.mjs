@@ -127,5 +127,12 @@ test("Image Rotate downloads a valid JPEG after a 90-degree rotation", async ({ 
   const output = await readFile(await download.path());
   expect(output[0]).toBe(0xff);
   expect(output[1]).toBe(0xd8);
+  const dimensions = await page.evaluate(async (base64) => {
+    const image = new Image();
+    image.src = `data:image/jpeg;base64,${base64}`;
+    await image.decode();
+    return { width: image.naturalWidth, height: image.naturalHeight };
+  }, output.toString("base64"));
+  expect(dimensions).toEqual({ width: 1, height: 2 });
   await expect(page.getByText("Image rotated successfully.")).toBeVisible();
 });
