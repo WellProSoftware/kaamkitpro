@@ -22,8 +22,8 @@ test("BMI calculator returns a numeric result and category", async ({ page }) =>
   await page.goto("/tools/bmi-calculator");
   await page.locator('input[type="number"]').nth(0).fill("70");
   await page.locator('input[type="number"]').nth(1).fill("175");
-  await expect(page.getByText("22.9", { exact: true })).toBeVisible();
-  await expect(page.getByText("Normal", { exact: true })).toBeVisible();
+  await expect(page.locator("p.text-5xl")).toHaveText("22.9");
+  await expect(page.locator("div.bg-blue-50 p.text-lg")).toHaveText("Normal");
 });
 
 test("SIP calculator handles zero return and calculates invested amount", async ({ page }) => {
@@ -31,8 +31,8 @@ test("SIP calculator handles zero return and calculates invested amount", async 
   await page.locator('input[type="number"]').nth(0).fill("5000");
   await page.locator('input[type="number"]').nth(1).fill("0");
   await page.locator('input[type="number"]').nth(2).fill("1");
-  await expect(page.getByText("₹60,000", { exact: true })).toBeVisible();
-  await expect(page.getByText("₹0", { exact: true })).toBeVisible();
+  await expect(page.locator("div.rounded-2xl.bg-blue-50 p.text-3xl")).toHaveText("₹60,000");
+  await expect(page.locator("div.rounded-2xl.bg-emerald-50 p.text-3xl")).toHaveText("₹0");
 });
 
 test("age calculator calculates date components and rejects a future date", async ({ page }) => {
