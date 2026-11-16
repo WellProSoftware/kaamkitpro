@@ -685,8 +685,10 @@ test("PDF converters do not create empty files for scanned PDFs without selectab
       mimeType: "application/pdf",
       buffer: blankPdf,
     });
+    const convertButton = page.getByRole("button", { name: route.endsWith("excel") ? "Convert to Excel" : "Convert to Word" });
+    await expect(convertButton).toBeEnabled();
     const downloadPromise = page.waitForEvent("download", { timeout: 2000 }).catch(() => null);
-    await page.getByRole("button", { name: route.endsWith("excel") ? "Convert to Excel" : "Convert to Word" }).click();
+    await convertButton.click();
     await expect(page.getByRole("status")).toContainText("No selectable text was found");
     await expect(page.getByRole("status")).toContainText("No output file was created");
     expect(await downloadPromise).toBeNull();
