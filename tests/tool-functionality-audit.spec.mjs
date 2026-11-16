@@ -63,3 +63,24 @@ test("PDF Merge downloads a valid PDF containing pages from both inputs", async 
   expect(output.getPageCount()).toBe(3);
   await expect(page.getByText("PDFs merged successfully.")).toBeVisible();
 });
+
+test("PDF Rotate downloads a PDF with the selected page rotation", async ({ page }) => {
+  await page.goto("/tools/pdf-rotate");
+  const source = await PDFDocument.create();
+  source.addPage([300, 400]);
+  const input = await source.save();
+  await page.locator("#pdf-file").setInputFiles({
+    name: "portrait.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from(input),
+  });
+  await page.locator("#angle").selectOption("90");
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Rotate & Download PDF" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-rotated.pdf");
+  const output = await PDFDocument.load(await readFile(await download.path()));
+  expect(output.getPageCount()).toBe(1);
+  expect(output.getPage(0).getRotation().angle).toBe(90);
+  await expect(page.getByText("PDF rotated 90° successfully.")).toBeVisible();
+});
