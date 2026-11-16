@@ -270,3 +270,48 @@ test("Image Brightness increases pixel intensity and preserves dimensions", asyn
   expect(pixel.blue).toBeGreaterThan(90);
   await expect(page.getByText("Brightness adjusted successfully.")).toBeVisible();
 });
+
+
+test("Image Flip mirrors pixels vertically and preserves dimensions", async ({ page }) => {
+  await page.goto("/tools/image-flip");
+  const pngDataUrl = await page.evaluate(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 10;
+    canvas.height = 20;
+    const context = canvas.getContext("2d");
+    context.fillStyle = "#ff0000";
+    context.fillRect(0, 0, 10, 10);
+    context.fillStyle = "#0000ff";
+    context.fillRect(0, 10, 10, 10);
+    return canvas.toDataURL("image/png");
+  });
+  await page.locator("#flip-file").setInputFiles({
+    name: "vertical-colors.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(pngDataUrl.split(",")[1], "base64"),
+  });
+  await page.locator("select").selectOption("vertical");
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Flip & Download" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-flipped.jpg");
+  const output = await readFile(await download.path());
+  const pixels = await page.evaluate(async (base64) => {
+    const image = new Image();
+    image.src = `data:image/jpeg;base64,${base64}`;
+    await image.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0);
+    const data = context.getImageData(0, 0, canvas.width, canvas.height).data;
+    const sample = (y) => { const index = (5 * canvas.width + y) * 4; return [data[index], data[index + 1], data[index + 2]]; };
+    return { width: canvas.width, height: canvas.height, top: sample(5), bottom: sample(15) };
+  }, output.toString("base64"));
+  expect(pixels.width).toBe(10);
+  expect(pixels.height).toBe(20);
+  expect(pixels.top[2]).toBeGreaterThan(pixels.top[0]);
+  expect(pixels.bottom[0]).toBeGreaterThan(pixels.bottom[2]);
+  await expect(page.getByText("Image flipped successfully.")).toBeVisible();
+});
