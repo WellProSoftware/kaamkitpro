@@ -315,3 +315,127 @@ test("Image Flip mirrors pixels vertically and preserves dimensions", async ({ p
   expect(pixels.bottom[0]).toBeGreaterThan(pixels.bottom[2]);
   await expect(page.getByText("Image flipped successfully.")).toBeVisible();
 });
+
+
+test("PDF Page Number adds numbering and downloads a valid PDF", async ({ page }) => {
+  await page.goto("/tools/pdf-page-number");
+  await page.locator("#pdf-file").setInputFiles({
+    name: "two-pages.pdf",
+    mimeType: "application/pdf",
+    buffer: await makePdf(2),
+  });
+  await page.locator("#position").selectOption("top-right");
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Add Numbers & Download" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-numbered.pdf");
+  const output = await PDFDocument.load(await readFile(await download.path()));
+  expect(output.getPageCount()).toBe(2);
+  await expect(page.getByText("Page numbers added successfully.")).toBeVisible();
+});
+
+test("PDF Watermark adds text and downloads a valid PDF", async ({ page }) => {
+  await page.goto("/tools/pdf-watermark");
+  await page.locator("#pdf-file").setInputFiles({
+    name: "source.pdf",
+    mimeType: "application/pdf",
+    buffer: await makePdf(1),
+  });
+  await page.locator("#watermark").fill("INTERNAL REVIEW");
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Add Watermark & Download" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-watermarked.pdf");
+  const output = await PDFDocument.load(await readFile(await download.path()));
+  expect(output.getPageCount()).toBe(1);
+  await expect(page.getByText("Watermark added successfully.")).toBeVisible();
+});
+
+test("PDF Metadata Editor saves entered metadata into the downloaded PDF", async ({ page }) => {
+  await page.goto("/tools/pdf-metadata");
+  await page.locator("#pdf-file").setInputFiles({
+    name: "source.pdf",
+    mimeType: "application/pdf",
+    buffer: await makePdf(1),
+  });
+  await page.locator("#title").fill("Quarterly Purchase Report");
+  await page.locator("#author").fill("Purchase Department");
+  await page.locator("#subject").fill("Vendor review");
+  await page.locator("#keywords").fill("purchase, vendor, report");
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Save Metadata & Download" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-metadata.pdf");
+  const output = await PDFDocument.load(await readFile(await download.path()));
+  expect(output.getTitle()).toBe("Quarterly Purchase Report");
+  expect(output.getAuthor()).toBe("Purchase Department");
+  expect(output.getSubject()).toBe("Vendor review");
+  expect(output.getKeywords()).toContain("vendor");
+  await expect(page.getByText("PDF metadata updated successfully.")).toBeVisible();
+});
+
+test("PDF Compressor downloads a readable PDF and reports its size result", async ({ page }) => {
+  await page.goto("/tools/pdf-compressor");
+  await page.locator("#pdf-compress").setInputFiles({
+    name: "source.pdf",
+    mimeType: "application/pdf",
+    buffer: await makePdf(2),
+  });
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Compress PDF" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-compressed.pdf");
+  const output = await PDFDocument.load(await readFile(await download.path()));
+  expect(output.getPageCount()).toBe(2);
+  await expect(page.getByText(/PDF compressed successfully|already optimized/)).toBeVisible();
+  await expect(page.getByText("New Size", { exact: true })).toBeVisible();
+});
+
+test("PDF to JPG exports each page as a valid JPEG image", async ({ page }) => {
+  await page.goto("/tools/pdf-to-jpg");
+  await page.locator("#pdf-file").setInputFiles({
+    name: "two-pages.pdf",
+    mimeType: "application/pdf",
+    buffer: await makePdf(2),
+  });
+  await expect(page.getByRole("button", { name: "Convert to JPG" })).toBeEnabled({ timeout: 15000 });
+  const downloads = [];
+  page.on("download", (download) => downloads.push(download));
+  await page.getByRole("button", { name: "Convert to JPG" }).click();
+  await expect(page.getByText("2 pages converted successfully.")).toBeVisible({ timeout: 30000 });
+  await expect.poll(() => downloads.length).toBe(2);
+  expect(downloads.map((download) => download.suggestedFilename()).sort()).toEqual(["page-1.jpg", "page-2.jpg"]);
+  for (const download of downloads) {
+    const bytes = await readFile(await download.path());
+    expect(bytes[0]).toBe(0xff);
+    expect(bytes[1]).toBe(0xd8);
+  }
+});
+
+test("JPG to PDF combines two uploaded images into a two-page PDF", async ({ page }) => {
+  await page.goto("/tools/jpg-to-pdf");
+  const images = await page.evaluate(() => {
+    return ["#ff0000", "#0000ff"].map((color) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 8;
+      canvas.height = 6;
+      const context = canvas.getContext("2d");
+      context.fillStyle = color;
+      context.fillRect(0, 0, 8, 6);
+      return canvas.toDataURL("image/png").split(",")[1];
+    });
+  });
+  await page.locator("#image-files").setInputFiles(images.map((base64, index) => ({
+    name: `image-${index + 1}.png`,
+    mimeType: "image/png",
+    buffer: Buffer.from(base64, "base64"),
+  })));
+  await expect(page.getByText("2 images", { exact: true })).toBeVisible();
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Create PDF" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-images.pdf");
+  const output = await PDFDocument.load(await readFile(await download.path()));
+  expect(output.getPageCount()).toBe(2);
+  await expect(page.getByText("PDF created successfully.")).toBeVisible();
+});
