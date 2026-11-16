@@ -173,8 +173,8 @@ test("Image Grayscale preserves dimensions and produces grayscale JPEG pixels", 
     const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
     return { width: canvas.width, height: canvas.height, red: data[0], green: data[1], blue: data[2] };
   }, output.toString("base64"));
-  expect(pixels.width).toBe(20);
-  expect(pixels.height).toBe(10);
+  expect(pixels.width).toBe(2);
+  expect(pixels.height).toBe(1);
   expect(Math.max(pixels.red, pixels.green, pixels.blue) - Math.min(pixels.red, pixels.green, pixels.blue)).toBeLessThanOrEqual(8);
   await expect(page.getByText("Grayscale image created successfully.")).toBeVisible();
 });
@@ -222,8 +222,8 @@ test("Image Flip mirrors pixels horizontally and preserves dimensions", async ({
       right: sample(15),
     };
   }, output.toString("base64"));
-  expect(pixels.width).toBe(2);
-  expect(pixels.height).toBe(1);
+  expect(pixels.width).toBe(20);
+  expect(pixels.height).toBe(10);
   expect(pixels.left[2]).toBeGreaterThan(pixels.left[0]);
   expect(pixels.right[0]).toBeGreaterThan(pixels.right[2]);
   await expect(page.getByText("Image flipped successfully.")).toBeVisible();
