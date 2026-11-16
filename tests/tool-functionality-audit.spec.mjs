@@ -84,3 +84,42 @@ test("PDF Rotate downloads a PDF with the selected page rotation", async ({ page
   expect(output.getPage(0).getRotation().angle).toBe(90);
   await expect(page.getByText("PDF rotated 90° successfully.")).toBeVisible();
 });
+
+
+test("PDF Split downloads a valid one-page PDF", async ({ page }) => {
+  await page.goto("/tools/pdf-split");
+  await page.locator("#pdf-file").setInputFiles({
+    name: "single-page.pdf",
+    mimeType: "application/pdf",
+    buffer: await makePdf(1),
+  });
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Split PDF" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("page-1.pdf");
+  const output = await PDFDocument.load(await readFile(await download.path()));
+  expect(output.getPageCount()).toBe(1);
+  await expect(page.getByText("1 page split successfully.")).toBeVisible();
+});
+
+test("Image Rotate downloads a valid JPEG after a 90-degree rotation", async ({ page }) => {
+  await page.goto("/tools/image-rotate");
+  const png = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAIAAACQd1PeAAAADUlEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC",
+    "base64"
+  );
+  await page.locator("#rotate-file").setInputFiles({
+    name: "tiny.png",
+    mimeType: "image/png",
+    buffer: png,
+  });
+  await page.locator("select").selectOption("90");
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Rotate & Download" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("kaamkitpro-rotated.jpg");
+  const output = await readFile(await download.path());
+  expect(output[0]).toBe(0xff);
+  expect(output[1]).toBe(0xd8);
+  await expect(page.getByText("Image rotated successfully.")).toBeVisible();
+});
