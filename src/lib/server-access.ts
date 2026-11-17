@@ -12,8 +12,16 @@ export function getSupabaseConfig() {
 
 export async function getRequestUser(request: NextRequest): Promise<SupabaseUser | null> {
   const config = getSupabaseConfig();
-  const token = request.cookies.get("kk_access_token")?.value;
-  if (!config || !token) return null;
+  if (!config) return null;
+  // Read the raw Cookie header first: some Workers adapters expose a partial
+  // NextRequest cookie jar. JWTs are cookie-safe, so no decoding is required.
+  const cookieHeader = request.headers.get("cookie") || "";
+  const token = cookieHeader
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith("kk_access_token="))
+    ?.slice("kk_access_token=".length);
+  if (!token) return null;
   try {
     const response = await fetch(`${config.url}/auth/v1/user`, {
       headers: { apikey: config.key, Authorization: `Bearer ${token}` },
