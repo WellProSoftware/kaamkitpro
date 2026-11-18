@@ -36,6 +36,13 @@ const guides = [
     category: "PDF Tools",
   },
   {
+    title: "How to Calculate BMI",
+    description: "Understand the adult BMI formula, convert centimetres to metres, follow a worked example and learn the limits of BMI as a screening measure.",
+    href: "/guides/bmi-calculator",
+    tool: "/tools/bmi-calculator",
+    category: "Health Calculators",
+  },
+  {
     title: "How to Calculate GST on a Price",
     description: "Understand GST-exclusive and GST-inclusive prices with formulas and worked examples.",
     href: "/guides/gst-calculator",
