@@ -40,7 +40,7 @@ export default function PricingPage() {
             <h2 className="font-bold">How access works</h2>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm sm:text-base">
               <li>Free tools remain free permanently and can be used without signup; ads may support the free service.</li>
-              <li>Paid-capacity tools offer a small trial allowance: typically 2 uses for heavier cloud processing or 3 uses per day for eligible AI/hosted tools. When the allowance is exhausted, the user is asked to subscribe to Pro to continue.</li>
+              <li>At launch, currently available tools remain accessible without signup. Any future premium-only workflows will be clearly labelled and will not remove access to existing free tools.</li>
               <li>Free-plan users see ads across the Free experience when the ad provider serves them. Once a paid Pro subscription is verified, all KaamKitPro ads are disabled site-wide for that account for the active subscription period.</li>
               <li>Pro access is granted only while an eligible paid subscription is active or an authorized admin has explicitly granted access. Admin grants can be scoped to selected tools and can expire or be revoked.</li>
               <li>Checkout on this staging branch is restricted to Razorpay Test Mode. Live collection remains disabled here; any production launch requires separate authorization after end-to-end billing, webhook, cancellation and entitlement tests pass.</li>
