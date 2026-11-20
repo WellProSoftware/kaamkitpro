@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const CONSENT_KEY = "kk_privacy_consent_v1";
 const SCRIPT_ID = "google-analytics-script";
-const MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || "G-M9190XP42G";
+const MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || "";
 
 type AnalyticsWindow = Window & {
   dataLayer?: unknown[][];
@@ -14,7 +14,7 @@ type AnalyticsWindow = Window & {
 
 export default function AnalyticsLoader({ disabled = false }: { disabled?: boolean }) {
   const pathname = usePathname();
-  const lastTrackedToolPath = useRef("");
+  const lastTrackedPath = useRef("");
 
   useEffect(() => {
     const analyticsWindow = window as AnalyticsWindow;
@@ -33,7 +33,7 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
         analyticsWindow.gtag = () => undefined;
       }
       document.getElementById(SCRIPT_ID)?.remove();
-      lastTrackedToolPath.current = "";
+      lastTrackedPath.current = "";
     }
 
     function loadAnalyticsIfConsented() {
@@ -62,14 +62,7 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
         analyticsWindow.dataLayer?.push(args);
       };
       analyticsWindow.gtag("js", new Date());
-      analyticsWindow.gtag("config", MEASUREMENT_ID);
-
-      if (window.location.pathname.startsWith("/tools/")) {
-        analyticsWindow.gtag("event", "tool_used", {
-          tool_name: window.location.pathname,
-        });
-        lastTrackedToolPath.current = window.location.pathname;
-      }
+      analyticsWindow.gtag("config", MEASUREMENT_ID, { send_page_view: false });
 
       const script = document.createElement("script");
       script.id = SCRIPT_ID;
@@ -86,7 +79,7 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
   }, [disabled]);
 
   useEffect(() => {
-    if (disabled || !pathname.startsWith("/tools/") || lastTrackedToolPath.current === pathname) {
+    if (disabled || !MEASUREMENT_ID || lastTrackedPath.current === pathname) {
       return;
     }
 
@@ -100,8 +93,11 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
       return;
     }
 
-    window.gtag("event", "tool_used", { tool_name: pathname });
-    lastTrackedToolPath.current = pathname;
+    window.gtag("event", "page_view", { page_path: pathname });
+    if (pathname.startsWith("/tools/")) {
+      window.gtag("event", "tool_used", { tool_name: pathname });
+    }
+    lastTrackedPath.current = pathname;
   }, [disabled, pathname]);
 
   return null;
