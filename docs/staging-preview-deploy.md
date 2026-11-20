@@ -5,6 +5,7 @@
 - Worker name: `kaamkitpro-staging`
 - Preview host: `https://kaamkitpro-staging.ankitkd550.workers.dev`
 - Deployment target: Cloudflare Workers Free `workers.dev` only
+- Wrangler CLI is upgraded to 4.166.0 in the isolated deploy job to avoid the 4.149.0 deployment runtime error
 - No custom domains, production routes, DNS records, or production Worker changes
 - Staging pages use `noindex/nofollow`; staging `robots.txt` disallows indexing
 - AdSense scripts are disabled in staging
