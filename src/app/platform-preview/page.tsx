@@ -70,7 +70,7 @@ const tools: Tool[] = [
   { name: "Text Diff Checker", category: "Text", description: "Compare two text blocks and find differences.", href: "/tools/text-diff-checker" },
 ];
 
-const categories = ["All", "PDF", "Image", "Calculators", "Text", "SEO", "Social", "Developer"];
+const categories = ["All", "PDF", "Image", "Calculators", "Text", "SEO", "Social", "Developer", "Business", "Data"];
 
 const products = [
   { number: "01", title: "Hospital Purchase Management Kit", description: "Practical procurement trackers, purchase workflows and vendor comparison templates.", tag: "Healthcare operations" },
