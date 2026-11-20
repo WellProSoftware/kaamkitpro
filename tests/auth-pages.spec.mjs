@@ -99,10 +99,13 @@ test.describe("KaamKitPro authentication pages", () => {
     expect((await accessResponse.json()).adsEnabled).toBe(false);
   });
 
-  test("paid plans and checkout remain paused on the pricing page", async ({ page }) => {
+  test("Pro checkout is visible but requires explicit recurring-billing consent", async ({ page }) => {
     await page.goto("/pricing");
-    await expect(page.getByRole("heading", { name: "Paid plans are on hold" })).toBeVisible();
-    await expect(page.getByRole("button", { name: /choose monthly|choose yearly|checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Use every tool without ads" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Choose monthly" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Choose yearly" })).toBeVisible();
+    await page.getByRole("button", { name: "Choose monthly" }).click();
+    await expect(page.getByRole("status")).toContainText("Please accept the recurring billing terms");
     await expect(page.locator('script[src*="checkout.razorpay.com"]')).toHaveCount(0);
   });
 
