@@ -10,7 +10,7 @@ Build KaamKitPro as a polished, trustworthy, English-first global utility and bu
 - Work only on an isolated staging branch and isolated workers.dev preview.
 - Keep staging noindex/nofollow and clearly identify it as a preview.
 - Do not change production DNS, Worker, database, authentication, users, email, AdSense, analytics, payment settings, or secrets.
-- Keep checkout demonstrative/mock only; Razorpay and paid subscriptions remain on hold.
+- The owner has confirmed Razorpay live activation and bank/KYC verification are complete. Integrate and verify Razorpay in staging using test credentials and test webhooks first. Keep production live keys, webhooks, subscriptions and customer data untouched until the owner approves the final production release.
 - No production deployment until the owner has reviewed the complete preview and explicitly approved it.
 
 ## Information architecture
@@ -86,10 +86,11 @@ Use 5–7 clear desktop top-level destinations. Use grouped dropdowns or a curat
 - Create original, genuinely useful tool instructions and guides; avoid thin or duplicated SEO pages.
 - Place ads only in non-disruptive, clearly separated locations and only where the production AdSense configuration is later approved.
 - Do not block basic free-tool use behind a paywall. Do not activate paid plans or payment processing in this staging phase.
-- Measure real traffic and engagement only with a separately approved staging analytics setup; do not alter production analytics.
+- Build a visitor analytics dashboard for sessions/users, acquisition sources, landing pages, tool usage, country-level geography, device categories, returning visitors and purchase conversions. Use the isolated staging GA4 measurement setup (verify the configured property/ID before use); never send staging events into the production property. Do not collect names, emails, payment details or other directly identifying data in analytics.
 
 ## Quality assurance gate
-- Build and lint pass; no runtime or console errors.
+- Build, lint and browser tests pass; no runtime or console errors.
+- Razorpay test checkout, signature verification, webhook idempotency, subscription lifecycle and failed-payment handling pass in staging.
 - Every navigation link, dropdown, CTA, form, filter, upload, tool action, and download tested.
 - Desktop, tablet, and mobile visual checks, including intermediate widths.
 - Keyboard-only navigation, visible focus, labels, contrast, screen-reader semantics, and reduced-motion checks.
