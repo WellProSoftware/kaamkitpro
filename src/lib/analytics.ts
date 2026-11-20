@@ -46,3 +46,28 @@ export function trackCopy(toolName: string): void {
     tool_name: toolName,
   });
 }
+
+
+export function trackBeginCheckout(planId: string, amountMinor: number, currency: string): void {
+  trackEvent("begin_checkout", {
+    currency,
+    value: amountMinor / 100,
+    plan_id: planId,
+    item_category: "subscription",
+  });
+}
+
+export function trackSubscriptionPurchase(
+  transactionId: string,
+  planId: string,
+  amountMinor: number,
+  currency: string
+): void {
+  trackEvent("purchase", {
+    transaction_id: transactionId,
+    currency,
+    value: amountMinor / 100,
+    plan_id: planId,
+    item_category: "subscription",
+  });
+}
