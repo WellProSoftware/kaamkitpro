@@ -706,3 +706,16 @@ test("professional platform preview search and responsive navigation work", asyn
   await page.getByRole("navigation", { name: "Mobile navigation" }).getByRole("link", { name: "Digital products" }).click();
   await expect(page).toHaveURL(/#products$/);
 });
+
+
+test("professional preview only lists tool routes that actually render", async ({ page, request }) => {
+  await page.goto("/platform-preview");
+  const hrefs = await page.locator('#tools a[href^="/tools/"]').evaluateAll((nodes) =>
+    [...new Set(nodes.map((node) => node.getAttribute("href")).filter(Boolean))]
+  );
+  expect(hrefs.length).toBeGreaterThan(0);
+  const results = await Promise.all(hrefs.map((href) => request.get(href!)));
+  for (let index = 0; index < results.length; index += 1) {
+    expect(results[index].status(), hrefs[index]).toBe(200);
+  }
+});
