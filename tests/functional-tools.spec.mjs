@@ -714,7 +714,7 @@ test("professional preview only lists tool routes that actually render", async (
     [...new Set(nodes.map((node) => node.getAttribute("href")).filter(Boolean))]
   );
   expect(hrefs.length).toBeGreaterThan(0);
-  const results = await Promise.all(hrefs.map((href) => request.get(href!)));
+  const results = await Promise.all(hrefs.map((href) => request.get(href)));
   for (let index = 0; index < results.length; index += 1) {
     expect(results[index].status(), hrefs[index]).toBe(200);
   }
