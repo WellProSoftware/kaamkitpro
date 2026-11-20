@@ -94,7 +94,7 @@ test("PDF Split downloads a valid one-page PDF", async ({ page }) => {
     mimeType: "application/pdf",
     buffer: await makePdf(1),
   });
-  await expect(page.getByText("single-page.pdf", { exact: true })).toBeVisible();
+  await expect(page.locator("main").getByText("single-page.pdf", { exact: true })).toBeVisible();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Split PDF" }).click();
   const download = await downloadPromise;
