@@ -728,5 +728,5 @@ test("preview navigation stays within the new platform and visible copy is Engli
   await expect(navigation.getByRole("link", { name: "All tools", exact: true })).toHaveAttribute("href", "/platform-preview#tools");
   await expect(page.getByText("Every Digital Task, One Place.", { exact: true })).toBeVisible();
   const visibleText = await page.locator("body").innerText();
-  expect(visibleText).not.toMatch(/[\\u0900-\\u097F]/);
+  expect(visibleText).not.toMatch(/[\u0900-\u097F]/);
 });
