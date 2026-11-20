@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { trackBeginCheckout, trackSubscriptionPurchase } from "@/lib/analytics";
 
 type CheckoutResponse = {
   key_id: string;
@@ -94,6 +95,7 @@ export default function ProSubscriptionCheckout() {
         throw new Error("The payment key does not match the server-authorized Razorpay mode. No payment was started.");
       }
 
+      trackBeginCheckout(planId, checkout.amount || 0, checkout.currency || "INR");
       const loaded = await loadRazorpayCheckout();
       if (!loaded || !window.Razorpay) throw new Error("Razorpay checkout could not be initialized.");
 
@@ -119,6 +121,12 @@ export default function ProSubscriptionCheckout() {
               throw new Error(verification.error || "Payment verification could not be completed.");
             }
             if (verification.verified) {
+              trackSubscriptionPurchase(
+                response.razorpay_subscription_id,
+                planId,
+                checkout.amount || 0,
+                checkout.currency || "INR"
+              );
               setMessage("Payment verified. Refreshing your Pro access…");
               window.dispatchEvent(new Event("kaamkitpro:access-changed"));
               router.push("/account?subscription=verified");
