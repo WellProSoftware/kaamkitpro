@@ -319,6 +319,8 @@ jobs:
           fi
           printf '%s' "$SUPABASE_SERVICE_ROLE_KEY" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --name kaamkitpro-staging
           echo "Configured Supabase server secret on the isolated staging Worker."
+      - name: Deploy to workers.dev
+        run: npx vinext-cloudflare deploy --config dist/server/wrangler.json
       - name: Configure optional Razorpay Test Mode secrets only
         shell: bash
         env:
@@ -343,8 +345,6 @@ jobs:
           printf '%s' "$RAZORPAY_TEST_KEY_SECRET" | npx wrangler secret put RAZORPAY_KEY_SECRET --name kaamkitpro-staging
           printf '%s' "$RAZORPAY_TEST_WEBHOOK_SECRET" | npx wrangler secret put RAZORPAY_WEBHOOK_SECRET --name kaamkitpro-staging
           echo "Configured Razorpay Test Mode secrets only on the isolated staging Worker."
-      - name: Deploy to workers.dev
-        run: npx vinext-cloudflare deploy --config dist/server/wrangler.json
       # Production domains and deployments are intentionally excluded from this smoke-test gate.
       - name: Post-deploy smoke tests against staging workers.dev only
         shell: bash
