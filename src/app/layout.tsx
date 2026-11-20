@@ -135,12 +135,6 @@ export default function RootLayout({
         {children}
         <SiteFooter />
 
-        <ToolEditorialContent />
-
-        <ToolEditorialContentBatchTwo />
-
-        <ToolEditorialContentBatchThree />
-
         <SupportChat />
 
         <InternalLinks />
