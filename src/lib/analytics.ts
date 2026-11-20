@@ -25,6 +25,10 @@ function trackEvent(
   window.gtag("event", eventName, params);
 }
 
+export function trackPageView(pathname: string): void {
+  trackEvent("page_view", { page_path: pathname });
+}
+
 export function trackToolUsed(toolName: string): void {
   trackEvent("tool_used", {
     tool_name: toolName,
