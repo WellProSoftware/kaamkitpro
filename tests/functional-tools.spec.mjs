@@ -719,3 +719,14 @@ test("professional preview only lists tool routes that actually render", async (
     expect(results[index].status(), hrefs[index]).toBe(200);
   }
 });
+
+
+test("preview navigation stays within the new platform and visible copy is English", async ({ page }) => {
+  await page.goto("/platform-preview");
+  const navigation = page.getByRole("navigation", { name: "Main navigation" });
+  await expect(navigation.getByRole("link", { name: "Home", exact: true })).toHaveAttribute("href", "/platform-preview");
+  await expect(navigation.getByRole("link", { name: "All tools", exact: true })).toHaveAttribute("href", "/platform-preview#tools");
+  await expect(page.getByText("Every Digital Task, One Place.", { exact: true })).toBeVisible();
+  const visibleText = await page.locator("body").innerText();
+  expect(visibleText).not.toMatch(/[\\u0900-\\u097F]/);
+});
