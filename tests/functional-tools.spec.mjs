@@ -680,11 +680,13 @@ test("PDF converters do not create empty files for scanned PDFs without selectab
 
   for (const route of ["/tools/pdf-to-excel", "/tools/pdf-to-word"]) {
     await page.goto(route);
+    await page.waitForTimeout(500); // Wait for the client-side file handler to hydrate before upload.
     await page.locator("#converter-file").setInputFiles({
       name: "scanned.pdf",
       mimeType: "application/pdf",
       buffer: blankPdf,
     });
+    await expect(page.getByText("scanned.pdf", { exact: true })).toBeVisible();
     const convertButton = page.getByRole("button", { name: route.endsWith("excel") ? "Convert to Excel" : "Convert to Word" });
     await expect(convertButton).toBeEnabled();
     const downloadPromise = page.waitForEvent("download", { timeout: 2000 }).catch(() => null);
