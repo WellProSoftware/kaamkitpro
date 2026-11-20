@@ -2,12 +2,13 @@ import Link from "next/link";
 
 type BrandLogoProps = {
   compact?: boolean;
+  href?: string;
 };
 
-export default function BrandLogo({ compact = false }: BrandLogoProps) {
+export default function BrandLogo({ compact = false, href = "/" }: BrandLogoProps) {
   return (
     <Link
-      href="/"
+      href={href}
       aria-label="KaamKitPro home"
       className="inline-flex shrink-0 items-center gap-3"
     >
