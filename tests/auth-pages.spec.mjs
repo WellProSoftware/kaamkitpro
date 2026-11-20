@@ -78,7 +78,7 @@ test.describe("KaamKitPro authentication pages", () => {
     expect(await verify.json()).toMatchObject({ error: "Sign in before verifying a subscription." });
   });
 
-  test("all tool tiers are temporarily free without sign-in while paid plans are paused", async ({ request }) => {
+  test("all currently available tools remain free to use without sign-in", async ({ request }) => {
     for (const tool_key of ["calculator", "ai-tool", "bulk-ai-generation"]) {
       const response = await request.post("/api/tools/usage", { data: { tool_key, action: "check" } });
       expect(response.ok()).toBeTruthy();
