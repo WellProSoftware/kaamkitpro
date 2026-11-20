@@ -38,36 +38,14 @@ const copy = {
     planAnswer: "Check your plan and subscription status on the Account page. If you have an access or renewal issue, send us a message here.",
     defaultAnswer: "Thanks for your message. We’ve sent it to the support team. An admin reply will appear in this chat.",
   },
-  hi: {
-    subtitle: "सहायता · एडमिन सपोर्ट",
-    refresh: "रिफ्रेश",
-    greeting: "नमस्ते! आज हम आपकी कैसे मदद कर सकते हैं? लॉगिन, टूल, पेमेंट या सब्सक्रिप्शन के बारे में पूछें।",
-    loginRequired: "सपोर्ट टिकट सेव करने के लिए कृपया लॉगिन करें।",
-    publicTools: "पब्लिक टूल बिना लॉगिन के इस्तेमाल कर सकते हैं।",
-    login: "लॉगिन करें",
-    placeholder: "अपना मैसेज लिखें…",
-    send: "भेजें",
-    sending: "भेज रहे हैं…",
-    close: "बंद करें",
-    open: "मदद / सपोर्ट",
-    tooLong: "कृपया मैसेज 4,000 अक्षरों से छोटा रखें।",
-    loadError: "सपोर्ट अभी उपलब्ध नहीं है। थोड़ी देर बाद फिर कोशिश करें।",
-    loginFirst: "सपोर्ट चैट इस्तेमाल करने के लिए कृपया लॉगिन करें।",
-    sendError: "मैसेज नहीं भेजा जा सका।",
-    refreshError: "मैसेज रिफ्रेश नहीं हो सके।",
-    loginAnswer: "लॉगिन की समस्या के लिए अपना ईमेल और पासवर्ड जाँचकर दोबारा कोशिश करें। समस्या बनी रहे तो यहाँ मैसेज भेजें।",
-    paymentAnswer: "Account पेज पर पेमेंट स्टेटस देखें। सफल पेमेंट के बाद भी Pro चालू न हो, तो समस्या यहाँ बताएँ। संवेदनशील पेमेंट जानकारी शेयर न करें।",
-    toolAnswer: "पेज रिफ्रेश करके टूल दोबारा चलाएँ। समस्या बनी रहे तो टूल का नाम और दिख रहा एरर बताएँ।",
-    planAnswer: "Account पेज पर अपना प्लान और सब्सक्रिप्शन स्टेटस देखें। एक्सेस या रिन्यूअल की समस्या हो तो यहाँ मैसेज भेजें।",
-    defaultAnswer: "आपके मैसेज के लिए धन्यवाद। इसे सपोर्ट टीम को भेज दिया गया है। एडमिन का जवाब इसी चैट में दिखेगा।",
-  },
+
 } as const;
 
 const helpAnswers: Array<{ match: RegExp; key: "loginAnswer" | "paymentAnswer" | "toolAnswer" | "planAnswer" }> = [
-  { match: /login|sign.?in|password|लॉग.?इन|पासवर्ड/i, key: "loginAnswer" },
-  { match: /payment|razorpay|paid|पेमेंट|भुगतान/i, key: "paymentAnswer" },
-  { match: /tool|error|not work|काम नहीं|समस्या/i, key: "toolAnswer" },
-  { match: /subscription|pro|plan|सब्सक्रिप्शन/i, key: "planAnswer" },
+  { match: /login|sign.?in|password/i, key: "loginAnswer" },
+  { match: /payment|razorpay|paid/i, key: "paymentAnswer" },
+  { match: /tool|error|not work/i, key: "toolAnswer" },
+  { match: /subscription|pro|plan/i, key: "planAnswer" },
 ];
 
 export default function SupportChat() {
@@ -139,7 +117,7 @@ export default function SupportChat() {
           <div className="flex-1 space-y-3 overflow-y-auto bg-slate-50 p-3">
             <div className="max-w-[92%] rounded-2xl rounded-tl-sm bg-white p-3 text-sm text-slate-800 shadow-sm">{t.greeting}</div>
             {signedIn === false ? <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">{t.loginRequired} <a href="/login" className="font-bold underline">{t.login}</a>. {t.publicTools}</div> : null}
-            {conversation?.messages?.map(message => <div key={message.id} className={message.sender_role === "user" ? "ml-auto max-w-[92%] rounded-2xl rounded-tr-sm bg-blue-600 p-3 text-sm text-white" : "max-w-[92%] rounded-2xl rounded-tl-sm bg-white p-3 text-sm text-slate-800 shadow-sm"}><p className="mb-1 text-[10px] font-bold uppercase opacity-70">{message.sender_role === "user" ? (language === "en" ? "You" : "आप") : message.sender_role === "admin" ? (language === "en" ? "Support team" : "सपोर्ट टीम") : "Assistant"}</p>{message.body}</div>)}
+            {conversation?.messages?.map(message => <div key={message.id} className={message.sender_role === "user" ? "ml-auto max-w-[92%] rounded-2xl rounded-tr-sm bg-blue-600 p-3 text-sm text-white" : "max-w-[92%] rounded-2xl rounded-tl-sm bg-white p-3 text-sm text-slate-800 shadow-sm"}><p className="mb-1 text-[10px] font-bold uppercase opacity-70">{message.sender_role === "user" ? ("You") : message.sender_role === "admin" ? (language === "en" ? "Support team" : "सपोर्ट टीम") : "Assistant"}</p>{message.body}</div>)}
           </div>
           {notice ? <p role="status" className="border-t border-slate-100 px-3 py-2 text-xs text-slate-600">{notice}</p> : null}
           <form onSubmit={send} className="flex gap-2 border-t border-slate-200 p-3">
