@@ -35,6 +35,7 @@ jobs:
       KAAMKITPRO_STAGING: "true"
       NEXT_PUBLIC_GA4_MEASUREMENT_ID: "G-8B6JX70RH8"
       NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_GA4_MEASUREMENT_ID: "G-8B6JX70RH8"
 
     steps:
       - name: Checkout explicitly selected staging source
