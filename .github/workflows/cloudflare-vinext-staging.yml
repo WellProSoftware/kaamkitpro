@@ -35,7 +35,6 @@ jobs:
       KAAMKITPRO_STAGING: "true"
       NEXT_PUBLIC_GA4_MEASUREMENT_ID: "G-8B6JX70RH8"
       NEXT_TELEMETRY_DISABLED: "1"
-      NEXT_PUBLIC_GA4_MEASUREMENT_ID: "G-8B6JX70RH8"
 
     steps:
       - name: Checkout explicitly selected staging source
@@ -266,6 +265,7 @@ jobs:
       KAAMKITPRO_STAGING: "true"
       KAAMKITPRO_ADMIN_EMAILS: kaamkitpro-staging-admin-${{ github.run_id }}@example.com
       NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_GA4_MEASUREMENT_ID: "G-8B6JX70RH8"
       NEXT_PUBLIC_SUPABASE_URL: "https://stcahnjwonfcuzevfmyg.supabase.co"
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_pnD1QuYuIV9qYGRdYJTDGQ_UfwUycgY"
     steps:
