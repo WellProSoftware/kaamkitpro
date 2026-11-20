@@ -115,9 +115,10 @@ test.describe("KaamKitPro authentication pages", () => {
     await expect(page.getByRole("link", { name: "Sign in" }).first()).toHaveAttribute("href", "/login?mode=login");
     await page.goto("/pricing");
     await expect(page.getByRole("heading", { name: "Useful tools. No signup needed." })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Paid plans are on hold" })).toBeVisible();
-    await expect(page.locator("main").getByRole("link", { name: "Sign in" })).toHaveCount(0);
-    await expect(page.getByRole("button", { name: /choose monthly|choose yearly|checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Use every tool without ads" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Sign in" }).first()).toBeVisible();
+    await expect(page.getByRole("button", { name: "Choose monthly" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Choose yearly" })).toBeVisible();
   });
 });
 
