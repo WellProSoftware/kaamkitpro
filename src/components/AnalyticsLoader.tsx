@@ -37,7 +37,7 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
     }
 
     function loadAnalyticsIfConsented() {
-      if (disabled) {
+      if (disabled || !MEASUREMENT_ID || !/^G-[A-Z0-9]+$/.test(MEASUREMENT_ID)) {
         removeAnalytics();
         return;
       }
