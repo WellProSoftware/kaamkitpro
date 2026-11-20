@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 
+import ToolEditorialContent from "@/components/ToolEditorialContent";
+import ToolEditorialContentBatchTwo from "@/components/ToolEditorialContentBatchTwo";
+import ToolEditorialContentBatchThree from "@/components/ToolEditorialContentBatchThree";
+
 export const metadata: Metadata = {
   title: "Free Online Tools",
   description:
