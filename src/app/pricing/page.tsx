@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import BrandLogo from "@/components/BrandLogo";
 import ProSubscriptionCheckout from "@/components/ProSubscriptionCheckout";
 
 export const metadata: Metadata = {
@@ -13,20 +12,6 @@ export const metadata: Metadata = {
 export default function PricingPage() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
-          <BrandLogo />
-          <nav className="flex items-center gap-4">
-            <Link href="/login" className="text-sm font-semibold text-blue-700 hover:text-blue-800">
-              Sign in
-            </Link>
-            <Link href="/" className="text-sm font-semibold text-slate-600 hover:text-slate-900">
-              ← Home
-            </Link>
-          </nav>
-        </div>
-      </header>
-
       <section className="bg-white">
         <div className="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6">
           <p className="text-sm font-bold uppercase tracking-widest text-blue-600">Free tools first</p>
