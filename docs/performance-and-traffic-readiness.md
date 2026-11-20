@@ -54,6 +54,8 @@ Measure production-like staging on mobile and desktop. Track p50 and p95 separat
 
 Use only capabilities available to the currently configured Free plan. Verify current request, CPU, storage, queue and rate-limit quotas against the account before relying on them. Do not silently add paid services or upgrade plans. If a target exceeds Free-tier limits, document the trade-off and ask before incurring cost.
 
+**Important current Workers Free constraint:** Cloudflare's Workers limits documentation states a 100,000 Worker requests-per-day account limit on the Free plan (resets at midnight UTC); Cloudflare describes Workers as automatically scaling across its global network with no general requests-per-second limit. Once the daily cap is exceeded, requests can receive Error 1027. This is a hard planning constraint for the current zero-budget launch: cache and serve assets efficiently, reduce unnecessary Worker invocations where the deployment architecture permits, monitor daily usage, and do not market the site as unlimited traffic. If measured demand approaches the daily cap, pause and present the free-tier trade-off before any paid upgrade.
+
 ## Acceptance checklist
 
 - [ ] Route-level performance baseline on staging (mobile + desktop)
