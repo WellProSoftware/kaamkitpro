@@ -217,23 +217,17 @@ test("Sitemap lists each new utility route exactly once", async ({ request }) =>
 });
 
 
-test("Pricing page explains Free access and presents Pro checkout only when available", async ({ page }) => {
+test("Pricing page presents Free access and guarded Pro checkout", async ({ page }) => {
   await page.goto("/pricing");
   await expect(page.getByRole("heading", { name: /Useful tools\./ })).toBeVisible();
-  await expect(page.getByText(/Use the available free tools right away/i)).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Paid plans are on hold" })).toBeVisible();
-  await expect(page.locator("main").getByRole("link", { name: "Sign in", exact: true })).toHaveCount(0);
-
-  const monthlyButton = page.getByRole("button", { name: "Choose monthly" });
-  if (await monthlyButton.count()) {
-    await expect(page.getByRole("heading", { name: "Use every tool without ads" })).toBeVisible();
-    await expect(monthlyButton).toBeVisible();
-    await expect(page.getByRole("button", { name: "Choose yearly" })).toBeVisible();
-    await expect(page.getByText(/authorize recurring subscription payments/i)).toBeVisible();
-  } else {
-    await expect(page.getByRole("button", { name: /checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
-    await expect(page.getByRole("link", { name: /checkout|subscribe|buy now|start trial/i })).toHaveCount(0);
-  }
+  await expect(page.getByText(/Open any currently available free tool/i)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Sign in", exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Use every tool without ads" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Choose monthly" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Choose yearly" })).toBeVisible();
+  await page.getByRole("button", { name: "Choose monthly" }).click();
+  await expect(page.getByRole("status")).toContainText("Please accept the recurring billing terms");
+  await expect(page.locator('script[src*="checkout.razorpay.com"]')).toHaveCount(0);
 });
 
 test("Subscription checkout rejects unauthenticated requests", async ({ request }) => {
