@@ -68,6 +68,16 @@ export default function SiteHeader() {
           <Link href="/" className="hover:text-blue-700">Home</Link>
           <Link href="/tools" className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">All tools</Link>
           <Link href="/#categories" className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">Categories</Link>
+          <details className="group relative">
+            <summary className="flex cursor-pointer list-none items-center gap-1 rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">Solutions <span aria-hidden="true">⌄</span></summary>
+            <div className="absolute left-0 top-full mt-2 w-72 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+              <Link href="/platform-preview#business" className="block rounded-xl p-3 hover:bg-slate-50"><span className="block text-sm font-bold text-slate-900">Business solutions</span><span className="text-xs text-slate-500">Procurement, inventory and operations</span></Link>
+              <Link href="/tools/item-master-matcher" className="block rounded-xl p-3 hover:bg-slate-50"><span className="block text-sm font-bold text-slate-900">Item master matcher</span><span className="text-xs text-slate-500">Map healthcare purchase items</span></Link>
+              <Link href="/tools/vendor-quotation-comparison" className="block rounded-xl p-3 hover:bg-slate-50"><span className="block text-sm font-bold text-slate-900">Vendor comparison</span><span className="text-xs text-slate-500">Compare supplier quotations</span></Link>
+            </div>
+          </details>
+          <Link href="/platform-preview#products" className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">Digital products</Link>
+          <Link href="/guides" className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">Resources</Link>
           <Link href="/pricing" className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">Pricing</Link>
           <Link href="/about" className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">About</Link>
           <Link href="/contact" className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">Contact</Link>
@@ -85,10 +95,11 @@ export default function SiteHeader() {
                   <div className="border-b border-slate-100 px-3 py-3">
                     <p className="truncate text-sm font-bold text-slate-900">{displayName}</p>
                     <p className="mt-1 break-all text-xs text-slate-500">{user.email}</p>
-                    <div className="mt-2 flex flex-wrap gap-2"><span className="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">{access?.isAdmin ? "Admin access" : "Free access"}</span><span className="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">All tools currently free</span></div>
+                    <div className="mt-2 flex flex-wrap gap-2"><span className="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">{access?.isAdmin ? "Admin access" : access?.isPro ? "Pro access" : "Free access"}</span></div>
                   </div>
                   <Link role="menuitem" href="/account" onClick={() => setMenuOpen(false)} className="mt-1 flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">My account</Link>
                   <Link role="menuitem" href="/tools" onClick={() => setMenuOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Browse all tools</Link>
+                  {!access?.isPro && !access?.isAdmin ? <Link role="menuitem" href="/pricing" onClick={() => setMenuOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-sm font-bold text-blue-700 hover:bg-blue-50">View plans & upgrade</Link> : null}
                   {access?.isAdmin ? <><Link role="menuitem" href="/admin/access" onClick={() => setMenuOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Admin access management</Link><Link role="menuitem" href="/admin/support" onClick={() => setMenuOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Support inbox</Link></> : null}
                   <div className="my-1 border-t border-slate-100" />
                   <button role="menuitem" type="button" onClick={() => void signOut()} className="flex min-h-11 w-full items-center rounded-xl px-3 text-left text-sm font-bold text-red-700 hover:bg-red-50">Sign out</button>
@@ -107,6 +118,9 @@ export default function SiteHeader() {
         <Link href="/" className="whitespace-nowrap">Home</Link>
         <Link href="/tools" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">All tools</Link>
         <Link href="/#categories" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">Categories</Link>
+        <Link href="/platform-preview#business" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">Solutions</Link>
+        <Link href="/platform-preview#products" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">Digital products</Link>
+        <Link href="/guides" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">Resources</Link>
         <Link href="/pricing" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">Pricing</Link>
         <Link href="/about" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">About</Link>
         <Link href="/contact" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">Contact</Link>
