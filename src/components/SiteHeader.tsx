@@ -1,12 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import BrandLogo from "@/components/BrandLogo";
 
 type SessionUser = { id: string; email: string | null; full_name?: string | null };
 
 export default function SiteHeader() {
+  const pathname = usePathname();
+  const isPlatformPreview = pathname === "/platform-preview";
+  const homeHref = isPlatformPreview ? "/platform-preview" : "/";
+  const toolsHref = isPlatformPreview ? "/platform-preview#tools" : "/tools";
+  const categoriesHref = isPlatformPreview ? "/platform-preview#tools" : "/#categories";
   const [user, setUser] = useState<SessionUser | null>(null);
   const [access, setAccess] = useState<{ isAdmin?: boolean; isPro?: boolean; plan?: string } | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -54,7 +60,7 @@ export default function SiteHeader() {
 
   async function signOut() {
     await fetch("/api/auth/session", { method: "DELETE" }).catch(() => undefined);
-    window.location.replace("/");
+    window.location.replace(homeHref);
   }
 
   const displayName = user?.full_name?.trim() || user?.email?.split("@")[0] || "My account";
@@ -63,11 +69,11 @@ export default function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 shadow-[0_8px_30px_rgba(15,23,42,0.04)] backdrop-blur-xl">
       <div className="mx-auto flex min-h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <BrandLogo />
+        <BrandLogo href={homeHref} />
         <nav aria-label="Main navigation" className="hidden items-center gap-1 rounded-full bg-slate-50 p-1 text-sm font-semibold text-slate-600 lg:flex">
-          <Link href="/" className="hover:text-blue-700">Home</Link>
-          <Link href="/tools" className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">All tools</Link>
-          <Link href="/#categories" className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">Categories</Link>
+          <Link href={homeHref} className="hover:text-blue-700">Home</Link>
+          <Link href={toolsHref} className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">All tools</Link>
+          <Link href={categoriesHref} className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">Categories</Link>
           <details className="group relative">
             <summary className="flex cursor-pointer list-none items-center gap-1 rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">Solutions <span aria-hidden="true">⌄</span></summary>
             <div className="absolute left-0 top-full mt-2 w-72 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
@@ -98,7 +104,7 @@ export default function SiteHeader() {
                     <div className="mt-2 flex flex-wrap gap-2"><span className="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">{access?.isAdmin ? "Admin access" : access?.isPro ? "Pro access" : "Free access"}</span></div>
                   </div>
                   <Link role="menuitem" href="/account" onClick={() => setMenuOpen(false)} className="mt-1 flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">My account</Link>
-                  <Link role="menuitem" href="/tools" onClick={() => setMenuOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Browse all tools</Link>
+                  <Link role="menuitem" href={toolsHref} onClick={() => setMenuOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Browse all tools</Link>
                   {!access?.isPro && !access?.isAdmin ? <Link role="menuitem" href="/pricing" onClick={() => setMenuOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-sm font-bold text-blue-700 hover:bg-blue-50">View plans & upgrade</Link> : null}
                   {access?.isAdmin ? <><Link role="menuitem" href="/admin/access" onClick={() => setMenuOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Admin access management</Link><Link role="menuitem" href="/admin/support" onClick={() => setMenuOpen(false)} className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50">Support inbox</Link></> : null}
                   <div className="my-1 border-t border-slate-100" />
@@ -115,9 +121,9 @@ export default function SiteHeader() {
         </div>
       </div>
       <nav aria-label="Mobile navigation" className="flex gap-2 overflow-x-auto border-t border-slate-100 px-4 py-2 text-xs font-semibold text-slate-600 lg:hidden">
-        <Link href="/" className="whitespace-nowrap">Home</Link>
-        <Link href="/tools" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">All tools</Link>
-        <Link href="/#categories" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">Categories</Link>
+        <Link href={homeHref} className="whitespace-nowrap">Home</Link>
+        <Link href={toolsHref} className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">All tools</Link>
+        <Link href={categoriesHref} className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">Categories</Link>
         <Link href="/platform-preview#business" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">Solutions</Link>
         <Link href="/platform-preview#products" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">Digital products</Link>
         <Link href="/guides" className="whitespace-nowrap rounded-full px-3 py-1.5 transition hover:bg-blue-50 hover:text-blue-700">Resources</Link>
