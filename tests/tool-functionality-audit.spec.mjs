@@ -88,11 +88,13 @@ test("PDF Rotate downloads a PDF with the selected page rotation", async ({ page
 
 test("PDF Split downloads a valid one-page PDF", async ({ page }) => {
   await page.goto("/tools/pdf-split");
+  await page.waitForTimeout(500); // Wait for the client-side file handler to hydrate before upload.
   await page.locator("#pdf-file").setInputFiles({
     name: "single-page.pdf",
     mimeType: "application/pdf",
     buffer: await makePdf(1),
   });
+  await expect(page.getByText("single-page.pdf", { exact: true })).toBeVisible();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Split PDF" }).click();
   const download = await downloadPromise;
