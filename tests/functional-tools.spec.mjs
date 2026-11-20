@@ -696,3 +696,19 @@ test("PDF converters do not create empty files for scanned PDFs without selectab
     expect(await downloadPromise).toBeNull();
   }
 });
+
+test("professional platform preview search and responsive navigation work", async ({ page }) => {
+  await page.goto("/platform-preview");
+  await expect(page.getByText("PRIVATE STAGING PREVIEW", { exact: false })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Powerful tools for your everyday work/ })).toBeVisible();
+
+  await page.getByLabel("Search tools").fill("GST calculator");
+  await expect(page.getByRole("heading", { name: "GST Calculator", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "PDF Merge", exact: true })).toHaveCount(0);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByRole("navigation", { name: "Mobile navigation" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Mobile navigation" }).getByRole("link", { name: "Digital products" })).toBeVisible();
+  await page.getByRole("navigation", { name: "Mobile navigation" }).getByRole("link", { name: "Digital products" }).click();
+  await expect(page).toHaveURL(/#products$/);
+});
