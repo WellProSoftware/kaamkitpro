@@ -21,7 +21,6 @@ const tools: Tool[] = [
   { name: "PDF Page Number", category: "PDF", description: "Add page numbers to PDF documents.", href: "/tools/pdf-page-number" },
   { name: "PDF Watermark", category: "PDF", description: "Add a watermark to PDF pages.", href: "/tools/pdf-watermark" },
   { name: "PDF Metadata", category: "PDF", description: "View and edit PDF document metadata.", href: "/tools/pdf-metadata" },
-  { name: "PDF Protect", category: "PDF", description: "Protect PDF files with a password.", href: "/tools/pdf-protect" },
   { name: "Image Brightness", category: "Image", description: "Adjust image brightness.", href: "/tools/image-brightness" },
   { name: "Image Cropper", category: "Image", description: "Crop an image to a selected area.", href: "/tools/image-cropper" },
   { name: "Image Rotate", category: "Image", description: "Rotate images to the right orientation.", href: "/tools/image-rotate" },
