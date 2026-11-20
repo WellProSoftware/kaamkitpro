@@ -14,6 +14,8 @@ type Quote = {
   freight: string;
 };
 
+type QuoteField = Exclude<keyof Quote, "id">;
+
 type CalculatedQuote = {
   quote: Quote;
   key: string;
@@ -71,7 +73,7 @@ export default function VendorQuotationComparisonPage() {
     return values;
   }, [calculated]);
 
-  function updateQuote(id: number, field: keyof Quote, value: string) {
+  function updateQuote(id: number, field: QuoteField, value: string) {
     setQuotes((current) => current.map((quote) => quote.id === id ? { ...quote, [field]: value } : quote));
     setNotice("");
   }
@@ -137,8 +139,9 @@ export default function VendorQuotationComparisonPage() {
         <div className="mt-7 grid gap-4 xl:grid-cols-2">
           {quotes.map((quote, index) => (
             <fieldset key={quote.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+              <legend className="sr-only">Supplier quote {index + 1}</legend>
               <div className="mb-4 flex items-center justify-between">
-                <legend className="text-base font-extrabold text-slate-900">Supplier quote {index + 1}</legend>
+                <p className="text-base font-extrabold text-slate-900">Supplier quote {index + 1}</p>
                 <button type="button" onClick={() => removeQuote(quote.id)} disabled={quotes.length === 1} className="rounded-lg px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40">Remove</button>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
