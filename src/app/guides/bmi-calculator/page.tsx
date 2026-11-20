@@ -21,7 +21,7 @@ export default function BmiCalculatorGuide() {
         <div className="rounded-3xl bg-white p-7 shadow-sm md:p-10">
           <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">Calculator Guide</p>
           <h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">How to Calculate BMI</h1>
-          <p className="mt-5 text-lg leading-8 text-slate-600">Body Mass Index (BMI) is a screening measure calculated from a person's weight and height. It can help describe weight relative to height, but it does not directly measure body fat or diagnose a health condition.</p>
+          <p className="mt-5 text-lg leading-8 text-slate-600">Body Mass Index (BMI) is a screening measure calculated from a person&apos;s weight and height. It can help describe weight relative to height, but it does not directly measure body fat or diagnose a health condition.</p>
           <div className="mt-8">
             <Link href="/tools/bmi-calculator" className="inline-block rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">Open BMI Calculator</Link>
           </div>
