@@ -33,7 +33,7 @@ export default function BrandLogo({ compact = false }: BrandLogoProps) {
 
         {!compact && (
           <span className="mt-1 hidden text-[10px] font-medium tracking-wide text-slate-500 sm:block">
-            Har Digital Kaam, Ek Jagah.
+            Every Digital Task, One Place.
           </span>
         )}
       </div>
