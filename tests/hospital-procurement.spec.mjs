@@ -7,7 +7,7 @@ test("the broader hospital procurement landing page remains paused until its ful
 
 test("Vendor Quotation Comparison calculates landed costs and identifies the lowest quote", async ({ page }) => {
   await page.goto("/tools/vendor-quotation-comparison");
-  await expect(page.getByRole("heading", { name: "Vendor Quotation Comparison" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Vendor Quotation Comparison" })).toBeVisible();
 
   for (const [index, supplier, price] of [
     [1, "Supplier A", "10.00"],
