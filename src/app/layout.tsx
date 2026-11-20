@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import InternalLinks from "@/components/InternalLinks";
+import AnalyticsConsent from "@/components/AnalyticsConsent";
 
 export const metadata: Metadata = {
   title: {
@@ -27,6 +28,7 @@ export default function RootLayout({
       <body>
         {children}
         <InternalLinks />
+        <AnalyticsConsent />
       </body>
     </html>
   );
