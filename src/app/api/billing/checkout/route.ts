@@ -144,6 +144,7 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({
     key_id: keyId,
+    mode,
     subscription_id: providerSubscription.id,
     name: "KaamKitPro",
     description: plan.name,
