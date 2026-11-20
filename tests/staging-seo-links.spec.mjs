@@ -70,7 +70,7 @@ test("every tool listed on the homepage opens a reachable tool page", async ({ p
       .filter((href) => !["/tools/pdf", "/tools/image", "/tools/calculators", "/tools/developer", "/tools/text", "/tools/seo", "/tools/social"].includes(href))
   );
 
-  expect(routes.length, "homepage should expose the current curated tool collection").toBe(28);
+  expect(routes.length, "homepage should expose the current curated tool collection").toBe(29);
   const failures = [];
   for (const route of routes) {
     const response = await request.get(route, { maxRedirects: 5 });
