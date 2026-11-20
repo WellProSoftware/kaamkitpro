@@ -319,6 +319,30 @@ jobs:
           fi
           printf '%s' "$SUPABASE_SERVICE_ROLE_KEY" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --name kaamkitpro-staging
           echo "Configured Supabase server secret on the isolated staging Worker."
+      - name: Configure optional Razorpay Test Mode secrets only
+        shell: bash
+        env:
+          RAZORPAY_TEST_KEY_ID: ${{ secrets.RAZORPAY_TEST_KEY_ID }}
+          RAZORPAY_TEST_KEY_SECRET: ${{ secrets.RAZORPAY_TEST_KEY_SECRET }}
+          RAZORPAY_TEST_WEBHOOK_SECRET: ${{ secrets.RAZORPAY_TEST_WEBHOOK_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "${RAZORPAY_TEST_KEY_ID:-}" ] && [ -z "${RAZORPAY_TEST_KEY_SECRET:-}" ] && [ -z "${RAZORPAY_TEST_WEBHOOK_SECRET:-}" ]; then
+            echo "Razorpay Test Mode secrets are not configured. Staging checkout will remain safely unavailable (503); no live keys are accepted."
+            exit 0
+          fi
+          if [ -z "${RAZORPAY_TEST_KEY_ID:-}" ] || [ -z "${RAZORPAY_TEST_KEY_SECRET:-}" ] || [ -z "${RAZORPAY_TEST_WEBHOOK_SECRET:-}" ]; then
+            echo "Incomplete Razorpay Test Mode secret set; refusing partial payment configuration."
+            exit 1
+          fi
+          case "$RAZORPAY_TEST_KEY_ID" in
+            rzp_test_*) ;;
+            *) echo "Only an rzp_test_ key is allowed in staging."; exit 1 ;;
+          esac
+          printf '%s' "$RAZORPAY_TEST_KEY_ID" | npx wrangler secret put RAZORPAY_KEY_ID --name kaamkitpro-staging
+          printf '%s' "$RAZORPAY_TEST_KEY_SECRET" | npx wrangler secret put RAZORPAY_KEY_SECRET --name kaamkitpro-staging
+          printf '%s' "$RAZORPAY_TEST_WEBHOOK_SECRET" | npx wrangler secret put RAZORPAY_WEBHOOK_SECRET --name kaamkitpro-staging
+          echo "Configured Razorpay Test Mode secrets only on the isolated staging Worker."
       - name: Deploy to workers.dev
         run: npx vinext-cloudflare deploy --config dist/server/wrangler.json
       # Production domains and deployments are intentionally excluded from this smoke-test gate.
@@ -330,7 +354,8 @@ jobs:
           const base = "https://kaamkitpro-staging.ankitkd550.workers.dev";
           const checks = [
             ["/", async r => r.status === 200 && /noindex/i.test(await r.text()), "homepage + staging noindex"],
-            ["/pricing", async r => { const t = await r.text(); return r.status === 200 && /Useful tools\. No signup needed\./i.test(t) && /Paid plans are on hold/i.test(t) && /Explore free tools/i.test(t) && !/ProSubscriptionCheckout|Razorpay Test Mode|Subscribe now/i.test(t); }, "free-first pricing; paid checkout remains paused"],
+            ["/platform-preview", async r => { const t = await r.text(); return r.status === 200 && /PRIVATE STAGING PREVIEW/i.test(t) && /noindex/i.test(t) && /Digital products/i.test(t); }, "professional unified platform preview + noindex"],
+            ["/pricing", async r => { const t = await r.text(); return r.status === 200 && /Useful tools\. No signup needed\./i.test(t) && /Use every tool without ads/i.test(t) && /Choose monthly/i.test(t) && /Choose yearly/i.test(t) && /Razorpay Test Mode/i.test(t); }, "free tools plus guarded Pro Test Mode checkout"],
             ["/ads.txt", async r => r.status === 200 && (await r.text()).trim() === "google.com, pub-6738934686699082, DIRECT, f08c47fec0942fa0", "ads.txt publisher line"],
             ["/robots.txt", async r => r.status === 200 && (await r.text()).includes("Disallow: /"), "robots.txt staging exclusion"],
             ["/api/access", async r => { const t = await r.json(); return r.status === 200 && t.plan === "free_pro_access" && t.isPro === true && t.adsEnabled === false; }, "anonymous temporary free-Pro access + staging ads disabled"],
@@ -353,6 +378,12 @@ jobs:
             console.log((ok ? "PASS " : "FAIL ") + label + " — " + detail);
             if (!ok) failures++;
           }
+          const checkoutGuard = await fetch(base + "/api/billing/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ plan_id: "pro-monthly-inr" }) });
+          if (checkoutGuard.status !== 401) {
+            console.log("FAIL unauthenticated subscription checkout must return 401 — HTTP " + checkoutGuard.status);
+            process.exit(1);
+          }
+          console.log("PASS unauthenticated subscription checkout is blocked — HTTP 401");
           if (failures) process.exit(1);
           console.log("All post-deploy checks passed for the isolated workers.dev staging URL.");
           NODE
