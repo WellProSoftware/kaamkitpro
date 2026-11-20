@@ -311,14 +311,26 @@ jobs:
         shell: bash
         env:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ env.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
         run: |
           set -euo pipefail
-          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
-            echo "Missing repository secret SUPABASE_SERVICE_ROLE_KEY; refusing deployment."
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ] || [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "Missing staging Supabase configuration; refusing deployment."
+            exit 1
+          fi
+          admin_status=$(curl -sS -o /dev/null -w "%{http_code}" -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" "$NEXT_PUBLIC_SUPABASE_URL/auth/v1/admin/users?page=1&per_page=1")
+          if [ "$admin_status" != "200" ]; then
+            echo "Service-role key did not authenticate against the configured staging Supabase project; refusing deployment."
+            exit 1
+          fi
+          public_status=$(curl -sS -o /dev/null -w "%{http_code}" -H "apikey: $NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" "$NEXT_PUBLIC_SUPABASE_URL/rest/v1/subscription_plans?select=id&limit=1")
+          if [ "$public_status" != "200" ]; then
+            echo "Publishable key did not authenticate against the configured staging Supabase project; refusing deployment."
             exit 1
           fi
           printf '%s' "$SUPABASE_SERVICE_ROLE_KEY" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --name kaamkitpro-staging
-          echo "Configured Supabase server secret on the isolated staging Worker."
+          echo "Verified both Supabase keys against the staging project and configured the server secret."
       - name: Deploy to workers.dev
         run: npx vinext-cloudflare deploy --config dist/server/wrangler.json
       - name: Configure optional Razorpay Test Mode secrets only
