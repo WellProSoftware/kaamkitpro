@@ -74,6 +74,7 @@ test("PDF Rotate downloads a PDF with the selected page rotation", async ({ page
     mimeType: "application/pdf",
     buffer: Buffer.from(input),
   });
+  await expect(page.locator("#angle")).toBeVisible({ timeout: 15000 });
   await page.locator("#angle").selectOption("90");
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Rotate & Download PDF" }).click();
@@ -94,7 +95,7 @@ test("PDF Split downloads a valid one-page PDF", async ({ page }) => {
     mimeType: "application/pdf",
     buffer: await makePdf(1),
   });
-  await expect(page.locator("main").getByText("single-page.pdf", { exact: true })).toBeVisible();
+  await expect(page.locator("main p.font-medium").filter({ hasText: /^single-page\.pdf$/ })).toBeVisible();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Split PDF" }).click();
   const download = await downloadPromise;
