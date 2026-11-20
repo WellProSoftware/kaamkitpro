@@ -117,7 +117,7 @@ export default function SupportChat() {
           <div className="flex-1 space-y-3 overflow-y-auto bg-slate-50 p-3">
             <div className="max-w-[92%] rounded-2xl rounded-tl-sm bg-white p-3 text-sm text-slate-800 shadow-sm">{t.greeting}</div>
             {signedIn === false ? <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">{t.loginRequired} <a href="/login" className="font-bold underline">{t.login}</a>. {t.publicTools}</div> : null}
-            {conversation?.messages?.map(message => <div key={message.id} className={message.sender_role === "user" ? "ml-auto max-w-[92%] rounded-2xl rounded-tr-sm bg-blue-600 p-3 text-sm text-white" : "max-w-[92%] rounded-2xl rounded-tl-sm bg-white p-3 text-sm text-slate-800 shadow-sm"}><p className="mb-1 text-[10px] font-bold uppercase opacity-70">{message.sender_role === "user" ? ("You") : message.sender_role === "admin" ? (language === "en" ? "Support team" : "सपोर्ट टीम") : "Assistant"}</p>{message.body}</div>)}
+            {conversation?.messages?.map(message => <div key={message.id} className={message.sender_role === "user" ? "ml-auto max-w-[92%] rounded-2xl rounded-tr-sm bg-blue-600 p-3 text-sm text-white" : "max-w-[92%] rounded-2xl rounded-tl-sm bg-white p-3 text-sm text-slate-800 shadow-sm"}><p className="mb-1 text-[10px] font-bold uppercase opacity-70">{message.sender_role === "user" ? ("You") : message.sender_role === "admin" ? ("Support team") : "Assistant"}</p>{message.body}</div>)}
           </div>
           {notice ? <p role="status" className="border-t border-slate-100 px-3 py-2 text-xs text-slate-600">{notice}</p> : null}
           <form onSubmit={send} className="flex gap-2 border-t border-slate-200 p-3">
