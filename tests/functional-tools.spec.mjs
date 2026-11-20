@@ -253,3 +253,28 @@ test("Homepage category filter shows matching tools", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Percentage Calculator", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "PDF Merge", exact: true })).toHaveCount(0);
 });
+
+
+test("staging robots blocks crawlers and does not advertise the production sitemap", async ({ request }) => {
+  const response = await request.get("/robots.txt");
+  expect(response.ok()).toBeTruthy();
+  const body = await response.text();
+  expect(body).toContain("Disallow: /");
+  expect(body).not.toContain("Sitemap:");
+});
+
+test("professional platform preview search and mobile navigation work", async ({ page }) => {
+  await page.goto("/platform-preview");
+  await expect(page.getByText("PRIVATE STAGING PREVIEW", { exact: false })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Powerful tools for your everyday work/ })).toBeVisible();
+
+  await page.getByLabel("Search tools").fill("GST calculator");
+  await expect(page.getByRole("heading", { name: "GST Calculator", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "PDF Merge", exact: true })).toHaveCount(0);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Menu", exact: true }).click();
+  await expect(page.getByRole("navigation", { name: "Mobile navigation" })).toBeVisible();
+  await page.getByRole("navigation", { name: "Mobile navigation" }).getByRole("link", { name: "Digital Products" }).click();
+  await expect(page.getByRole("navigation", { name: "Mobile navigation" })).toHaveCount(0);
+});
