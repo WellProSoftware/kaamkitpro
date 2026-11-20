@@ -245,7 +245,7 @@ test.describe("staging security regression checks", () => {
     await expect(page.getByText(/PRIVATE ACCOUNT A ITEM/)).toHaveCount(0);
   });
 
-  test("temporary free-Pro access bypasses subscription lookup while checkout remains paused", async () => {
+  test("temporary free-Pro access remains open while staging Pro checkout is Test Mode guarded", async () => {
     const access = await readFile(new URL("../src/app/api/access/route.ts", import.meta.url), "utf8");
     const usage = await readFile(new URL("../src/app/api/tools/usage/route.ts", import.meta.url), "utf8");
     const pricing = await readFile(new URL("../src/app/pricing/page.tsx", import.meta.url), "utf8");
@@ -253,8 +253,8 @@ test.describe("staging security regression checks", () => {
     expect(access).toContain("adsEnabled: !isStagingBuild");
     expect(usage).toContain('tier: "free_pro_access"');
     expect(usage).toContain("limited: false");
-    expect(pricing).toContain("Paid plans are on hold");
-    expect(pricing).not.toContain("ProSubscriptionCheckout");
+    expect(pricing).toContain("ProSubscriptionCheckout");
+    expect(pricing).toContain("Checkout on this staging branch is restricted to Razorpay Test Mode.");
   });
   test("staging does not load the live AdSense script", async ({ page }) => {
     await page.goto("/");
