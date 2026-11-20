@@ -370,3 +370,15 @@ test("email signup and password login stay on the approved account flow", async 
     expect(callback).toContain('window.history.replaceState(null, "", "/auth/callback")');
     expect(callback).toContain('flow === "reset" ? "/reset-password"');
   });
+
+
+test("Razorpay staging checkout is test-key-only and live mode requires explicit server authorization", async () => {
+  const checkout = await readFile(new URL("../src/app/api/billing/checkout/route.ts", import.meta.url), "utf8");
+  const client = await readFile(new URL("../src/components/ProSubscriptionCheckout.tsx", import.meta.url), "utf8");
+  expect(checkout).toContain('stagingOnly && (mode !== "test" || !keyId.startsWith("rzp_test_"))');
+  expect(checkout).toContain('livePaymentsEnabled !== "true"');
+  expect(checkout).toContain('!keyId.startsWith("rzp_live_")');
+  expect(checkout).toContain("mode,");
+  expect(client).toContain('checkout.mode === "test" && checkout.key_id.startsWith("rzp_test_")');
+  expect(client).toContain('checkout.mode === "live" && checkout.key_id.startsWith("rzp_live_")');
+});
