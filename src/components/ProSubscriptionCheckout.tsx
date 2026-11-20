@@ -10,6 +10,7 @@ type CheckoutResponse = {
   description: string;
   amount: number;
   currency: string;
+  mode: "test" | "live";
   prefill?: { email?: string };
 };
 
@@ -86,8 +87,11 @@ export default function ProSubscriptionCheckout() {
       if (!checkoutResponse.ok || !checkout.key_id || !checkout.subscription_id) {
         throw new Error(checkout.error || "Subscription checkout is not available yet.");
       }
-      if (!checkout.key_id.startsWith("rzp_test_")) {
-        throw new Error("Staging checkout is restricted to Razorpay Test Mode. No live payment was started.");
+      const keyMatchesMode =
+        (checkout.mode === "test" && checkout.key_id.startsWith("rzp_test_")) ||
+        (checkout.mode === "live" && checkout.key_id.startsWith("rzp_live_"));
+      if (!keyMatchesMode) {
+        throw new Error("The payment key does not match the server-authorized Razorpay mode. No payment was started.");
       }
 
       const loaded = await loadRazorpayCheckout();
@@ -181,7 +185,7 @@ export default function ProSubscriptionCheckout() {
           <span>I authorize recurring subscription payments for the plan I select. I have reviewed the renewal amount and frequency shown in Razorpay, and understand that I can manage or cancel the subscription using the available account/provider controls.</span>
         </label>
         <p role="status" aria-live="polite" className="mt-4 min-h-6 text-sm text-slate-700">{message}</p>
-        <p className="mt-2 text-xs leading-5 text-slate-500">Checkout is currently guarded for staging Test Mode. A successful browser callback alone does not grant Pro access; server verification and the signed Razorpay webhook control subscription status.</p>
+        <p className="mt-2 text-xs leading-5 text-slate-500">Staging uses Razorpay Test Mode only. Production Live Mode requires a separately authorized release. A successful browser callback alone never grants Pro access; server verification and the signed Razorpay webhook control subscription status.</p>
       </div>
     </section>
   );
