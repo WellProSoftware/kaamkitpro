@@ -1,0 +1,487 @@
+KaamKitPro production Worker recovery snapshot
+Captured: 2026-11-20
+This file preserves the Cloudflare Worker module export and deployment/configuration metadata. It does not contain secret values.
+
+--- METADATA JSON ---
+{
+  "backup_created_at": "2026-11-20",
+  "source": "Cloudflare Workers GET /accounts/{account_id}/workers/scripts/kaamkitpro-production/content/v2",
+  "production_worker": "kaamkitpro-production",
+  "production_hostnames": [
+    "kaamkitpro.com",
+    "www.kaamkitpro.com"
+  ],
+  "live_deployment_id": "f30c3f42-c978-448f-b945-d7867231f7e1",
+  "live_version_id": "baf1d136-e17b-4dbb-9c94-22ec9849b175",
+  "export_bytes": 24115,
+  "export_sha256_note": "Exact multipart response stored below; source export is from the currently deployed production Worker.",
+  "github_main_commit": "14154e1e85ec2b7f303935cc668fe753900ecb91",
+  "worker_settings": {
+    "result": {
+      "placement": {},
+      "compatibility_date": "2026-10-11",
+      "compatibility_flags": [
+        "nodejs_compat",
+        "nodejs_compat_populate_process_env"
+      ],
+      "usage_model": "standard",
+      "tags": [],
+      "tail_consumers": [],
+      "logpush": false,
+      "annotations": {
+        "workers/triggered_by": "secret"
+      },
+      "cache_options": {
+        "enabled": true,
+        "cross_version_cache": false
+      },
+      "bindings": [
+        {
+          "name": "ASSETS",
+          "type": "assets"
+        },
+        {
+          "name": "CF_VERSION_METADATA",
+          "type": "version_metadata"
+        },
+        {
+          "name": "KAAMKITPRO_ADMIN_EMAILS",
+          "text": "ankitkd550@gmail.com",
+          "type": "plain_text"
+        },
+        {
+          "name": "KAAMKITPRO_STAGING",
+          "text": "false",
+          "type": "plain_text"
+        },
+        {
+          "name": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+          "text": "sb_publishable_A7qrv4E5dIkSPJfSVcM-LQ_SUWqgPoe",
+          "type": "plain_text"
+        },
+        {
+          "name": "NEXT_PUBLIC_SUPABASE_URL",
+          "text": "https://brydbxhghwyeyjvsvfkr.supabase.co",
+          "type": "plain_text"
+        },
+        {
+          "name": "SUPABASE_SERVICE_ROLE_KEY",
+          "type": "secret_text"
+        }
+      ]
+    },
+    "success": true,
+    "errors": [],
+    "messages": []
+  },
+  "deployments": {
+    "result": {
+      "deployments": [
+        {
+          "id": "f30c3f42-c978-448f-b945-d7867231f7e1",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "author_email": "ankitkd550@gmail.com",
+          "annotations": {
+            "workers/triggered_by": "secret"
+          },
+          "versions": [
+            {
+              "version_id": "baf1d136-e17b-4dbb-9c94-22ec9849b175",
+              "percentage": 100
+            }
+          ],
+          "created_on": "2026-11-16T17:57:49.705102Z"
+        },
+        {
+          "id": "35d02387-87d2-4374-ad17-47e5f2afeb5d",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "author_email": "ankitkd550@gmail.com",
+          "annotations": {
+            "workers/triggered_by": "deployment"
+          },
+          "versions": [
+            {
+              "version_id": "87039e29-d476-4f84-ae76-82d85ab5d712",
+              "percentage": 100
+            }
+          ],
+          "created_on": "2026-11-16T17:57:47.220345Z"
+        },
+        {
+          "id": "a6bc3f0e-a0f1-4009-87f5-b06d86602808",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "author_email": "ankitkd550@gmail.com",
+          "annotations": {
+            "workers/triggered_by": "secret"
+          },
+          "versions": [
+            {
+              "version_id": "a2ffdd32-8469-4eb7-924e-79fd2944a521",
+              "percentage": 100
+            }
+          ],
+          "created_on": "2026-11-13T18:39:02.666191Z"
+        },
+        {
+          "id": "12c83e8c-ad84-4031-9a26-fe8332338748",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "author_email": "ankitkd550@gmail.com",
+          "annotations": {
+            "workers/triggered_by": "deployment"
+          },
+          "versions": [
+            {
+              "version_id": "2c562e15-3331-49f6-84e1-1417e070f8fe",
+              "percentage": 100
+            }
+          ],
+          "created_on": "2026-11-13T18:38:59.63568Z"
+        },
+        {
+          "id": "8a23d230-c686-4351-8fef-37e28a246f0e",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "author_email": "ankitkd550@gmail.com",
+          "annotations": {
+            "workers/triggered_by": "secret"
+          },
+          "versions": [
+            {
+              "version_id": "1068047d-df1c-4bec-9c9a-518f7bfd2149",
+              "percentage": 100
+            }
+          ],
+          "created_on": "2026-10-16T13:26:05.536842Z"
+        },
+        {
+          "id": "0c000855-6e30-4754-9925-2f75bf14fef1",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "author_email": "ankitkd550@gmail.com",
+          "annotations": {
+            "workers/triggered_by": "deployment"
+          },
+          "versions": [
+            {
+              "version_id": "d622542c-fa93-4230-bf69-de006cec96a9",
+              "percentage": 100
+            }
+          ],
+          "created_on": "2026-10-16T13:26:03.16383Z"
+        },
+        {
+          "id": "db861719-dc9a-4913-bd7f-3dffc0d7d17a",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "author_email": "ankitkd550@gmail.com",
+          "annotations": {
+            "workers/triggered_by": "secret"
+          },
+          "versions": [
+            {
+              "version_id": "bec21876-9ac6-42c4-99ac-e715c76dd252",
+              "percentage": 100
+            }
+          ],
+          "created_on": "2026-10-16T13:15:43.336551Z"
+        },
+        {
+          "id": "e2463e87-a7dc-4147-bcdd-1b96552b9859",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "author_email": "ankitkd550@gmail.com",
+          "annotations": {
+            "workers/triggered_by": "deployment"
+          },
+          "versions": [
+            {
+              "version_id": "0dbfbd70-8fe9-4eaa-8018-89e96d938176",
+              "percentage": 100
+            }
+          ],
+          "created_on": "2026-10-16T13:15:40.470851Z"
+        },
+        {
+          "id": "75dbd90d-259a-4e29-864d-b08930201b3d",
+          "source": "api",
+          "strategy": "percentage",
+          "author_email": "ankitkd550@gmail.com",
+          "annotations": {
+            "workers/message": "Restore last known production version from before Oct 13 evening IST for recovery verification.",
+            "workers/triggered_by": "deployment"
+          },
+          "versions": [
+            {
+              "version_id": "75ddf0e2-7ae2-4488-83e7-313e5dfac20c",
+              "percentage": 100
+            }
+          ],
+          "created_on": "2026-10-13T19:22:38.098489Z"
+        },
+        {
+          "id": "3704528e-0a81-4d3b-84c9-9370f0d1b308",
+          "source": "wrangler",
+          "strategy": "percentage",
+          "author_email": "ankitkd550@gmail.com",
+          "annotations": {
+            "workers/triggered_by": "deployment"
+          },
+          "versions": [
+            {
+              "version_id": "36b44654-1672-41c3-9780-013e52fd8d61",
+              "percentage": 100
+            }
+          ],
+          "created_on": "2026-10-13T19:11:20.500463Z"
+        }
+      ]
+    },
+    "success": true,
+    "errors": [],
+    "messages": [],
+    "result_info": {
+      "page": 1,
+      "per_page": 10,
+      "count": 10,
+      "total_count": 25,
+      "total_pages": 3
+    }
+  },
+  "versions": {
+    "result": {
+      "items": [
+        {
+          "id": "baf1d136-e17b-4dbb-9c94-22ec9849b175",
+          "number": 24,
+          "metadata": {
+            "created_on": "2026-11-16T17:57:49.705102Z",
+            "source": "wrangler",
+            "author_id": "1d160d9ac7bc83d8f5f36f5aadc630ad",
+            "author_email": "ankitkd550@gmail.com",
+            "has_preview": false
+          },
+          "annotations": {
+            "workers/triggered_by": "secret"
+          }
+        },
+        {
+          "id": "87039e29-d476-4f84-ae76-82d85ab5d712",
+          "number": 23,
+          "metadata": {
+            "created_on": "2026-11-16T17:57:46.052428Z",
+            "source": "wrangler",
+            "author_id": "1d160d9ac7bc83d8f5f36f5aadc630ad",
+            "author_email": "ankitkd550@gmail.com",
+            "has_preview": true
+          },
+          "annotations": {
+            "workers/triggered_by": "version_upload"
+          }
+        },
+        {
+          "id": "a2ffdd32-8469-4eb7-924e-79fd2944a521",
+          "number": 22,
+          "metadata": {
+            "created_on": "2026-11-13T18:39:02.666191Z",
+            "source": "wrangler",
+            "author_id": "1d160d9ac7bc83d8f5f36f5aadc630ad",
+            "author_email": "ankitkd550@gmail.com",
+            "has_preview": false
+          },
+          "annotations": {
+            "workers/triggered_by": "secret"
+          }
+        },
+        {
+          "id": "2c562e15-3331-49f6-84e1-1417e070f8fe",
+          "number": 21,
+          "metadata": {
+            "created_on": "2026-11-13T18:38:58.967873Z",
+            "source": "wrangler",
+            "author_id": "1d160d9ac7bc83d8f5f36f5aadc630ad",
+            "author_email": "ankitkd550@gmail.com",
+            "has_preview": true
+          },
+          "annotations": {
+            "workers/triggered_by": "version_upload"
+          }
+        },
+        {
+          "id": "1068047d-df1c-4bec-9c9a-518f7bfd2149",
+          "number": 20,
+          "metadata": {
+            "created_on": "2026-10-16T13:26:05.536842Z",
+            "source": "wrangler",
+            "author_id": "1d160d9ac7bc83d8f5f36f5aadc630ad",
+            "author_email": "ankitkd550@gmail.com",
+            "has_preview": false
+          },
+          "annotations": {
+            "workers/triggered_by": "secret"
+          }
+        },
+        {
+          "id": "d622542c-fa93-4230-bf69-de006cec96a9",
+          "number": 19,
+          "metadata": {
+            "created_on": "2026-10-16T13:26:02.025391Z",
+            "source": "wrangler",
+            "author_id": "1d160d9ac7bc83d8f5f36f5aadc630ad",
+            "author_email": "ankitkd550@gmail.com",
+            "has_preview": true
+          },
+          "annotations": {
+            "workers/triggered_by": "version_upload"
+          }
+        },
+        {
+          "id": "bec21876-9ac6-42c4-99ac-e715c76dd252",
+          "number": 18,
+          "metadata": {
+            "created_on": "2026-10-16T13:15:43.336551Z",
+            "source": "wrangler",
+            "author_id": "1d160d9ac7bc83d8f5f36f5aadc630ad",
+            "author_email": "ankitkd550@gmail.com",
+            "has_preview": false
+          },
+          "annotations": {
+            "workers/triggered_by": "secret"
+          }
+        },
+        {
+          "id": "0dbfbd70-8fe9-4eaa-8018-89e96d938176",
+          "number": 17,
+          "metadata": {
+            "created_on": "2026-10-16T13:15:39.568101Z",
+            "source": "wrangler",
+            "author_id": "1d160d9ac7bc83d8f5f36f5aadc630ad",
+            "author_email": "ankitkd550@gmail.com",
+            "has_preview": true
+          },
+          "annotations": {
+            "workers/triggered_by": "version_upload"
+          }
+        },
+        {
+          "id": "36b44654-1672-41c3-9780-013e52fd8d61",
+          "number": 16,
+          "metadata": {
+            "created_on": "2026-10-13T19:11:19.508057Z",
+            "source": "wrangler",
+            "author_id": "1d160d9ac7bc83d8f5f36f5aadc630ad",
+            "author_email": "ankitkd550@gmail.com",
+            "has_preview": true
+          },
+          "annotations": {
+            "workers/triggered_by": "version_upload"
+          }
+        },
+        {
+          "id": "945a9a06-aac5-4723-a675-297d00005af2",
+          "number": 15,
+          "metadata": {
+            "created_on": "2026-10-13T19:11:13.435558Z",
+            "source": "wrangler",
+            "author_id": "1d160d9ac7bc83d8f5f36f5aadc630ad",
+            "author_email": "ankitkd550@gmail.com",
+            "has_preview": false
+          },
+          "annotations": {
+            "workers/triggered_by": "secret"
+          }
+        }
+      ]
+    },
+    "success": true,
+    "errors": null,
+    "messages": null,
+    "result_info": {
+      "page": 1,
+      "per_page": 10,
+      "count": 10,
+      "total_count": 24
+    }
+  }
+}
+
+--- RAW CLOUDFLARE CONTENT/V2 EXPORT ---
+--76847ad9c7a475ff0aa73211a6b1c48a60c3bebf0211adc7438d9a3d050b
+Content-Disposition: form-data; name="_next/static/page-Cxcvgfvd.js"; filename="_next/static/page-Cxcvgfvd.js"
+Content-Type: application/javascript+module
+
+import{a as e}from"../../vinext-stage-runtime~virtual_vinext-response-stage~virtual_vinext-rsc-entry~cache-calla~bai84cks-DMhfLSFK.js";var t=e(()=>{throw Error(`Unexpectedly client reference export 'default' is called on server`)},`e31b1d3d10b3`,`default`);export{t as default};
+--76847ad9c7a475ff0aa73211a6b1c48a60c3bebf0211adc7438d9a3d050b
+Content-Disposition: form-data; name="_next/static/vinext-stage-runtime~cacheability-request-D1jT34Q7.js"; filename="_next/static/vinext-stage-runtime~cacheability-request-D1jT34Q7.js"
+Content-Type: application/javascript+module
+
+import{n as e}from"./rolldown-runtime-hePW80VL.js";import{C as t,G as n,T as r,st as i}from"../../vinext-stage-runtime~index~virtual_vinext-response-stage~virtual_vinext-rsc-entry~app-r~njcbxspq-ogkipE3w.js";import{n as a}from"../../vinext-stage-runtime~index~virtual_vinext-response-stage~virtual_vinext-rsc-entry~app-r~gmmvtxfa-GfF3-du6.js";import{Gt as o,Ht as s,Jt as c,Kn as l,Kt as u,Rr as d,Ut as f,Vt as p,Wt as m,_r as h,g,hr as _,ir as v,mr as ee,or as y,qt as b,sr as x,vr as S,xr as C}from"../../vinext-stage-runtime~virtual_vinext-response-stage~virtual_vinext-request-stage-C4h-J1xt.js";import{n as w,r as T,t as E}from"./vinext-stage-runtime~metadata-route-response~app-route-handler-dispatch~cacheability-request-BTpP4ZoO.js";var D=e({applyResponseStageCachePolicy:()=>L,captureCacheabilityAdmissionBody:()=>Y,createCacheabilityAdmissionCaptureBudget:()=>W,createWorkerCacheabilityAdmissionContext:()=>F,createWorkerCacheabilityContext:()=>M,createWorkerCacheabilityProbeContext:()=>j,finalizeRequestStageCacheabilityProbe:()=>V,finalizeWorkerCacheabilityResponse:()=>ce,readWorkerCacheabilityProbeMode:()=>A,readWorkerCacheabilityProbeRoute:()=>te,recordResponseStageCachePolicy:()=>R,serializeWorkerCacheabilityProbeRoute:()=>k});function O(e,t){let n=(e.get(`Vary`)??``).split(`,`).map(e=>e.trim().toLowerCase()).filter(Boolean);return n.includes(`*`)?`response uses Vary: *`:t.responseVary===`verbatim`?null:n.some(e=>!i(e))?`response cache does not support custom Vary fields`:null}function k(e){return encodeURIComponent(JSON.stringify([e.kind,e.pattern]))}function te(e){let t=e.headers.get(r);if(!t)return null;try{let e=JSON.parse(decodeURIComponent(t));if(!Array.isArray(e)||e.length!==2)return null;let[n,r]=e;return n!==`app-page`&&n!==`app-route`&&n!==`pages-page`||typeof r!=`string`||!r.startsWith(`/`)?null:{kind:n,pattern:r}}catch{return null}}function A(e,n){let r=e.headers.get(t);return r!==`1`&&r!==`identity`||!n||!l(e.headers.get(`x-vinext-prerender-secret`)??``,n)?null:r===`identity`?`identity`:`probe`}function j(e,t,n,r){let i={captureDeadlineAt:Date.now()+T,mode:t,responseVary:n,resolvedRoutePathname:r};return Object.assign(Object.create(Object.getPrototypeOf(e)),e,{[C]:i})}function M(e,t,n,r){let i=A(t,n);return i?j(e,i,r):e}var N;function P(e,t){if(N?.raw===e&&N.buildId===t)return N.manifest;let n=b(e,t);return N={buildId:t,manifest:n,raw:e},n}function F(e,t,n,r,i=n!=null,a,s,c,l){let u=m(t,c),d=t.headers.has(`authorization`)||t.headers.has(`cookie`)||t.headers.has(`proxy-authorization`),f=u?o(s??new URL(t.url).pathname,u.representation):void 0;if(!n){if(!i)return e;let t={admission:u?{policy:`runtime`,...u,routePathname:f}:{policy:`deny`},captureDeadlineAt:Date.now()+T,credentialedRequest:d,mode:`admit`,applyCompletedResponsePolicy:l?.applyCompletedResponsePolicy,responseVary:a};return Object.assign(Object.create(Object.getPrototypeOf(e)),e,{[C]:t})}let p=r?P(n,r):null,h={admission:p&&u?{manifest:p,policy:`manifest`,...u,routePathname:f}:{policy:`deny`},captureDeadlineAt:Date.now()+T,credentialedRequest:d,mode:`admit`,applyCompletedResponsePolicy:l?.applyCompletedResponsePolicy,responseVary:a};return Object.assign(Object.create(Object.getPrototypeOf(e)),e,{[C]:h})}function I(e){return Reflect.get(e,C)??null}function L(e,t,n){if(!n?.length)return e;z(I(t),n);try{return g(e.headers,n),e}catch{let t=new Headers(e.headers);return g(t,n),new Response(e.body,{headers:t,status:e.status,statusText:e.statusText})}}function R(e,t){t?.length&&z(I(e),t)}function z(e,t){if(e){e.explicitConfigCachePolicy=!0;for(let[n,r]of t)_(n)&&d(e,n,r)}}function B(e,t,n,r,i){let a=i?.dynamicUsage===!0||n.dynamicUsage===!0||e.patternDynamicReason!==void 0,o={cacheControl:n.cacheControl,...a?{dynamicUsage:!0}:{},...e.explicitConfigCachePolicy?{explicitConfigCachePolicy:!0}:{},kind:e.route?.kind,pattern:e.route?.pattern,reason:n.reason,...i?{rendererStatic:i.static}:{},...n.retryable?{retryable:!0}:{},...e.resolvedRoutePathname?{routePathname:e.resolvedRoutePathname}:{},...t===`dynamic`?{scope:e.patternDynamicReason?`pattern`:`identity`}:{},state:t,status:r,version:1};return y(Response.json(o,{headers:{"Cache-Control":v}}))}function V(e,t){if(!t.mode||t.responseStageDispatched||!t.route)return e;e.body?.cancel().catch(()=>{});let n={kind:t.route.kind,pattern:t.route.pattern,reason:`request routing completed without response-stage rendering`,scope:`identity`,state:`dynamic`,status:e.status,terminal:!0,version:1};return y(Response.json(n,{headers:{"Cache-Control":v}}))}async function H(e,t){if(!e.body)return null;let n=e.body.getReader(),r;try{for(;;){let e=t-Date.now();if(e<=0)return`response body did not complete before the probe deadline`;let i=await Promise.race([n.read(),new Promise((t,n)=>{r=setTimeout(()=>n(Error(`response body did not complete before the probe deadline`)),e)})]);if(r!==void 0&&(clearTimeout(r),r=void 0),i.done)return null}}catch(e){return e instanceof Error?e.message:String(e)}finally{r!==void 0&&clearTimeout(r),n.cancel().catch(()=>{});try{n.releaseLock()}catch{}}}var U={maxBytes:E,reservedBytes:0};function W(e){return{maxBytes:e,reservedBytes:0}}function G(e,t){return t>e.maxBytes-e.reservedBytes?!1:(e.reservedBytes+=t,!0)}function K(e,t){t.reserved&&(t.reserved=!1,e.reservedBytes-=t.value.byteLength)}function q(e,t,n=0){for(let r=n;r<t.length;r++)K(e,t[r])}async function ne(e,t){let n=t-Date.now();if(n<=0)return{kind:`timeout`};let r;try{return await Promise.race([e.then(e=>({kind:`value`,value:e})),new Promise(e=>{r=setTimeout(()=>e({kind:`timeout`}),n)})])}finally{r!==void 0&&clearTimeout(r)}}function J(e,t,n,r){let i=0,a=!1,o=()=>{if(!a){a=!0;try{e.releaseLock()}catch{}}};return new ReadableStream({async pull(a){if(i<t.length){let e=t[i++];a.enqueue(e.value),K(n,e)}else try{let t=await(r??e.read());r=void 0,t.done?(o(),a.close()):a.enqueue(t.value)}catch(e){o(),a.error(e)}},cancel(r){q(n,t,i);try{e.cancel(r).catch(()=>{}).finally(o)}catch{o()}}},{highWaterMark:0})}function re(e,t){let n=0;return new ReadableStream({pull(r){if(n>=e.length){r.close();return}let i=e[n++];r.enqueue(i.value),K(t,i)},cancel(){q(t,e,n)}},{highWaterMark:0})}async function Y(e,t,n=w,r=U){if(!e)return{body:null,kind:`captured`};let i=e.getReader(),a=[],o=0;try{for(;;){let e=i.read(),s=await ne(e,t);if(s.kind===`timeout`)return{body:J(i,a,r,e),kind:`fallback`};let c=s.value;if(c.done)return i.releaseLock(),{body:re(a,r),kind:`captured`};let l=o+c.value.byteLength,u=l<=n&&G(r,c.value.byteLength);if(a.push({reserved:u,value:c.value}),o=l,!u)return{body:J(i,a,r),kind:`fallback`}}}catch(e){q(r,a);let t=()=>{try{i.releaseLock()}catch{}};try{let n=i.cancel(e);t(),n.catch(()=>{}).finally(t)}catch{t()}throw e}}function X(e,t,r,i,a){let o=new Headers(e.headers);typeof t==`string`&&o.delete(`Content-Length`);for(let[e,t]of Object.entries(a?.headers??{}))o.has(e)||o.set(e,t);x(o,r?.cacheable===!0&&r.cacheControl?{cacheControl:r.cacheControl,tags:r.tags,browserCacheControl:i}:{cacheControl:v,browserCacheControl:i});let s=a?.status??e.status,c=a?.status;return(c===401||c===403||c===404)&&o.set(n,String(c)),new Response(t,{headers:o,status:s,statusText:s===e.status?e.statusText:``})}async function ie(e,t){if(!e)return null;let n=await new Response(e).text(),{stripClientTraceMetadataBlock:r}=await import(`./vinext-stage-runtime~client-trace-metadata-DpvC-3GU.js`).then(e=>e.t);return r(n,t)}function ae(e,t){let n=S(e.headers);if(!n||n===`cache-control`)return null;let r=e.headers.get(n);if(!(t.explicitResponseCachePolicy||t.configCdnCachePolicy?.get(n)===r||t.frameworkResponseCachePolicy&&t.frameworkResponseCachePolicy.get(n)!==r)||!r)return null;let i=h(e.headers);return i?a(i)?{cacheable:!1}:{cacheable:!0,cacheControl:i,...t.cdnCacheTags?{tags:t.cdnCacheTags}:{}}:null}function Z(e,t,n=t.outcome??null){if(t.forcedDynamicReason)return{cacheable:!1,reason:t.forcedDynamicReason};let r=O(e.headers,t);if(r)return{cacheable:!1,reason:r};if(e.headers.has(`set-cookie`))return{cacheable:!1,reason:`response sets a cookie`};if(n?.dynamicUsage)return n;let i=ae(e,t)??n,a=i?.tags??n?.tags??t.cdnCacheTags;return i&&a&&i.tags!==a?{...i,tags:a}:i}function oe(e){let t=new Headers({"Content-Type":`text/plain; charset=utf-8`});return x(t,{cacheControl:v}),new Response(`[vinext] Route ${e.pattern} changed from static to dynamic after deployment.`,{headers:t,status:500})}function Q(e){let t=new Headers({"Content-Type":`text/plain; charset=utf-8`});return x(t,{cacheControl:v}),new Response(`[vinext] Route ${e} failed during cacheability evaluation.`,{headers:t,status:500})}function $(e,t){let n=new Headers(e.headers);return n.delete(`Cache-Control`),!!(t.finalResponseVetoReason||e.headers.has(`set-cookie`)||ee(n,t.frameworkResponseCachePolicy))}async function se(e,t){if(t.preserveResponseCachePolicy)return e;let n=t.explicitResponseCachePolicy||t.configCdnCachePolicy?.has(`cache-control`)||t.route?.kind===`pages-api`||t.route?.kind===`pages-page`&&t.outcome?.cacheable!==!0?e.headers.get(`Cache-Control`)??void 0:void 0,r=t.admission;if(t.route?.kind===`app-route`||t.route?.kind===`pages-api`){let i=null,a=Z(e,t),o=r?.representation?c(r.representation,t.route.kind):null,l=a?.cacheable===!0;if(!r||r.policy===`deny`||!o||!r.requestKey)return X(e,e.body,null,n);if(r.policy===`manifest`&&t.route.kind===`app-route`){let e=r.manifest;i=u(e,t.route.kind,t.route.pattern)}let d=i!==null&&r.routePathname!==void 0&&s(i,r.routePathname,o)!==null,f=l&&(r.policy===`runtime`||r.policy===`manifest`&&!d);if(!d&&!f||e.status>=500||t.credentialedRequest||t.forcedDynamicReason||$(e,t)||O(e.headers,t)!==null)return X(e,e.body,null,n);let p=a;if(t.completedResponseBody)return!p?.cacheable||!p.cacheControl?X(e,e.body,null,n):t.applyCompletedResponsePolicy?X(e,e.body,p,n):e;let m;try{m=await Y(e.body,t.captureDeadlineAt,w,t.captureBudget??U)}catch{return Q(t.route.pattern)}return m.kind===`fallback`?X(e,m.body,null,n):X(e,m.body,p,n)}if(!r||r.policy===`deny`||!r.representation||!r.requestKey||!t.route||e.status>=500)return X(e,e.body,null,n);let i={kind:t.route.kind,pattern:t.route.pattern},a=r.representation,o=c(a,i.kind);if(!f(i.kind,o))return X(e,e.body,null,n);let l=null,d=null;if(r.policy===`manifest`){let t=r.manifest;if(l=u(t,i.kind,i.pattern),d=r.routePathname?p(t,i,a,r.routePathname):null,!l||!d)return X(e,e.body,null,n)}if(t.forcedDynamicReason||$(e,t)||O(e.headers,t)!==null||t.route.kind===`pages-page`&&!t.completion&&Z(e,t)?.cacheable!==!0)return X(e,e.body,null,n);let m;try{m=await Y(e.body,t.captureDeadlineAt,w,t.captureBudget??U)}catch{return Q(t.route.pattern)}if(m.kind===`fallback`)return X(e,m.body,null,n);let h=t.completion?await t.completion:t.outcome??null,g=Z(e,t,h);if(g?.cacheable!==!0||!g.cacheControl)return l&&d===`static-candidate`&&g?.dynamicUsage===!0?(await m.body?.cancel().catch(()=>{}),oe(l)):X(e,m.body,null,n);let _=S(e.headers),v=g!==h&&_!==null&&t.configCdnCachePolicy?.get(_)===e.headers.get(_);return t.route.kind===`app-page`&&!v&&h?.searchParamsUnread!==!0?X(e,m.body,null,n):X(e,o===`html`&&t.clientTraceMetadataMarker?await ie(m.body,t.clientTraceMetadataMarker):m.body,g,n,h??void 0)}async function ce(e,t){let n=I(t);if(!n)return e;if(n.mode===`admit`)return se(e,n);if(n.mode===`identity`)return await e.body?.cancel().catch(()=>{}),B(n,n.route?`runtime-check`:`probe-failed`,n.route?{cacheable:!1}:{cacheable:!1,reason:`request did not resolve to a probeable page route`},e.status);if(!n.route)return await e.body?.cancel().catch(()=>{}),B(n,`probe-failed`,{cacheable:!1,reason:`request did not resolve to a probeable page route`},e.status);if(n.probeBailout?.kind===`private-cache`)return await e.body?.cancel().catch(()=>{}),B(n,`dynamic`,n.probeBailout.outcome,e.status);if(e.status>=500)return await e.body?.cancel().catch(()=>{}),B(n,`probe-failed`,{cacheable:!1,reason:`route returned HTTP ${e.status}`},e.status);if(n.patternDynamicReason&&!n.explicitConfigCachePolicy)return await e.body?.cancel().catch(()=>{}),B(n,`dynamic`,{cacheable:!1,reason:n.patternDynamicReason},e.status);let r=await H(e,n.captureDeadlineAt);if(r)return B(n,`probe-failed`,{cacheable:!1,classificationFailure:!0,reason:r,retryable:!0},e.status);let i=n.completion?await n.completion:n.outcome??null,a=Z(e,n,i);return a?B(n,a.cacheable?`static-candidate`:a.classificationFailure?`probe-failed`:`dynamic`,a,e.status,{dynamicUsage:i?.dynamicUsage===!0,static:i?.cacheable===!0&&i.dynamicUsage!==!0}):B(n,`dynamic`,{cacheable:!1,reason:`completed render did not produce a reusable cache policy`},e.status)}export{D as t};
+--76847ad9c7a475ff0aa73211a6b1c48a60c3bebf0211adc7438d9a3d050b
+Content-Disposition: form-data; name="ssr/_next/static/AdSenseLoader-DapWehxG.js"; filename="ssr/_next/static/AdSenseLoader-DapWehxG.js"
+Content-Type: application/javascript+module
+
+import{i as e,t}from"./react-KgNZ1LC2.js";import{n}from"./navigation-BeyfZ-2t.js";var r=e(t(),1),i=`google-adsense`,a=`kk_privacy_consent_v1`,o=`ca-pub-6738934686699082`;function s({disabled:e=!1}){let t=n();return(0,r.useEffect)(()=>{let n=!1,r=()=>{document.getElementById(i)?.remove(),document.querySelectorAll([`ins.adsbygoogle`,`.google-auto-placed`,`iframe[id^='google_ads_iframe']`,`iframe[src*='googlesyndication.com']`,`iframe[src*='doubleclick.net']`].join(`,`)).forEach(e=>e.remove())},s=[`/login`,`/account`,`/admin`].some(e=>t===e||t.startsWith(e+`/`))||t.startsWith(`/auth/`);async function c(){if(e||s){r();return}let t=``;try{t=window.localStorage.getItem(a)||``}catch{r();return}if(t!==`accepted`)r();else try{let e=await fetch(`/api/access`,{cache:`no-store`});if(!e.ok){r();return}let t=await e.json();if(n||t.adsEnabled!==!0){r();return}if(document.getElementById(i))return;let a=document.createElement(`script`);a.id=i,a.async=!0,a.crossOrigin=`anonymous`,a.src=`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${o}`,a.dataset.adClient=o,document.head.appendChild(a)}catch{r()}}let l=()=>{c()},u=()=>{document.visibilityState===`visible`&&c()};return c(),window.addEventListener(`kaamkitpro:consent`,l),window.addEventListener(`kaamkitpro:access-changed`,l),window.addEventListener(`focus`,l),document.addEventListener(`visibilitychange`,u),()=>{n=!0,window.removeEventListener(`kaamkitpro:consent`,l),window.removeEventListener(`kaamkitpro:access-changed`,l),window.removeEventListener(`focus`,l),document.removeEventListener(`visibilitychange`,u)}},[t,e]),null}export{s as default};
+--76847ad9c7a475ff0aa73211a6b1c48a60c3bebf0211adc7438d9a3d050b
+Content-Disposition: form-data; name="__vinext_pregenerated_concrete_paths.js"; filename="__vinext_pregenerated_concrete_paths.js"
+Content-Type: application/javascript+module
+
+delete globalThis.__VINEXT_PREGENERATED_CONCRETE_PATHS;
+
+--76847ad9c7a475ff0aa73211a6b1c48a60c3bebf0211adc7438d9a3d050b
+Content-Disposition: form-data; name="ssr/_next/static/app-router-scroll-state-Chjrq4uf.js"; filename="ssr/_next/static/app-router-scroll-state-Chjrq4uf.js"
+Content-Type: application/javascript+module
+
+function e(e){try{return decodeURIComponent(e)}catch{return e}}function t(t){let n=e(t.startsWith(`#`)?t.slice(1):t);if(n===``||n===`top`){window.scrollTo(0,0);return}let r=document.getElementById(n);if(r){r.scrollIntoView({behavior:`auto`});return}let i=document.getElementsByName(n)[0];i?i.scrollIntoView({behavior:`auto`}):window.scrollTo(0,0)}var n=Symbol.for(`vinext.appRouterScrollIntent`);function r(){let e=globalThis;return e[n]??={nextId:0,pending:null},e[n]}function i(e){let t=r();t.nextId+=1;let n={commitId:null,hash:e,headElements:typeof document>`u`?null:new Set(document.head?.children??[]),id:t.nextId,targetHoistedInHead:!1};return t.pending=n,n}function a(){let e=r();e.nextId+=1,e.pending=null}function o(){return r().pending}function s(e,t){let n=r(),i=n.pending;e!=null&&i!==null&&i.id===e.id&&i.commitId===t&&(n.pending={...i,targetHoistedInHead:!0})}function c(e,t){if(e==null)return null;let n=r(),i=n.pending;return i===null||i.id!==e.id||t!==void 0&&i.commitId!==t?null:(n.pending=null,i)}export{s as a,o as i,a as n,e as o,c as r,t as s,i as t};
+--76847ad9c7a475ff0aa73211a6b1c48a60c3bebf0211adc7438d9a3d050b
+Content-Disposition: form-data; name="ssr/_next/static/page-DmZW8tyw.js"; filename="ssr/_next/static/page-DmZW8tyw.js"
+Content-Type: application/javascript+module
+
+import{i as e,t}from"./react-KgNZ1LC2.js";import{t as n}from"./jsx-runtime-BQmy_8t3.js";import{t as r}from"./FileImportDropzone-it9Sh75O.js";var i=e(t(),1),a=n();function o(){let[e,t]=(0,i.useState)(null),[n,o]=(0,i.useState)(`horizontal`),[s,c]=(0,i.useState)(``);return(0,a.jsx)(`main`,{className:`min-h-screen bg-slate-50 px-4 py-10`,children:(0,a.jsxs)(`div`,{className:`mx-auto max-w-3xl`,children:[(0,a.jsx)(`a`,{href:`/tools/image`,className:`text-sm font-medium text-blue-600 hover:underline`,children:`← Browse all Image tools`}),(0,a.jsxs)(`div`,{className:`mt-4 rounded-2xl bg-white p-6 shadow-sm md:p-8`,children:[(0,a.jsxs)(`div`,{className:`mb-8 text-center`,children:[(0,a.jsx)(`h1`,{className:`text-3xl font-bold text-slate-900`,children:`Image Flip Tool`}),(0,a.jsx)(`p`,{className:`mt-3 text-slate-600`,children:`Flip images horizontally or vertically online in your browser.`})]}),(0,a.jsx)(r,{inputId:`flip-file`,inputLabel:`Select Image`,title:`Image Flip`,description:`Drop a image here, or browse your device. Your file is processed locally in your browser.`,accept:`image/*`,buttonLabel:`Select Image`,onFile:e=>{t(e),c(``)}}),e&&(0,a.jsxs)(`div`,{className:`mt-6`,children:[(0,a.jsx)(`label`,{className:`mb-2 block text-sm font-medium text-slate-700`,children:`Flip direction`}),(0,a.jsxs)(`select`,{value:n,onChange:e=>o(e.target.value),className:`w-full rounded-lg border border-slate-300 px-4 py-3`,children:[(0,a.jsx)(`option`,{value:`horizontal`,children:`Horizontal`}),(0,a.jsx)(`option`,{value:`vertical`,children:`Vertical`})]}),(0,a.jsx)(`button`,{type:`button`,onClick:()=>{if(!e){c(`Please select an image.`);return}let t=URL.createObjectURL(e),r=new Image;r.onload=()=>{let e=document.createElement(`canvas`);e.width=r.width,e.height=r.height;let i=e.getContext(`2d`);i?(n===`horizontal`?(i.translate(e.width,0),i.scale(-1,1)):(i.translate(0,e.height),i.scale(1,-1)),i.drawImage(r,0,0),e.toBlob(e=>{if(URL.revokeObjectURL(t),!e){c(`Could not flip the image.`);return}let n=URL.createObjectURL(e),r=document.createElement(`a`);r.href=n,r.download=`kaamkitpro-flipped.jpg`,r.click(),URL.revokeObjectURL(n),c(`Image flipped successfully.`)},`image/jpeg`,.92)):(URL.revokeObjectURL(t),c(`Your browser does not support image processing.`))},r.onerror=()=>{URL.revokeObjectURL(t),c(`Could not read this image.`)},r.src=t},className:`mt-5 w-full rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700`,children:`Flip & Download`})]}),s&&(0,a.jsx)(`div`,{className:`mt-5 rounded-lg bg-slate-100 p-4 text-center text-sm text-slate-700`,children:s}),(0,a.jsx)(`p`,{className:`mt-8 text-center text-xs text-slate-500`,children:`Image processing happens directly in your browser.`})]})]})})}export{o as default};
+--76847ad9c7a475ff0aa73211a6b1c48a60c3bebf0211adc7438d9a3d050b
+Content-Disposition: form-data; name="_next/static/ToolSeoContent-frIwFa0P.js"; filename="_next/static/ToolSeoContent-frIwFa0P.js"
+Content-Type: application/javascript+module
+
+import{o as e}from"../../vinext-stage-runtime~virtual_vinext-response-stage-B4n4ihex.js";import{t}from"../../vinext-stage-runtime~virtual_vinext-response-stage~virtual_vinext-rsc-entry~layout~layo~egnrxt6k-CEmcuAQy.js";var n=t();function r({title:t,description:r,howToUse:i,benefits:a,faq:o,relatedTools:s=[]}){let c={"@context":`https://schema.org`,"@type":`FAQPage`,mainEntity:o.map(e=>({"@type":`Question`,name:e.question,acceptedAnswer:{"@type":`Answer`,text:e.answer}}))};return(0,n.jsxs)(`section`,{className:`mx-auto mt-10 max-w-4xl space-y-8`,children:[(0,n.jsxs)(`div`,{children:[(0,n.jsx)(`h2`,{className:`text-2xl font-bold tracking-tight text-slate-900`,children:t}),(0,n.jsx)(`p`,{className:`mt-3 leading-7 text-slate-600`,children:r})]}),(0,n.jsxs)(`div`,{children:[(0,n.jsx)(`h2`,{className:`text-xl font-semibold text-slate-900`,children:`How to Use This Tool`}),(0,n.jsx)(`ol`,{className:`mt-4 space-y-3`,children:i.map((e,t)=>(0,n.jsxs)(`li`,{className:`flex gap-3 text-sm leading-6 text-slate-600`,children:[(0,n.jsx)(`span`,{className:`flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-50 font-semibold text-blue-600`,children:t+1}),(0,n.jsx)(`span`,{children:e})]},e))})]}),(0,n.jsxs)(`div`,{children:[(0,n.jsx)(`h2`,{className:`text-xl font-semibold text-slate-900`,children:`Why Use KaamKitPro?`}),(0,n.jsx)(`ul`,{className:`mt-4 space-y-3`,children:a.map(e=>(0,n.jsxs)(`li`,{className:`flex gap-3 text-sm leading-6 text-slate-600`,children:[(0,n.jsx)(`span`,{className:`mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-600`}),(0,n.jsx)(`span`,{children:e})]},e))})]}),s.length>0&&(0,n.jsxs)(`div`,{children:[(0,n.jsx)(`h2`,{className:`text-xl font-semibold text-slate-900`,children:`Related Tools`}),(0,n.jsx)(`div`,{className:`mt-4 flex flex-wrap gap-3`,children:s.map(t=>(0,n.jsx)(e,{href:t.href,className:`rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-blue-600 transition hover:border-blue-300 hover:bg-blue-50`,children:t.label},t.href))})]}),(0,n.jsxs)(`div`,{children:[(0,n.jsx)(`h2`,{className:`text-xl font-semibold text-slate-900`,children:`Frequently Asked Questions`}),(0,n.jsx)(`div`,{className:`mt-4 space-y-3`,children:o.map(e=>(0,n.jsxs)(`details`,{className:`rounded-xl border border-slate-200 bg-white p-4`,children:[(0,n.jsx)(`summary`,{className:`cursor-pointer font-medium text-slate-900`,children:e.question}),(0,n.jsx)(`p`,{className:`mt-3 text-sm leading-6 text-slate-600`,children:e.answer})]},e.question))})]}),(0,n.jsx)(`script`,{type:`application/ld+json`,dangerouslySetInnerHTML:{__html:JSON.stringify(c)}})]})}export{r as t};
+--76847ad9c7a475ff0aa73211a6b1c48a60c3bebf0211adc7438d9a3d050b
+Content-Disposition: form-data; name="ssr/__vite_rsc_assets_manifest.js"; filename="ssr/__vite_rsc_assets_manifest.js"
+Content-Type: application/javascript+module
+
+export default {
+  "clientEntryUrl": "/_next/static/chunks/index-Dbijz876.js",
+  "clientEntryDeps": {
+    "js": [
+      "/_next/static/chunks/index-Dbijz876.js",
+      "/_next/static/chunks/rolldown-runtime-hePW80VL.js",
+      "/_next/static/chunks/framework-VZQ7zkYr.js",
+      "/_next/static/chunks/vinext-Cvm6U7zS.js"
+    ],
+    "css": []
+  },
+  "clientReferenceDeps": {
+    "9276801271d6": {
+      "js": [
+        "/_next/static/chunks/vinext-Cvm6U7zS.js",
+        "/_next/static/chunks/rolldown-runtime-hePW80VL.js",
+        "/_next/static/chunks/framework-VZQ7zkYr.js",
+        "/_next/static/chunks/index-Dbijz876.js"
+      ],
+      "css": []
+    },
+    "3b65333b902f": {
+      "js": [
+        "/_next/static/chunks/vinext-Cvm6U7zS.js",
+        "/_next/static/chunks/rolldown-runtime-hePW80VL.js",
+        "/_next/static/chunks/framework-VZQ7zkYr.js",
+        "/_next/static/chunks/index-Dbijz876.js"
+      ],
+      "css": []
+    },
+    "0b874ad30386": {
+      "js": [
+        "/_next/static/chunk
+
+--- TRUNCATED ---
+Response was ~717,827 tokens (limit: 6,000). Use more specific queries to reduce response size.
