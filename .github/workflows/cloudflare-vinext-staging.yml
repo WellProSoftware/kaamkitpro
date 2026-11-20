@@ -250,7 +250,8 @@ jobs:
 
   deploy-staging:
     name: Deploy validated build to workers.dev only
-    if: needs.validate.result == 'success' && ((github.event_name == 'workflow_dispatch' && inputs.deploy_to_workers_dev == true) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[deploy-staging]')))
+    # SAFETY HOLD: the kaamkitpro-staging Worker was removed during cleanup. Keep this job disabled to prevent accidental recreation.
+    if: false
     needs: validate
     runs-on: ubuntu-24.04
     timeout-minutes: 15
