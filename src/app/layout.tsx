@@ -65,17 +65,19 @@ export const metadata: Metadata = {
       "Free online PDF, image, calculator and business tools for everyday tasks.",
   },
 
-  robots: {
-    index: !isStagingBuild,
-    follow: !isStagingBuild,
-    googleBot: {
-      index: !isStagingBuild,
-      follow: !isStagingBuild,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
-  },
+  robots: isStagingBuild
+    ? { index: false, follow: false }
+    : {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+          "max-video-preview": -1,
+        },
+      },
 
   icons: {
     icon: [
