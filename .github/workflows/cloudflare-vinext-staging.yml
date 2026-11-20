@@ -307,6 +307,11 @@ jobs:
             if (p.routes?.length || p.route || p.custom_domains?.length || p.domains?.length) throw new Error("Refusing deploy: custom route/domain detected");
             console.log("Verified staging-only Worker name and no custom routes/domains.");
           '
+      - name: Upgrade Wrangler CLI to patched release
+        run: |
+          npm install --no-save wrangler@4.166.0
+          npx wrangler --version
+          npx wrangler --version | grep -q "4.166.0"
       - name: Configure staging-only Supabase secret
         shell: bash
         env:
