@@ -693,7 +693,7 @@ test("PDF converters do not create empty files for scanned PDFs without selectab
 
 test("professional platform preview search and responsive navigation work", async ({ page }) => {
   await page.goto("/platform-preview");
-  await expect(page.getByText("PRIVATE STAGING PREVIEW", { exact: false })).toBeVisible();
+  await expect(page.getByText("STAGING PREVIEW", { exact: false })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Powerful tools for your everyday work/ })).toBeVisible();
 
   await page.getByLabel("Search tools").fill("GST calculator");
