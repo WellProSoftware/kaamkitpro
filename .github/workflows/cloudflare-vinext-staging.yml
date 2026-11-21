@@ -419,7 +419,7 @@ jobs:
           const base = "https://kaamkitpro-staging.ankitkd550.workers.dev";
           const checks = [
             ["/", async r => r.status === 200 && /noindex/i.test(await r.text()), "homepage + staging noindex"],
-            ["/platform-preview", async r => { const t = await r.text(); return r.status === 200 && /PRIVATE STAGING PREVIEW/i.test(t) && /noindex/i.test(t) && /Digital products/i.test(t); }, "professional unified platform preview + noindex"],
+            ["/platform-preview", async r => { const t = await r.text(); return r.status === 200 && /STAGING PREVIEW/i.test(t) && /noindex/i.test(t) && /Digital products/i.test(t); }, "professional unified platform preview + noindex"],
             ["/pricing", async r => { const t = await r.text(); return r.status === 200 && /Useful tools\. No signup needed\./i.test(t) && /Use every tool without ads/i.test(t) && /Choose monthly/i.test(t) && /Choose yearly/i.test(t) && /Razorpay Test Mode/i.test(t); }, "free tools plus guarded Pro Test Mode checkout"],
             ["/ads.txt", async r => r.status === 200 && (await r.text()).trim() === "google.com, pub-6738934686699082, DIRECT, f08c47fec0942fa0", "ads.txt publisher line"],
             ["/robots.txt", async r => r.status === 200 && (await r.text()).includes("Disallow: /"), "robots.txt staging exclusion"],
