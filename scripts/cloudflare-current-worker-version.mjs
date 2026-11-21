@@ -11,7 +11,11 @@ const payload = await response.json();
 if (!response.ok || !payload.success) {
   throw new Error(`Could not read Worker deployments: HTTP ${response.status} ${JSON.stringify(payload.errors || [])}`);
 }
-const deployments = [...(payload.result || [])].sort(
+const deploymentList = Array.isArray(payload.result) ? payload.result : payload.result?.deployments;
+if (!Array.isArray(deploymentList)) {
+  throw new Error(`Cloudflare returned an unexpected deployments response: ${JSON.stringify(payload.errors || payload.result || {})}`);
+}
+const deployments = [...deploymentList].sort(
   (a, b) => new Date(b.created_on || 0).getTime() - new Date(a.created_on || 0).getTime(),
 );
 const latest = deployments[0];
