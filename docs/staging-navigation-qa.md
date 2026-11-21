@@ -12,3 +12,10 @@ Latest full CI validation passed:
 - Preview navigation and staging banner assertions passed
 
 Production remains outside the deployment target. The public staging URL is noindex but not password protected. No production domain, DNS, Worker, database, email, analytics, advertising, or live payment configuration is changed by this staging workflow.
+
+
+## Visual refresh
+
+- Updated the isolated `/platform-preview` hero, workspace showcase, tool cards and digital product cards with a more distinctive dark navy and cyan visual direction.
+- Production homepage, domain, DNS, payment configuration and production data were not changed.
+- Visual acceptance still requires browser review on the deployed staging preview.
