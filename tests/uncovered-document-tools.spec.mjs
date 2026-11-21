@@ -74,7 +74,7 @@ test("PDF Text Extractor extracts selectable text into the editable result", asy
   });
   await page.getByRole("button", { name: "Extract Text", exact: true }).click();
   await expect(page.getByLabel("Extracted PDF text")).toContainText("KaamKitPro QA extraction", { timeout: 20000 });
-  await expect(page.getByRole("status")).toContainText("Text extracted from 1 page");
+  await expect(page.getByRole("status")).toContainText("Text extracted from 1 page.");
 });
 
 test("PDF to Word exports selectable PDF text into a readable Word-compatible document", async ({ page }) => {
