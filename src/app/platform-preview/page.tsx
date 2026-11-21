@@ -50,7 +50,6 @@ function Arrow() { return <span aria-hidden="true">↗</span>; }
 export default function PlatformPreviewPage() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const filteredTools = useMemo(() => {
     const q = query.trim().toLowerCase();
