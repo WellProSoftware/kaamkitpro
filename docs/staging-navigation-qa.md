@@ -28,3 +28,9 @@ Production remains outside the deployment target. The public staging URL is noin
 ### 2026-11-21 regression follow-up
 - Updated the preview heading assertion to match the current `One workspace. More momentum.` staging hero.
 - Re-run the complete browser gate before any workers.dev deployment; production remains out of scope.
+
+### 2026-11-21 PDF text extraction accessibility follow-up
+- The extractor now announces success/error/loading feedback through an accessible live status region.
+- The page count message uses singular/plural grammar (`1 page`, `2 pages`).
+- Added a browser assertion for the semantic status region and corrected success copy.
+- Re-run the full staging validation gate; do not deploy if any check fails. Production remains untouched.
