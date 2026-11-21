@@ -186,12 +186,14 @@ export default function PrivacyPolicyPage() {
               Those providers may receive ordinary connection and request
               metadata when your browser downloads a library. In the code
               paths reviewed for PDF Merge, PDF Text Extractor, PDF Compressor,
-              PDF/ image document conversion and Excel Combiner, the selected
-              file contents are processed in the browser rather than uploaded
-              to a KaamKitPro file-processing endpoint. This finding is limited
-              to the reviewed tools and does not establish that every current
-              or future tool works the same way. Please check each tool&apos;s own
-              instructions before using it with confidential files.
+              PDF Split, PDF Rotate, PDF to JPG, PDF/ image document conversion,
+              Image Compressor, Image Resizer, Image Converter, Image Cropper
+              and Excel Combiner, the selected file contents are processed in
+              the browser rather than uploaded to a KaamKitPro file-processing
+              endpoint. This finding is limited to the reviewed tools and does
+              not establish that every current or future tool works the same
+              way. Please check each tool&apos;s own instructions before using
+              it with confidential files.
 
               These services may process information according to their own
               terms and privacy policies.
