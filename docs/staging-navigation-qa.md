@@ -24,3 +24,7 @@ Production remains outside the deployment target. The public staging URL is noin
 - Strengthened the hero headline and supporting copy, and added a responsive three-part value strip for discovery, workflow utility, and clarity.
 - Existing tool routes, search/filter interactions, product catalogue, and business solution sections remain in place.
 - This iteration is staging-only. Deployment must pass the existing build, browser, isolation, and post-deploy smoke checks; production remains untouched.
+
+### 2026-11-21 regression follow-up
+- Updated the preview heading assertion to match the current `One workspace. More momentum.` staging hero.
+- Re-run the complete browser gate before any workers.dev deployment; production remains out of scope.
