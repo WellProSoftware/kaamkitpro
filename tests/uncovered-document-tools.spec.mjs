@@ -56,3 +56,58 @@ test("JPG to PDF converts an uploaded image into a valid one-page PDF", async ({
   const output = await PDFDocument.load(bytes);
   expect(output.getPageCount()).toBe(1);
 });
+
+async function createTextPdf() {
+  const document = await PDFDocument.create();
+  const page = document.addPage([400, 240]);
+  page.drawText("KaamKitPro QA extraction", { x: 30, y: 180, size: 18 });
+  page.drawText("Invoice Number    INV-2026-001", { x: 30, y: 140, size: 12 });
+  return Buffer.from(await document.save());
+}
+
+test("PDF Text Extractor extracts selectable text into the editable result", async ({ page }) => {
+  await page.goto("/tools/pdf-extract-text");
+  await page.locator("#pdf-file").setInputFiles({
+    name: "qa-text.pdf",
+    mimeType: "application/pdf",
+    buffer: await createTextPdf(),
+  });
+  await page.getByRole("button", { name: "Extract Text", exact: true }).click();
+  await expect(page.getByLabel("Extracted PDF text")).toContainText("KaamKitPro QA extraction", { timeout: 20000 });
+  await expect(page.getByRole("status")).toContainText("Text extracted from 1 page");
+});
+
+test("PDF to Word exports selectable PDF text into a readable Word-compatible document", async ({ page }) => {
+  await page.goto("/tools/pdf-to-word");
+  await page.locator("#converter-file").setInputFiles({
+    name: "qa-word.pdf",
+    mimeType: "application/pdf",
+    buffer: await createTextPdf(),
+  });
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Convert to Word", exact: true }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("KaamKitPro_Converted.doc");
+  const { readFile } = await import("node:fs/promises");
+  const output = await readFile(await download.path(), "utf8");
+  expect(output).toContain("KaamKitPro QA extraction");
+  await expect(page.getByRole("status")).toContainText("Word-compatible document downloaded");
+});
+
+test("PDF to Excel exports selectable PDF text into an Excel workbook", async ({ page }) => {
+  await page.goto("/tools/pdf-to-excel");
+  await page.locator("#converter-file").setInputFiles({
+    name: "qa-excel.pdf",
+    mimeType: "application/pdf",
+    buffer: await createTextPdf(),
+  });
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Convert to Excel", exact: true }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("KaamKitPro_Converted.xlsx");
+  const { readFile } = await import("node:fs/promises");
+  const output = await readFile(await download.path());
+  expect(output.subarray(0, 2).toString()).toBe("PK");
+  await expect(page.getByRole("status")).toContainText("Excel workbook created from selectable PDF text");
+});
+
