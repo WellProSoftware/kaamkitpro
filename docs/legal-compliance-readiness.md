@@ -34,6 +34,12 @@ Scope: staging branch only. This is an engineering checklist, not legal advice o
 - Support chat has a 4,000-character message limit and warns users not to share sensitive details, but no public retention schedule or self-service data deletion flow was verified in this review.
 - A public email contact is present. A full legal operator identity, service address and grievance details were not established by repository evidence.
 
+## Latest staging validation
+- 2026-11-21: Cloudflare/vinext compatibility, Worker build, TypeScript, sitemap coverage, lint, original Next.js build and browser regression suite passed in GitHub Actions run 44888095644.
+- The deployment job was intentionally skipped because this run was triggered by a normal push, not an explicit staging-deploy trigger.
+- The configured Supabase project reference was independently confirmed in the account project list as `KaamKitPro-Staging`; production Supabase is a separate project and is not the deployment target.
+- The workflow's staging deploy gate is restricted to the `kaamkitpro-staging` Worker with no custom routes/domains; Razorpay is forced to Test Mode and live payments are disabled.
+
 ## Release gates
 - Keep this branch staging-only until CI passes and a staging preview is deployed and smoke-tested.
 - Keep production domain/DNS/Worker, production data, production analytics, live AdSense and Razorpay live configuration untouched during this work.
