@@ -53,3 +53,4 @@ Scope: staging branch only. This is an engineering checklist, not legal advice o
 - Do not deploy legal copy that contains placeholders or guessed identity details.
 - Do not claim “fully compliant”, certified, registered, trademark-protected or government-approved without evidence and qualified review.
 - 2026-11-21: Privacy Policy updated on the staging branch to disclose third-party CDN delivery for selected browser tools and to scope the local-file-processing finding to the specific tools reviewed. Staging revalidation/redeployment is required before treating this policy change as visible in the preview.
+- 2026-11-21: First privacy-policy validation caught one unescaped apostrophe in JSX; corrected to an HTML entity. The workflow's lint gate must pass before the staging redeploy is considered successful.
