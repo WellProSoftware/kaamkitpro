@@ -22,7 +22,7 @@ export default function PrivacyPolicyPage() {
           </h1>
 
           <p className="mt-5 text-sm text-slate-500">
-            Last updated: October 7, 2026
+            Last updated: November 21, 2026
           </p>
 
           <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
@@ -78,6 +78,16 @@ export default function PrivacyPolicyPage() {
               account information, government identification numbers or
               other highly sensitive information into any online service
               unless specifically required and trusted.
+            </p>
+          </section>
+
+          <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
+            <h2 className="text-2xl font-bold">Accounts and Support Messages</h2>
+            <p className="mt-4 leading-7 text-slate-600">
+              If you create an account, our authentication service processes account identifiers and the email address associated with your account so that sign-in and account-related features can work. If you use the signed-in support chat, the message you submit, your account identifier, the conversation subject and message timestamps are stored so that the support conversation can be displayed and answered.
+            </p>
+            <p className="mt-4 leading-7 text-slate-600">
+              Do not include passwords, payment-card details, government identification numbers, confidential business records or sensitive health information in support messages. Access to support conversations should be limited to authorised support personnel and the account holder.
             </p>
           </section>
 
@@ -160,12 +170,13 @@ export default function PrivacyPolicyPage() {
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
-              KaamKitPro uses third-party services including Google
-              Analytics for usage measurement and Google AdSense for
-              advertising functionality, in addition to hosting and other
-              website infrastructure services. These providers may process
-              technical information under their own terms and privacy
-              policies.
+              KaamKitPro uses Supabase for account authentication and the
+              database functions used by signed-in features, Cloudflare for
+              website hosting and delivery, Google Analytics for usage
+              measurement when you opt in, and Google AdSense for advertising
+              where enabled and permitted. These providers may process
+              information needed to deliver their services under their own
+              terms and privacy policies.
             </p>
 
             <p className="mt-4 leading-7 text-slate-600">
@@ -215,6 +226,13 @@ export default function PrivacyPolicyPage() {
             <p className="mt-4 leading-7 text-slate-600">
               Any updated version will be published on this page with a
               revised update date.
+            </p>
+          </section>
+
+          <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
+            <h2 className="text-2xl font-bold">Data Requests and Retention</h2>
+            <p className="mt-4 leading-7 text-slate-600">
+              You can contact us to ask about personal information associated with your account or support conversation, or to request correction or deletion. We may need to verify your request and retain limited information where required for security, legal, dispute-resolution or service-integrity purposes. Retention periods depend on the type of record and applicable requirements; we do not currently publish a fixed schedule for every data category.
             </p>
           </section>
 
