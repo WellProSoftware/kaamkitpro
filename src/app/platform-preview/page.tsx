@@ -61,34 +61,35 @@ export default function PlatformPreviewPage() {
   }, [query, category]);
 
   return (
-    <main className="min-h-screen bg-[#f6f8fc] text-[#14213d]">
+    <main className="min-h-screen overflow-hidden bg-[#f4f7fb] text-[#14213d]">
       <div className="border-b border-[#dbe4f0] bg-[#10254b] px-4 py-2 text-center text-xs font-semibold tracking-wide text-white">
         STAGING PREVIEW · NOT THE LIVE WEBSITE · TEST PAYMENTS ONLY
       </div>
 
-      <section id="home" className="relative overflow-hidden bg-white">
-        <div className="pointer-events-none absolute -right-24 -top-32 h-96 w-96 rounded-full bg-blue-100/70 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-40 left-1/4 h-80 w-80 rounded-full bg-indigo-100/60 blur-3xl" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:py-20 lg:grid-cols-[1.1fr_.9fr] lg:px-8 lg:py-24">
+      <section id="home" className="relative isolate overflow-hidden bg-[#08172f] text-white">
+        <div className="pointer-events-none absolute -right-24 -top-32 h-[34rem] w-[34rem] rounded-full bg-cyan-400/20 blur-[100px]" />
+        <div className="pointer-events-none absolute -bottom-40 left-1/4 h-[28rem] w-[28rem] rounded-full bg-blue-600/30 blur-[100px]" />
+        <div className="pointer-events-none absolute inset-0 opacity-[.12]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.16) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.16) 1px, transparent 1px)", backgroundSize: "54px 54px" }} />
+        <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 py-20 sm:py-24 lg:grid-cols-[1.05fr_.95fr] lg:px-8 lg:py-28">
           <div>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-bold uppercase tracking-[.12em] text-[#2458d3]"><span className="h-2 w-2 rounded-full bg-emerald-500" /> One workspace. More ways to get work done.</div>
-            <h1 className="max-w-3xl text-4xl font-black leading-[1.08] tracking-[-.045em] text-[#10254b] sm:text-5xl lg:text-6xl">Powerful tools for your <span className="text-[#2458d3]">everyday work.</span></h1>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">Get practical online tools, ready-to-use business resources and workflow solutions in one organised place. Simple to use, built to help you move faster.</p>
+            <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.08] px-4 py-2 text-[11px] font-extrabold uppercase tracking-[.16em] text-cyan-200 backdrop-blur"><span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,.9)]" /> Tools that move work forward</div>
+            <h1 className="max-w-3xl text-5xl font-black leading-[1.02] tracking-[-.055em] text-white sm:text-6xl lg:text-[4.6rem]">Get more done.<br /><span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-blue-400 bg-clip-text text-transparent">Work smarter.</span></h1>
+            <p className="mt-7 max-w-xl text-base leading-8 text-slate-300 sm:text-lg">A sharper way to handle everyday tasks. Discover useful online tools, practical business resources and focused workflows—all in one place.</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a href="#tools" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2458d3] px-6 py-4 text-sm font-extrabold text-white shadow-xl shadow-blue-200 transition hover:-translate-y-0.5 hover:bg-[#1745b6]">Explore free tools <Arrow /></a>
-              <a href="#products" className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-6 py-4 text-sm font-extrabold text-[#10254b] transition hover:border-blue-300 hover:bg-blue-50">Explore business resources</a>
+              <a href="#tools" className="inline-flex items-center justify-center gap-3 rounded-xl bg-cyan-300 px-7 py-4 text-sm font-black text-[#07172f] shadow-xl shadow-cyan-950/30 transition hover:-translate-y-1 hover:bg-cyan-200">Explore tools <Arrow /></a>
+              <a href="#products" className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/[.06] px-7 py-4 text-sm font-bold text-white backdrop-blur transition hover:border-white/40 hover:bg-white/10">Explore resources</a>
             </div>
-            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-slate-500"><span>✓ Browser-based utilities</span><span>✓ Practical business resources</span><span>✓ Mobile-friendly experience</span></div>
+            <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-xs font-semibold text-slate-300"><span>✓ Easy-to-use utilities</span><span>✓ Practical work resources</span><span>✓ Built for every screen</span></div>
           </div>
           <div className="relative mx-auto w-full max-w-xl">
-            <div className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-2xl shadow-blue-900/10 sm:p-6">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-4"><div><p className="text-xs font-bold uppercase tracking-widest text-slate-400">Your workspace</p><p className="mt-1 text-lg font-extrabold">What would you like to do?</p></div><span className="rounded-xl bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700">Explore</span></div>
+            <div className="rounded-[2rem] border border-white/15 bg-white/[.08] p-4 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-6">
+              <div className="flex items-center justify-between border-b border-white/10 pb-4"><div><p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-cyan-200">Your workspace</p><p className="mt-1 text-xl font-extrabold text-white">What are you working on?</p></div><span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1.5 text-[10px] font-bold text-emerald-200">READY TO EXPLORE</span></div>
               <div className="mt-4 grid grid-cols-2 gap-3">
-                {[["▤","PDF tools","Documents"],["▧","Image tools","Visual assets"],["◉","Calculators","Everyday numbers"],["⌘","Developer tools","Code utilities"]].map(([icon,title,sub]) => <a key={title} href="#tools" className="rounded-2xl border border-slate-100 bg-slate-50 p-4 transition hover:-translate-y-1 hover:border-blue-200 hover:bg-blue-50"><span className="grid h-10 w-10 place-items-center rounded-xl bg-white text-xl font-bold text-[#2458d3] shadow-sm">{icon}</span><b className="mt-4 block text-sm">{title}</b><span className="mt-1 block text-xs text-slate-500">{sub}</span></a>)}
+                {[["▤","PDF tools","Documents"],["▧","Image tools","Visual assets"],["◉","Calculators","Everyday numbers"],["⌘","Developer tools","Code utilities"]].map(([icon,title,sub]) => <a key={title} href="#tools" className="rounded-2xl border border-white/10 bg-[#102744] p-4 transition hover:-translate-y-1 hover:border-cyan-300/50 hover:bg-[#15365c]"><span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-cyan-200 to-blue-400 text-xl font-black text-[#09203d] shadow-lg shadow-cyan-950/30">{icon}</span><b className="mt-4 block text-sm text-white">{title}</b><span className="mt-1 block text-xs text-slate-300">{sub}</span></a>)}
               </div>
-              <div className="mt-4 rounded-2xl bg-[#10254b] p-5 text-white"><p className="text-xs font-bold uppercase tracking-widest text-blue-200">Business resources</p><p className="mt-2 text-lg font-extrabold">Turn repeat work into organised workflows.</p><a href="#business" className="mt-3 inline-flex text-sm font-bold text-blue-200 hover:text-white">Explore solutions <Arrow /></a></div>
+              <div className="mt-4 rounded-2xl border border-cyan-300/20 bg-gradient-to-r from-[#123d68] to-[#164d75] p-5 text-white"><p className="text-xs font-bold uppercase tracking-widest text-blue-200">Business resources</p><p className="mt-2 text-lg font-extrabold">Turn repeat work into organised workflows.</p><a href="#business" className="mt-3 inline-flex text-sm font-bold text-blue-200 hover:text-white">Explore solutions <Arrow /></a></div>
             </div>
-            <div className="absolute -bottom-5 -left-5 hidden rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-xl sm:block"><p className="text-xs font-bold text-slate-400">DESIGNED FOR</p><p className="mt-1 text-sm font-extrabold text-[#10254b]">Individuals & teams</p></div>
+            <div className="absolute -bottom-5 -left-5 hidden rounded-2xl border border-white/15 bg-[#102744] px-5 py-4 shadow-xl sm:block"><p className="text-[10px] font-extrabold tracking-[.18em] text-cyan-200">MADE FOR</p><p className="mt-1 text-sm font-extrabold text-white">Individuals & teams</p></div>
           </div>
         </div>
       </section>
@@ -98,7 +99,7 @@ export default function PlatformPreviewPage() {
           <div><p className="text-xs font-extrabold uppercase tracking-[.18em] text-[#2458d3]">The tool library</p><h2 className="mt-3 text-3xl font-black tracking-tight text-[#10254b] sm:text-4xl">Find the right tool, faster.</h2><p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">Browse useful tools by category or search by the task you need to complete.</p></div>
           <span className="text-sm font-bold text-slate-500">{tools.length}+ listed tool experiences</span>
         </div>
-        <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+        <div className="mt-8 rounded-[2rem] border border-slate-200/80 bg-white p-5 shadow-[0_24px_70px_rgba(15,35,70,.08)] sm:p-7">
           <label htmlFor="tool-search" className="mb-2 block text-sm font-bold text-slate-700">Search tools</label>
           <div className="flex flex-col gap-3 md:flex-row">
             <input id="tool-search" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Try “compress PDF” or “GST calculator”" className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-slate-50 px-4 py-3.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100" />
@@ -108,17 +109,17 @@ export default function PlatformPreviewPage() {
             {categories.map((item) => <button type="button" key={item} onClick={() => setCategory(item)} aria-pressed={category === item} className={`rounded-full px-4 py-2 text-xs font-bold transition ${category === item ? "bg-[#2458d3] text-white shadow-md shadow-blue-200" : "bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-700"}`}>{item}</button>)}
           </div>
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredTools.map((tool) => <a key={tool.name} href={tool.href} className="group rounded-2xl border border-slate-200 p-4 transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-900/5"><div className="flex items-start justify-between gap-3"><span className="rounded-lg bg-blue-50 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-blue-700">{tool.category}</span><span className="text-slate-300 transition group-hover:text-blue-600"><Arrow /></span></div><h3 className="mt-3 text-sm font-extrabold text-[#10254b]">{tool.name}</h3><p className="mt-1.5 text-xs leading-6 text-slate-500">{tool.description}</p><span className="mt-3 inline-block text-xs font-bold text-[#2458d3]">Open tool</span></a>)}
+            {filteredTools.map((tool) => <a key={tool.name} href={tool.href} className="group rounded-2xl border border-slate-200/80 bg-gradient-to-b from-white to-slate-50/70 p-5 transition duration-300 hover:-translate-y-1.5 hover:border-blue-300 hover:shadow-[0_18px_40px_rgba(28,74,150,.12)]"><div className="flex items-start justify-between gap-3"><span className="rounded-lg bg-blue-50 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-blue-700">{tool.category}</span><span className="text-slate-300 transition group-hover:text-blue-600"><Arrow /></span></div><h3 className="mt-3 text-sm font-extrabold text-[#10254b]">{tool.name}</h3><p className="mt-1.5 text-xs leading-6 text-slate-500">{tool.description}</p><span className="mt-3 inline-block text-xs font-bold text-[#2458d3]">Open tool</span></a>)}
           </div>
           {filteredTools.length === 0 && <div className="rounded-2xl bg-slate-50 px-4 py-10 text-center"><p className="font-bold text-slate-700">No matching tools found</p><p className="mt-1 text-sm text-slate-500">Try a different search term or category.</p></div>}
           <p className="mt-5 text-xs leading-5 text-slate-400">Tool links are mapped from the current tool catalogue and will be regression-tested before this preview is considered complete.</p>
         </div>
       </section>
 
-      <section id="products" className="scroll-mt-24 border-y border-slate-200 bg-white py-16 lg:py-20">
+      <section id="products" className="scroll-mt-24 border-y border-slate-200/70 bg-gradient-to-b from-white to-[#f2f6fc] py-20 lg:py-24">
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
           <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="text-xs font-extrabold uppercase tracking-[.18em] text-[#2458d3]">Digital products</p><h2 className="mt-3 text-3xl font-black tracking-tight text-[#10254b] sm:text-4xl">Practical resources. Ready for real work.</h2><p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">Structured templates and business kits designed to reduce repetitive work and make everyday decisions easier.</p></div><span className="rounded-full bg-amber-50 px-4 py-2 text-xs font-bold text-amber-800">Preview catalogue · Checkout disabled</span></div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{products.map((product) => <article key={product.number} className="flex flex-col rounded-2xl border border-slate-200 bg-[#fbfcff] p-5 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-900/5"><span className="text-xs font-black tracking-widest text-blue-600">{product.number} / RESOURCE</span><span className="mt-5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{product.tag}</span><h3 className="mt-2 text-lg font-extrabold leading-snug text-[#10254b]">{product.title}</h3><p className="mt-3 flex-1 text-sm leading-6 text-slate-600">{product.description}</p><a href="mailto:support@kaamkitpro.com?subject=Digital%20Product%20Enquiry" className="mt-6 inline-flex items-center justify-between border-t border-slate-200 pt-4 text-xs font-extrabold text-[#2458d3]">Request details <Arrow /></a></article>)}</div>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{products.map((product) => <article key={product.number} className="flex flex-col rounded-[1.6rem] border border-slate-200/80 bg-white p-6 shadow-[0_12px_35px_rgba(15,35,70,.05)] transition duration-300 hover:-translate-y-1.5 hover:border-blue-200 hover:shadow-[0_22px_45px_rgba(15,35,70,.1)]"><span className="text-xs font-black tracking-widest text-blue-600">{product.number} / RESOURCE</span><span className="mt-5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{product.tag}</span><h3 className="mt-2 text-lg font-extrabold leading-snug text-[#10254b]">{product.title}</h3><p className="mt-3 flex-1 text-sm leading-6 text-slate-600">{product.description}</p><a href="mailto:support@kaamkitpro.com?subject=Digital%20Product%20Enquiry" className="mt-6 inline-flex items-center justify-between border-t border-slate-200 pt-4 text-xs font-extrabold text-[#2458d3]">Request details <Arrow /></a></article>)}</div>
         </div>
       </section>
 
