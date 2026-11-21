@@ -143,7 +143,8 @@ export default function ContactPage() {
   );
 }
 export const metadata: Metadata = {
-  title: "Contact KaamKitPro",
-  description: "Contact KaamKitPro for support, questions and feedback about the online tools.",
+  title: "Contact KaamKitPro | Support and Feedback",
+  description:
+    "Contact KaamKitPro to report a tool issue, share feedback, or suggest an improvement. Find the information that helps us understand your request.",
   alternates: { canonical: "https://kaamkitpro.com/contact" },
 };
