@@ -1,4 +1,11 @@
 import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Contact KaamKitPro | Support and Feedback",
+  description:
+    "Contact KaamKitPro to report a tool issue, share feedback, or suggest an improvement. Find the information that helps us understand your request.",
+  alternates: { canonical: "https://kaamkitpro.com/contact" },
+};
 export default function ContactPage() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900"><section className="bg-white">
@@ -29,6 +36,22 @@ export default function ContactPage() {
             tool, or have a suggestion for a useful new tool, please get
             in touch with us.
           </p>
+
+          <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+            <h3 className="font-bold">What to include in a support request</h3>
+            <p className="mt-2 text-sm leading-7 text-slate-600">
+              To help us understand the issue, include the tool name, the
+              browser and device you are using, the steps you followed, and
+              what you expected to happen. If an error message appears, copy
+              its wording without including passwords, payment details or
+              other sensitive information.
+            </p>
+            <p className="mt-3 text-sm leading-7 text-slate-600">
+              Please do not email confidential source documents or personal
+              information unless support has specifically requested it and
+              you are authorised to share it.
+            </p>
+          </div>
 
           <div className="mt-8 grid gap-5 sm:grid-cols-2">
             <div className="rounded-2xl bg-blue-50 p-6">
