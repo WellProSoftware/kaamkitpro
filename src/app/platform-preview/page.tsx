@@ -62,30 +62,6 @@ export default function PlatformPreviewPage() {
 
   return (
     <main className="min-h-screen bg-[#f6f8fc] text-[#14213d]">
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3 lg:px-8">
-          <a href="#home" className="flex items-center gap-2.5" aria-label="KaamKitPro home">
-            <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#2458d3] text-lg font-black text-white">K</span>
-            <span className="text-lg font-black tracking-tight text-[#10254b]">KaamKit<span className="text-[#2458d3]">Pro</span></span>
-          </a>
-          <nav className="hidden items-center gap-6 lg:flex" aria-label="Main navigation">
-            <a className="text-sm font-semibold text-slate-600 hover:text-blue-700" href="#tools">Tools</a>
-            <a className="text-sm font-semibold text-slate-600 hover:text-blue-700" href="#business">Business Solutions</a>
-            <a className="text-sm font-semibold text-slate-600 hover:text-blue-700" href="#products">Digital Products</a>
-            <a className="text-sm font-semibold text-slate-600 hover:text-blue-700" href="#resources">Resources</a>
-            <a className="text-sm font-semibold text-slate-600 hover:text-blue-700" href="/about">About</a>
-            <a className="text-sm font-semibold text-slate-600 hover:text-blue-700" href="/contact">Contact</a>
-          </nav>
-          <div className="hidden items-center gap-3 lg:flex">
-            <a href="/login" className="text-sm font-bold text-[#2458d3] hover:text-blue-800">Sign in</a>
-            <a href="#tools" className="rounded-xl bg-[#2458d3] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#1745b6]">Explore tools</a>
-          </div>
-          <button type="button" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-xl text-[#10254b] lg:hidden" aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={mobileOpen} onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? "×" : "☰"}</button>
-        </div>
-        {mobileOpen && <nav className="grid gap-1 border-t border-slate-100 bg-white px-5 py-3 lg:hidden" aria-label="Mobile navigation">
-          {[["Tools","#tools"],["Business Solutions","#business"],["Digital Products","#products"],["Resources","#resources"],["About","/about"],["Contact","/contact"],["Sign in","/login"]].map(([label,href]) => <a key={label} href={href} onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">{label}</a>)}
-        </nav>}
-      </header>
       <div className="border-b border-[#dbe4f0] bg-[#10254b] px-4 py-2 text-center text-xs font-semibold tracking-wide text-white">
         STAGING PREVIEW · NOT THE LIVE WEBSITE · TEST PAYMENTS ONLY
       </div>
