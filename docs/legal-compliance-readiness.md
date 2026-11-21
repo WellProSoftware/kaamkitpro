@@ -34,6 +34,13 @@ Scope: staging branch only. This is an engineering checklist, not legal advice o
 - Support chat has a 4,000-character message limit and warns users not to share sensitive details, but no public retention schedule or self-service data deletion flow was verified in this review.
 - A public email contact is present. A full legal operator identity, service address and grievance details were not established by repository evidence.
 
+## Additional file-processing review (2026-11-21)
+- Reviewed the source for PDF Merge, PDF Text Extractor, PDF Compressor, PDF-to-Word/Excel and JPG-to-Word/Excel conversion, and Excel Combiner.
+- In those reviewed paths, selected files are read and processed in the browser; no upload to a KaamKitPro file-processing API was found.
+- Some tools download processing libraries from cdnjs.cloudflare.com or cdn.jsdelivr.net. The browser's request metadata may be visible to those CDN providers; the Privacy Policy now discloses these dependencies and limits the finding to the tools reviewed.
+- This is not yet a complete inventory of every tool, embedded third-party script, browser request, storage path, logging path or future implementation. Continue auditing remaining image, PDF, and converter tools before making a site-wide “files never leave your device” claim.
+- Avoid adding a blanket statement that all uploaded files are private/local until the complete inventory and deployed runtime network behaviour are verified.
+
 ## Latest staging validation
 - 2026-11-21: Cloudflare/vinext compatibility, Worker build, TypeScript, sitemap coverage, lint, original Next.js build and browser regression suite passed in GitHub Actions run 44888095644.
 - The deployment job was intentionally skipped because this run was triggered by a normal push, not an explicit staging-deploy trigger.
