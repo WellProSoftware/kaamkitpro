@@ -1,11 +1,5 @@
 # Staging navigation and footer QA
 
-The preview homepage now includes:
-- Responsive desktop and mobile navigation with an accessible menu toggle.
-- Direct links to Tools, Business Solutions, Digital Products, Resources, About, Contact and Sign in.
-- Footer links to About, Contact, Advertise, My Account, Privacy Policy, Terms and Disclaimer.
-- Support email contact link.
+The staging preview homepage now includes responsive desktop and mobile navigation, direct links to the major product sections, and a footer with company, support, and legal links. All 29 curated tool links were matched against actual route page files. Build, TypeScript, sitemap coverage, lint, and the original Next.js build passed in the latest CI attempt. The browser regression stage was interrupted by concurrent workflow activity, so a fresh complete run is required before deployment.
 
-All 29 curated tool links were compared against the source route tree and each has a matching implemented page route.
-
-This commit requests the normal isolated staging validation and deployment workflow. Production is not a deployment target.
+Production remains outside the deployment target. The public staging URL is noindex but not password protected.
