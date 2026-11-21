@@ -105,7 +105,7 @@ export default function TermsPage() {
               Website materials, software, names, logos, graphics and other
               content may be protected by intellectual-property laws. Rights
               belong to their respective owners. Materials made available by
-              third parties remain subject to their owners' licences and terms.
+              third parties remain subject to their owners&apos; licences and terms.
               Nothing on this website transfers ownership of third-party
               material to KaamKitPro or to a user.
             </p>
