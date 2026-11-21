@@ -87,7 +87,7 @@ export default function PlatformPreviewPage() {
         </nav>}
       </header>
       <div className="border-b border-[#dbe4f0] bg-[#10254b] px-4 py-2 text-center text-xs font-semibold tracking-wide text-white">
-        PRIVATE STAGING PREVIEW · NOT THE LIVE WEBSITE · TEST PAYMENTS ONLY
+        STAGING PREVIEW · NOT THE LIVE WEBSITE · TEST PAYMENTS ONLY
       </div>
 
       <section id="home" className="relative overflow-hidden bg-white">
