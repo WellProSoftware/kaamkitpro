@@ -10,7 +10,6 @@ type SessionUser = { id: string; email: string | null; full_name?: string | null
 export default function SiteHeader() {
   const pathname = usePathname();
   const isPlatformPreview = pathname === "/platform-preview";
-  if (isPlatformPreview) return null;
   const homeHref = "/";
   const toolsHref = "/tools";
   const categoriesHref = "/#categories";
@@ -65,6 +64,8 @@ export default function SiteHeader() {
 
   const displayName = user?.full_name?.trim() || user?.email?.split("@")[0] || "My account";
   const initials = displayName.split(/[\\s._-]+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "U";
+
+  if (isPlatformPreview) return null;
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 shadow-[0_8px_30px_rgba(15,23,42,0.04)] backdrop-blur-xl">
