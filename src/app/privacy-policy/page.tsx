@@ -180,6 +180,19 @@ export default function PrivacyPolicyPage() {
             </p>
 
             <p className="mt-4 leading-7 text-slate-600">
+              Some browser-based document and spreadsheet tools also load
+              third-party processing libraries from public content delivery
+              networks, including cdnjs.cloudflare.com and cdn.jsdelivr.net.
+              Those providers may receive ordinary connection and request
+              metadata when your browser downloads a library. In the code
+              paths reviewed for PDF Merge, PDF Text Extractor, PDF Compressor,
+              PDF/ image document conversion and Excel Combiner, the selected
+              file contents are processed in the browser rather than uploaded
+              to a KaamKitPro file-processing endpoint. This finding is limited
+              to the reviewed tools and does not establish that every current
+              or future tool works the same way. Please check each tool's own
+              instructions before using it with confidential files.
+
               These services may process information according to their own
               terms and privacy policies.
             </p>
