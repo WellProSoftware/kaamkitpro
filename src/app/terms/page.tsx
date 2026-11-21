@@ -12,7 +12,7 @@ export default function TermsPage() {
           </h1>
 
           <p className="mt-5 text-sm text-slate-500">
-            Last updated: October 7, 2026
+            Last updated: November 21, 2026
           </p>
 
           <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
@@ -102,15 +102,19 @@ export default function TermsPage() {
             </h2>
 
             <p className="mt-4 leading-7 text-slate-600">
-              Unless otherwise stated, the KaamKitPro website, branding,
-              design, text, graphics, code and original content are owned by
-              or licensed to KaamKitPro.
+              Website materials, software, names, logos, graphics and other
+              content may be protected by intellectual-property laws. Rights
+              belong to their respective owners. Materials made available by
+              third parties remain subject to their owners' licences and terms.
+              Nothing on this website transfers ownership of third-party
+              material to KaamKitPro or to a user.
             </p>
 
             <p className="mt-4 leading-7 text-slate-600">
-              You may not reproduce, copy, modify, distribute or commercially
-              exploit our original website content without appropriate
-              permission.
+              You may use the website and its materials only as permitted by
+              applicable law and any licence or usage terms shown with the
+              relevant material. You must not remove rights notices or use
+              third-party material beyond the permissions granted by its owner.
             </p>
           </section>
 
