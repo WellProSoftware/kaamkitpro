@@ -190,7 +190,7 @@ export default function PrivacyPolicyPage() {
               file contents are processed in the browser rather than uploaded
               to a KaamKitPro file-processing endpoint. This finding is limited
               to the reviewed tools and does not establish that every current
-              or future tool works the same way. Please check each tool's own
+              or future tool works the same way. Please check each tool&apos;s own
               instructions before using it with confidential files.
 
               These services may process information according to their own
