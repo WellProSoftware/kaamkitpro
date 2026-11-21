@@ -17,3 +17,10 @@ Production remains outside the deployment target. The public staging URL is noin
 - Updated the isolated `/platform-preview` hero, workspace showcase, tool cards and digital product cards with a more distinctive dark navy and cyan visual direction.
 - Production homepage, domain, DNS, payment configuration and production data were not changed.
 - Visual acceptance still requires browser review on the deployed staging preview.
+
+
+## Premium homepage iteration — 2026-11-21
+- Refined the staging homepage positioning around a focused productivity workspace rather than a generic tool directory.
+- Strengthened the hero headline and supporting copy, and added a responsive three-part value strip for discovery, workflow utility, and clarity.
+- Existing tool routes, search/filter interactions, product catalogue, and business solution sections remain in place.
+- This iteration is staging-only. Deployment must pass the existing build, browser, isolation, and post-deploy smoke checks; production remains untouched.
