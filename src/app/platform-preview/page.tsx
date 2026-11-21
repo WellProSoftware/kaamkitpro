@@ -62,6 +62,30 @@ export default function PlatformPreviewPage() {
 
   return (
     <main className="min-h-screen bg-[#f6f8fc] text-[#14213d]">
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3 lg:px-8">
+          <a href="#home" className="flex items-center gap-2.5" aria-label="KaamKitPro home">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#2458d3] text-lg font-black text-white">K</span>
+            <span className="text-lg font-black tracking-tight text-[#10254b]">KaamKit<span className="text-[#2458d3]">Pro</span></span>
+          </a>
+          <nav className="hidden items-center gap-6 lg:flex" aria-label="Main navigation">
+            <a className="text-sm font-semibold text-slate-600 hover:text-blue-700" href="#tools">Tools</a>
+            <a className="text-sm font-semibold text-slate-600 hover:text-blue-700" href="#business">Business Solutions</a>
+            <a className="text-sm font-semibold text-slate-600 hover:text-blue-700" href="#products">Digital Products</a>
+            <a className="text-sm font-semibold text-slate-600 hover:text-blue-700" href="#resources">Resources</a>
+            <a className="text-sm font-semibold text-slate-600 hover:text-blue-700" href="/about">About</a>
+            <a className="text-sm font-semibold text-slate-600 hover:text-blue-700" href="/contact">Contact</a>
+          </nav>
+          <div className="hidden items-center gap-3 lg:flex">
+            <a href="/login" className="text-sm font-bold text-[#2458d3] hover:text-blue-800">Sign in</a>
+            <a href="#tools" className="rounded-xl bg-[#2458d3] px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#1745b6]">Explore tools</a>
+          </div>
+          <button type="button" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-xl text-[#10254b] lg:hidden" aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={mobileOpen} onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? "×" : "☰"}</button>
+        </div>
+        {mobileOpen && <nav className="grid gap-1 border-t border-slate-100 bg-white px-5 py-3 lg:hidden" aria-label="Mobile navigation">
+          {[["Tools","#tools"],["Business Solutions","#business"],["Digital Products","#products"],["Resources","#resources"],["About","/about"],["Contact","/contact"],["Sign in","/login"]].map(([label,href]) => <a key={label} href={href} onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700">{label}</a>)}
+        </nav>}
+      </header>
       <div className="border-b border-[#dbe4f0] bg-[#10254b] px-4 py-2 text-center text-xs font-semibold tracking-wide text-white">
         PRIVATE STAGING PREVIEW · NOT THE LIVE WEBSITE · TEST PAYMENTS ONLY
       </div>
@@ -131,6 +155,19 @@ export default function PlatformPreviewPage() {
 
       <section id="resources" className="mx-auto max-w-7xl px-5 py-16 lg:px-8"><div className="rounded-3xl border border-slate-200 bg-white p-7 sm:p-10"><div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-center"><div><p className="text-xs font-extrabold uppercase tracking-[.18em] text-[#2458d3]">Knowledge & support</p><h2 className="mt-3 text-2xl font-black tracking-tight text-[#10254b] sm:text-3xl">Clear guidance makes better tools.</h2><p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">Helpful explainers, step-by-step instructions and practical answers should make every tool easier to use—not just add more pages.</p></div><a href="mailto:support@kaamkitpro.com?subject=KaamKitPro%20Support" className="inline-flex justify-center rounded-xl border border-slate-300 px-5 py-3 text-sm font-extrabold text-[#10254b] hover:border-blue-300 hover:bg-blue-50">Contact support <Arrow /></a></div></div></section>
 
+      <footer className="border-t border-slate-200 bg-white">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:px-8">
+          <div>
+            <a href="#home" className="text-xl font-black tracking-tight text-[#10254b]">KaamKit<span className="text-[#2458d3]">Pro</span></a>
+            <p className="mt-3 max-w-sm text-sm leading-7 text-slate-500">Practical online tools and business resources designed to make everyday work simpler.</p>
+            <a href="mailto:support@kaamkitpro.com" className="mt-4 inline-block text-sm font-bold text-[#2458d3]">support@kaamkitpro.com</a>
+          </div>
+          <div><h3 className="text-sm font-extrabold text-[#10254b]">Explore</h3><div className="mt-4 grid gap-3 text-sm text-slate-500"><a className="hover:text-blue-700" href="#tools">All tools</a><a className="hover:text-blue-700" href="#products">Digital products</a><a className="hover:text-blue-700" href="#business">Business solutions</a><a className="hover:text-blue-700" href="#resources">Resources</a></div></div>
+          <div><h3 className="text-sm font-extrabold text-[#10254b]">Company</h3><div className="mt-4 grid gap-3 text-sm text-slate-500"><a className="hover:text-blue-700" href="/about">About us</a><a className="hover:text-blue-700" href="/contact">Contact</a><a className="hover:text-blue-700" href="/advertise">Advertise</a><a className="hover:text-blue-700" href="/login">My account</a></div></div>
+          <div><h3 className="text-sm font-extrabold text-[#10254b]">Legal</h3><div className="mt-4 grid gap-3 text-sm text-slate-500"><a className="hover:text-blue-700" href="/privacy-policy">Privacy policy</a><a className="hover:text-blue-700" href="/terms">Terms of service</a><a className="hover:text-blue-700" href="/disclaimer">Disclaimer</a></div></div>
+        </div>
+        <div className="border-t border-slate-100"><div className="mx-auto flex max-w-7xl flex-col gap-2 px-5 py-5 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between lg:px-8"><span>© {new Date().getFullYear()} KaamKitPro. All rights reserved.</span><span>Built for useful work, with clarity and care.</span></div></div>
+      </footer>
     </main>
   );
 }
