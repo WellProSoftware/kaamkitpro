@@ -52,3 +52,4 @@ Scope: staging branch only. This is an engineering checklist, not legal advice o
 - Keep production domain/DNS/Worker, production data, production analytics, live AdSense and Razorpay live configuration untouched during this work.
 - Do not deploy legal copy that contains placeholders or guessed identity details.
 - Do not claim “fully compliant”, certified, registered, trademark-protected or government-approved without evidence and qualified review.
+- 2026-11-21: Privacy Policy updated on the staging branch to disclose third-party CDN delivery for selected browser tools and to scope the local-file-processing finding to the specific tools reviewed. Staging revalidation/redeployment is required before treating this policy change as visible in the preview.
