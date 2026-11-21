@@ -21,7 +21,7 @@ export default function DisclaimerPage() {
           </h1>
 
           <p className="mt-5 text-sm text-slate-500">
-            Last updated: October 7, 2026
+            Last updated: November 21, 2026
           </p>
 
           <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
@@ -82,6 +82,13 @@ export default function DisclaimerPage() {
             <p className="mt-4 leading-7 text-slate-600">
               They are not a substitute for medical advice, diagnosis or
               treatment from a qualified healthcare professional.
+            </p>
+          </section>
+
+          <section className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
+            <h2 className="text-2xl font-bold">Operational and Healthcare Workflows</h2>
+            <p className="mt-4 leading-7 text-slate-600">
+              Any inventory, purchasing, stock, expiry, pricing or healthcare-workflow utility is intended for administrative and operational support only. It is not a medical device or a clinical decision-support service and must not be used to diagnose, prescribe, select treatment or replace a qualified healthcare professional. Independently verify critical quantities, units, tax treatment, stock decisions and source records before acting.
             </p>
           </section>
 
