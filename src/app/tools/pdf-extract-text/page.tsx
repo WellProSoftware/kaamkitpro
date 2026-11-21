@@ -65,7 +65,7 @@ export default function PDFExtractTextPage() {
       }
 
       setText(result.trim());
-      setMessage(`Text extracted from ${pdf.numPages} page(s).`);
+      setMessage(`Text extracted from ${pdf.numPages} ${pdf.numPages === 1 ? "page" : "pages"}.`);
     } catch (error) {
       console.error(error);
       setMessage("Could not extract text from this PDF. Please make sure it is a valid PDF file.");
@@ -112,7 +112,7 @@ export default function PDFExtractTextPage() {
           </button>
 
           {message && (
-            <div className="mt-5 rounded-lg bg-slate-100 p-4 text-center text-sm text-slate-700">
+            <div role="status" aria-live="polite" className="mt-5 rounded-lg bg-slate-100 p-4 text-center text-sm text-slate-700">
               {message}
             </div>
           )}
