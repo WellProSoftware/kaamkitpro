@@ -7,12 +7,10 @@ The staging preview includes desktop and mobile navigation, direct links to the 
 Latest full CI validation passed:
 - Vinext compatibility and build
 - TypeScript, sitemap route coverage, lint, and original Next.js build
-- Browser regression checks: 180 checks completed, 2 skipped, 0 failed
-- JPG to PDF two-image conversion and resulting two-page PDF verified
+- Browser regression checks passed on the refreshed preview source
 - Preview navigation and staging banner assertions passed
 
 Production remains outside the deployment target. The public staging URL is noindex but not password protected. No production domain, DNS, Worker, database, email, analytics, advertising, or live payment configuration is changed by this staging workflow.
-
 
 ## Visual refresh
 
