@@ -10,9 +10,10 @@ type SessionUser = { id: string; email: string | null; full_name?: string | null
 export default function SiteHeader() {
   const pathname = usePathname();
   const isPlatformPreview = pathname === "/platform-preview";
-  const homeHref = isPlatformPreview ? "/platform-preview" : "/";
-  const toolsHref = isPlatformPreview ? "/platform-preview#tools" : "/tools";
-  const categoriesHref = isPlatformPreview ? "/platform-preview#tools" : "/#categories";
+  if (isPlatformPreview) return null;
+  const homeHref = "/";
+  const toolsHref = "/tools";
+  const categoriesHref = "/#categories";
   const [user, setUser] = useState<SessionUser | null>(null);
   const [access, setAccess] = useState<{ isAdmin?: boolean; isPro?: boolean; plan?: string } | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -39,7 +40,6 @@ export default function SiteHeader() {
       })
       .catch(() => undefined)
       .finally(() => { if (!cancelled) setLoaded(true); });
-
     return () => { cancelled = true; };
   }, []);
 
@@ -64,7 +64,7 @@ export default function SiteHeader() {
   }
 
   const displayName = user?.full_name?.trim() || user?.email?.split("@")[0] || "My account";
-  const initials = displayName.split(/[\s._-]+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "U";
+  const initials = displayName.split(/[\\s._-]+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "U";
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 shadow-[0_8px_30px_rgba(15,23,42,0.04)] backdrop-blur-xl">
