@@ -56,3 +56,10 @@ Scope: staging branch only. This is an engineering checklist, not legal advice o
 - 2026-11-21: First privacy-policy validation caught one unescaped apostrophe in JSX; corrected to an HTML entity. The workflow's lint gate must pass before the staging redeploy is considered successful.
 - Additional source review: Image Compressor, Image Resizer, Image Converter and Image Cropper use browser object URLs and Canvas APIs; PDF Split and PDF Rotate use browser-side pdf-lib; PDF to JPG uses browser-side PDF.js and Canvas. These selected-file paths did not show a KaamKitPro upload endpoint in the reviewed page components. The Privacy Policy scope was expanded accordingly. Object URL cleanup, memory use for very large files, malformed input handling and browser-specific behaviour still need dedicated functional/security tests.
 - Revalidation note: the earlier run was superseded while related audit notes were being committed. Privacy Policy JSX apostrophe has been escaped; run the full staging validation and isolated workers.dev deploy against the latest combined source before calling this change released.
+
+
+### Image-tool download lifecycle follow-up (2026-11-24)
+- Fixed Image Compressor, Image Resizer, Image Converter and Image Cropper output object-URL cleanup to wait 1 second after triggering the download, avoiding immediate revocation before the browser has consumed the download URL.
+- Image Resizer now revokes its source preview URL when image decoding fails. Image Cropper now cleans up its retained preview URL when the selected image changes or the component unmounts.
+- Existing Playwright functional tests already wait for download events and verify the expected filenames for all four tools; these tests are included in the next full staging validation. They do not yet prove cross-browser behaviour or stress-test very large images.
+- Remaining work: inspect remaining file-handling tools and add large/malformed-file limits and memory safeguards where the source code supports reliable enforcement. No production changes.
