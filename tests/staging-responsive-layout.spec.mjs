@@ -9,6 +9,8 @@ const routes = [
   "/tools/gst-calculator",
   "/about",
   "/contact",
+  "/privacy-policy",
+  "/terms",
   "/disclaimer",
   "/login",
 ];
