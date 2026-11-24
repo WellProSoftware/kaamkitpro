@@ -15,6 +15,9 @@ const mobileRoutes = [
   "/tools/excel-combiner",
   "/about",
   "/contact",
+  "/privacy-policy",
+  "/terms",
+  "/disclaimer",
   "/login",
   "/pricing",
 ];
