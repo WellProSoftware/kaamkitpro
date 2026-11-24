@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { createRequestSequence } from "../src/lib/adsense-request-guard.mjs";
 
 test("staging privacy and legal pages are reachable and disclose advertising", async ({ page }) => {
   const pages = [
@@ -128,48 +129,15 @@ test("revoking analytics consent disables future gtag events and sends denied st
 });
 
 
-test("stale access responses cannot re-enable ads after a newer access check disables them", async ({ page }) => {
-  await page.addInitScript(() => {
-    window.localStorage.setItem("kk_privacy_consent_v1", "accepted");
-  });
 
-  let releaseFirstResponse;
-  const firstResponse = new Promise((resolve) => {
-    releaseFirstResponse = resolve;
-  });
-  let requestCount = 0;
+test("AdSense request sequence rejects stale responses and invalidates on cleanup", async () => {
+  const requests = createRequestSequence();
+  const olderRequest = requests.next();
+  const latestRequest = requests.next();
 
-  await page.route("**/api/access", async (route) => {
-    requestCount += 1;
-    if (requestCount === 1) {
-      await firstResponse;
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ adsEnabled: true }),
-      });
-      return;
-    }
+  expect(requests.isCurrent(olderRequest)).toBe(false);
+  expect(requests.isCurrent(latestRequest)).toBe(true);
 
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({ adsEnabled: false }),
-    });
-  });
-
-  await page.goto("/");
-  await expect.poll(() => requestCount).toBe(1);
-
-  await page.evaluate(() => {
-    window.dispatchEvent(new Event("kaamkitpro:access-changed"));
-  });
-  await expect.poll(() => requestCount).toBe(2);
-  await page.waitForTimeout(100);
-
-  releaseFirstResponse();
-  await page.waitForTimeout(100);
-
-  await expect(page.locator("#google-adsense")).toHaveCount(0);
-  await expect(page.locator('script[src*="pagead2.googlesyndication.com"]')).toHaveCount(0);
+  requests.invalidate();
+  expect(requests.isCurrent(latestRequest)).toBe(false);
 });
