@@ -730,3 +730,17 @@ test("preview navigation stays within the new platform and visible copy is Engli
   const visibleText = await page.locator("body").innerText();
   expect(visibleText).not.toMatch(/[\u0900-\u097F]/);
 });
+
+
+test("File import dropzone explains unsupported types and rejects multiple files for single-file tools", async ({ page }) => {
+  await page.goto("/tools/pdf-watermark");
+  const input = page.locator("#pdf-file");
+  await input.setInputFiles({ name: "not-a-pdf.png", mimeType: "image/png", buffer: Buffer.from("not a pdf") });
+  await expect(page.getByRole("alert")).toHaveText("Unsupported file type. Please choose a supported file.");
+  await input.setInputFiles([
+    { name: "first.pdf", mimeType: "application/pdf", buffer: await createOnePagePdf("First") },
+    { name: "second.pdf", mimeType: "application/pdf", buffer: await createOnePagePdf("Second") },
+  ]);
+  await expect(page.getByRole("alert")).toHaveText("Please select one file at a time.");
+  await expect(page.getByRole("button", { name: "Add Watermark & Download" })).toHaveCount(0);
+});
