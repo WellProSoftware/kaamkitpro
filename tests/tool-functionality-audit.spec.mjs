@@ -20,6 +20,14 @@ test("GST calculator adds and removes GST correctly", async ({ page }) => {
 
 test("BMI calculator returns a numeric result and category", async ({ page }) => {
   await page.goto("/tools/bmi-calculator");
+  await page.waitForFunction(() => {
+    const inputs = [...document.querySelectorAll('input[type="number"]')];
+    return inputs.length >= 2 && inputs.every((input) =>
+      Object.keys(input).some((key) =>
+        key.startsWith("__reactProps$") && typeof input[key]?.onChange === "function"
+      )
+    );
+  }, { timeout: 10000 });
   await page.locator('input[type="number"]').nth(0).fill("70");
   await page.locator('input[type="number"]').nth(1).fill("175");
   await expect(page.locator("p.text-5xl")).toHaveText("22.9");
