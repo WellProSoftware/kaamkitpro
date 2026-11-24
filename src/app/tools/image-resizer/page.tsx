@@ -65,7 +65,7 @@ export default function ImageResizerPage() {
           link.download = "kaamkitpro-resized.jpg";
           link.click();
 
-          URL.revokeObjectURL(url);
+          window.setTimeout(() => URL.revokeObjectURL(url), 1000);
           setMessage("Image resized successfully.");
         },
         "image/jpeg",
@@ -94,6 +94,11 @@ export default function ImageResizerPage() {
       setWidth(String(image.width));
       setHeight(String(image.height));
       URL.revokeObjectURL(url);
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      setMessage("Could not read this image.");
     };
 
     image.src = url;
