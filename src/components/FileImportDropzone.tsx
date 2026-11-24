@@ -23,10 +23,17 @@ export default function FileImportDropzone({
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [fileNames, setFileNames] = useState<string[]>([]);
+  const [selectionError, setSelectionError] = useState("");
 
   function choose(list: FileList | null) {
     if (!list || !list.length || disabled) return;
+    setSelectionError("");
     const selected = Array.from(list);
+    if (!multiple && selected.length > 1) {
+      setFileNames([]);
+      setSelectionError("Please select one file at a time.");
+      return;
+    }
     const allowed = accept.split(",").map((value) => value.trim().toLowerCase());
     const valid = selected.filter((file) => allowed.some((rule) => {
       if (rule === "*/*") return true;
@@ -36,6 +43,7 @@ export default function FileImportDropzone({
     }));
     if (!valid.length || valid.length !== selected.length) {
       setFileNames([]);
+      setSelectionError("Unsupported file type. Please choose a supported file.");
       return;
     }
     setFileNames(valid.map((file) => file.name));
@@ -74,6 +82,7 @@ export default function FileImportDropzone({
         <button type="button" disabled={disabled} onClick={() => inputRef.current?.click()} className="mt-4 inline-flex min-h-10 items-center justify-center rounded-xl bg-blue-700 px-4 py-2 text-sm font-bold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed">
           {buttonLabel}
         </button>
+        {selectionError && <p role="alert" className="mt-3 text-xs font-medium text-red-700">{selectionError}</p>}
         <p className="mt-3 max-w-full break-all text-xs text-slate-500" aria-live="polite">
           {fileNames.length ? (multiple ? `${fileNames.length} files selected` : showFileName ? fileNames[0] : "1 file selected") : "Drag and drop " + (multiple ? "files" : "a file") + " here"}
         </p>
