@@ -3,7 +3,7 @@
 import FileImportDropzone from "@/components/FileImportDropzone";
 import Link from "next/link";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function ImageCropperPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -15,12 +15,14 @@ export default function ImageCropperPage() {
   const [cropHeight, setCropHeight] = useState("");
   const [message, setMessage] = useState("");
 
+  useEffect(() => {
+    return () => {
+      if (imageUrl) URL.revokeObjectURL(imageUrl);
+    };
+  }, [imageUrl]);
+
   const handleFile = (selectedFile: File | null) => {
     if (!selectedFile) return;
-
-    if (imageUrl) {
-      URL.revokeObjectURL(imageUrl);
-    }
 
     const url = URL.createObjectURL(selectedFile);
     const image = new Image();
@@ -110,7 +112,7 @@ export default function ImageCropperPage() {
           link.download = "kaamkitpro-cropped.jpg";
           link.click();
 
-          URL.revokeObjectURL(url);
+          window.setTimeout(() => URL.revokeObjectURL(url), 1000);
           setMessage("Image cropped successfully.");
         },
         "image/jpeg",
