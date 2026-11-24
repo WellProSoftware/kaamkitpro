@@ -96,6 +96,12 @@ test("PDF to Word exports selectable PDF text into a readable Word-compatible do
 
 test("PDF to Excel exports selectable PDF text into an Excel workbook", async ({ page }) => {
   await page.goto("/tools/pdf-to-excel");
+  await page.waitForFunction(() => {
+    const input = document.querySelector("#converter-file");
+    return input && Object.keys(input).some((key) =>
+      key.startsWith("__reactProps$") && typeof input[key]?.onChange === "function"
+    );
+  }, { timeout: 10000 });
   await page.locator("#converter-file").setInputFiles({
     name: "qa-excel.pdf",
     mimeType: "application/pdf",
