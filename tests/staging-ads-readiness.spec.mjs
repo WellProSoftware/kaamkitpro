@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { createRequestSequence } from "../src/lib/adsense-request-guard.mjs";
 
 test("staging privacy and legal pages are reachable and disclose advertising", async ({ page }) => {
   const pages = [
@@ -125,4 +126,18 @@ test("revoking analytics consent disables future gtag events and sends denied st
   ]);
   expect(state.after).toBe(state.before);
   expect(state.storedConsent).toBe("essential");
+});
+
+
+
+test("AdSense request sequence rejects stale responses and invalidates on cleanup", async () => {
+  const requests = createRequestSequence();
+  const olderRequest = requests.next();
+  const latestRequest = requests.next();
+
+  expect(requests.isCurrent(olderRequest)).toBe(false);
+  expect(requests.isCurrent(latestRequest)).toBe(true);
+
+  requests.invalidate();
+  expect(requests.isCurrent(latestRequest)).toBe(false);
 });
