@@ -737,10 +737,16 @@ test("File import dropzone explains unsupported types and rejects multiple files
   const input = page.locator("#pdf-file");
   await input.setInputFiles({ name: "not-a-pdf.png", mimeType: "image/png", buffer: Buffer.from("not a pdf") });
   await expect(page.getByRole("alert")).toHaveText("Unsupported file type. Please choose a supported file.");
-  await input.setInputFiles([
-    { name: "first.pdf", mimeType: "application/pdf", buffer: await createOnePagePdf("First") },
-    { name: "second.pdf", mimeType: "application/pdf", buffer: await createOnePagePdf("Second") },
-  ]);
+  await input.evaluate((element) => {
+    const transfer = new DataTransfer();
+    transfer.items.add(new File(["first"], "first.pdf", { type: "application/pdf" }));
+    transfer.items.add(new File(["second"], "second.pdf", { type: "application/pdf" }));
+    element.parentElement.dispatchEvent(new DragEvent("drop", {
+      bubbles: true,
+      cancelable: true,
+      dataTransfer: transfer,
+    }));
+  });
   await expect(page.getByRole("alert")).toHaveText("Please select one file at a time.");
   await expect(page.getByRole("button", { name: "Add Watermark & Download" })).toHaveCount(0);
 });
