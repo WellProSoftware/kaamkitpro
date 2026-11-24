@@ -63,3 +63,10 @@ Scope: staging branch only. This is an engineering checklist, not legal advice o
 - Image Resizer now revokes its source preview URL when image decoding fails. Image Cropper now cleans up its retained preview URL when the selected image changes or the component unmounts.
 - Existing Playwright functional tests already wait for download events and verify the expected filenames for all four tools; these tests are included in the next full staging validation. They do not yet prove cross-browser behaviour or stress-test very large images.
 - Remaining work: inspect remaining file-handling tools and add large/malformed-file limits and memory safeguards where the source code supports reliable enforcement. No production changes.
+
+
+### File selection validation follow-up (2026-11-24)
+- Shared FileImportDropzone now reports unsupported file types accessibly and rejects multi-file drops when the tool is configured for a single file. This prevents silent rejection and accidental repeated callbacks from a multi-file drop.
+- Added a Playwright regression test against PDF Watermark for unsupported image input and multiple files on a single-file tool. The next full staging workflow must confirm this test and the existing file-download tests pass.
+- PDF Watermark, PDF Page Number, PDF Split and PDF Rotate source paths were reviewed: they read selected file bytes in the browser and generate local downloads; no server upload path was found in those components. This is source inspection, not a complete network capture of every tool.
+- File size and page-count ceilings are not yet consistently enforced across all browser file tools. Do not claim large-file stress testing or universal upload privacy until a broader audit and runtime tests are complete.
