@@ -12,6 +12,7 @@ export default function AdSenseLoader({ disabled = false }: { disabled?: boolean
 
   useEffect(() => {
     let cancelled = false;
+    let syncSequence = 0;
 
     // Removing only the loader script is not enough: Auto Ads can leave injected
     // frames/placeholders behind after a user signs in or upgrades to Pro.
@@ -35,6 +36,10 @@ export default function AdSenseLoader({ disabled = false }: { disabled?: boolean
     ) || pathname.startsWith("/auth/");
 
     async function syncAds() {
+      // Only the newest access/consent check may change the page's ad state.
+      const requestSequence = ++syncSequence;
+      const isCurrentRequest = () => !cancelled && requestSequence === syncSequence;
+
       if (disabled || excluded) {
         removeAds();
         return;
@@ -55,13 +60,15 @@ export default function AdSenseLoader({ disabled = false }: { disabled?: boolean
 
       try {
         const response = await fetch("/api/access", { cache: "no-store" });
+        if (!isCurrentRequest()) return;
         if (!response.ok) {
           removeAds();
           return;
         }
 
         const data = (await response.json()) as { adsEnabled?: boolean };
-        if (cancelled || data.adsEnabled !== true) {
+        if (!isCurrentRequest()) return;
+        if (data.adsEnabled !== true) {
           removeAds();
           return;
         }
@@ -76,7 +83,7 @@ export default function AdSenseLoader({ disabled = false }: { disabled?: boolean
         document.head.appendChild(script);
       } catch {
         // Fail closed: never leave ads enabled when account access is unknown.
-        removeAds();
+        if (isCurrentRequest()) removeAds();
       }
     }
 
@@ -93,6 +100,7 @@ export default function AdSenseLoader({ disabled = false }: { disabled?: boolean
 
     return () => {
       cancelled = true;
+      syncSequence += 1;
       window.removeEventListener("kaamkitpro:consent", onConsent);
       window.removeEventListener("kaamkitpro:access-changed", onConsent);
       window.removeEventListener("focus", onConsent);
