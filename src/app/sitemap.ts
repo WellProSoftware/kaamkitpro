@@ -41,6 +41,7 @@ const staticRoutes = [
   "/guides/pdf-merge", "/guides/choosing-online-tools", "/guides/pdf-compression", "/guides/gst-calculator",
   "/guides/csv-to-json", "/guides/json-to-csv", "/guides/line-sorter",
   "/guides/remove-duplicate-lines", "/guides/slug-generator", "/guides/text-diff-checker",
+  "/guides/bmi-calculator",
   "/privacy-policy", "/terms", "/tools",
 ];
 
