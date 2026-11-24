@@ -61,6 +61,9 @@ test("privacy consent choices persist; staging uses only its test Analytics ID a
   await expect.poll(() => page.evaluate(() => window.localStorage.getItem("kk_privacy_consent_v1"))).toBe("accepted");
   await expect(page.getByRole("dialog", { name: /Your privacy choices/i })).toHaveCount(0);
   await expect(page.locator("#google-analytics-script")).toHaveAttribute("src", /G-8B6JX70RH8/);
+  await expect.poll(() => page.evaluate(() => (window.dataLayer || []).filter((entry) =>
+    entry[0] === "event" && entry[1] === "page_view" && entry[2]?.page_path === "/"
+  ).length)).toBe(1);
   await expect(page.locator("#google-adsense")).toHaveCount(0);
   await expect(page.locator('script[src*="pagead2.googlesyndication.com"]')).toHaveCount(0);
   await expect(page.locator('script[src*="googletagmanager.com/gtag/js"]')).toHaveAttribute("src", /G-8B6JX70RH8/);
