@@ -20,6 +20,7 @@ jobs:
     env:
       KAAMKITPRO_STAGING: "true"
       NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_GA4_MEASUREMENT_ID: "G-8B6JX70RH8"
     steps:
       - name: Checkout the pull request head
         uses: actions/checkout@v5
