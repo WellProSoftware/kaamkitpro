@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { createRequestSequence } from "@/lib/adsense-request-guard.mjs";
 
 const ADSENSE_SCRIPT_ID = "google-adsense";
 const CONSENT_KEY = "kk_privacy_consent_v1";
@@ -12,7 +13,7 @@ export default function AdSenseLoader({ disabled = false }: { disabled?: boolean
 
   useEffect(() => {
     let cancelled = false;
-    let syncSequence = 0;
+    const requestSequence = createRequestSequence();
 
     // Removing only the loader script is not enough: Auto Ads can leave injected
     // frames/placeholders behind after a user signs in or upgrades to Pro.
@@ -37,8 +38,8 @@ export default function AdSenseLoader({ disabled = false }: { disabled?: boolean
 
     async function syncAds() {
       // Only the newest access/consent check may change the page's ad state.
-      const requestSequence = ++syncSequence;
-      const isCurrentRequest = () => !cancelled && requestSequence === syncSequence;
+      const requestId = requestSequence.next();
+      const isCurrentRequest = () => !cancelled && requestSequence.isCurrent(requestId);
 
       if (disabled || excluded) {
         removeAds();
@@ -100,7 +101,7 @@ export default function AdSenseLoader({ disabled = false }: { disabled?: boolean
 
     return () => {
       cancelled = true;
-      syncSequence += 1;
+      requestSequence.invalidate();
       window.removeEventListener("kaamkitpro:consent", onConsent);
       window.removeEventListener("kaamkitpro:access-changed", onConsent);
       window.removeEventListener("focus", onConsent);
