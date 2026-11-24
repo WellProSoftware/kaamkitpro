@@ -36,6 +36,18 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
       lastTrackedPath.current = "";
     }
 
+    function trackCurrentPage() {
+      if (lastTrackedPath.current === pathname || typeof analyticsWindow.gtag !== "function") {
+        return;
+      }
+
+      analyticsWindow.gtag("event", "page_view", { page_path: pathname });
+      if (pathname.startsWith("/tools/")) {
+        analyticsWindow.gtag("event", "tool_used", { tool_name: pathname });
+      }
+      lastTrackedPath.current = pathname;
+    }
+
     function loadAnalyticsIfConsented() {
       if (disabled || !MEASUREMENT_ID || !/^G-[A-Z0-9]+$/.test(MEASUREMENT_ID)) {
         removeAnalytics();
@@ -69,6 +81,10 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
       script.async = true;
       script.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
       document.head.appendChild(script);
+
+      // Consent may be granted without a route change. Track that page now;
+      // lastTrackedPath prevents the route effect from sending it twice.
+      trackCurrentPage();
     }
 
     loadAnalyticsIfConsented();
@@ -76,7 +92,7 @@ export default function AnalyticsLoader({ disabled = false }: { disabled?: boole
     return () => {
       window.removeEventListener("kaamkitpro:consent", loadAnalyticsIfConsented);
     };
-  }, [disabled]);
+  }, [disabled, pathname]);
 
   useEffect(() => {
     if (disabled || !MEASUREMENT_ID || lastTrackedPath.current === pathname) {
