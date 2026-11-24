@@ -126,3 +126,50 @@ test("revoking analytics consent disables future gtag events and sends denied st
   expect(state.after).toBe(state.before);
   expect(state.storedConsent).toBe("essential");
 });
+
+
+test("stale access responses cannot re-enable ads after a newer access check disables them", async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem("kk_privacy_consent_v1", "accepted");
+  });
+
+  let releaseFirstResponse;
+  const firstResponse = new Promise((resolve) => {
+    releaseFirstResponse = resolve;
+  });
+  let requestCount = 0;
+
+  await page.route("**/api/access", async (route) => {
+    requestCount += 1;
+    if (requestCount === 1) {
+      await firstResponse;
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ adsEnabled: true }),
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ adsEnabled: false }),
+    });
+  });
+
+  await page.goto("/");
+  await expect.poll(() => requestCount).toBe(1);
+
+  await page.evaluate(() => {
+    window.dispatchEvent(new Event("kaamkitpro:access-changed"));
+  });
+  await expect.poll(() => requestCount).toBe(2);
+  await page.waitForTimeout(100);
+
+  releaseFirstResponse();
+  await page.waitForTimeout(100);
+
+  await expect(page.locator("#google-adsense")).toHaveCount(0);
+  await expect(page.locator('script[src*="pagead2.googlesyndication.com"]')).toHaveCount(0);
+});
