@@ -114,7 +114,7 @@ export default function ImageCompressionGuide() {
                 is 1.2 MB. Compress it, then check the actual downloaded file size. If it is
                 still above 500 KB, try a lower quality setting and inspect the new result.
                 If the picture becomes visibly poor, use a suitable resize workflow or another
-                format accepted by the form. Always follow the receiving website's own file
+                format accepted by the form. Always follow the receiving website&apos;s own file
                 type and size rules.
               </p>
             </section>
@@ -137,7 +137,7 @@ export default function ImageCompressionGuide() {
                 The KaamKitPro tool page states that image processing happens locally in your
                 browser. This avoids uploading the selected image to a processing server as
                 part of the normal compression flow. However, only use a browser and device
-                you trust, and do not treat this as a substitute for your organisation's
+                you trust, and do not treat this as a substitute for your organisation&apos;s
                 confidentiality rules. Keep a separate original copy of important images.
               </p>
               <p className="mt-3 leading-8 text-slate-600">
@@ -150,7 +150,7 @@ export default function ImageCompressionGuide() {
             <section className="rounded-2xl bg-slate-50 p-6">
               <h2 className="text-2xl font-bold">Before you upload or publish</h2>
               <ul className="mt-4 list-disc space-y-2 pl-6 leading-8 text-slate-600">
-                <li>Confirm that the output meets the destination's file-size and format rules.</li>
+                <li>Confirm that the output meets the destination&apos;s file-size and format rules.</li>
                 <li>Check that the image is readable at the size people will view it.</li>
                 <li>Confirm that transparency or other important visual details have not been lost.</li>
                 <li>Keep the original until the compressed copy has been accepted and checked.</li>
