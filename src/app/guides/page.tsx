@@ -56,3 +56,4 @@ const guides = [
     tool: "/tools",
     category: "Everyday Tools",
   },
+];
