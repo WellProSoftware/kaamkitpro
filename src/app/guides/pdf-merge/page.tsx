@@ -91,7 +91,7 @@ export default function PdfMergeGuide() {
                 </li>
                 <li>
                   <strong>Select the source PDFs.</strong> Choose the files
-                  you intend to combine. Follow the tool's on-screen
+                  you intend to combine. Follow the tool&apos;s on-screen
                   instructions if it asks you to add files one at a time.
                 </li>
                 <li>
@@ -178,7 +178,7 @@ export default function PdfMergeGuide() {
                 authorised to process, avoid uploading sensitive records to a
                 service unless its handling practices meet your requirements,
                 and do not share the resulting file through a public link.
-                Check the service's privacy information if you need to
+                Check the service&apos;s privacy information if you need to
                 understand how files are handled.
               </p>
             </section>
