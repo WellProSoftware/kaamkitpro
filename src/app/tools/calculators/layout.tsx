@@ -16,23 +16,21 @@ const benefits = [
   ];
 
 const faq = [
-    { question: "Which calculators are available?", answer: "KaamKitPro includes calculators such as EMI, GST, SIP, BMI, age and percentage calculators." },
+    { question: "Which calculators are available?", answer: "KaamKitPro includes GST, SIP, BMI and age calculators." },
     { question: "Are the calculator results free?", answer: "Yes. The calculators are available as free online utilities." },
     { question: "Can I use these calculators on mobile?", answer: "Yes. The calculator pages are designed to work in modern mobile and desktop browsers." }
   ];
 
 const relatedTools = [
-    { href: "/tools/emi-calculator", label: "EMI Calculator" },
     { href: "/tools/gst-calculator", label: "GST Calculator" },
     { href: "/tools/sip-calculator", label: "SIP Calculator" },
     { href: "/tools/bmi-calculator", label: "BMI Calculator" },
     { href: "/tools/age-calculator", label: "Age Calculator" },
-    { href: "/tools/percentage-calculator", label: "Percentage Calculator" }
   ];
 
 export const metadata: Metadata = {
   title: "Online Calculators",
-  description: "Use free online calculators for EMI, GST, SIP, BMI, age and other everyday calculations.",
+  description: "Use free online GST, SIP, BMI and age calculators for everyday calculations.",
   keywords: [
     "online calculators",
     "free calculators",
@@ -43,7 +41,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Online Calculators | KaamKitPro",
-    description: "Use free online calculators for EMI, GST, SIP, BMI, age and other everyday calculations.",
+    description: "Use free online GST, SIP, BMI and age calculators for everyday calculations.",
     type: "website",
     siteName: "KaamKitPro",
     url: "https://kaamkitpro.com/tools/calculators",
@@ -52,10 +50,6 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Online Calculators | KaamKitPro",
     description: "Use free online calculators for EMI, GST, SIP, BMI, age and other everyday calculations.",
-  },
-  robots: {
-    index: true,
-    follow: true,
   },
 };
 
