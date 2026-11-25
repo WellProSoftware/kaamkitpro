@@ -52,10 +52,6 @@ export const metadata: Metadata = {
     title: "PDF Tools Online | KaamKitPro",
     description: "Use free online PDF tools to merge, split, compress, convert and manage PDF files directly in your browser.",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
 };
 
 export default function CategoryLayout({

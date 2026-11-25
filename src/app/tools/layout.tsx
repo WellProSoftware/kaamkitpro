@@ -16,7 +16,6 @@ export const metadata: Metadata = {
     "image tools",
     "calculator tools",
     "hospital procurement tools",
-    "vendor quotation comparison",
   ],
   alternates: {
     canonical: "https://kaamkitpro.com/tools",

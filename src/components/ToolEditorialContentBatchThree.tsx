@@ -10,8 +10,7 @@ type Guide = {
   faqs: { q: string; a: string }[];
 };
 
-const guides: Record<string, Guide> = {
-  "gst-calculator": {
+const guides: Record<string, Guide> = {  "gst-calculator": {
     title: "GST Calculator",
     intro: "A GST calculator estimates the Goods and Services Tax amount from a base price or helps separate the tax portion from a price that already includes GST. It is useful for quick estimates, but the correct tax treatment depends on the product or service, applicable rules and transaction details.",
     sections: [
@@ -24,21 +23,6 @@ const guides: Record<string, Guide> = {
       { q: "What is the difference between adding and removing GST?", a: "Adding GST calculates tax on a base price; removing GST estimates the tax portion already included in a total price." },
       { q: "Does this calculator decide the correct GST rate?", a: "No. It performs arithmetic for the selected rate; the applicable rate must be established separately." },
       { q: "Why may invoice totals differ by a few paise?", a: "Rounding rules and line-by-line versus invoice-level calculations can affect the final amount." }
-    ]
-  },
-  "emi-calculator": {
-    title: "EMI Calculator",
-    intro: "An EMI (equated monthly instalment) calculator estimates a fixed monthly loan payment using the principal, interest rate and repayment period. It helps compare possible loan scenarios, but a lender's actual schedule may include fees, insurance, rate changes or other conditions.",
-    sections: [
-      { heading: "What affects the EMI?", body: "A higher loan amount or interest rate generally increases the EMI, while a longer repayment term generally lowers the monthly payment but can increase total interest paid. Compare both the monthly instalment and total repayment rather than choosing only the smallest EMI." },
-      { heading: "Understand the estimate", body: "Many EMI calculators assume a fixed annual interest rate converted to a monthly rate and equal payments over the term. Actual products may use different rate conventions, variable rates, processing charges or repayment rules. Review the lender's official amortisation schedule before committing." },
-      { heading: "Borrow within a realistic budget", body: "Consider essential expenses, emergency savings and other debts when assessing affordability. A calculator can compare scenarios but cannot determine whether a loan is suitable for your circumstances." }
-    ],
-    steps: ["Enter the loan principal, annual interest rate and tenure.", "Check that the tenure unit is months or years as expected.", "Review the estimated EMI and total interest.", "Compare the estimate with the lender's offer and fee schedule."],
-    faqs: [
-      { q: "Does a longer tenure always save money?", a: "It often reduces the monthly payment but can increase total interest over the life of the loan." },
-      { q: "Why is the lender's EMI different?", a: "Fees, rate conventions, dates, insurance or a variable rate can cause differences from a simplified estimate." },
-      { q: "Is the calculator a loan approval?", a: "No. It is an estimate and does not assess eligibility or guarantee a lender's terms." }
     ]
   },
   "age-calculator": {
@@ -54,21 +38,6 @@ const guides: Record<string, Guide> = {
       { q: "Can I calculate age on a past date?", a: "If the tool supports a reference date, enter the date you want to calculate age on." },
       { q: "Why is the result not the same as days divided by 365?", a: "Calendar years and months have different lengths, and leap years affect elapsed days." },
       { q: "Can this result determine official eligibility?", a: "Use the relevant authority's date and eligibility rules for official decisions." }
-    ]
-  },
-  "password": {
-    title: "Password Generator",
-    intro: "A password generator creates random character strings that can be used as passwords. Strong, unique passwords help reduce the risk that a password exposed on one service can be reused to access another account.",
-    sections: [
-      { heading: "Choose length and character options", body: "Longer passwords generally provide more possible combinations. Use the longest password accepted by the service and include a mix of character types when the service supports them. Avoid predictable patterns, personal information, common phrases and simple substitutions." },
-      { heading: "Use a password manager", body: "A reputable password manager can generate and store a different password for each account. Do not reuse a generated password across services, and avoid placing passwords in shared documents, chat messages or unprotected notes." },
-      { heading: "Protect account access", body: "A strong password is only one part of account security. Enable multifactor authentication where available, keep recovery options current, and never share passwords or one-time codes with someone who contacts you unexpectedly." }
-    ],
-    steps: ["Choose the password length and supported character options.", "Generate a password and check that it meets the target service's rules.", "Save it directly in a trusted password manager.", "Use a unique password and enable multifactor authentication where possible."],
-    faqs: [
-      { q: "Should I use the same generated password everywhere?", a: "No. Use a unique password for each account so one exposed password does not unlock other services." },
-      { q: "Is a longer password usually stronger?", a: "Length is an important factor when the password is random and not predictable." },
-      { q: "Where should I store the password?", a: "Use a trusted password manager rather than an unprotected document or shared note." }
     ]
   },
   "pdf-split": {

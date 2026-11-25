@@ -28,7 +28,6 @@ const tools: Tool[] = [
   { name: "Image Grayscale", category: "Image", description: "Convert images to grayscale.", href: "/tools/image-grayscale" },
   { name: "SIP Calculator", category: "Calculators", description: "Estimate SIP investment growth.", href: "/tools/sip-calculator" },
   { name: "Item Master Matcher", category: "Business", description: "Match hospital purchase items to your item master.", href: "/tools/item-master-matcher" },
-  { name: "Vendor Quotation Comparison", category: "Business", description: "Compare supplier quotations side by side.", href: "/tools/vendor-quotation-comparison" },
   { name: "Excel Combiner", category: "Data", description: "Combine Excel and CSV files into one workbook.", href: "/tools/excel-combiner" },
   { name: "PDF to Excel", category: "PDF", description: "Convert supported PDF tables into spreadsheet data.", href: "/tools/pdf-to-excel" },
   { name: "PDF to Word", category: "PDF", description: "Convert PDF documents into editable Word files.", href: "/tools/pdf-to-word" },
@@ -41,7 +40,6 @@ const categories = ["All", "PDF", "Image", "Calculators", "Business", "Data"];
 const products = [
   { number: "01", title: "Hospital Purchase Management Kit", description: "Practical procurement trackers, purchase workflows and vendor comparison templates.", tag: "Healthcare operations" },
   { number: "02", title: "Pharmacy Inventory & Expiry Kit", description: "Structured stock, expiry monitoring and reorder planning templates.", tag: "Pharmacy operations" },
-  { number: "03", title: "Vendor Quotation Comparison", description: "Compare supplier offers with a consistent, decision-ready format.", tag: "Procurement" },
   { number: "04", title: "Business Financial Projection Kit", description: "Organise assumptions, forecasts and business planning in one workbook.", tag: "Business planning" },
 ];
 
@@ -84,7 +82,7 @@ export default function PlatformPreviewPage() {
             <div className="rounded-[2rem] border border-white/15 bg-white/[.08] p-4 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-6">
               <div className="flex items-center justify-between border-b border-white/10 pb-4"><div><p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-cyan-200">Your workspace</p><p className="mt-1 text-xl font-extrabold text-white">Start with what you need</p></div><span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1.5 text-[10px] font-bold text-emerald-200">YOUR WORKSPACE</span></div>
               <div className="mt-4 grid grid-cols-2 gap-3">
-                {[["▤","PDF tools","Documents"],["▧","Image tools","Visual assets"],["◉","Calculators","Smart calculations"],["⌘","Developer tools","Code utilities"]].map(([icon,title,sub]) => <a key={title} href="#tools" className="rounded-2xl border border-white/10 bg-[#102744] p-4 transition hover:-translate-y-1 hover:border-cyan-300/50 hover:bg-[#15365c]"><span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-cyan-200 to-blue-400 text-xl font-black text-[#09203d] shadow-lg shadow-cyan-950/30">{icon}</span><b className="mt-4 block text-sm text-white">{title}</b><span className="mt-1 block text-xs text-slate-300">{sub}</span></a>)}
+                {[["▤","PDF tools","Documents"],["▧","Image tools","Visual assets"],["◉","Calculators","Smart calculations"],["▦","Business tools","Purchase workflows"]].map(([icon,title,sub]) => <a key={title} href="#tools" className="rounded-2xl border border-white/10 bg-[#102744] p-4 transition hover:-translate-y-1 hover:border-cyan-300/50 hover:bg-[#15365c]"><span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-cyan-200 to-blue-400 text-xl font-black text-[#09203d] shadow-lg shadow-cyan-950/30">{icon}</span><b className="mt-4 block text-sm text-white">{title}</b><span className="mt-1 block text-xs text-slate-300">{sub}</span></a>)}
               </div>
               <div className="mt-4 rounded-2xl border border-cyan-300/20 bg-gradient-to-r from-[#123d68] to-[#164d75] p-5 text-white"><p className="text-xs font-bold uppercase tracking-widest text-blue-200">Business resources</p><p className="mt-2 text-lg font-extrabold">Less busywork. Better decisions.</p><a href="#business" className="mt-3 inline-flex text-sm font-bold text-blue-200 hover:text-white">Explore solutions <Arrow /></a></div>
             </div>

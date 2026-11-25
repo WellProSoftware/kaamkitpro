@@ -79,7 +79,6 @@ export default function SiteHeader() {
             <div className="absolute left-0 top-full mt-2 w-72 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
               <Link href="/platform-preview#business" className="block rounded-xl p-3 hover:bg-slate-50"><span className="block text-sm font-bold text-slate-900">Business solutions</span><span className="text-xs text-slate-500">Procurement, inventory and operations</span></Link>
               <Link href="/tools/item-master-matcher" className="block rounded-xl p-3 hover:bg-slate-50"><span className="block text-sm font-bold text-slate-900">Item master matcher</span><span className="text-xs text-slate-500">Map healthcare purchase items</span></Link>
-              <Link href="/tools/vendor-quotation-comparison" className="block rounded-xl p-3 hover:bg-slate-50"><span className="block text-sm font-bold text-slate-900">Vendor comparison</span><span className="text-xs text-slate-500">Compare supplier quotations</span></Link>
             </div>
           </details>
           <Link href="/platform-preview#products" className="rounded-full px-3 py-2 transition hover:bg-white hover:text-blue-700 hover:shadow-sm">Digital products</Link>

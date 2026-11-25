@@ -50,56 +50,13 @@ const guides = [
     category: "Calculators",
   },
   {
-    title: "How to Compare Two Texts Online",
-    description:
-      "Find added, removed, and unchanged lines between two drafts, lists, or plain-text versions.",
-    href: "/guides/text-diff-checker",
-    tool: null,
-    category: "Text Tools",
-  },
-  {
-    title: "How to Sort Lines of Text Online",
-    description:
-      "Organize lists, filenames, product codes and keywords with alphabetical or natural sorting, then keep cleaning the list.",
-    href: "/guides/line-sorter",
-    tool: null,
-    category: "Text Tools",
-  },
-  {
-    title: "How to Convert JSON to CSV Online",
-    description: "Turn JSON arrays into spreadsheet-ready rows and handle quoting, nested data, and common conversion issues.",
-    href: "/guides/json-to-csv",
-    tool: null,
-    category: "Developer Tools",
-  },
-  {
-    title: "How to Convert CSV to JSON Online",
-    description: "Turn CSV rows into JSON objects, handle quoted fields, and fix common conversion issues.",
-    href: "/guides/csv-to-json",
-    tool: null,
-    category: "Developer Tools",
-  },
-  {
-    title: "How to Create an SEO-Friendly URL Slug",
-    description: "Learn how to turn a page title into a readable URL slug and avoid common URL formatting mistakes.",
-    href: "/guides/slug-generator",
-    tool: null,
-    category: "SEO Tools",
-  },
-  {
     title: "How to Choose and Use Online Tools",
     description: "Choose a utility, test with a small sample, verify outputs, and protect sensitive information.",
     href: "/guides/choosing-online-tools",
     tool: "/tools",
     category: "Everyday Tools",
   },
-  {
-    title: "How to Remove Duplicate Lines from a List",
-    description: "Clean repeated names, keywords, IDs and copied spreadsheet lines while choosing how whitespace and letter case should be treated.",
-    href: "/guides/remove-duplicate-lines",
-    tool: null,
-    category: "Text Tools",
-  },
+
 ];
 
 export default function GuidesPage() {

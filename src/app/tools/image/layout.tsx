@@ -52,10 +52,6 @@ export const metadata: Metadata = {
     title: "Image Tools Online | KaamKitPro",
     description: "Free online image tools for compressing, resizing, cropping and converting images directly in your browser.",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
 };
 
 export default function CategoryLayout({
