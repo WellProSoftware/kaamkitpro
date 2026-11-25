@@ -30,6 +30,36 @@ const toolSeo: Record<string, ToolSeo> = {  "age-calculator": {
       "Compress JPG, PNG and WebP images online to reduce file size while maintaining useful quality.",
     keywords: ["image compressor", "compress image", "reduce image size"],
   },
+  "image-converter": {
+    title: "Image Converter Online",
+    description:
+      "Convert images between common formats directly in your browser with this free online image converter.",
+    keywords: ["image converter", "convert image", "JPG PNG converter"],
+  },
+  "image-cropper": {
+    title: "Image Cropper Online",
+    description:
+      "Crop images online to the size and shape you need with this free browser-based image cropper.",
+    keywords: ["image cropper", "crop image online", "photo cropper"],
+  },
+  "image-resizer": {
+    title: "Image Resizer Online",
+    description:
+      "Resize images to custom dimensions online while keeping control over the output size.",
+    keywords: ["image resizer", "resize image", "photo resizer"],
+  },
+  "jpg-to-pdf": {
+    title: "JPG to PDF Converter Online",
+    description:
+      "Convert JPG, JPEG and PNG images into PDF documents online for free.",
+    keywords: ["JPG to PDF", "image to PDF", "JPEG to PDF"],
+  },
+  "pdf-compressor": {
+    title: "PDF Compressor Online",
+    description:
+      "Reduce PDF file size online with this free browser-based PDF compression tool.",
+    keywords: ["PDF compressor", "compress PDF", "reduce PDF size"],
+  },
   "pdf-merge": {
     title: "Merge PDF Files Online",
     description:
@@ -41,6 +71,12 @@ const toolSeo: Record<string, ToolSeo> = {  "age-calculator": {
     description:
       "Split a PDF into separate pages online with this free browser-based PDF splitter.",
     keywords: ["split PDF", "PDF splitter", "separate PDF pages"],
+  },
+  "pdf-to-jpg": {
+    title: "PDF to JPG Converter Online",
+    description:
+      "Convert PDF pages into JPG images online with this free browser-based converter.",
+    keywords: ["PDF to JPG", "PDF converter", "convert PDF to image"],
   },
   "sip-calculator": {
     title: "SIP Calculator Online",
