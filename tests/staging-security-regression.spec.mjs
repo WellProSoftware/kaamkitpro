@@ -166,11 +166,13 @@ test.describe("staging security regression checks", () => {
 
   test("billing checkout and account routes reject signed-out requests", async ({ request }) => {
     const checkout = await request.post("/api/billing/checkout", {
+      headers: { Origin: "http://127.0.0.1:4173" },
       data: { plan_id: "pro-monthly-inr" },
     });
     expect(checkout.status()).toBe(401);
 
     const verify = await request.post("/api/billing/verify", {
+      headers: { Origin: "http://127.0.0.1:4173" },
       data: {
         razorpay_payment_id: "pay_test123",
         razorpay_subscription_id: "sub_test123",
@@ -183,6 +185,7 @@ test.describe("staging security regression checks", () => {
     expect(subscription.status()).toBe(401);
 
     const cancel = await request.post("/api/billing/cancel", {
+      headers: { Origin: "http://127.0.0.1:4173" },
       data: { subscription_id: "a80a66cc-5f2f-4cfd-a1bf-7c71ec3d73d8" },
     });
     expect(cancel.status()).toBe(401);
