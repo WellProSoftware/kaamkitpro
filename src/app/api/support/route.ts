@@ -15,12 +15,18 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ conversation });
 }
 
-export async function POST(request: NextRequest) {
+function originIsValid(request: NextRequest) {
   const origin = request.headers.get("origin");
-  if (origin) {
-    try { if (new URL(origin).host !== request.nextUrl.host) return NextResponse.json({ error: "Invalid request origin." }, { status: 403 }); }
-    catch { return NextResponse.json({ error: "Invalid request origin." }, { status: 403 }); }
+  if (!origin) return false;
+  try {
+    return new URL(origin).origin === request.nextUrl.origin;
+  } catch {
+    return false;
   }
+}
+
+export async function POST(request: NextRequest) {
+  if (!originIsValid(request)) return NextResponse.json({ error: "Invalid request origin." }, { status: 403 });
   const user = await getRequestUser(request);
   if (!user?.email) return NextResponse.json({ error: "Sign in to send a support message." }, { status: 401 });
   let body: Record<string, unknown>;
