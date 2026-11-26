@@ -61,7 +61,7 @@ test.describe("KaamKitPro authentication pages", () => {
   });
 
   test("subscription checkout rejects requests without an authenticated user", async ({ request }) => {
-    const response = await request.post("/api/billing/checkout", { data: { plan_id: "pro-monthly-inr" } });
+    const response = await request.post("/api/billing/checkout", { headers: { Origin: "http://127.0.0.1:4173" }, data: { plan_id: "pro-monthly-inr" } });
     expect(response.status()).toBe(401);
     expect(await response.json()).toMatchObject({ error: "Sign in before starting a subscription." });
   });
@@ -70,10 +70,10 @@ test.describe("KaamKitPro authentication pages", () => {
     const status = await request.get("/api/billing/subscription");
     expect(status.status()).toBe(401);
     expect(await status.json()).toMatchObject({ error: "Please sign in first." });
-    const cancel = await request.post("/api/billing/cancel", { data: { subscription_id: "00000000-0000-4000-8000-000000000000" } });
+    const cancel = await request.post("/api/billing/cancel", { headers: { Origin: "http://127.0.0.1:4173" }, data: { subscription_id: "00000000-0000-4000-8000-000000000000" } });
     expect(cancel.status()).toBe(401);
     expect(await cancel.json()).toMatchObject({ error: "Please sign in first." });
-    const verify = await request.post("/api/billing/verify", { data: {} });
+    const verify = await request.post("/api/billing/verify", { headers: { Origin: "http://127.0.0.1:4173" }, data: {} });
     expect(verify.status()).toBe(401);
     expect(await verify.json()).toMatchObject({ error: "Sign in before verifying a subscription." });
   });

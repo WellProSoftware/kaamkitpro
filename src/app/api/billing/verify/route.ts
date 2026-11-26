@@ -35,7 +35,18 @@ function isoDate(value?: number | null) {
     : null;
 }
 
+function originIsValid(request: NextRequest) {
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+  try {
+    return new URL(origin).origin === request.nextUrl.origin;
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(request: NextRequest) {
+  if (!originIsValid(request)) return NextResponse.json({ error: "Invalid request origin." }, { status: 403 });
   const user = await getRequestUser(request);
   if (!user?.email) {
     return NextResponse.json({ error: "Sign in before verifying a subscription." }, { status: 401 });

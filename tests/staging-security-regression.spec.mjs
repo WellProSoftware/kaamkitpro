@@ -171,13 +171,31 @@ test.describe("staging security regression checks", () => {
     expect(await metered.json()).toMatchObject({ allowed: true, tier: "free_pro_access", limited: false });
   });
 
+
+  test("admin support and billing mutations reject hostile or missing Origin before authentication", async ({ request }) => {
+    for (const path of ["/api/admin/support", "/api/billing/checkout", "/api/billing/verify", "/api/billing/cancel"]) {
+      const data = path.endsWith("/checkout") ? { plan_id: "pro-monthly-inr" }
+        : path.endsWith("/verify") ? { razorpay_payment_id: "pay_test123", razorpay_subscription_id: "sub_test123", razorpay_signature: "0".repeat(64) }
+        : path.endsWith("/cancel") ? { subscription_id: "a80a66cc-5f2f-4cfd-a1bf-7c71ec3d73d8" }
+        : { conversation_id: "a80a66cc-5f2f-4cfd-a1bf-7c71ec3d73d8", message: "CSRF test" };
+      const hostile = await request.post(path, { headers: { Origin: "https://attacker.example.invalid" }, data });
+      expect(hostile.status(), path + " hostile Origin").toBe(403);
+      expect(await hostile.json()).toMatchObject({ error: "Invalid request origin." });
+      const missing = await request.post(path, { data });
+      expect(missing.status(), path + " missing Origin").toBe(403);
+      expect(await missing.json()).toMatchObject({ error: "Invalid request origin." });
+    }
+  });
+
   test("billing checkout and account routes reject signed-out requests", async ({ request }) => {
     const checkout = await request.post("/api/billing/checkout", {
+      headers: { Origin: "http://127.0.0.1:4173" },
       data: { plan_id: "pro-monthly-inr" },
     });
     expect(checkout.status()).toBe(401);
 
     const verify = await request.post("/api/billing/verify", {
+      headers: { Origin: "http://127.0.0.1:4173" },
       data: {
         razorpay_payment_id: "pay_test123",
         razorpay_subscription_id: "sub_test123",
@@ -190,6 +208,7 @@ test.describe("staging security regression checks", () => {
     expect(subscription.status()).toBe(401);
 
     const cancel = await request.post("/api/billing/cancel", {
+      headers: { Origin: "http://127.0.0.1:4173" },
       data: { subscription_id: "a80a66cc-5f2f-4cfd-a1bf-7c71ec3d73d8" },
     });
     expect(cancel.status()).toBe(401);
