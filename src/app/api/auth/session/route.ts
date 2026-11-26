@@ -4,6 +4,13 @@ const ACCESS_COOKIE = "kk_access_token";
 const REFRESH_COOKIE = "kk_refresh_token";
 const REFRESH_MAX_AGE = 60 * 60 * 24 * 60;
 
+function originIsValid(request: NextRequest) {
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+  try { return new URL(origin).origin === request.nextUrl.origin; }
+  catch { return false; }
+}
+
 function authConfig() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -36,6 +43,7 @@ async function getSupabaseUser(url: string, key: string, accessToken: string) {
 }
 
 export async function POST(request: NextRequest) {
+  if (!originIsValid(request)) return NextResponse.json({ error: "Invalid request origin." }, { status: 403 });
   const config = authConfig();
   if (!config) {
     return NextResponse.json({ error: "Authentication is not configured." }, { status: 503 });

@@ -45,7 +45,7 @@ test.describe("KaamKitPro authentication pages", () => {
   });
 
   test("password API rejects requests without an authenticated session", async ({ request }) => {
-    const response = await request.post("/api/auth/password", { data: { password: "test-password-123" } });
+    const response = await request.post("/api/auth/password", { headers: { Origin: "http://127.0.0.1:4173" }, data: { password: "test-password-123" } });
     expect([401, 503]).toContain(response.status());
   });
 

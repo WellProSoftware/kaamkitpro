@@ -20,10 +20,33 @@ test.describe("staging security regression checks", () => {
 
   test("session endpoint rejects malformed token payloads without issuing cookies", async ({ request }) => {
     const response = await request.post("/api/auth/session", {
+      headers: { Origin: "http://127.0.0.1:4173" },
       data: { access_token: "", refresh_token: "" },
     });
     expect([400, 503]).toContain(response.status());
     expect(response.headers()["set-cookie"] || "").not.toMatch(/kk_access_token=|kk_refresh_token=/);
+  });
+
+
+  test("auth session and password mutations reject cross-origin and missing-Origin requests", async ({ request }) => {
+    for (const path of ["/api/auth/session", "/api/auth/password"]) {
+      const crossOrigin = await request.post(path, {
+        headers: { Origin: "https://attacker.example.invalid" },
+        data: path.endsWith("/session")
+          ? { access_token: "test", refresh_token: "test" }
+          : { password: "NotARealPassword123!" },
+      });
+      expect(crossOrigin.status()).toBe(403);
+      expect(await crossOrigin.json()).toMatchObject({ error: "Invalid request origin." });
+
+      const missingOrigin = await request.post(path, {
+        data: path.endsWith("/session")
+          ? { access_token: "test", refresh_token: "test" }
+          : { password: "NotARealPassword123!" },
+      });
+      expect(missingOrigin.status()).toBe(403);
+      expect(await missingOrigin.json()).toMatchObject({ error: "Invalid request origin." });
+    }
   });
 
   test("admin grant mutation rejects a cross-origin request before authentication", async ({ request }) => {
