@@ -86,6 +86,21 @@ test.describe("staging security regression checks", () => {
   });
 
 
+  test("support chat rejects cross-origin and missing-Origin mutations before authentication", async ({ request }) => {
+    const crossOrigin = await request.post("/api/support", {
+      headers: { Origin: "https://attacker.example.invalid" },
+      data: { message: "Cross-origin CSRF regression test." },
+    });
+    expect(crossOrigin.status()).toBe(403);
+    expect(await crossOrigin.json()).toMatchObject({ error: "Invalid request origin." });
+
+    const missingOrigin = await request.post("/api/support", {
+      data: { message: "Missing-Origin CSRF regression test." },
+    });
+    expect(missingOrigin.status()).toBe(403);
+    expect(await missingOrigin.json()).toMatchObject({ error: "Invalid request origin." });
+  });
+
   test("support chat and admin replies remain protected for signed-out users", async ({ request }) => {
     const userInbox = await request.get("/api/support");
     expect(userInbox.status()).toBe(401);
