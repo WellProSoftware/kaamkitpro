@@ -232,6 +232,7 @@ test("Pricing page presents Free access and guarded Pro checkout", async ({ page
 
 test("Subscription checkout rejects unauthenticated requests", async ({ request }) => {
   const response = await request.post("/api/billing/checkout", {
+    headers: { Origin: "http://127.0.0.1:4173" },
     data: { plan_id: "pro-monthly-inr" },
   });
   expect(response.status()).toBe(401);
