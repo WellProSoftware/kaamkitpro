@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ACCESS_COOKIE = "kk_access_token";\n\nfunction originIsValid(request: NextRequest) {\n  const origin = request.headers.get("origin");\n  if (!origin) return false;\n  try { return new URL(origin).origin === request.nextUrl.origin; }\n  catch { return false; }\n}
+const ACCESS_COOKIE = "kk_access_token";
 
-export async function POST(request: NextRequest) {\n  if (!originIsValid(request)) return NextResponse.json({ error: "Invalid request origin." }, { status: 403 });
+function originIsValid(request: NextRequest) {
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+  try { return new URL(origin).origin === request.nextUrl.origin; }
+  catch { return false; }
+}
+
+export async function POST(request: NextRequest) {
+  if (!originIsValid(request)) return NextResponse.json({ error: "Invalid request origin." }, { status: 403 });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   if (!url || !key) return NextResponse.json({ error: "Authentication is not configured." }, { status: 503 });
