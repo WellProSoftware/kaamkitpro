@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRequestUser, isAuthorizedAdmin, serviceRest } from "@/lib/server-access";
 
+function originIsValid(request: NextRequest) {
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+  try {
+    return new URL(origin).origin === request.nextUrl.origin;
+  } catch {
+    return false;
+  }
+}
+
 async function requireAdmin(request: NextRequest) {
   const user = await getRequestUser(request);
   if (!user) return { error: NextResponse.json({ error: "Please sign in first." }, { status: 401 }) };
@@ -19,8 +29,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const origin = request.headers.get("origin");
-  if (origin) { try { if (new URL(origin).host !== request.nextUrl.host) return NextResponse.json({ error: "Invalid request origin." }, { status: 403 }); } catch { return NextResponse.json({ error: "Invalid request origin." }, { status: 403 }); } }
+  if (!originIsValid(request)) return NextResponse.json({ error: "Invalid request origin." }, { status: 403 });
   const auth = await requireAdmin(request);
   if ("error" in auth) return auth.error;
   let body: Record<string, unknown>;
