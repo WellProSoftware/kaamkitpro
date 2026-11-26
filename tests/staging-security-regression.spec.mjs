@@ -21,7 +21,7 @@ test.describe("staging security regression checks", () => {
   test("session endpoint rejects malformed token payloads without issuing cookies", async ({ request }) => {
     const response = await request.post("/api/auth/session", {
       headers: { Origin: "http://127.0.0.1:4173" },
-      data: { access_token: "", refresh_token: "",
+      data: { access_token: "", refresh_token: "" },
     });
     expect([400, 503]).toContain(response.status());
     expect(response.headers()["set-cookie"] || "").not.toMatch(/kk_access_token=|kk_refresh_token=/);
